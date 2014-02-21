@@ -9,12 +9,23 @@
 
 <body>
 
+	Artist: {{name}}
+	<p></p>
+	Years active: {{active}}
+	<p></p>
+	Popularity: {{hot}}
+	<p></p>
+	Tunes: 
 	<ul>
-
-	{% for artist in s_results %}
-		<li>{{artist}}</li>
-	{% endfor %}
-
+		{% for s in songs %}
+		<li>{{s}}</li>
+		{% endfor %}
+	</ul>
+	Similar artists: 
+	<ul>
+		{% for a in similar %}
+		<li>{{a}}</li>
+		{% endfor %}
 	</ul>
 
 </body>
