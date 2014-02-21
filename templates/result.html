@@ -9,7 +9,13 @@
 
 <body>
 
-{{ qstring }}
+	<ul>
+
+	{% for artist in s_results %}
+		<li>{{artist}}</li>
+	{% endfor %}
+
+	</ul>
 
 </body>
 
