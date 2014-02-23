@@ -9,34 +9,7 @@
 
 <body>
 
-	<h3>Artists</h3>
-	<ul>
-	{% for artist in artists %}
 
-		<il>
-			{{artist}}
-		</il>
-		<br>
-
-	{% endfor %}
-	</ul>
-
-	<h3>Songs</h3> 
-	<ul>
-	{% for song in songs %}
-
-		<il>
-			{{song}}
-		</il>
-		<br>
-
-	{% endfor %}
-	</ul>
-
-	<p></p>
-	<a href="/artist/">test</a>
-
-	{% url 'home.views.artist_info' %}
 
 </body>
 
