@@ -11,7 +11,11 @@ v .02
 
 v .03
 -Added echnoest calls
+
 -Added mockup of search functionality
 
 v .04
 -Added artist and song pages
+
+v .05
+-Artist urls should work now

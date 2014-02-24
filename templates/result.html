@@ -14,7 +14,7 @@
 	{% for artist in artists %}
 
 		<il>
-			{{artist}}
+			<a href = {% url 'home.views.artist_info' %}?q={{artist}} > {{artist}} </a>
 		</il>
 		<br>
 
