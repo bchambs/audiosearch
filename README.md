@@ -22,3 +22,6 @@ v .05
 
 v .06
 -Added template filter to correct spaces in urls
+
+v .07
+-Added individual artist / song pages with filler data. 

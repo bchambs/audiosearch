@@ -9,7 +9,25 @@
 
 <body>
 
+	<h3>{{ name }} : ({{ hot }}) : @{{ twitter }}</h3>
 
+	<p></p>
+
+	<h5>Similar artists:</h5>
+	
+	<ul>
+	{% for s in similar %}
+
+		<il>
+			<a href = {% url 'home.views.artist_info' %}?q={{ s.name.split|join:'+' }} > {{ s }} </a>
+		</il>
+		<br>
+
+	{% endfor %}
+	</ul>
+	
+	<!-- control size with a div later -->
+	<img src='{{ image }}'>
 
 </body>
 
