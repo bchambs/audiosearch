@@ -19,3 +19,6 @@ v .04
 
 v .05
 -Artist urls should work now
+
+v .06
+-Added template filter to correct spaces in urls

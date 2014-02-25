@@ -14,7 +14,7 @@
 	{% for artist in artists %}
 
 		<il>
-			<a href = {% url 'home.views.artist_info' %}?q={{artist}} > {{artist}} </a>
+			<a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
 		</il>
 		<br>
 
@@ -26,7 +26,7 @@
 	{% for song in songs %}
 
 		<il>
-			{{song}}
+			<a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
 		</il>
 		<br>
 
