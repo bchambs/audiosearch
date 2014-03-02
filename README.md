@@ -25,3 +25,6 @@ v .06
 
 v .07
 -Added individual artist / song pages with filler data. 
+
+v .08
+-Fixed static files.  Improved index visual.
