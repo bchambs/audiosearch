@@ -28,3 +28,6 @@ v .07
 
 v .08
 -Fixed static files.  Improved index visual.
+
+v .09
+-Changed index.
