@@ -12,7 +12,7 @@
 
 </head>
 
-<body>
+<body onload="initCanvas();">
 
 <div class="container-fluid">
 
@@ -41,20 +41,26 @@
 
     <div class="row-fluid">
 
-        <div class="col-md-4">
-            <div class="square"></div>
+        <canvas id="album_matrix"></canvas>
+
+        <!-- OLD ALBUM SQUARES IN DIVS
+
+        <div class="col-md-4 center_me">
+            <div class="square">asdf</div>
         </div>
-        <div class="col-md-4">
-            <div class="square"></div>
+        <div class="col-md-4 center_me">
+            <div class="square">asdf</div>
         </div>
-        <div class="col-md-4">
-            <div class="square"></div>
-        </div>
+        <div class="col-md-4 center_me">
+            <div class="square">asdf</div>
+        </div> -->
 
     </div><!--END square row-->
 </div><!--END container-->
 
+    <script src="static/js/jquery-1.11.0.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/script.js"></script>
 </body>
 
 </html>
