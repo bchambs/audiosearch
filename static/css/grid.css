@@ -52,3 +52,14 @@ canvas {
     display:block; 
     background-color: red;
 }
+
+.cell_img {
+    height:100px;
+    width:100px;
+}
+
+table {
+    margin: 0 auto;
+    position: relative;;
+        border-collapse: collapse;
+}
