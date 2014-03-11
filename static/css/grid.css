@@ -1,7 +1,8 @@
 body {
     padding: 0;
-    background: #DEDEFF;
+    background: #343535;
 }
+
 
 .container-fluid {
     padding: 0;
@@ -11,6 +12,14 @@ body {
     height: 250px;
     background: #1A1A80;
     position: relative;
+}
+
+#index-main-col{
+    background: #343535;
+    position:relative;
+    width: 800px;
+    height: 100%;
+    top: 300px;
 }
 
 #title_image {
@@ -29,15 +38,16 @@ body {
 }
 
 #search_bar {
-    width: 250px;
-    height: 30px;
-    margin-top: 7px;
-    margin-left: 50px;
+    width: 300px;
+    height: 25px;
+    margin-top: 4px;
+    margin-left: 3px;
 }
 
 .btn {
     margin-top: -2px;
-    height: 30.5px;
+    height: 25px;
+    width: 25px;
 }
 
 .center_me {
@@ -61,5 +71,6 @@ canvas {
 table {
     margin: 0 auto;
     position: relative;;
-        border-collapse: collapse;
+    border-collapse: collapse;
 }
+

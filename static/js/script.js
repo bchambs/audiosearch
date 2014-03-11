@@ -57,7 +57,7 @@ function loadImages(sources, callback){
     }
 }
 
-function initMatrix() {
+function buildTable(img_list) {
     var b_height = "innerHeight" in window 
                ? window.innerHeight
                : document.documentElement.offsetHeight; 
@@ -67,17 +67,15 @@ function initMatrix() {
     var i_dimentions = b_height / 100;
     var table = document.getElementById("album_matrix");
 
+    var tr = document.createElement("tr");
 
-    for (var i=0; i < b_height; i += 200){ 
-        var tr = document.createElement("tr");
-
-        for (var j=0; j < b_width; j += 110) {
-            var td = document.createElement("td");
-            td.innerHTML = "<img src=\"http://i.imgur.com/YsrGF9v.jpg\" class=\"cell_img\">";
-            //td.innerHTML += "<img src=\"static/img/cell_fill.png\" class=\"cell_img\">";
-            tr.appendChild(td);
-        }
+    for (var j=0; j < 15; j++) {
+        var td = document.createElement("td");
+        td.innerHTML = "<img src=\"static/img/cell_fill.png\" id=\" + j + \" class=\"cell_img\">";
+        //td.innerHTML += "<img src=\"static/img/cell_fill.png\" class=\"cell_img\">";
+        tr.appendChild(td);
 
         table.appendChild(tr);
     }
 }
+

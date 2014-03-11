@@ -6,14 +6,12 @@ from random import choice
 #############################
 # CATCH EMPTY QUERY STRINGS #
 #############################
+config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
     return render(request, 'index.html')
 
 def search(request):
-    #removed for security, add your key
-    config.ECHO_NEST_API_KEY=""
-
     c = Context({})
 
     #this still breaks on empty query string fix it
