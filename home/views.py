@@ -9,7 +9,11 @@ from random import choice
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
-    return render(request, 'index.html')
+    c = Context({
+            'trending': artist.top_hottt()
+        })
+
+    return render(request, 'index.html', c)
 
 def search(request):
     c = Context({})

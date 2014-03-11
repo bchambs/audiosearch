@@ -26,12 +26,29 @@
     <div class="row">
         <div id="index-main-col" class="center-block">
             <img src="static/img/title.png">
+
             <form action="/search/" method="GET">
-            <input id="search_bar" type="text" name="q">
-            <button type="submit" class="btn">
-                <span class="glyphicon glyphicon-play"></span> 
-            </button>
+                <input id="search_bar" type="text" name="q">
+
+                <button type="submit" class="btn">
+                    <span class="glyphicon glyphicon-play"></span> 
+                </button>
             </form>
+
+            <!--Button ladder-->
+            <div class="row">
+                <div id="trend-ladder" class="col-md-8">
+                    <div id="trend-sticker">
+                        {% for t in trending %}
+                            <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }} /> {{ t }}  <br />
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+
+                </div>
+            </div><!--END button ladder-->
         </div>
     </div>
 

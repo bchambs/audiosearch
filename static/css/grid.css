@@ -1,6 +1,8 @@
 body {
-    padding: 0;
+
     background: #343535;
+    margin:0; 
+    padding:0px; 
 }
 
 
@@ -15,11 +17,10 @@ body {
 }
 
 #index-main-col{
-    background: #343535;
     position:relative;
     width: 800px;
     height: 100%;
-    top: 300px;
+    top: 270px;
 }
 
 #title_image {
@@ -40,14 +41,12 @@ body {
 #search_bar {
     width: 300px;
     height: 25px;
-    margin-top: 4px;
+    margin-top: 5px;
     margin-left: 3px;
 }
 
 .btn {
     margin-top: -2px;
-    height: 25px;
-    width: 25px;
 }
 
 .center_me {
@@ -74,3 +73,36 @@ table {
     border-collapse: collapse;
 }
 
+.glyphicon {
+    height: 13px;
+}
+
+#trend-ladder {
+    position: absolute;
+    left: 19px;
+    width: 299px;
+}
+
+#trend-sticker {
+    position: absolute;
+    top:5px;
+    right:0px;
+    color:white;
+    text-align:right;
+}
+
+a:link {
+    color:white;
+}
+
+a:visited {
+    color:white;
+}
+
+a:hover {
+    color:white;
+}
+
+a:active {
+    color:white;
+}
