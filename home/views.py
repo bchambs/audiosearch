@@ -33,6 +33,14 @@ def search(request):
 
     return render(request, 'result.html', c)
 
+def compare(request):
+
+    return render(request, 'compare.html')
+
+def about(request):
+
+    return render (request, 'about.html')
+
 def artist_info(request):
     qs = request.GET['q']
 
