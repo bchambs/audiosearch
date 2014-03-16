@@ -30,7 +30,10 @@
                 <img src="{{ STATIC_URL }}img/title.png">
 
                 <form action="/search/" method="GET">
-                    <input id="search-bar" type="text" name="q">
+                <div class="input-group">
+                    <input id="search-bar" type="text" name="q" class="form-control" >
+                </div>
+
                 </form>
             </div><!--END title block-->
 
@@ -48,9 +51,10 @@
             <!--trending block-->
             <div id="trending-block" class="col-lg-4 orange">
                 <img src="{{ STATIC_URL }}img/trending.png"> <br />
-                    {% for t in trending %}
-                        <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }} /> {{ t }}  <br />
-                    {% endfor %}
+                {% for t in trending %}
+                    <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}> {{ t }} </a> <br />
+                {% endfor %}
+                <br />
             </div><!--END trending block-->
 
             <!--misc block-->
@@ -58,10 +62,15 @@
                 <img src="{{ STATIC_URL }}img/compare.png"> <br />
             </div><!--END block-->
 
-            <!--random-block-->
-            <div id="random-block" class="col-lg-4 purple">
+            <!--featured-block-->
+            <div id="featured-block" class="col-lg-4 purple">
                 <img src="{{ STATIC_URL }}img/featured.png"> <br />
-            </div><!--random-block-->
+                {{ featured_name }} <br />
+                {% for f in featured_terms %}
+                    {{ f }}, 
+                {% endfor %}
+
+            </div><!--featured-block-->
 
         </div>
     </div>

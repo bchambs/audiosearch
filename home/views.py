@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from pyechonest import config, artist, song
 from random import choice
+import unicodedata
 
 #############################
 # CATCH EMPTY QUERY STRINGS #
@@ -10,8 +11,24 @@ config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
     c = Context({
-            'trending': artist.top_hottt()
+            'trending': artist.top_hottt(),
         })
+
+    #add file error checking
+    featured_file = open ('featured.txt', 'r')
+    featured = featured_file.read()
+    f_artist = artist.search(name=featured, results=6)[3]
+    c['featured_name'] = f_artist.name,
+    c['featured_terms'] = f_artist.terms,
+    c['featured_bio'] = f_artist.biographies
+
+    # print
+    # s = c['featured_bio'][0]['text'].encode('ascii','ignore')
+
+    # print len(s)
+    # print
+    # print c['featured_bio'][1]['text']
+
 
     return render(request, 'index.html', c)
 

@@ -1,5 +1,6 @@
 body {
-    /*background: #343535;
+    /*
+    background: #343535;
     */
     margin:0; 
     padding:0px; 
@@ -16,6 +17,7 @@ body {
     height: 100%;
     top: 250px;
 }
+
 
 .red {
     background: red;
@@ -36,6 +38,7 @@ body {
     background: yellow;
 }
 
+
 #index-header {
     height: 100px;
 }
@@ -45,7 +48,7 @@ body {
 }
 
 #summary-block {
-    font-style: italic;
+    font-style: ;
 }
 
 #index-content {
@@ -62,21 +65,21 @@ body {
     padding: 0;
 }
 
-#random-block {
+#featured-block {
     height: 400px;
     padding: 0;
 }
 
 #search-bar {
     width: 300px;
-    height: 25px;
+    height: 30px;
     margin-top: 5px;
     margin-left: 3px;
     color:black;
 }
 
 .txt-img-offset {
-    
+
 }
 
 a:link {
