@@ -58,14 +58,17 @@
             </div><!--END trending block-->
 
             <!--misc block-->
-            <div id="misc-block" class="col-lg-4 yellow">
+            <div id="misc-block" class="col-lg-4 blue">
                 <img src="{{ STATIC_URL }}img/compare.png"> <br />
+                Search for two artists or songs to see a visual representation of their differences.  Artist comparisons involve popularity, average song length, music type, etc.  
+                Song comparisons involve mapping tempo, frequency, etc on a graph. </br>
+                <a href = {% url 'home.views.compare' %}>Try it.</a>
             </div><!--END block-->
 
             <!--featured-block-->
             <div id="featured-block" class="col-lg-4 purple">
                 <img src="{{ STATIC_URL }}img/featured.png"> <br />
-                <a href = {% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}> {{ featured_name }}
+                <a id="featured-artist" href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> {{ fname }}
                 ( 
                 {% for t in featured_terms %}
                     {{ t }}
@@ -74,7 +77,7 @@
                 </a><br />
 
                 {{ featured_bio }}<br />
-                <a href = {% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}> Read more.
+                <a href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> Read more. </a>
 
                 
             </div><!--featured-block-->

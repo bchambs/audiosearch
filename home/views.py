@@ -29,7 +29,7 @@ def index(request):
     #get displayable bio
     f_bio = get_good_bio (f_artist.biographies)
 
-    c['featured_name'] = f_artist.name
+    c['fname'] = f_artist.name
     c['featured_terms'] = f_terms
     c['featured_bio'] = f_bio
 

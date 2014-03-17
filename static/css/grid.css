@@ -1,7 +1,5 @@
 body {
-    /*
     background: #343535;
-    */
     margin:0; 
     padding:0px; 
     color:white;
@@ -18,7 +16,7 @@ body {
     top: 250px;
 }
 
-
+/*
 .red {
     background: red;
 }
@@ -34,10 +32,7 @@ body {
 .orange {
     background: orange;
 }
-.yellow {
-    background: yellow;
-}
-
+*/
 
 #index-header {
     height: 100px;
@@ -49,6 +44,7 @@ body {
 
 #summary-block {
     font-style: ;
+    top: 20px;
 }
 
 #index-content {
@@ -78,8 +74,8 @@ body {
     color:black;
 }
 
-.txt-img-offset {
-
+#featured-artist {
+    font-size: 25px;
 }
 
 a:link {
