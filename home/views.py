@@ -11,6 +11,8 @@ from util import *
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
+    trending = artist.top_hottt()
+
     c = Context({
         'trending': artist.top_hottt(),
     })
