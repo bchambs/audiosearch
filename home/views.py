@@ -3,6 +3,7 @@ from django.template import RequestContext, loader, Context
 from pyechonest import config, artist, song
 from random import choice
 import unicodedata
+from util import *
 
 #############################
 # CATCH EMPTY QUERY STRINGS #
@@ -11,24 +12,26 @@ config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
     c = Context({
-            'trending': artist.top_hottt(),
-        })
+        'trending': artist.top_hottt(),
+    })
 
     #add file error checking
     featured_file = open ('featured.txt', 'r')
     featured = featured_file.read()
-    f_artist = artist.search(name=featured, results=6)[3]
-    c['featured_name'] = f_artist.name,
-    c['featured_terms'] = f_artist.terms,
-    c['featured_bio'] = f_artist.biographies
+    f_artist = artist.search(name=featured, sort='hotttnesss-desc', results=1)[0]
+    f_terms = []
 
-    # print
-    # s = c['featured_bio'][0]['text'].encode('ascii','ignore')
+    #ensure we have 2 terms
+    f_terms.append(f_artist.terms[0]['name'])
+    f_terms[0] += ', '
+    f_terms.append(f_artist.terms[1]['name'])
 
-    # print len(s)
-    # print
-    # print c['featured_bio'][1]['text']
+    #get displayable bio
+    f_bio = get_good_bio (f_artist.biographies)
 
+    c['featured_name'] = f_artist.name
+    c['featured_terms'] = f_terms
+    c['featured_bio'] = f_bio
 
     return render(request, 'index.html', c)
 

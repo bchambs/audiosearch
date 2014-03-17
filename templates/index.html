@@ -65,11 +65,18 @@
             <!--featured-block-->
             <div id="featured-block" class="col-lg-4 purple">
                 <img src="{{ STATIC_URL }}img/featured.png"> <br />
-                {{ featured_name }} <br />
-                {% for f in featured_terms %}
-                    {{ f }}, 
+                <a href = {% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}> {{ featured_name }}
+                ( 
+                {% for t in featured_terms %}
+                    {{ t }}
                 {% endfor %}
+                )
+                </a><br />
 
+                {{ featured_bio }}<br />
+                <a href = {% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}> Read more.
+
+                
             </div><!--featured-block-->
 
         </div>
