@@ -12,9 +12,10 @@ config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 def index(request):
     trending = artist.top_hottt()
+    del trending[10:]
 
     c = Context({
-        'trending': artist.top_hottt(),
+        'trending': trending,
     })
 
     #add file error checking

@@ -23,7 +23,7 @@
 
     <!--main column-->
     <div id="index-main-col" class="col-lg-10">
-        <div id="index-header" class="row red">
+        <div id="index-header" class="row red box">
 
             <!--title block-->
             <div id="title-block" class="col-lg-4 red">
@@ -40,16 +40,17 @@
             <!--summary block-->
             <div id="summary-block" class="col-lg-8 green ">
                 audiosearch is a simple way to find new music.<br />
-                <span class="glyphicon glyphicon-play"></span> Search for your favorite song and artist to be directed to related media.<br />
-                <span class="glyphicon glyphicon-play"></span> Compare two songs or two artists.<br />
             </div>
             <!--END summary block -->
         </div>
 
-        <div id="index-content" class= "row blue">
+        <div id="index-h-separator" class="row">
+        </div>
+
+        <div id="index-content" class= "row">
             
             <!--trending block-->
-            <div id="trending-block" class="col-lg-4 orange">
+            <div id="trending-block" class="col-lg-3 box">
                 <img src="{{ STATIC_URL }}img/trending.png"> <br />
                 {% for t in trending %}
                     <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}> {{ t }} </a> <br />
@@ -57,15 +58,21 @@
                 <br />
             </div><!--END trending block-->
 
+            <div id="index-w-separator" class="col-lg-1">
+            </div>
+
             <!--misc block-->
-            <div id="misc-block" class="col-lg-4 blue">
+            <div id="misc-block" class="col-lg-3 box">
                 <img src="{{ STATIC_URL }}img/compare.png"> <br />
                 Search for two artists or songs to see a visual representation of their differences.</br>
                 <a href = {% url 'home.views.compare' %}>Try it.</a>
             </div><!--END block-->
 
+            <div id="index-w-separator" class="col-lg-1">
+            </div>
+
             <!--featured-block-->
-            <div id="featured-block" class="col-lg-4 purple">
+            <div id="featured-block" class="col-lg-3 box">
                 <img src="{{ STATIC_URL }}img/featured.png"> <br />
                 <a id="featured-artist" href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> {{ fname }}
                 ( 

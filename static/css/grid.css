@@ -1,5 +1,7 @@
 body {
+
     background: #343535;
+
     margin:0; 
     padding:0px; 
     color:white;
@@ -16,26 +18,23 @@ body {
     top: 250px;
 }
 
-/*
-.red {
-    background: red;
+.box {
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
 }
-.blue {
-    background: blue;
+
+#index-h-separator {
+    height: 15px;
 }
-.green {
-    background: green;
+
+#index-w-separator {
+    width: 15px;
 }
-.purple {
-    background: purple;
-}
-.orange {
-    background: orange;
-}
-*/
 
 #index-header {
     height: 100px;
+    background: #151515;
 }
 
 #title-block {
@@ -52,18 +51,18 @@ body {
 }
 
 #trending-block {
-    height: 400px;
-    padding: 0;
+    padding: 10px;
+    background: #990033;
 }
 
 #misc-block {
-    height: 400px;
-    padding: 0;
+    padding: 10px;
+    background: #990033;
 }
 
 #featured-block {
-    height: 400px;
-    padding: 0;
+    padding: 10px;
+    background: #990033;
 }
 
 #search-bar {
