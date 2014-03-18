@@ -22,6 +22,13 @@ body {
     border-style: solid;
     border-width: 2px;
     border-color: white;
+    height: 300px;
+}
+
+.box-footer {
+    bottom: 0;
+    font-size: 32px;
+    text-align: right;
 }
 
 #index-h-separator {
@@ -37,13 +44,9 @@ body {
     background: #151515;
 }
 
-#title-block {
-   
-}
-
 #summary-block {
-    font-style: ;
-    top: 20px;
+    font-size: 25px;
+    bottom: 0;
 }
 
 #index-content {
@@ -53,16 +56,20 @@ body {
 #trending-block {
     padding: 10px;
     background: #990033;
+    padding-bottom: 0;
 }
 
 #misc-block {
     padding: 10px;
     background: #990033;
+    padding-bottom: 0;
 }
 
 #featured-block {
     padding: 10px;
     background: #990033;
+    padding-bottom: 0;
+
 }
 
 #search-bar {

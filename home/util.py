@@ -7,4 +7,4 @@ def get_good_bio(bios):
         for b in bios:
             if len(b['text']) > 200:
                 return (b['text'][:197] + '...')
-        return 'NO BIO FOUND'
+        return 'Bio not available'

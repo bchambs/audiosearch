@@ -23,10 +23,10 @@
 
     <!--main column-->
     <div id="index-main-col" class="col-lg-10">
-        <div id="index-header" class="row red box">
+        <div id="index-header" class="row box">
 
             <!--title block-->
-            <div id="title-block" class="col-lg-4 red">
+            <div id="title-block" class="col-lg-4">
                 <img src="{{ STATIC_URL }}img/title.png">
 
                 <form action="/search/" method="GET">
@@ -38,7 +38,7 @@
             </div><!--END title block-->
 
             <!--summary block-->
-            <div id="summary-block" class="col-lg-8 green ">
+            <div id="summary-block" class="col-lg-8 box-footer">
                 audiosearch is a simple way to find new music.<br />
             </div>
             <!--END summary block -->
@@ -51,29 +51,22 @@
             
             <!--trending block-->
             <div id="trending-block" class="col-lg-3 box">
-                <img src="{{ STATIC_URL }}img/trending.png"> <br />
+                <!--<img src="{{ STATIC_URL }}img/trending.png"> <br />-->
                 {% for t in trending %}
                     <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}> {{ t }} </a> <br />
                 {% endfor %}
-                <br />
+
+                <div class="box-footer">
+                    trending
+                </div>
             </div><!--END trending block-->
-
-            <div id="index-w-separator" class="col-lg-1">
-            </div>
-
-            <!--misc block-->
-            <div id="misc-block" class="col-lg-3 box">
-                <img src="{{ STATIC_URL }}img/compare.png"> <br />
-                Search for two artists or songs to see a visual representation of their differences.</br>
-                <a href = {% url 'home.views.compare' %}>Try it.</a>
-            </div><!--END block-->
 
             <div id="index-w-separator" class="col-lg-1">
             </div>
 
             <!--featured-block-->
             <div id="featured-block" class="col-lg-3 box">
-                <img src="{{ STATIC_URL }}img/featured.png"> <br />
+                <!--<img src="{{ STATIC_URL }}img/featured.png"> <br />-->
                 <a id="featured-artist" href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> {{ fname }}
                 ( 
                 {% for t in featured_terms %}
@@ -83,10 +76,29 @@
                 </a><br />
 
                 {{ featured_bio }}<br />
-                <a href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> Read more. </a>
+                <!--<a href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> Read more. </a>-->
 
+                <div class="box-footer">
+                    featured
+                </div>
                 
-            </div><!--featured-block-->
+            </div><!--END featured-block-->
+
+            <div id="index-w-separator" class="col-lg-1">
+            </div>
+
+            <!--misc block-->
+            <div id="misc-block" class="col-lg-3 box">
+                <!--<img src="{{ STATIC_URL }}img/compare.png"> <br />-->
+                Search for two artists or songs to see a visual representation of their differences.</br></br></br></br>
+                <!--<a href = {% url 'home.views.compare' %}>Try it.</a>-->
+
+                <div class="box-footer">
+                    compare
+                </div>
+            </div><!--END block-->
+
+
 
         </div>
     </div>
