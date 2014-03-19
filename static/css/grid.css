@@ -1,10 +1,12 @@
 body {
-
     background: #343535;
-
     margin:0; 
     padding:0px; 
     color:white;
+}
+
+.blue {
+    background: blue;
 }
 
 .container {
@@ -18,11 +20,34 @@ body {
     top: 250px;
 }
 
+.content-main-col {
+    position:relative;
+    width: 1000px;
+    height: 100%;
+    top: 20px;
+    margin: 0 auto;
+}
+
+#artist-result-block {
+    background: #990033;
+}
+
+#song-result-block {
+    background: #990033;
+}
+
 .box {
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    height: 300px;
+}
+
+.half-box {
     border-style: solid;
     border-width: 2px;
     border-color: white;
-    height: 300px;
+    height: 150px;
 }
 
 .box-footer {
@@ -37,6 +62,10 @@ body {
 
 #index-w-separator {
     width: 15px;
+}
+
+.content-h-separator {
+    height: 5px;
 }
 
 #index-header {
@@ -59,7 +88,13 @@ body {
     padding-bottom: 0;
 }
 
-#misc-block {
+#about-block {
+    padding: 10px;
+    background: #990033;
+    padding-bottom: 0;
+}
+
+#compare-block {
     padding: 10px;
     background: #990033;
     padding-bottom: 0;

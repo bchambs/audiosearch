@@ -2,45 +2,93 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<!-- need to give credit for the font...-->
+
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="static/css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
 
-    <title>audiosearch</title>
+<title>audiosearch</title>
+
 </head>
 
 <body>
 
-	<h3>Artists</h3>
-	<ul>
-	{% for artist in artists %}
+<div class="container">
 
-		<il>
-			<a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
-		</il>
-		<br>
+    <!--left column-->
+    <div class="col-lg-1">
+    </div>
 
-	{% endfor %}
-	</ul>
+    <!--main column-->
+    <div class="content-main-col" class="col-lg-10">
 
-	<h3>Songs</h3> 
-	<ul>
-	{% for song in songs %}
+        <div id="index-header" class="row box">
+            <!--title block-->
+            <div id="title-block" class="col-lg-4">
+                <img src="{{ STATIC_URL }}img/title.png">
 
-		<il>
-			<a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
-		</il>
-		<br>
+                <form action="/search/" method="GET">
+                <div class="input-group">
+                    <input id="search-bar" type="text" name="q" class="form-control" >
+                </div>
 
-	{% endfor %}
-	</ul>
+                </form>
+            </div><!--END title block-->
 
-	<p></p>
-	<a href="/artist/">test</a>
+            <!--summary block-->
+            <div id="summary-block" class="col-lg-8 box-footer">
+                audiosearch is a simple way to find new music.<br />
+            </div>
+            <!--END summary block -->
+        </div>
 
-	{% url 'home.views.artist_info' %}
+        <div class="content-h-separator row">
+        </div>
 
+        <div id="artist-result-block" class="row box">
+             <h3>Artists</h3>
+            <ul>
+            {% for artist in artists %}
+
+                <il>
+                    <a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
+                </il>
+                <br>
+
+            {% endfor %}
+            </ul>
+        </div><!--END artist block-->
+
+        <div class="content-h-separator row">
+        </div>
+
+        <div id="song-result-block" class="row box">
+            <h3>Songs</h3> 
+            <ul>
+            {% for song in songs %}
+
+                <il>
+                    <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
+                </il>
+                <br>
+
+            {% endfor %}
+            </ul>
+        </div><!--END song block-->
+
+    </div><!--END main-->
+
+    <!--right column-->
+    <div class="col-lg-1">
+    </div>
+
+</div><!--END container-->
+
+<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/script.js"></script>
 </body>
 
 </html>
