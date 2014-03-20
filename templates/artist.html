@@ -2,12 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<!-- need to give credit for the font...-->
+
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
 
-    <title>audiosearch</title>
+<title>audiosearch</title>
+
 </head>
 
 <body>
@@ -15,37 +18,112 @@
 <div class="container">
 
     <!--left column-->
-    <div class="col-lg-2">
+    <div class="col-lg-1">
     </div>
 
     <!--main column-->
-    <div class="col-lg-8"  class="center-block">
-        <div id="index-main-col">
-            <img src="{{ STATIC_URL }}img/title.png">
-            <h3>{{ name }} : ({{ hot }}) : @{{ twitter }}</h3>
+    <div class="content-main-col col-lg-10">
 
-            <p></p>
+        <div id="index-header" class="row center box">
+            <!--title block-->
+            <div id="title-block" class="col-lg-4">
+                <img src="{{ STATIC_URL }}img/title.png">
 
-            <h5>Similar artists:</h5>
-            
-            <ul>
-            {% for s in similar %}
+                <form action="/search/" method="GET">
+                <div class="input-group">
+                    <input id="search-bar" type="text" name="q" class="form-control" >
+                </div>
 
-                <il>
-                    <a href = {% url 'home.views.artist_info' %}?q={{ s.name.split|join:'+' }} > {{ s }} </a>
-                </il>
-                <br>
+                </form>
+            </div><!--END title block-->
 
-            {% endfor %}
-            </ul>
-            
-            <!-- control size with a div later -->
-            <img src='{{ image }}'>
+            <!--summary block-->
+            <div id="summary-block" class="col-lg-8 box-footer">
+                audiosearch is a simple way to find new music.<br />
+            </div>
+            <!--END summary block -->
         </div>
-    </div>
+
+        <div class="content-h-separator row">
+        </div>
+
+        <!--nav buttons-->
+        <div class="row center">
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    home
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    trending
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    featured
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                    compare
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    about
+                </div>
+            </div>
+        </div>
+        <!--END nav-->
+
+        <div class="content-h-separator row">
+        </div>
+
+        <!--artist summary-->
+        <div class="row center box">
+            <div id="artist-summary-col">
+                <div class="subtitle-text">
+                    <div id="artist-image" align="right"> 
+                        <img src="{{image}}">
+                    </div>
+
+                    {{ name }} - (@{{ twitter }})
+                    <br />
+                    (list of terms)
+
+                    
+
+                    <div class="clear"></div>
+                </div>
+            </div>  
+        </div><!--END artist summary-->
+        
+    </div><!--END main-->
 
     <!--right column-->
-    <div class="col-lg-2">
+    <div class="col-lg-1">
     </div>
 
 </div>

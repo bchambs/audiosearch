@@ -35,11 +35,13 @@ body {
 #artist-result-block {
     background: #990033;
     padding: 10px;
+    width: 497px;
 }
 
 #song-result-block {
     background: #990033;
     padding: 10px;
+    width: 497px;
 }
 
 .box {
@@ -120,7 +122,6 @@ body {
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
-
 }
 
 #search-bar {
@@ -129,6 +130,19 @@ body {
     margin-top: 5px;
     margin-left: 3px;
     color:black;
+}
+
+#artist-summary-col {
+    background: #990033;
+    padding: 10px;
+    height: 100%;
+}
+
+#artist-image {
+    height: 400px;
+    width: 400px;
+    float:right;
+    overflow: hidden;
 }
 
 a:link {
@@ -151,10 +165,17 @@ a:active {
     font-size: 25px;
 }
 
+.clear {
+    clear:both;
+}
 .nav-button {
     width: 196px;
     height: 40px;
     position: relative;
+}
+
+.nav-button:hover {
+    background: green;
 }
 
 /*credit to stackoverflow*/

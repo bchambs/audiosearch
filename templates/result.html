@@ -61,6 +61,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
                     trending
                 </div>
             </div>
@@ -70,6 +71,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
                     featured
                 </div>
             </div>
@@ -79,6 +81,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
                     compare
                 </div>
             </div>
@@ -88,6 +91,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
                     about
                 </div>
             </div>
@@ -97,37 +101,38 @@
         <div class="content-h-separator row">
         </div>
 
-        <div id="artist-result-block" class="row center box">
-             <div class="subtitle-text">Artists</div>
-            <ul>
-            {% for artist in artists %}
+        <div class="row center">
+            <div id="artist-result-block" class="col-lg-5 box">
+                 <div class="subtitle-text">Artists</div>
+                <ul>
+                {% for artist in artists %}
 
-                <il>
-                    <a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
-                </il>
-                <br>
+                    <il>
+                        <a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
+                    </il>
+                    <br>
 
-            {% endfor %}
-            </ul>
-        </div><!--END artist block-->
+                {% endfor %}
+                </ul>
+            </div><!--END artist block-->
 
-        <div class="content-h-separator row">
-        </div>
+            <div class="content-w-separator col-lg-1">
+            </div>
 
-        <div id="song-result-block" class="row center box">
-            <div class="subtitle-text">Songs</div>
-            <ul>
-            {% for song in songs %}
+            <div id="song-result-block" class="col-lg-5 box">
+                <div class="subtitle-text">Songs</div>
+                <ul>
+                {% for song in songs %}
 
-                <il>
-                    <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
-                </il>
-                <br>
+                    <il>
+                        <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
+                    </il>
+                    <br>
 
-            {% endfor %}
-            </ul>
-        </div><!--END song block-->
-
+                {% endfor %}
+                </ul>
+            </div><!--END song block-->
+        </div><!--END dual columns-->
     </div><!--END main-->
 
     <!--right column-->
