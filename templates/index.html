@@ -53,7 +53,7 @@
             <div id="trending-block" class="col-lg-3 box">
                 <!--<img src="{{ STATIC_URL }}img/trending.png"> <br />-->
                 {% for t in trending %}
-                    <a href = {% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}> {{ t }} </a> <br />
+                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t }} </a> <br />
                 {% endfor %}
 
                 <div class="box-footer">
@@ -67,7 +67,7 @@
             <!--featured-block-->
             <div id="featured-block" class="col-lg-3 box">
                 <!--<img src="{{ STATIC_URL }}img/featured.png"> <br />-->
-                <a id="featured-artist" href = {% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}> {{ fname }}
+                <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}"> {{ fname }}
                 ( 
                 {% for t in featured_terms %}
                     {{ t }}

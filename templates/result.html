@@ -24,7 +24,7 @@
     <!--main column-->
     <div class="content-main-col" class="col-lg-10">
 
-        <div id="index-header" class="row box">
+        <div id="index-header" class="row center box">
             <!--title block-->
             <div id="title-block" class="col-lg-4">
                 <img src="{{ STATIC_URL }}img/title.png">
@@ -47,8 +47,58 @@
         <div class="content-h-separator row">
         </div>
 
-        <div id="artist-result-block" class="row box">
-             <h3>Artists</h3>
+        <!--nav buttons-->
+        <div class="row center">
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    home
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                    trending
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                    featured
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                    compare
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                    about
+                </div>
+            </div>
+        </div>
+        <!--END nav-->
+
+        <div class="content-h-separator row">
+        </div>
+
+        <div id="artist-result-block" class="row center box">
+             <div class="subtitle-text">Artists</div>
             <ul>
             {% for artist in artists %}
 
@@ -64,8 +114,8 @@
         <div class="content-h-separator row">
         </div>
 
-        <div id="song-result-block" class="row box">
-            <h3>Songs</h3> 
+        <div id="song-result-block" class="row center box">
+            <div class="subtitle-text">Songs</div>
             <ul>
             {% for song in songs %}
 
