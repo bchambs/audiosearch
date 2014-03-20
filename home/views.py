@@ -78,6 +78,8 @@ def artist_info(request):
         'hot': a.hotttnesss,
         'image': i['url'],
         'twitter': t,
+        'bio': a.biographies[0]['text'],
+        'songs': a.songs,
     })
 
     return render(request, 'artist.html', c)

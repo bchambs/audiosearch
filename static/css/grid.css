@@ -139,10 +139,22 @@ body {
 }
 
 #artist-image {
-    height: 400px;
-    width: 400px;
+    height: 200px;
+    width: 200px;
     float:right;
     overflow: hidden;
+}
+
+#artist-song-block {
+    background: #990033;
+    padding: 10px;
+    width: 497px;
+}
+
+#sim-artist-block {
+    background: #990033;
+    padding: 10px;
+    width: 497px;
 }
 
 a:link {

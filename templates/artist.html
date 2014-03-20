@@ -109,16 +109,54 @@
                         <img src="{{image}}">
                     </div>
 
-                    {{ name }} - (@{{ twitter }})
+                    {{ name }} - {{ hot }} - (@{{ twitter }})
                     <br />
                     (list of terms)
-
-                    
-
-                    <div class="clear"></div>
                 </div>
+                <br />
+                {{ bio }}
+
+                <div class="clear"></div>
             </div>  
         </div><!--END artist summary-->
+
+        <div class="content-h-separator row">
+        </div>
+
+        <div class="row center">
+
+            <div id="artist-song-block" class="col-lg-5 box">
+                <div class="subtitle-text">Songs</div>
+                <ul>
+                {% for s in songs %}
+
+                    <il>
+                        <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{ s }} </a>
+                    </il>
+                    <br>
+
+                {% endfor %}
+                </ul>
+            </div><!--END song block-->
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div id="sim-artist-block" class="col-lg-5 box">
+                 <div class="subtitle-text">Artists</div>
+                <ul>
+                {% for a in similar %}
+
+                    <il>
+                        <a href = {% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }} > {{ a }} </a>
+                    </il>
+                    <br>
+
+                {% endfor %}
+                </ul>
+            </div><!--END artist block-->
+
+        </div><!--END dual columns-->
         
     </div><!--END main-->
 
