@@ -61,7 +61,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
-                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
                     trending
                 </div>
             </div>
@@ -71,7 +71,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
-                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}"><span class="nav-link"></span></a>
                     featured
                 </div>
             </div>
@@ -91,7 +91,7 @@
 
             <div class="nav-button col-lg-2 box">
                 <div class="box-footer">
-                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
                     about
                 </div>
             </div>
@@ -108,7 +108,7 @@
                 {% for artist in artists %}
 
                     <il>
-                        <a href = {% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }} > {{artist}} </a>
+                        <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}} </a>
                     </il>
                     <br>
 
@@ -125,7 +125,7 @@
                 {% for song in songs %}
 
                     <il>
-                        <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{song}} </a>
+                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}} </a>
                     </il>
                     <br>
 

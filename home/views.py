@@ -9,6 +9,7 @@ from util import *
 # CATCH EMPTY QUERY STRINGS #
 #############################
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
+featured_artist = "M83"
 
 def index(request):
     trending = artist.top_hottt()
@@ -19,22 +20,24 @@ def index(request):
     })
 
     #add file error checking
-    featured_file = open ('featured.txt', 'r')
-    featured = featured_file.read()
-    f_artist = artist.search(name=featured, sort='hotttnesss-desc', results=1)[0]
-    f_terms = []
+    # featured_file = open ('featured.txt', 'r')
+    # featured = featured_file.read()
+    # f_artist = artist.search(name=featured, sort='hotttnesss-desc', results=1)[0]
+    
+    featured = artist.search(name=featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     #ensure we have 2 terms
-    f_terms.append(f_artist.terms[0]['name'])
-    f_terms[0] += ', '
-    f_terms.append(f_artist.terms[1]['name'])
+    featured_terms = []
+    featured_terms.append(featured.terms[0]['name'])
+    featured_terms[0] += ', '
+    featured_terms.append(featured.terms[1]['name'])
 
     #get displayable bio
-    f_bio = get_good_bio (f_artist.biographies)
+    featured_bio = get_good_bio (featured.biographies)
 
-    c['fname'] = f_artist.name
-    c['featured_terms'] = f_terms
-    c['featured_bio'] = f_bio
+    c['fname'] = featured.name
+    c['featured_terms'] = featured_terms
+    c['featured_bio'] = featured_bio
 
     return render(request, 'index.html', c)
 
@@ -63,6 +66,10 @@ def compare(request):
 def about(request):
 
     return render (request, 'about.html')
+
+def trending(request):
+
+    return render (request, 'trending.html')
 
 def artist_info(request):
     qs = request.GET['q']

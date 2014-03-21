@@ -2,12 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<!-- need to give credit for the font...-->
+
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
 
-    <title>audiosearch</title>
+<title>audiosearch</title>
+
 </head>
 
 <body>
@@ -15,21 +18,128 @@
 <div class="container">
 
     <!--left column-->
-    <div class="col-lg-2">
+    <div class="col-lg-1">
     </div>
 
     <!--main column-->
-    <div class="col-lg-8"  class="center-block">
-        <div id="index-main-col">
-            compare
+    <div class="content-main-col" class="col-lg-10">
+
+        <div id="index-header" class="row center box">
+            <!--title block-->
+            <div id="title-block" class="col-lg-4">
+                <img src="{{ STATIC_URL }}img/title.png">
+
+                <form action="/search/" method="GET">
+                <div class="input-group">
+                    <input id="search-bar" type="text" name="q" class="form-control" >
+                </div>
+
+                </form>
+            </div><!--END title block-->
+
+            <!--summary block-->
+            <div id="summary-block" class="col-lg-8 box-footer">
+                audiosearch is a simple way to find new music.<br />
+            </div>
+            <!--END summary block -->
         </div>
-    </div>
+
+        <div class="content-h-separator row">
+        </div>
+
+        <!--nav buttons-->
+        <div class="row center">
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                    home
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                    trending
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.artist_info' %}"><span class="nav-link"></span></a>
+                    featured
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                    compare
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div class="nav-button col-lg-2 box">
+                <div class="box-footer">
+                <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
+                    about
+                </div>
+            </div>
+        </div>
+        <!--END nav-->
+
+        <div class="content-h-separator row">
+        </div>
+
+        <div class="row center">
+            <div id="artist-result-block" class="col-lg-5 box">
+                 <div class="subtitle-text">Artists</div>
+                <ul>
+                {% for artist in artists %}
+
+                    <il>
+                        <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}} </a>
+                    </il>
+                    <br>
+
+                {% endfor %}
+                </ul>
+            </div><!--END artist block-->
+
+            <div class="content-w-separator col-lg-1">
+            </div>
+
+            <div id="song-result-block" class="col-lg-5 box">
+                <div class="subtitle-text">Songs</div>
+                <ul>
+                {% for song in songs %}
+
+                    <il>
+                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}} </a>
+                    </il>
+                    <br>
+
+                {% endfor %}
+                </ul>
+            </div><!--END song block-->
+        </div><!--END dual columns-->
+    </div><!--END main-->
 
     <!--right column-->
-    <div class="col-lg-2">
+    <div class="col-lg-1">
     </div>
 
-</div>
+</div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>

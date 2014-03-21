@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^song/$', 'home.views.song_info'),
     url(r'^about/$', 'home.views.about'),
     url(r'^compare/$', 'home.views.compare'),
+    url(r'^trending/$', 'home.views.trending'),
     #url(r'^admin/', include(admin.site.urls)),
 )

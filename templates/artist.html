@@ -131,7 +131,7 @@
                 {% for s in songs %}
 
                     <il>
-                        <a href = {% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }} > {{ s }} </a>
+                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{ s }} </a>
                     </il>
                     <br>
 
@@ -148,7 +148,7 @@
                 {% for a in similar %}
 
                     <il>
-                        <a href = {% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }} > {{ a }} </a>
+                        <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }} </a>
                     </il>
                     <br>
 

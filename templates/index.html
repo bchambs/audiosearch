@@ -68,7 +68,7 @@
             <div id="featured-block" class="col-lg-3 box">
                 <!--<img src="{{ STATIC_URL }}img/featured.png"> <br />-->
                 <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ fname.split|join:'+' }}"> {{ fname }}
-                ( 
+                (
                 {% for t in featured_terms %}
                     {{ t }}
                 {% endfor %}
