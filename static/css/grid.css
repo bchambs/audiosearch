@@ -1,12 +1,12 @@
 body {
-    background: #343535;
+    background: #9A9A9A;
     margin:0; 
     padding:0px; 
     color:white;
 }
 
 .blue {
-    background: blue;
+    background: blue !important;
 }
 
 .yellow {
@@ -19,7 +19,7 @@ body {
 
 #index-main-col {
     position:relative;
-    width: 100%;
+    width: 1000px;
     height: 100%;
     top: 250px;
 }
@@ -48,42 +48,54 @@ body {
     border-style: solid;
     border-width: 1px;
     border-color: white;
+    height: 260px;
 }
 
 .half-box {
     border-style: solid;
-    border-width: 2px;
+    border-width: 1px;
     border-color: white;
-    height: 150px;
+    height: 127px;
 }
 
 .box-footer {
-    bottom: 0;
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
     font-size: 32px;
-    text-align: right;
+   
 }
 
-#index-h-separator {
-    height: 15px;
-}
-
-#index-w-separator {
-    width: 5px;
+.index-w-separator {
+    width: 4px;
+    padding: 0;
 }
 
 .content-h-separator {
     height: 5px;
 }
 
-.content-w-separator {
-    width: 5px;
-    padding: 0;
-
+#half-box-h-separator {
+    height: 4px;
 }
 
-#index-header {
+.content-w-separator {
+    width: 4px;
+    padding: 0;
+}
+
+.title-img-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.title-box {
     height: 100px;
-    background: #151515;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    background: #343535;
 }
 
 .center {
@@ -91,45 +103,57 @@ body {
     margin: 0 auto;
 }
 
-#summary-block {
-    font-size: 25px;
-    bottom: 0;
-}
-
-#index-content {
+.tag-container {
+    position: relative;
     height: 100%;
 }
 
+.tag-block {
+    font-size: 25px;
+    font-style: italic;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
 #trending-block {
+    width: 330px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
 
 #about-block {
+    width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
 
 #compare-block {
+    width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
 
 #featured-block {
+    width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
 
-#search-bar {
-    width: 300px;
-    height: 30px;
-    margin-top: 5px;
-    margin-left: 3px;
+.search-container {
+    height: 100%;
+}
+
+.search-bar {
+    position: absolute;
+    width: 450px ;
     color:black;
+    left: 10px;
+    bottom: 10px;
 }
 
 #artist-summary-col {
@@ -174,7 +198,7 @@ a:active {
 }
 
 .subtitle-text {
-    font-size: 25px;
+    font-size: 23px;
 }
 
 .clear {
