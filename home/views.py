@@ -34,26 +34,30 @@ def index(request):
     return render(request, 'index.html', context)
 
 def search(request):
-    c = Context({})
+    qs = request.GET['q']
 
-    #this still breaks on empty query string fix it
-    if 'q' in request.GET:
-        qs = request.GET['q']
-    
-        #get sorted list of artists and songs
-        artists = artist.search(name=qs, sort='hotttnesss-desc', results=10)
-        songs = song.search(title=qs, sort='song_hotttnesss-desc', results=10)
+    #get sorted list of artists and songs
+    artists = artist.search(name=qs, sort='hotttnesss-desc', results=10)
+    songs = song.search(title=qs, sort='song_hotttnesss-desc', results=10)
 
-        c = {
-            'artists': artists,
-            'songs': songs,
-        }
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    return render(request, 'result.html', c)
+    context = Context({
+        'artists': artists,
+        'songs': songs,
+        'featured_name': featured_artist.name,
+    })
+
+    return render(request, 'result.html', context)
 
 def compare(request):
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    return render(request, 'compare.html')
+    context = Context({
+        "featured_name": featured_artist.name,
+    })
+
+    return render(request, 'compare.html', context)
 
 def about(request):
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]

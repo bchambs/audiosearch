@@ -18,8 +18,7 @@
 <div class="container">
 
     <!--left column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
     <!--main column-->
     <div class="content-main-col" class="col-lg-10">
@@ -43,100 +42,64 @@
             </div>
         </div><!--END header-->
 
-        <div class="content-h-separator row">
-        </div>
+        <div class="content-h-separator row"></div>
 
         <!--nav buttons-->
         <div class="row center">
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     home
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     trending
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
-                <a href="{% url 'home.views.artist_info' %}"><span class="nav-link"></span></a>
                     featured
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     compare
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     about
                 </div>
             </div>
         </div>
         <!--END nav-->
 
-        <div class="content-h-separator row">
-        </div>
+        <div class="content-h-separator row"></div>
 
         <div class="row center">
-            <div id="artist-result-block" class="col-lg-5 box">
-                 <div class="subtitle-text">Artists</div>
-                <ul>
-                {% for artist in artists %}
-
-                    <il>
-                        <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}} </a>
-                    </il>
-                    <br>
-
-                {% endfor %}
-                </ul>
-            </div><!--END artist block-->
-
-            <div class="content-w-separator col-lg-1">
-            </div>
-
-            <div id="song-result-block" class="col-lg-5 box">
-                <div class="subtitle-text">Songs</div>
-                <ul>
-                {% for song in songs %}
-
-                    <il>
-                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}} </a>
-                    </il>
-                    <br>
-
-                {% endfor %}
-                </ul>
-            </div><!--END song block-->
-        </div><!--END dual columns-->
+            asdf
+        </div>
     </div><!--END main-->
 
     <!--right column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
 </div><!--END container-->
 
