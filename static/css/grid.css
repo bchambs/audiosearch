@@ -21,14 +21,13 @@ body {
     position:relative;
     width: 1000px;
     height: 100%;
-    top: 250px;
+    top: 230px;
 }
 
 .content-main-col {
     position:relative;
     width: 1000px;
     height: 100%;
-    top: 20px;
     margin: 0 auto;
 }
 
@@ -58,12 +57,12 @@ body {
     height: 127px;
 }
 
+/*fix margins*/
 .box-footer {
     position: absolute;
-    bottom: 0px;
-    right: 10px;
+    bottom: -5px;
+    right: 5px;
     font-size: 32px;
-   
 }
 
 .index-w-separator {
@@ -91,11 +90,13 @@ body {
 }
 
 .title-box {
+    width: 1000px;
     height: 100px;
     border-style: solid;
     border-width: 1px;
     border-color: white;
     background: #343535;
+    margin: 0 auto;
 }
 
 .center {
@@ -123,25 +124,37 @@ body {
     padding-bottom: 0;
 }
 
+/* make this 1 class */
 #about-block {
     width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
-
 #compare-block {
     width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
 }
-
 #featured-block {
     width: 331px;
     padding: 10px;
     background: #990033;
     padding-bottom: 0;
+}
+
+#trending-block:hover {
+    background: #FF66A3;
+}
+#about-block:hover {
+    background: #FF66A3;
+}
+#compare-block:hover {
+    background: #FF66A3;
+}
+#featured-block:hover {
+    background: #FF66A3;
 }
 
 .search-container {
@@ -184,15 +197,12 @@ body {
 a:link {
     color:white;
 }
-
 a:visited {
     color:white;
 }
-
 a:hover {
     color:white;
 }
-
 a:active {
     color:white;
 }
@@ -208,12 +218,12 @@ a:active {
     width: 196px;
     height: 40px;
     position: relative;
+    bottom: 0;
+    right: 0;
 }
-
 .nav-button:hover {
     background: green;
 }
-
 /*credit to stackoverflow*/
 .nav-link {
     position:absolute; 

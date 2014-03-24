@@ -3,7 +3,6 @@
 
 <head>
 <!-- need to give credit for the font...-->
-
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
@@ -18,126 +17,88 @@
 <div class="container">
 
     <!--left column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
     <!--main column-->
     <div class="content-main-col" class="col-lg-10">
 
-        <div id="index-header" class="row center box">
+        <!--header block-->
+        <div class="title-box row">
+
             <!--title block-->
-            <div id="title-block" class="col-lg-4">
-                <img src="{{ STATIC_URL }}img/title.png">
+            <div class="search-container col-lg-5">
+                <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
 
                 <form action="/search/" method="GET">
-                <div class="input-group">
-                    <input id="search-bar" type="text" name="q" class="form-control" >
-                </div>
-
+                    <input class="search-bar" type="text" name="q">
                 </form>
-            </div><!--END title block-->
+            </div><!--END title-->
 
-            <!--summary block-->
-            <div id="summary-block" class="col-lg-8 box-footer">
-                audiosearch is a simple way to find new music.<br />
+            <div class="tag-container col-lg-7">
+                <div class="tag-block">
+                    audiosearch is a simple way to find new music.
+                </div>
             </div>
-            <!--END summary block -->
-        </div>
+        </div><!--END header-->
 
-        <div class="content-h-separator row">
-        </div>
+        <div class="content-h-separator row"></div>
 
         <!--nav buttons-->
         <div class="row center">
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     home
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     trending
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
-                <a href="{% url 'home.views.artist_info' %}"><span class="nav-link"></span></a>
                     featured
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     compare
                 </div>
             </div>
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2 box">
-                <div class="box-footer">
                 <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
                     about
                 </div>
             </div>
         </div>
         <!--END nav-->
 
-        <div class="content-h-separator row">
-        </div>
+        <div class="content-h-separator row"></div>
 
         <div class="row center">
-            <div id="artist-result-block" class="col-lg-5 box">
-                 <div class="subtitle-text">Artists</div>
-                <ul>
-                {% for artist in artists %}
-
-                    <il>
-                        <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}} </a>
-                    </il>
-                    <br>
-
-                {% endfor %}
-                </ul>
-            </div><!--END artist block-->
-
-            <div class="content-w-separator col-lg-1">
-            </div>
-
-            <div id="song-result-block" class="col-lg-5 box">
-                <div class="subtitle-text">Songs</div>
-                <ul>
-                {% for song in songs %}
-
-                    <il>
-                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}} </a>
-                    </il>
-                    <br>
-
-                {% endfor %}
-                </ul>
-            </div><!--END song block-->
-        </div><!--END dual columns-->
+            
+        </div>
     </div><!--END main-->
 
     <!--right column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
 </div><!--END container-->
 

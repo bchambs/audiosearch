@@ -24,25 +24,24 @@
     <!--main column-->
     <div class="content-main-col" class="col-lg-10">
 
-        <div id="index-header" class="row center box">
+        <!--header block-->
+        <div class="title-box row">
+
             <!--title block-->
-            <div id="title-block" class="col-lg-4">
-                <img src="{{ STATIC_URL }}img/title.png">
+            <div class="search-container col-lg-5">
+                <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
 
                 <form action="/search/" method="GET">
-                <div class="input-group">
-                    <input id="search-bar" type="text" name="q" class="form-control" >
-                </div>
-
+                    <input class="search-bar" type="text" name="q">
                 </form>
-            </div><!--END title block-->
+            </div><!--END title-->
 
-            <!--summary block-->
-            <div id="summary-block" class="col-lg-8 box-footer">
-                audiosearch is a simple way to find new music.<br />
+            <div class="tag-container col-lg-7">
+                <div class="tag-block">
+                    audiosearch is a simple way to find new music.
+                </div>
             </div>
-            <!--END summary block -->
-        </div>
+        </div><!--END header-->
 
         <div class="content-h-separator row">
         </div>

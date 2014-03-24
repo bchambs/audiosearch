@@ -2,44 +2,36 @@ from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from pyechonest import config, artist, song
 from random import choice
-import unicodedata
 from util import *
 
-#############################
-# CATCH EMPTY QUERY STRINGS #
-#############################
+#globals
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
-featured_artist = "M83"
+_featured_artist = "M83"
 
 def index(request):
     trending = artist.top_hottt()
     del trending[10:]
 
-    c = Context({
-        'trending': trending,
-    })
-
-    #add file error checking
-    # featured_file = open ('featured.txt', 'r')
-    # featured = featured_file.read()
-    # f_artist = artist.search(name=featured, sort='hotttnesss-desc', results=1)[0]
-    
-    featured = artist.search(name=featured_artist, sort='hotttnesss-desc', results=1)[0]
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     #ensure we have 2 terms
+    #needs error checking, what if artist does not have terms?
     featured_terms = []
-    featured_terms.append(featured.terms[0]['name'])
+    featured_terms.append(featured_artist.terms[0]['name'])
     featured_terms[0] += ', '
-    featured_terms.append(featured.terms[1]['name'])
+    featured_terms.append(featured_artist.terms[1]['name'])
 
     #get displayable bio
-    featured_bio = get_good_bio (featured.biographies)
+    featured_bio = get_good_bio (featured_artist.biographies)
 
-    c['fname'] = featured.name
-    c['featured_terms'] = featured_terms
-    c['featured_bio'] = featured_bio
+    context = Context({
+        'trending': trending,
+        'featured_name': featured_artist.name,
+        'featured_terms': featured_terms,
+        'featured_bio': featured_bio,
+    })
 
-    return render(request, 'index.html', c)
+    return render(request, 'index.html', context)
 
 def search(request):
     c = Context({})
@@ -64,8 +56,13 @@ def compare(request):
     return render(request, 'compare.html')
 
 def about(request):
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    return render (request, 'about.html')
+    context = Context({
+        "featured_name": featured_artist.name,
+    })
+
+    return render (request, 'about.html', context)
 
 def trending(request):
 
