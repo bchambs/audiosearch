@@ -17,10 +17,7 @@ body {
     height: 100%;
 }
 
-#index-main-col {
-    position:relative;
-    width: 1000px;
-    height: 100%;
+#index-title-offset {
     top: 230px;
 }
 
