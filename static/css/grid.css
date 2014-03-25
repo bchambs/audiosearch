@@ -183,12 +183,14 @@ body {
     background: #990033;
     padding: 10px;
     width: 497px;
+    height: 100%;
 }
 
 #sim-artist-block {
     background: #990033;
     padding: 10px;
     width: 497px;
+    height: 100%;
 }
 
 a:link {
@@ -206,6 +208,10 @@ a:active {
 
 .subtitle-text {
     font-size: 23px;
+}
+
+.ital {
+    font-style: italic;
 }
 
 .clear {

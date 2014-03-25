@@ -34,12 +34,10 @@ def index(request):
     return render(request, 'index.html', context)
 
 def search(request):
-    qs = request.GET['q']
+    query = request.GET['q']
 
-    #get sorted list of artists and songs
-    artists = artist.search(name=qs, sort='hotttnesss-desc', results=10)
-    songs = song.search(title=qs, sort='song_hotttnesss-desc', results=10)
-
+    artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
+    songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     context = Context({
@@ -73,30 +71,47 @@ def trending(request):
     return render (request, 'trending.html')
 
 def artist_info(request):
-    qs = request.GET['q']
+    query = request.GET['q']
+    context = Context({})
 
     #set artist to first in list
-    a = artist.search(name=qs)[0] #why dont buckets work....
-    i = choice(a.images)
-    t = a.get_twitter_id
+    s_artist = artist.search(name=query)[0]
 
-    c = Context({
-        'name': a.name,
-        'similar': a.similar, 
-        'hot': a.hotttnesss,
-        'image': i['url'],
-        'twitter': t,
-        'bio': a.biographies[0]['text'],
-        'songs': a.songs,
-    })
+    #see if artist data exists, add to dict if true
+    if s_artist.images:
+        context['image']= choice(s_artist.images)['url']
 
-    return render(request, 'artist.html', c)
+    if s_artist.terms:
+        terms = []
+        if len(s_artist.terms) > 1:
+            terms.append(s_artist.terms[0]['name'])
+            terms[0] += ", "
+            terms.append(s_artist.terms[1]['name'])
+        else:
+            terms.append(s_artist.terms[0]['name'])
+        
+        context['terms']= terms
+
+    if s_artist.get_twitter_id:
+        context['twitter']= s_artist.get_twitter_id
+
+    if s_artist.similar:
+        context['similar']= remove_duplicate_artists(s_artist.similar, 10)
+
+    if s_artist.biographies:
+        context['bio']= s_artist.biographies[0]['text']
+
+    context['name']= s_artist.name
+    context['hot']= s_artist.hotttnesss
+    #context['songs']= remove_duplicates(s_artist.songs, 10)
+
+    return render(request, 'artist.html', context)
 
 def song_info(request):
-    qs = request.GET['q']
+    query = request.GET['q']
 
     #set song to first in list
-    s = song.search(title=qs)[0]
+    s = song.search(title=query)[0]
 
     c = Context({
         'title': s.title,

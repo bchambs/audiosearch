@@ -8,3 +8,15 @@ def get_good_bio(bios):
             if len(b['text']) > 200:
                 return (b['text'][:197] + '...')
         return 'Bio not available'
+
+#remove duplicates from list and return len = size
+def remove_duplicate_artists(inc_list, size):
+    trunc_list = []
+
+    for i in inc_list:
+        if i['name'] not in trunc_list:
+            trunc_list.append(i)
+
+        if len(trunc_list) == size:
+            break
+    return trunc_list
