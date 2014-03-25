@@ -166,10 +166,22 @@ body {
     bottom: 10px;
 }
 
+#about-content {
+    background: #990033;
+    padding: 10px;
+    height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
 #artist-summary-col {
     background: #990033;
     padding: 10px;
     height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
 }
 
 #artist-image {
@@ -212,6 +224,10 @@ a:active {
 
 .ital {
     font-style: italic;
+}
+
+.indent {
+    padding: 5px;
 }
 
 .clear {

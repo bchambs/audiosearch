@@ -47,6 +47,7 @@
             <!--trending block-->
             <div id="trending-block" class="col-lg-3 box">
                 {% for t in trending %}
+                    {{ forloop.counter }}.  
                     <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t }} </a> <br />
                 {% endfor %}
 
@@ -102,7 +103,7 @@
                     <!--about block-->
                     <div id="about-block" class="col-lg-11 half-box">
                         <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
-                        Search for two artists or songs to see a visual representation of their differences.<br />
+                        Application description, link to source code, and contact information.<br />
 
                         <div class="box-footer">
                             about

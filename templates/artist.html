@@ -94,7 +94,7 @@
         <div class="content-h-separator row"></div>
 
         <!--artist summary-->
-        <div class="row center box">
+        <div class="row center">
             <div id="artist-summary-col">
                 <div class="subtitle-text">
                     <div id="artist-image" align="right"> 
@@ -137,6 +137,7 @@
                 {% for s in songs %}
 
                     <il>
+                        {{ forloop.counter }}.  
                         <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }} </a>
                     </il>
                     <br />
@@ -153,6 +154,7 @@
                 {% if similar %}
                     {% for s in similar %}
                         <il>
+                            {{ forloop.counter }}.  
                             <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }} </a>
                         </il>
                         <br />
