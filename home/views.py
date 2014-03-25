@@ -99,6 +99,9 @@ def artist_info(request):
 
     if s_artist.similar:
         context['similar']= remove_duplicate_artists(s_artist.similar, 10)
+        test = remove_duplicate_artists(s_artist.similar, 10)
+        print type(test)
+        print type(test[0])
 
     if s_artist.biographies:
         context['bio']= s_artist.biographies[0]['text']

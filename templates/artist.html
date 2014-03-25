@@ -139,7 +139,7 @@
                     <il>
                         <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }} </a>
                     </il>
-                    <br>
+                    <br />
 
                 {% endfor %}
                 </ul>
@@ -151,11 +151,11 @@
                  <div class="subtitle-text">Artists</div>
                 <ul>
                 {% if similar %}
-                    {% for a in similar %}
+                    {% for s in similar %}
                         <il>
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }} </a>
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }} </a>
                         </il>
-                        <br>
+                        <br />
                     {% endfor %}
                 {% endif %}
                 </ul>
