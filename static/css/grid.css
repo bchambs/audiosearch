@@ -205,6 +205,24 @@ body {
     height: 100%;
 }
 
+#compare-content {
+    background: #990033;
+    padding: 10px;
+    height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
+#trending-content{
+    background: #990033;
+    padding: 10px;
+    height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
 a:link {
     color:white;
 }
