@@ -10,6 +10,7 @@ def get_good_bio(bios):
         return 'Bio not available'
 
 #remove duplicates from list and return len = size
+#returns size = len(inc_list) if len < size
 def remove_duplicate_artists(inc_list, size):
     trunc_list = []
 
@@ -22,6 +23,7 @@ def remove_duplicate_artists(inc_list, size):
     return trunc_list
 
 #remove duplicates from list and return len = size
+#returns size = len(inc_list) if len < size
 def remove_duplicate_songs(inc_list, size):
     trunc_list = []
 

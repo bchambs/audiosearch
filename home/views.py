@@ -74,6 +74,8 @@ def artist_info(request):
     query = request.GET['q']
     context = Context({})
 
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+
     #set artist to first in list
     s_artist = artist.search(name=query)[0]
 
@@ -104,6 +106,7 @@ def artist_info(request):
     context['name']= s_artist.name
     context['hot']= s_artist.hotttnesss
     context['songs']= remove_duplicate_songs(s_artist.songs, 10)
+    context['featured_name']= featured_artist.name
 
     return render(request, 'artist.html', context)
 
@@ -113,7 +116,7 @@ def song_info(request):
     #set song to first in list
     s = song.search(title=query)[0]
 
-    c = Context({
+    context = Context({
         'title': s.title,
         'artist': s.artist_name,
         'hot': s.song_hotttnesss,
@@ -122,4 +125,4 @@ def song_info(request):
         'tempo': s.audio_summary['tempo'],
     })
 
-    return render(request, 'song.html', c)
+    return render(request, 'song.html', context)
