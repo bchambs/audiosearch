@@ -14,8 +14,20 @@ def remove_duplicate_artists(inc_list, size):
     trunc_list = []
 
     for i in inc_list:
-        if i['name'] not in trunc_list:
-            trunc_list.append(i)
+        if i.name not in trunc_list:
+            trunc_list.append(i.name)
+
+        if len(trunc_list) == size:
+            break
+    return trunc_list
+
+#remove duplicates from list and return len = size
+def remove_duplicate_songs(inc_list, size):
+    trunc_list = []
+
+    for i in inc_list:
+        if i.title not in trunc_list:
+            trunc_list.append(i.title)
 
         if len(trunc_list) == size:
             break

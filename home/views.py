@@ -103,7 +103,7 @@ def artist_info(request):
 
     context['name']= s_artist.name
     context['hot']= s_artist.hotttnesss
-    #context['songs']= remove_duplicates(s_artist.songs, 10)
+    context['songs']= remove_duplicate_songs(s_artist.songs, 10)
 
     return render(request, 'artist.html', context)
 
