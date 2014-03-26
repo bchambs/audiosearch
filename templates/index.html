@@ -45,7 +45,7 @@
         <div class= "row center">
             
             <!--trending block-->
-            <div id="trending-block" class="col-lg-3 box">
+            <div id="trending-box" class="index-box col-lg-3 box">
                 {% for t in trending %}
                     {{ forloop.counter }}.  
                     <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t }} </a> <br />
@@ -59,7 +59,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <!--featured-block-->
-            <div id="featured-block" class="col-lg-3 box">
+            <div id="featured-box" class="index-box col-lg-3 box">
                 <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
 
                 <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"> {{ featured_name }}
@@ -84,7 +84,7 @@
                 <div class="row">
 
                     <!--compare block-->
-                    <div id="compare-block" class="col-lg-11 half-box">
+                    <div class="index-box col-lg-11 compare-about-box">
                         <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
 
                         Search for two artists or songs to see a visual representation of their differences.<br />
@@ -101,7 +101,7 @@
                     <div class="content-w-separator col-lg-1"></div>
 
                     <!--about block-->
-                    <div id="about-block" class="col-lg-11 half-box">
+                    <div class="index-box col-lg-11  compare-about-box">
                         <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
                         Application description, link to source code, and contact information.<br />
 

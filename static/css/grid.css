@@ -5,14 +5,6 @@ body {
     color:white;
 }
 
-.blue {
-    background: blue !important;
-}
-
-.yellow {
-    background: yellow;
-}
-
 .container {
     height: 100%;
 }
@@ -26,32 +18,6 @@ body {
     width: 1000px;
     height: 100%;
     margin: 0 auto;
-}
-
-#artist-result-block {
-    background: #990033;
-    padding: 10px;
-    width: 497px;
-}
-
-#song-result-block {
-    background: #990033;
-    padding: 10px;
-    width: 497px;
-}
-
-.box {
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-    height: 260px;
-}
-
-.half-box {
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-    height: 127px;
 }
 
 /*fix margins*/
@@ -72,7 +38,7 @@ body {
 }
 
 #half-box-h-separator {
-    height: 4px;
+    height: 5px;
 }
 
 .content-w-separator {
@@ -114,50 +80,9 @@ body {
     right: 10px;
 }
 
-#trending-block {
-    width: 330px;
-    padding: 10px;
-    background: #990033;
-    padding-bottom: 0;
-}
-
-/* make this 1 class */
-#about-block {
-    width: 331px;
-    padding: 10px;
-    background: #990033;
-    padding-bottom: 0;
-}
-#compare-block {
-    width: 331px;
-    padding: 10px;
-    background: #990033;
-    padding-bottom: 0;
-}
-#featured-block {
-    width: 331px;
-    padding: 10px;
-    background: #990033;
-    padding-bottom: 0;
-}
-
-#trending-block:hover {
-    background: #FF66A3;
-}
-#about-block:hover {
-    background: #FF66A3;
-}
-#compare-block:hover {
-    background: #FF66A3;
-}
-#featured-block:hover {
-    background: #FF66A3;
-}
-
 .search-container {
     height: 100%;
 }
-
 .search-bar {
     position: absolute;
     width: 450px ;
@@ -166,7 +91,7 @@ body {
     bottom: 10px;
 }
 
-#about-content {
+.content-box {
     background: #990033;
     padding: 10px;
     height: 100%;
@@ -175,13 +100,37 @@ body {
     border-color: white;
 }
 
-#artist-summary-col {
-    background: #990033;
+.index-box {
+    width: 330px;
     padding: 10px;
-    height: 100%;
+    background: #990033;
+    padding-bottom: 0;
     border-style: solid;
     border-width: 1px;
     border-color: white;
+}
+
+#trending-box {
+    height: 260px;
+}
+#featured-box {
+    height: 260px;
+}
+.compare-about-box {
+    height: 127px;
+}
+#trending-box:hover {
+    background: #FF66A3;
+}
+#featured-box:hover {
+    background: #FF66A3;
+}
+.compare-about-box:hover {
+    background: #FF66A3;
+}
+
+.double-col {
+    width: 497px;
 }
 
 #artist-image {
@@ -189,38 +138,6 @@ body {
     width: 200px;
     float:right;
     overflow: hidden;
-}
-
-#artist-song-block {
-    background: #990033;
-    padding: 10px;
-    width: 497px;
-    height: 100%;
-}
-
-#sim-artist-block {
-    background: #990033;
-    padding: 10px;
-    width: 497px;
-    height: 100%;
-}
-
-#compare-content {
-    background: #990033;
-    padding: 10px;
-    height: 100%;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-}
-
-#trending-content{
-    background: #990033;
-    padding: 10px;
-    height: 100%;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
 }
 
 a:link {
@@ -251,12 +168,16 @@ a:active {
 .clear {
     clear:both;
 }
+
 .nav-button {
     width: 196px;
     height: 40px;
     position: relative;
     bottom: 0;
     right: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
 }
 .nav-button:hover {
     background: green;

@@ -18,8 +18,7 @@
 <div class="container">
 
     <!--left column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
     <!--main column-->
     <div class="content-main-col" class="col-lg-10">
@@ -92,11 +91,12 @@
         </div>
         <!--END nav-->
 
-        <div class="content-h-separator row">
-        </div>
+        <div class="content-h-separator row"></div>
 
+        <!--dual columns-->
         <div class="row center">
-            <div id="artist-result-block" class="col-lg-5 box">
+            <!--artist block-->
+            <div class="col-lg-5 content-box double-col">
                  <div class="subtitle-text">Artists</div>
                 <ul>
                 {% for artist in artists %}
@@ -109,12 +109,12 @@
 
                 {% endfor %}
                 </ul>
-            </div><!--END artist block-->
+            </div><!--END artist-->
 
-            <div class="content-w-separator col-lg-1">
-            </div>
+            <div class="content-w-separator col-lg-1"></div>
 
-            <div id="song-result-block" class="col-lg-5 box">
+            <!--song block-->
+            <div class="col-lg-5 content-box double-col">
                 <div class="subtitle-text">Songs</div>
                 <ul>
                 {% for song in songs %}
@@ -127,13 +127,12 @@
 
                 {% endfor %}
                 </ul>
-            </div><!--END song block-->
+            </div><!--END song-->
         </div><!--END dual columns-->
     </div><!--END main-->
 
     <!--right column-->
-    <div class="col-lg-1">
-    </div>
+    <div class="col-lg-1"></div>
 
 </div><!--END container-->
 

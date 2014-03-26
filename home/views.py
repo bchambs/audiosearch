@@ -67,8 +67,13 @@ def about(request):
     return render (request, 'about.html', context)
 
 def trending(request):
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    return render (request, 'trending.html')
+    context = Context({
+        "featured_name": featured_artist.name,
+    })
+
+    return render (request, 'trending.html', context)
 
 def artist_info(request):
     query = request.GET['q']
@@ -99,9 +104,6 @@ def artist_info(request):
 
     if s_artist.similar:
         context['similar']= remove_duplicate_artists(s_artist.similar, 10)
-        test = remove_duplicate_artists(s_artist.similar, 10)
-        print type(test)
-        print type(test[0])
 
     if s_artist.biographies:
         context['bio']= s_artist.biographies[0]['text']

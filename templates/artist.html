@@ -21,7 +21,7 @@
     <div class="col-lg-1"></div>
 
     <!--main column-->
-    <div class="content-main-col col-lg-10">
+    <div class="content-main-col" class="col-lg-10">
 
         <!--header block-->
         <div class="title-box row">
@@ -95,7 +95,7 @@
 
         <!--artist summary-->
         <div class="row center">
-            <div id="artist-summary-col">
+            <div class="content-box">
                 <div class="subtitle-text">
                     <div id="artist-image" align="right"> 
                         {% if image %}
@@ -131,7 +131,7 @@
 
         <div class="row center">
 
-            <div id="artist-song-block" class="col-lg-5 box">
+            <div class="col-lg-5 content-box double-col">
                 <div class="subtitle-text">Songs</div>
                 <ul>
                 {% for s in songs %}
@@ -148,8 +148,8 @@
 
             <div class="content-w-separator col-lg-1"></div>
 
-            <div id="sim-artist-block" class="col-lg-5 box">
-                 <div class="subtitle-text">Artists</div>
+            <div class="col-lg-5 content-box double-col">
+                 <div class="subtitle-text">Similar Artists</div>
                 <ul>
                 {% if similar %}
                     {% for s in similar %}
