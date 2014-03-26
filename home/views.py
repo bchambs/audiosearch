@@ -118,16 +118,26 @@ def artist_info(request):
 def song_info(request):
     query = request.GET['q']
 
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+
     #set song to first in list
-    s = song.search(title=query)[0]
+    s_song = song.search(title=query, sort='song_hotttnesss-desc', results=1)[0]
 
     context = Context({
-        'title': s.title,
-        'artist': s.artist_name,
-        'hot': s.song_hotttnesss,
-        'duration': s.audio_summary['duration'],
-        'speechiness': s.audio_summary['speechiness'],
-        'tempo': s.audio_summary['tempo'],
+        'title':s_song.title,
+        'artist':s_song.artist_name,
+        'hot':s_song.song_hotttnesss,
+
+        #get song facts from audio dict
+        'dance':s_song.audio_summary['danceability'],
+        'duration':s_song.audio_summary['duration'],
+        'energy':s_song.audio_summary['energy'],
+        'liveness':s_song.audio_summary['liveness'],
+        'loudness':s_song.audio_summary['loudness'],
+        'speechiness':s_song.audio_summary['speechiness'],
+        'tempo':s_song.audio_summary['tempo'],
+
+        'featured_name': featured_artist.name,
     })
 
     return render(request, 'song.html', context)

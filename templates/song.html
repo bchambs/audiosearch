@@ -2,27 +2,112 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+<!-- need to give credit for the font...-->
 
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+   
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
 
-<title>audiosearch: find new music</title>
+<title>audiosearch</title>
+
+</head>
 
 <body>
 
-	<h3>{{ title }} by {{ artist }} : {{ hot }}</h3>
+<div class="container">
 
-	<p></p>
+    <!--left column-->
+    <div class="col-lg-1"></div>
 
-	Duration : {{ duration }} seconds.
+    <!--main column-->
+    <div class="content-main-col" class="col-lg-10">
 
-	<p></p>
+        <!--header block-->
+        <div class="title-box row">
 
-	Speechiness : {{ speechiness }}.
+            <!--title block-->
+            <div class="search-container col-lg-5">
+                <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
 
-	<p></p>
+                <form action="/search/" method="GET">
+                    <input class="search-bar" type="text" name="q">
+                </form>
+            </div><!--END title-->
 
-	Tempo : {{ tempo }}}.
+            <div class="tag-container col-lg-7">
+                <div class="tag-block">
+                    audiosearch is a simple way to find new music.
+                </div>
+            </div>
+        </div><!--END header-->
 
+        <div class="content-h-separator row"></div>
+
+        <!--nav buttons-->
+        <div class="row center">
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    home
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    trending
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    featured
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    compare
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    about
+                </div>
+            </div>
+        </div>
+        <!--END nav-->
+
+        <div class="content-h-separator row"></div>
+        
+    	<div class="row center">
+        	<div class="content-box">
+            	<div class="subtitle-text">
+            	</div>
+            </div>
+        </div>
+    </div><!--END main-->
+
+    <!--right column-->
+    <div class="col-lg-1"></div>
+</div>
+
+<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/script.js"></script>
 </body>
 
 </html>
