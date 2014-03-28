@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
-from pyechonest import config, artist, song
+from pyechonest import config, artist, song, track
 from random import choice
 from util import *
 
@@ -131,6 +131,7 @@ def song_info(request):
         'title':s_song.title,
         'artist':s_song.artist_name,
         'hot':s_song.song_hotttnesss,
+        'id':s_song.id,
 
         #get song facts from audio dict
         'dance':s_song.audio_summary['danceability'],
@@ -143,5 +144,29 @@ def song_info(request):
 
         'featured_name': featured_artist.name,
     })
+    
+    # try to get song data that I can graph with javascript
+    # it's not working for some reason
+    # tracks = s_song.get_tracks('7digital-US')[0]
+    # print tracks['id']
+    # print s_song.id
+    # t = track.track_from_ud(tracks['id'])
+    # t.get_analysis(t)
+
+    # try:
+    #     info = t.get_analysis()
+    #     print "beats"
+    #     print info.beats
+    #     print "samples"
+    #     print info.num_samples
+    #     print "sections"
+    #     print info.sections
+    #     print "segments"
+    #     print info.segments
+    #     print
+    # except:
+    #     print
+    #     print "UNABLE TO READ SONG DATA"
+    #     print
 
     return render(request, 'song.html', context)

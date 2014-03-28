@@ -93,11 +93,23 @@
 
         <div class="content-h-separator row"></div>
         
-    	<div class="row center">
-        	<div class="content-box">
-            	<div class="subtitle-text">
-            	</div>
-            </div>
+        <div class="row center">
+            <div class="content-box">
+                <span class="title-text">
+                    {{ title }} - {{ hot }}
+                </span>
+
+                <span class="subtitle-text ital"> 
+                    by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
+                </span>
+                <br />
+
+                Duration: {{ duration }} seconds<br />
+                Danceability: {{ dance }}<br />
+                Energy: {{ energy }}<br />
+                Liveliness: {{ liveness }}<br />
+                Speechines: {{ speechiness }}<br />
+            </div>{{ id }}
         </div>
     </div><!--END main-->
 
