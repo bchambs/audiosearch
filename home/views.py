@@ -107,7 +107,7 @@ def artist_info(request):
         context['twitter']= s_artist.get_twitter_id
 
     if s_artist.similar:
-        context['similar']= remove_duplicate_artists(s_artist.similar, 10)
+        context['artists']= remove_duplicate_artists(s_artist.similar, 10)
 
     if s_artist.biographies:
         context['bio']= s_artist.biographies[0]['text']
@@ -126,12 +126,17 @@ def song_info(request):
 
     #set song to first in list
     s_song = song.search(title=query, sort='song_hotttnesss-desc', results=1)[0]
+    temp_artist = artist.search(name=s_song.artist_name, sort='hotttnesss-desc', results=1)[0]
+
+    similar_artists = temp_artist.similar[:10]
+    similar_songs = get_similar_songs(similar_artists)
 
     context = Context({
         'title':s_song.title,
         'artist':s_song.artist_name,
         'hot':s_song.song_hotttnesss,
-        'id':s_song.id,
+        'similar_songs': similar_songs,
+        'similar_artists': similar_artists,
 
         #get song facts from audio dict
         'dance':s_song.audio_summary['danceability'],

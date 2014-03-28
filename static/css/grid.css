@@ -134,18 +134,24 @@ body {
     width: 497px;
 }
 
+#artist-image-container{
+    max-height: 100%;
+    max-width: 100%;
+}
 #artist-image {
     height: 200px;
     width: 200px;
     float:right;
     overflow: hidden;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
 }
 
 .trending-image-container {
     max-height: 100%;
     max-width: 100%;
 }
-
 .trending-image {
     height: 100px;
     width: 100px;

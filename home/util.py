@@ -34,3 +34,17 @@ def remove_duplicate_songs(inc_list, size):
         if len(trunc_list) == size:
             break
     return trunc_list
+
+#take a list of five artists, return a list containing the two most popular songs per artist
+def get_similar_songs(inc_list):
+    similar_songs = []
+
+    for a in inc_list:
+        print
+        print a
+        for x in range(0,2):
+            if a.songs[x]:
+                print a.songs[x].title
+                similar_songs.append(a.songs[x].title)
+
+    return similar_songs

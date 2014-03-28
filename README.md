@@ -22,3 +22,9 @@ Web app created in Django to be deployed with docker.  Uses Echo Nest API to giv
 9. Add a template tag to turn rating decimal into a percentage.
 
 10. Rank this list in order of priority. 
+
+11. Change titles to give more information.
+
+12. Combine remove_duplicate_artists and remove_duplicate_songs somehow.
+
+13. Add error checking to all api calls.

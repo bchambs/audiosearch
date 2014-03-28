@@ -93,6 +93,7 @@
 
         <div class="content-h-separator row"></div>
         
+        <!--song info-->
         <div class="row center">
             <div class="content-box">
                 <span class="title-text">
@@ -109,8 +110,46 @@
                 Energy: {{ energy }}<br />
                 Liveliness: {{ liveness }}<br />
                 Speechines: {{ speechiness }}<br />
-            </div>{{ id }}
-        </div>
+            </div>
+        </div><!--END song-->
+
+        <div class="content-h-separator row"></div>
+
+        <!--dual columns-->
+        <div class="row center">
+
+            <div class="col-lg-5 content-box double-col">
+                <div class="subtitle-text">Similar Songs</div>
+                <ul>
+                {% if similar_songs %}
+                    {% for s in similar_songs %}
+                        <il>
+                            {{ forloop.counter }}.  
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
+                        </il>
+                        <br />
+                    {% endfor %}
+                {% endif %}
+                </ul>
+            </div><!--END song block-->
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="col-lg-5 content-box double-col">
+                 <div class="subtitle-text">Similar Artists</div>
+                <ul>
+                {% if similar_artists %}
+                    {% for a in similar_artists %}
+                        <il>
+                            {{ forloop.counter }}.  
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }}</a>
+                        </il>
+                        <br />
+                    {% endfor %}
+                {% endif %}
+                </ul>
+            </div><!--END artist block-->
+        </div><!--END dual columns-->
     </div><!--END main-->
 
     <!--right column-->

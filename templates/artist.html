@@ -96,16 +96,16 @@
         <!--artist summary-->
         <div class="row center">
             <div class="content-box">
-                <div class="subtitle-text">
-                    <div id="artist-image" align="right"> 
+                <div class="title-text">
+                    <div id="artist-image-container" align="right"> 
                         {% if image %}
-                        <img src="{{image}}">
+                            <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
                         {% endif %}
                     </div>
 
                     {{ name }} - {{ hot }} 
-                    <br />
-                    {% if twitter %}@{{ twitter }}{% endif %}
+                    
+                    {% if twitter %}<br /> @{{ twitter }}{% endif %}
                     <br />
                     {% if terms %}
                         <div class="ital">
@@ -132,7 +132,7 @@
         <div class="row center">
 
             <div class="col-lg-5 content-box double-col">
-                <div class="subtitle-text">Songs</div>
+                <div class="subtitle-text">Top Songs</div>
                 <ul>
                 {% for s in songs %}
 
@@ -151,11 +151,11 @@
             <div class="col-lg-5 content-box double-col">
                  <div class="subtitle-text">Similar Artists</div>
                 <ul>
-                {% if similar %}
-                    {% for s in similar %}
+                {% if artists %}
+                    {% for a in artists %}
                         <il>
                             {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ a.split|join:'+' }}" > {{ a }}</a>
                         </il>
                         <br />
                     {% endfor %}
