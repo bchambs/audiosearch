@@ -138,7 +138,7 @@
 
                     <il>
                         {{ forloop.counter }}.  
-                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }} </a>
+                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
                     </il>
                     <br />
 
@@ -155,7 +155,7 @@
                     {% for s in similar %}
                         <il>
                             {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }} </a>
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
                         </il>
                         <br />
                     {% endfor %}

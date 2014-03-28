@@ -67,10 +67,14 @@ def about(request):
     return render (request, 'about.html', context)
 
 def trending(request):
+    trending = artist.top_hottt()
+    del trending[10:]
+
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     context = Context({
         "featured_name": featured_artist.name,
+        "trending": trending,
     })
 
     return render (request, 'trending.html', context)

@@ -34,3 +34,12 @@ def remove_duplicate_songs(inc_list, size):
         if len(trunc_list) == size:
             break
     return trunc_list
+
+#given a list of size n, crop size so they look
+#god as 100x100 squares, return list for width
+#return width for height
+def get_cropped_dimensions (inc_list, n):
+    width = []
+    height = []
+
+    return width, height

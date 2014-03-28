@@ -1,33 +1,12 @@
-music_search
+audiosearch
 ============
 
-Web app created in Django to be deployed with docker.  Uses echonest API to give music information and suggest similar artists / songs.
+Web app created in Django to be deployed with docker.  Uses Echo Nest API to give music information and suggest similar artists / songs.  Below is my todo list of features.
 
-v .01
--Added skeleton
+1. Develop algorithm to crop artist images so they do not appear stretched.  This will probably be done in javascript.
 
-v .02
--??
+2. Develop algorithm to return meaningful artist biographies.  Current version is lacking.
 
-v .03
--Added echnoest calls
+3. Replace numbered lists with visually pleasing tables.
 
--Added mockup of search functionality
-
-v .04
--Added artist and song pages
-
-v .05
--Artist urls should work now
-
-v .06
--Added template filter to correct spaces in urls
-
-v .07
--Added individual artist / song pages with filler data. 
-
-v .08
--Fixed static files.  Improved index visual.
-
-v .09
--Changed index.
+4. Add footer div to fill page.

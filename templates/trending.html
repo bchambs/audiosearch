@@ -92,11 +92,65 @@
 
         <div class="content-h-separator row"></div>
 
+        <!--top artist-->
         <div class="row center">
             <div class="content-box">
-               
+
+                <!--images-->
+                {% for i in trending.0.images|slice:":3" %}
+                <div class="trending-image-container" align="right">
+                    <a href="{{ i.url }}"><img src="{{ i.url }}" class="trending-image"></a>
+                </div>
+                {% endfor %}<!--END images-->
+
+                <div class="title-text">
+                    1. <a href= "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ trending.0.name }}</a> 
+                    - {{ trending.0.hotttnesss }} <br />
+                </div>
+
+                <!--terms-->
+                <div class="subtitle-text">
+                    <div class="ital">
+                        {% if trending.0.terms.0 %}
+                            {{ trending.0.terms.0.name }}, 
+                        {% endif %}
+                        {% if trending.1.terms.1 %}
+                            {{ trending.1.terms.1.name }}
+                        {% endif %} <br /><br />
+                    </div>
+                </div><!--END terms-->
+                
+                <!--songs-->
+                Songs: 
+
+                {% for s in trending.0.songs|slice:":3" %}
+                    {% if forloop.counter0 == 2 %}
+                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
+                    {% else %}
+                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>, 
+                    {% endif %}
+                {% endfor %}<!--END songs-->
+
+                <div class="clear"></div>
             </div>
-        </div>
+        </div><!--END top-->
+
+        <!--remaining trending-->
+        {% for artist in trending %}
+            {% if forloop.counter0 != 0 %}
+                <div class="content-h-separator row"></div>
+
+                <div class="row center">
+                    <div class="content-box">
+                        <div class="subtitle-text">
+                            {{ forloop.counter }}. 
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist.name }}</a> 
+                            - {{ artist.hotttnesss }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}<!--END remaining-->
     </div><!--END main-->
 
     <!--right column-->

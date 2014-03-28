@@ -3,6 +3,7 @@ body {
     margin:0; 
     padding:0px; 
     color:white;
+    font-family: Helvetica;
 }
 
 .container {
@@ -140,6 +141,21 @@ body {
     overflow: hidden;
 }
 
+.trending-image-container {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.trending-image {
+    height: 100px;
+    width: 100px;
+    float:right;
+    overflow: hidden;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
 a:link {
     color:white;
 }
@@ -153,8 +169,12 @@ a:active {
     color:white;
 }
 
-.subtitle-text {
+.title-text {
     font-size: 23px;
+}
+
+.subtitle-text {
+    font-size: 18px;
 }
 
 .ital {
