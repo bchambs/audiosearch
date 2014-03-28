@@ -40,11 +40,8 @@ def get_similar_songs(inc_list):
     similar_songs = []
 
     for a in inc_list:
-        print
-        print a
         for x in range(0,2):
-            if a.songs[x]:
-                print a.songs[x].title
+            if a.songs[x] and a.songs[x] not in similar_songs:
                 similar_songs.append(a.songs[x].title)
 
-    return similar_songs
+    return similar_songs[:10]

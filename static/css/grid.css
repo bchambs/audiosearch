@@ -6,6 +6,10 @@ body {
     font-family: Helvetica;
 }
 
+table {
+    margin:0 auto;
+}
+
 .container {
     height: 100%;
 }
