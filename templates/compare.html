@@ -102,13 +102,19 @@
                 <br />
 
                 <form action="/compare_results/" method="GET">
-                    <input class="col-lg-4 center" type="text" name="q"></input>
+                    <input class="compare-search-bar col-lg-4" type="text" name="q"></input>
 
-                    <button type="submit" class="btn col-lg-4 center">
-                        <span class="glyphicon glyphicon-play"></span> 
-                    </button>
+                    <span class="col-lg-1"></span>
 
-                    <input class="col-lg-4 center" type="text" name="q2"></input>
+                    <span id="compare-btn-container">
+                        <button type="submit" id="compare-btn" class="col-lg-2 center">
+                            <span class="glyphicon glyphicon-play"></span> 
+                        </button>
+                    </span>
+
+                    <span class="col-lg-1"></span>
+
+                    <input class="compare-search-bar col-lg-4 right" type="text" name="q2"></input>
                 </form>          
 
                 <div class="clear"></div>  

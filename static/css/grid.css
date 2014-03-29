@@ -95,6 +95,27 @@ table {
     bottom: 10px;
 }
 
+.compare-search-bar {
+    color:black;
+    padding: 2px;
+    width: 330px;
+}
+.right {
+    right: 0;
+    float:right;
+}
+#compare-btn-container {
+    width: 320px;
+}
+#compare-btn {
+    color:black;
+    width: 80px;
+    height: 27px;
+    bottom: 2px;
+
+    text-align:center;
+}
+
 .content-box {
     background: #990033;
     padding: 10px;
