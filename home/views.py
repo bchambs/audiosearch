@@ -57,6 +57,18 @@ def compare(request):
 
     return render(request, 'compare.html', context)
 
+def compare_results(request):
+    query = request.GET['q']
+    query_2 = request.GET['q2']
+
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+
+    context = Context({
+        "featured_name": featured_artist.name,
+    })
+
+    return render(request, 'compare-result.html', context)
+
 def about(request):
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
