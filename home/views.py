@@ -7,35 +7,58 @@ from util import *
 
 #globals
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
-_featured_artist = "M83"
+
+#store featured artist as globas to reduce our API call count
+_featured_artist = 'M83'
+_featured_terms = []
+_featured_bio = ''
+_initialized = False
+
+def startup():
+    global _initialized
+    global _featured_artist
+    global _featured_terms
+    global _featured_bio
+
+    if not _initialized:
+        print
+        print '_________________________________________________________________________________'
+        print 'Initializing featured artist... This should not happen more than once per deploy.'
+        print
+        print
+
+        _initialized = True
+        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+        _featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
+
+        #ensure we have 2 terms
+        #needs error checking, what if artist does not have terms?
+        _featured_terms.append(featured_artist.terms[0]['name'])
+        _featured_terms[0] += ', '
+        _featured_terms.append(featured_artist.terms[1]['name'])
+
+        #get displayable bio
+        _featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
+        _featured_bio = _featured_bio[:197] + '...'
 
 def index(request):
     trending = artist.top_hottt()
     del trending[10:]
 
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-
-    #ensure we have 2 terms
-    #needs error checking, what if artist does not have terms?
-    featured_terms = []
-    featured_terms.append(featured_artist.terms[0]['name'])
-    featured_terms[0] += ', '
-    featured_terms.append(featured_artist.terms[1]['name'])
-
-    #get displayable bio
-    featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
-    featured_bio = featured_bio[:197] + '...'
+    startup()
 
     context = Context({
         'trending': trending,
-        'featured_name': featured_artist.name,
-        'featured_terms': featured_terms,
-        'featured_bio': featured_bio,
+        'featured_name': _featured_artist,
+        'featured_terms': _featured_terms,
+        'featured_bio': _featured_bio,
     })
 
     return render(request, 'index.html', context)
 
 def search(request):
+    global _featured_artist
+
     query = request.GET['q']
     context = Context({})
 
@@ -60,21 +83,22 @@ def search(request):
     else: 
         context['results'] = 0
 
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-    context['featured_name'] = featured_artist.name
+    context['featured_name'] = _featured_artist
 
     return render(request, 'result.html', context)
 
 def compare(request):
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    global _featured_artist
 
     context = Context({
-        "featured_name": featured_artist.name,
+        "featured_name": _featured_artist,
     })
 
     return render(request, 'compare.html', context)
 
 def compare_results(request):
+    global _featured_artist
+
     query = request.GET['q']
     query_2 = request.GET['q2']
     context = Context({})
@@ -101,8 +125,7 @@ def compare_results(request):
         context['liveness_two'] = song_two.audio_summary['liveness'],
         context['speechiness_two'] = song_two.audio_summary['speechiness'],
 
-        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-        context['featured_name'] = featured_artist.name,
+        context['featured_name'] = _featured_artist,
 
         return render(request, 'compare-results.html', context)
 
@@ -110,39 +133,35 @@ def compare_results(request):
         return HttpResponseRedirect('/compare/')
 
 def about(request):
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    global _featured_artist
 
     context = Context({
-        "featured_name": featured_artist.name,
+        "featured_name": _featured_artist,
     })
 
     return render (request, 'about.html', context)
 
 def trending(request):
+    global _featured_artist
+
     trending = artist.top_hottt()
     del trending[10:]
 
     top_songs = remove_duplicate_songs (trending[0].songs, 3)
 
-    try:
-        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    context = Context({
+        "top_songs": top_songs,
+        "trending": trending,
+        "featured_name": _featured_artist,
+    })
 
-        context = Context({
-            "top_songs": top_songs,
-            "trending": trending,
-            "featured_name": featured_artist.name,
-        })
-
-        return render (request, 'trending.html', context)
-
-    except EchoNestAPIError:
-        return HttpResponseRedirect('/index/')
+    return render (request, 'trending.html', context)
 
 def artist_info(request):
+    global _featured_artist
+
     query = request.GET['q']
     context = Context({})
-
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     #set artist to first in list
     s_artist = artist.search(name=query)[0]
@@ -177,14 +196,14 @@ def artist_info(request):
     context['name']= s_artist.name
     context['hot']= s_artist.hotttnesss
     context['songs']= remove_duplicate_songs(s_artist.get_songs(results=50), 10)
-    context['featured_name']= featured_artist.name
+    context['featured_name']= _featured_artist
 
     return render(request, 'artist.html', context)
 
 def song_info(request):
+    global _featured_artist
+    
     query = request.GET['q']
-
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     #set song to first in list
     s_song = song.search(title=query, sort='song_hotttnesss-desc', results=1)[0]
@@ -207,7 +226,7 @@ def song_info(request):
         'liveness':s_song.audio_summary['liveness'],
         'speechiness':s_song.audio_summary['speechiness'],
 
-        'featured_name': featured_artist.name,
+        'featured_name': _featured_artist,
     })
     
     # try to get song data that I can graph with javascript
