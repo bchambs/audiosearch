@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
+from django.http import HttpResponseRedirect
 from pyechonest import config, artist, song, track
 from random import choice
 from util import *
@@ -35,16 +36,26 @@ def index(request):
 
 def search(request):
     query = request.GET['q']
+    context = Context({})
 
-    artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
-    songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
+    #results is 1 when we have something to display
+    if query:
+        artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
+        context['artists'] = artists
+
+        songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
+        context['songs'] = songs
+
+        if artists or songs:
+            context['results'] = 1
+        else:
+            context['results'] = 0
+
+    else: 
+        context['results'] = 0
+
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-
-    context = Context({
-        'artists': artists,
-        'songs': songs,
-        'featured_name': featured_artist.name,
-    })
+    context['featured_name'] = featured_artist.name
 
     return render(request, 'result.html', context)
 
@@ -60,14 +71,17 @@ def compare(request):
 def compare_results(request):
     query = request.GET['q']
     query_2 = request.GET['q2']
+    context = Context({})
 
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    if query and query_2:
+        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    context = Context({
-        "featured_name": featured_artist.name,
-    })
+        context['featured_name'] = featured_artist.name,
 
-    return render(request, 'compare-result.html', context)
+        return render(request, 'compare-result.html', context)
+
+    else:
+        return HttpResponseRedirect('/compare/')
 
 def about(request):
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]

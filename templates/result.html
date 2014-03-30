@@ -93,42 +93,54 @@
 
         <div class="content-h-separator row"></div>
 
-        <!--dual columns-->
-        <div class="row center">
-            <!--artist block-->
-            <div class="col-lg-5 content-box double-col">
-                 <div class="subtitle-text">Artists</div>
-                <ul>
-                {% for artist in artists %}
+        <!--dual columns, print if we have results-->
+        {% if results == 1 %}
+            <div class="row center">
+                <!--artist block-->
+                <div class="col-lg-5 content-box double-col">
+                     <div class="subtitle-text">Artists</div>
+                    <ul>
+                    {% for artist in artists %}
 
-                    <il>
-                        {{ forloop.counter }}.  
-                        <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}}</a>
-                    </il>
-                    <br>
+                        <il>
+                            {{ forloop.counter }}.  
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}}</a>
+                        </il>
+                        <br>
 
-                {% endfor %}
-                </ul>
-            </div><!--END artist-->
+                    {% endfor %}
+                    </ul>
+                </div><!--END artist-->
 
-            <div class="content-w-separator col-lg-1"></div>
+                <div class="content-w-separator col-lg-1"></div>
 
-            <!--song block-->
-            <div class="col-lg-5 content-box double-col">
-                <div class="subtitle-text">Songs</div>
-                <ul>
-                {% for song in songs %}
+                <!--song block-->
+                <div class="col-lg-5 content-box double-col">
+                    <div class="subtitle-text">Songs</div>
+                    <ul>
+                    {% for song in songs %}
 
-                    <il>
-                        {{ forloop.counter }}.  
-                        <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}}</a>
-                    </il>
-                    <br>
+                        <il>
+                            {{ forloop.counter }}.  
+                            <a href = "{% url 'home.views.song_info' %}?q={{ song.title.split|join:'+' }}" > {{song}}</a>
+                        </il>
+                        <br>
 
-                {% endfor %}
-                </ul>
-            </div><!--END song-->
-        </div><!--END dual columns-->
+                    {% endfor %}
+                    </ul>
+                </div><!--END song-->
+            </div><!--END dual columns-->
+
+        <!--no results-->
+        {% else %}
+            <div class="row center">
+                <div class="content-box">
+                    <div class="subtitle-text ital">
+                        No results found.
+                    </div>
+                </div>
+            </div><!--END no results-->
+        {% endif %}
     </div><!--END main-->
 
     <!--right column-->

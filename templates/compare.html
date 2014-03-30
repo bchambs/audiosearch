@@ -97,29 +97,29 @@
         <div class="row center">
             <div class="content-box">
                 <div class="subtitle-text">
-                    Enter two songs in the search bars below to see a side-by-side comparison of their analysis. 
+                    Enter a song title in each search bar to compare their analysis.  
                 </div>
-                <br />
+                <br /><br />
 
                 <form action="/compare_results/" method="GET">
-                    <input class="compare-search-bar col-lg-4" type="text" name="q"></input>
+                    <input class="compare-search-bar col-lg-4" type="text" name="q" placeholder="song one">
 
-                    <span class="col-lg-1"></span>
+                    <div class="col-lg-1"></div>
 
-                    <span id="compare-btn-container">
-                        <button type="submit" id="compare-btn" class="col-lg-2 center">
+                    <div id="compare-btn-container" class="col-lg-2 center">
+                        <button type="submit" id="compare-btn" class="center">
                             <span class="glyphicon glyphicon-play"></span> 
                         </button>
-                    </span>
+                    </div>
+             
+                    <div class="col-lg-1"></div>
 
-                    <span class="col-lg-1"></span>
-
-                    <input class="compare-search-bar col-lg-4 right" type="text" name="q2"></input>
+                    <input class="compare-search-bar col-lg-4 right" type="text" name="q2" placeholder="song two">>
                 </form>          
 
                 <div class="clear"></div>  
+                <br />
             </div>
-        </div>
         </div><!--END compare-->
 
     </div><!--END main-->

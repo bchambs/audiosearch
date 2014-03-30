@@ -105,15 +105,15 @@ table {
     float:right;
 }
 #compare-btn-container {
-    width: 320px;
+   bottom: 2px;
 }
-#compare-btn {
+.glyphicon {
+    top: 3px;
+}
+.glyphicon-play {
     color:black;
-    width: 80px;
-    height: 27px;
-    bottom: 2px;
-
-    text-align:center;
+    height: 22px;
+    width: 100px;
 }
 
 .content-box {
