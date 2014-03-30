@@ -18,3 +18,5 @@ Web app created in Django to be deployed with docker.  Uses Echo Nest API to giv
 9. Add pagination for more artist / song results.
 
 12. Combine remove_duplicate_artists and remove_duplicate_songs somehow.
+
+13. Add "no results" display when artist does not have songs

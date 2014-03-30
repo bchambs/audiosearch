@@ -125,7 +125,7 @@
                 <!--songs-->
                 Songs: 
 
-                {% for s in trending.0.songs|slice:":3" %}
+                {% for s in top_songs %}
                     {% if forloop.counter0 == 2 %}
                         <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
                     {% else %}

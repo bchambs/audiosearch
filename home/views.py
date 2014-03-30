@@ -40,11 +40,16 @@ def search(request):
 
     #results is 1 when we have something to display
     if query:
-        artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
-        context['artists'] = artists
 
-        songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
-        context['songs'] = songs
+        #search for 35 artists and trim duplicates
+        artists = artist.search(name=query, sort='hotttnesss-desc', results=35)
+        trimmed_artists = remove_duplicate_artists(artists, 10)
+        context['artists'] = trimmed_artists
+
+        #search for 35 songs and trim duplicates
+        songs = song.search(title=query, sort='song_hotttnesss-desc', results=35)
+        trimmed_songs = remove_duplicate_songs(songs, 10)
+        context['songs'] = trimmed_songs
 
         if artists or songs:
             context['results'] = 1
@@ -116,11 +121,15 @@ def trending(request):
     trending = artist.top_hottt()
     del trending[10:]
 
+    top_songs = remove_duplicate_songs (trending[0].songs, 3)
+    print len(trending[0].songs)
+
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
     context = Context({
-        "featured_name": featured_artist.name,
+        "top_songs": top_songs,
         "trending": trending,
+        "featured_name": featured_artist.name,
     })
 
     return render (request, 'trending.html', context)
@@ -160,7 +169,7 @@ def artist_info(request):
 
     context['name']= s_artist.name
     context['hot']= s_artist.hotttnesss
-    context['songs']= remove_duplicate_songs(s_artist.songs, 10)
+    context['songs']= remove_duplicate_songs(s_artist.get_songs(results=35), 10)
     context['featured_name']= featured_artist.name
 
     return render(request, 'artist.html', context)
