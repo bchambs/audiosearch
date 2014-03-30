@@ -51,13 +51,13 @@ def search(request):
         else:
             context['results'] = 0
 
-        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-        context['featured_name'] = featured_artist.name
-
-        return render(request, 'result.html', context)
-    
     else: 
-        return HttpResponseRedirect('/search/')
+        context['results'] = 0
+
+    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    context['featured_name'] = featured_artist.name
+
+    return render(request, 'result.html', context)
 
 def compare(request):
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_extras %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -96,20 +98,20 @@
         <!--song info-->
         <div class="row center">
             <div class="content-box">
-                <span class="title-text">
-                    {{ title }} - {{ hot }}
-                </span>
+                <div class="title-text">
+                    {{ title }} - {{ hot|to_percent }}%
+                </div>
 
-                <span class="subtitle-text ital"> 
+                <div class="subtitle-text ital"> 
                     by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
-                </span>
+                </div>
                 <br />
 
                 Duration: {{ duration }} seconds<br />
-                Danceability: {{ dance }}<br />
-                Energy: {{ energy }}<br />
-                Liveliness: {{ liveness }}<br />
-                Speechines: {{ speechiness }}<br />
+                Danceability: {{ dance|to_percent }}%<br />
+                Energy: {{ energy|to_percent }}%<br />
+                Liveliness: {{ liveness|to_percent }}%<br />
+                Speechines: {{ speechiness|to_percent }}%<br />
             </div>
         </div><!--END song-->
 

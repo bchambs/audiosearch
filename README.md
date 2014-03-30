@@ -19,7 +19,7 @@ Web app created in Django to be deployed with docker.  Uses Echo Nest API to giv
 
 8. Find a nice color scheme.
 
-9. Add a template tag to turn rating decimal into a percentage.
+//9. Add a template tag to turn rating decimal into a percentage. DONE
 
 10. Rank this list in order of priority. 
 

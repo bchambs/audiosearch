@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_extras %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -97,51 +99,51 @@
             <div class="content-box">
                 <!--artists -->
                 <div id="compare-title" class="title-text">
-                    {{ title_one }} vs. {{ title_two }}
+                    <a href = "{% url 'home.views.song_info' %}?q={{ title_one.split|join:'+' }}" > {{ title_one }}</a> 
+                    vs. 
+                    <a href = "{% url 'home.views.song_info' %}?q={{ title_two.split|join:'+' }}" > {{ title_two }}</a> 
                 </div><br /><!--END artists-->
 
                 <!--comparisons-->
-                <div id="table-container">
                 <table class="center">
                     <tr>
-                        <td class="col-lg-4">{{ artist_one }}</td>
-                        <td class="col-lg-4">Artist</td>
-                        <td class="col-lg-4">{{ artist_two }}</td>
+                        <th class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
+                        <th class="col-lg-4">Artist</td>
+                        <th class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ hot_one }}</td>
+                        <td class="col-lg-4">{{ hot_one|to_percent }}%</td>
                         <td class="col-lg-4">Rating</td>
-                        <td class="col-lg-4">{{ hot_two }}</td>
+                        <td class="col-lg-4">{{ hot_two|to_percent }}%</td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ duration_one }}</td>
-                        <td class="col-lg-4">Duration</td>
-                        <td class="col-lg-4">{{ duration_two }}</td>
+                        <td class="col-lg-4">{{ duration_one.0|floatformat:"0" }}</td>
+                        <td class="col-lg-4">Duration (s)</td>
+                        <td class="col-lg-4">{{ duration_two.0|floatformat:"0" }}</td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ dance_one }}</td>
+                        <td class="col-lg-4">{{ dance_one.0|to_percent }}%</td>
                         <td class="col-lg-4">Danceability</td>
-                        <td class="col-lg-4">{{ dance_two }}</td>
+                        <td class="col-lg-4">{{ dance_two.0|to_percent }}%</td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ energy_one }}</td>
+                        <td class="col-lg-4">{{ energy_one.0|to_percent }}%</td>
                         <td class="col-lg-4">Energy</td>
-                        <td class="col-lg-4">{{ energy_two }}</td>
+                        <td class="col-lg-4">{{ energy_two.0|to_percent }}%</td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ liveness_one }}</td>
+                        <td class="col-lg-4">{{ liveness_one.0|to_percent }}%</td>
                         <td class="col-lg-4">Liveliness</td>
-                        <td class="col-lg-4">{{ liveness_two }}</td>
+                        <td class="col-lg-4">{{ liveness_two.0|to_percent }}%</td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ speechiness_one }}</td>
+                        <td class="col-lg-4">{{ speechiness_one.0|to_percent }}%</td>
                         <td class="col-lg-4">Speechiness</td>
-                        <td class="col-lg-4">{{ speechiness_two }}</td>
+                        <td class="col-lg-4">{{ speechiness_two.0|to_percent }}%</td>
                     </tr>
-                </table><div class="clear"></div> 
-                </div>
+                </table><!--END comparisons-->
             </div>
-        </div><!--END comparisons-->
+        </div>
     </div><!--END main-->
 
     <!--right column-->

@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'home',
+    'home.templatetags.audiosearch_extras'
 )
 
 MIDDLEWARE_CLASSES = (

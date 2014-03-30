@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_extras %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -105,7 +107,7 @@
 
                 <div class="title-text">
                     1. <a href= "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ trending.0.name }}</a> 
-                    - {{ trending.0.hotttnesss }} <br />
+                    - {{ trending.0.hotttnesss|to_percent }}%<br />
                 </div>
 
                 <!--terms-->
@@ -145,7 +147,7 @@
                         <div class="subtitle-text">
                             {{ forloop.counter }}. 
                             <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist.name }}</a> 
-                            - {{ artist.hotttnesss }}
+                            - {{ artist.hotttnesss|to_percent }}%
                         </div>
                     </div>
                 </div>
