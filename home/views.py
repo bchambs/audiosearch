@@ -51,13 +51,13 @@ def search(request):
         else:
             context['results'] = 0
 
+        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+        context['featured_name'] = featured_artist.name
+
+        return render(request, 'result.html', context)
+    
     else: 
-        context['results'] = 0
-
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-    context['featured_name'] = featured_artist.name
-
-    return render(request, 'result.html', context)
+        return HttpResponseRedirect('/search/')
 
 def compare(request):
     featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
@@ -73,12 +73,32 @@ def compare_results(request):
     query_2 = request.GET['q2']
     context = Context({})
 
+    #fill context with song 1 and song 2 data
     if query and query_2:
-        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+        song_one = song.search(title=query, sort='song_hotttnesss-desc', results=1)[0]
+        context['title_one'] = song_one.title
+        context['artist_one'] = song_one.artist_name
+        context['hot_one'] = song_one.song_hotttnesss
+        context['dance_one'] = song_one.audio_summary['danceability'],
+        context['duration_one'] = song_one.audio_summary['duration'],
+        context['energy_one'] = song_one.audio_summary['energy'],
+        context['liveness_one'] = song_one.audio_summary['liveness'],
+        context['speechiness_one'] = song_one.audio_summary['speechiness'],
 
+        song_two = song.search(title=query_2, sort='song_hotttnesss-desc', results=1)[0]
+        context['title_two'] = song_two.title
+        context['artist_two'] = song_two.artist_name
+        context['hot_two'] = song_two.song_hotttnesss
+        context['dance_two'] = song_two.audio_summary['danceability'],
+        context['duration_two'] = song_two.audio_summary['duration'],
+        context['energy_two'] = song_two.audio_summary['energy'],
+        context['liveness_two'] = song_two.audio_summary['liveness'],
+        context['speechiness_two'] = song_two.audio_summary['speechiness'],
+
+        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
         context['featured_name'] = featured_artist.name,
 
-        return render(request, 'compare-result.html', context)
+        return render(request, 'compare-results.html', context)
 
     else:
         return HttpResponseRedirect('/compare/')
@@ -169,9 +189,7 @@ def song_info(request):
         'duration':s_song.audio_summary['duration'],
         'energy':s_song.audio_summary['energy'],
         'liveness':s_song.audio_summary['liveness'],
-        'loudness':s_song.audio_summary['loudness'],
         'speechiness':s_song.audio_summary['speechiness'],
-        'tempo':s_song.audio_summary['tempo'],
 
         'featured_name': featured_artist.name,
     })

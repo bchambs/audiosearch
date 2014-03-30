@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<!-- need to give credit for the font...-->
+
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+   
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+
+<title>audiosearch</title>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!--left column-->
+    <div class="col-lg-1"></div>
+
+    <!--main column-->
+    <div class="content-main-col" class="col-lg-10">
+
+        <!--header block-->
+        <div class="title-box row">
+
+            <!--title block-->
+            <div class="search-container col-lg-5">
+                <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
+
+                <form action="/search/" method="GET">
+                    <input class="search-bar" type="text" name="q">
+                </form>
+            </div><!--END title-->
+
+            <div class="tag-container col-lg-7">
+                <div class="tag-block">
+                    audiosearch is a simple way to find new music.
+                </div>
+            </div>
+        </div><!--END header-->
+
+        <div class="content-h-separator row"></div>
+
+        <!--nav buttons-->
+        <div class="row center">
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    home
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    trending
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    featured
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    compare
+                </div>
+            </div>
+
+            <div class="content-w-separator col-lg-1"></div>
+
+            <div class="nav-button col-lg-2">
+                <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    about
+                </div>
+            </div>
+        </div>
+        <!--END nav-->
+
+        <div class="content-h-separator row"></div>
+
+        <div class="row center">
+            <div class="content-box">
+                <!--artists -->
+                <div id="compare-title" class="title-text">
+                    {{ title_one }} vs. {{ title_two }}
+                </div><br /><!--END artists-->
+
+                <!--comparisons-->
+                <div id="table-container">
+                <table class="center">
+                    <tr>
+                        <td class="col-lg-4">{{ artist_one }}</td>
+                        <td class="col-lg-4">Artist</td>
+                        <td class="col-lg-4">{{ artist_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ hot_one }}</td>
+                        <td class="col-lg-4">Rating</td>
+                        <td class="col-lg-4">{{ hot_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ duration_one }}</td>
+                        <td class="col-lg-4">Duration</td>
+                        <td class="col-lg-4">{{ duration_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ dance_one }}</td>
+                        <td class="col-lg-4">Danceability</td>
+                        <td class="col-lg-4">{{ dance_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ energy_one }}</td>
+                        <td class="col-lg-4">Energy</td>
+                        <td class="col-lg-4">{{ energy_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ liveness_one }}</td>
+                        <td class="col-lg-4">Liveliness</td>
+                        <td class="col-lg-4">{{ liveness_two }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-lg-4">{{ speechiness_one }}</td>
+                        <td class="col-lg-4">Speechiness</td>
+                        <td class="col-lg-4">{{ speechiness_two }}</td>
+                    </tr>
+                </table><div class="clear"></div> 
+                </div>
+            </div>
+        </div><!--END comparisons-->
+    </div><!--END main-->
+
+    <!--right column-->
+    <div class="col-lg-1"></div>
+
+</div><!--END container-->
+
+<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+</body>
+
+</html>
