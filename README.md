@@ -7,11 +7,7 @@ Web app created in Django to be deployed with docker.  Uses Echo Nest API to giv
 
 2. Develop algorithm to return meaningful artist biographies.  Current version is lacking.
 
-3. Replace numbered lists with visually pleasing tables.
-
 4. Add footer div to fill page.
-
-5. Refactor the padding / margins on each page. 
 
 6. I'm tempted to place the bottom nine artists on the trending page in a table in one block.
 
@@ -19,12 +15,6 @@ Web app created in Django to be deployed with docker.  Uses Echo Nest API to giv
 
 8. Find a nice color scheme.
 
-//9. Add a template tag to turn rating decimal into a percentage. DONE
-
-10. Rank this list in order of priority. 
-
-11. Change titles to give more information.
+9. Add pagination for more artist / song results.
 
 12. Combine remove_duplicate_artists and remove_duplicate_songs somehow.
-
-13. Add error checking to all api calls.

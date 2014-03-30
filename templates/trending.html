@@ -106,7 +106,7 @@
                 {% endfor %}<!--END images-->
 
                 <div class="title-text">
-                    1. <a href= "{% url 'home.views.artist_info' %}?q={{ s.split|join:'+' }}" > {{ trending.0.name }}</a> 
+                    1. <a href= "{% url 'home.views.artist_info' %}?q={{ trending.0.name.split|join:'+' }}" > {{ trending.0.name }}</a> 
                     - {{ trending.0.hotttnesss|to_percent }}%<br />
                 </div>
 

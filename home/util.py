@@ -13,9 +13,11 @@ def get_good_bio(bios):
 #returns size = len(inc_list) if len < size
 def remove_duplicate_artists(inc_list, size):
     trunc_list = []
+    temp = []
 
     for i in inc_list:
-        if i.name not in trunc_list:
+        if i.name not in temp:
+            temp.append(i.name)
             trunc_list.append(i.name)
 
         if len(trunc_list) == size:
@@ -25,14 +27,27 @@ def remove_duplicate_artists(inc_list, size):
 #remove duplicates from list and return len = size
 #returns size = len(inc_list) if len < size
 def remove_duplicate_songs(inc_list, size):
+    print "incoming list"
+    for a in inc_list:
+        print a
+    print
+
     trunc_list = []
+    temp = []
 
     for i in inc_list:
-        if i.title not in trunc_list:
+        if i.title not in temp:
+            temp.append(i.title)
             trunc_list.append(i.title)
 
         if len(trunc_list) == size:
             break
+
+    print "outgoing list"
+    for b in trunc_list:
+        print b
+    print
+
     return trunc_list
 
 #take a list of five artists, return a list containing the two most popular songs per artist
