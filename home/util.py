@@ -1,13 +1,16 @@
 #bios = list of artist biographies
-#return one with 25 < len < x
-def get_good_bio(bios):
-    if len(bios[0]['text']) > 200:
-        return (bios[0]['text'][:197] + '...')
+#return one with min < len < max
+def get_good_bio(bios, min, max):
+    #optimize
+    if len(bios[0]['text']) > min and len(bios[0]['text']) < max:
+        return (bios[0]['text'])
     else:
+        #check all bios for something acceptable
         for b in bios:
-            if len(b['text']) > 200:
-                return (b['text'][:197] + '...')
-        return 'Bio not available'
+            if len(b['text']) > min and len(b['text']) < max:
+                return (b['text'])
+
+        return 'Artist biography is not available.'
 
 #remove duplicates from list and return len = n
 #returns n = len(inc_list) if len < n

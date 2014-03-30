@@ -23,7 +23,8 @@ def index(request):
     featured_terms.append(featured_artist.terms[1]['name'])
 
     #get displayable bio
-    featured_bio = get_good_bio (featured_artist.biographies)
+    featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
+    featured_bio = featured_bio[:197] + '...'
 
     context = Context({
         'trending': trending,
@@ -122,17 +123,20 @@ def trending(request):
     del trending[10:]
 
     top_songs = remove_duplicate_songs (trending[0].songs, 3)
-    print len(trending[0].songs)
 
-    featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
+    try:
+        featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
 
-    context = Context({
-        "top_songs": top_songs,
-        "trending": trending,
-        "featured_name": featured_artist.name,
-    })
+        context = Context({
+            "top_songs": top_songs,
+            "trending": trending,
+            "featured_name": featured_artist.name,
+        })
 
-    return render (request, 'trending.html', context)
+        return render (request, 'trending.html', context)
+
+    except EchoNestAPIError:
+        return HttpResponseRedirect('/index/')
 
 def artist_info(request):
     query = request.GET['q']
@@ -165,11 +169,14 @@ def artist_info(request):
         context['artists']= remove_duplicate_artists(s_artist.similar, 10)
 
     if s_artist.biographies:
-        context['bio']= s_artist.biographies[0]['text']
+        bios = s_artist.get_biographies(results=20)
+        good_bio = get_good_bio(bios, 150, 9999)
+        good_bio = good_bio[:350] + '...'
+        context['bio'] = good_bio
 
     context['name']= s_artist.name
     context['hot']= s_artist.hotttnesss
-    context['songs']= remove_duplicate_songs(s_artist.get_songs(results=35), 10)
+    context['songs']= remove_duplicate_songs(s_artist.get_songs(results=50), 10)
     context['featured_name']= featured_artist.name
 
     return render(request, 'artist.html', context)

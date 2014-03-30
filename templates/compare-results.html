@@ -107,14 +107,14 @@
                 <!--comparisons-->
                 <table class="center">
                     <tr>
-                        <th class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
-                        <th class="col-lg-4">Artist</td>
-                        <th class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
+                        <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
+                        <td class="col-lg-4">Artist</td>
+                        <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
                     </tr>
                     <tr>
-                        <td class="col-lg-4">{{ hot_one|to_percent }}%</td>
+                        <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
                         <td class="col-lg-4">Rating</td>
-                        <td class="col-lg-4">{{ hot_two|to_percent }}%</td>
+                        <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
                     </tr>
                     <tr>
                         <td class="col-lg-4">{{ duration_one.0|floatformat:"0" }}</td>

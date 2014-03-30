@@ -24,7 +24,12 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'http://127.0.0.1:8000/',
+    '127.0.0.1:8000',
+    '127.0.0.1',
+    'http://127.0.0.1:8000/trending/'
+]
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

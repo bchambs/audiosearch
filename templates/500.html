@@ -1,11 +1,8 @@
-﻿{% load audiosearch_extras %}
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <!-- need to give credit for the font...-->
-
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
@@ -95,82 +92,15 @@
 
         <div class="content-h-separator row"></div>
 
-        <!--artist summary-->
-        <div class="row center">
-            <div class="content-box">
-                <div class="title-text">
-                    <div id="artist-image-container" align="right"> 
-                        {% if image %}
-                            <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
-                        {% endif %}
-                    </div>
-
-                    {{ name }} - <span class="uline" title="A representation of how popular an artist or song is.">{{ hot|to_percent }}%</span>
-                    
-                    {% if twitter %}<br /> @{{ twitter }}{% endif %}
-                    <br />
-                    {% if terms %}
-                        <div class="ital">
-                            {% for t in terms %}
-                                {{ t }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                <br />
-                <!--(Artist biographies will appear here when I develop an algorithm to return meaningful data.)-->
-                <!--remove this until we have a reliable way to receive acceptable bios-->
-                {% if bio %}
-                    <div class="indent">
-                        {{ bio }}
-                    </div>
-                {% endif %}
-        
-                <div class="clear"></div>
-            </div>  
-        </div><!--END artist summary-->
-
-        <div class="content-h-separator row"></div>
-
-        <div class="row center">
-
-            <div class="col-lg-5 content-box double-col">
-                <div class="subtitle-text">Top Songs</div>
-                <ul>
-                {% for s in songs %}
-
-                    <il>
-                        {{ forloop.counter }}.  
-                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
-                    </il>
-                    <br />
-
-                {% endfor %}
-                </ul>
-            </div><!--END song block-->
-
-            <div class="content-w-separator col-lg-1"></div>
-
-            <div class="col-lg-5 content-box double-col">
-                 <div class="subtitle-text">Similar Artists</div>
-                <ul>
-                {% if artists %}
-                    {% for a in artists %}
-                        <il>
-                            {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ a.split|join:'+' }}" > {{ a }}</a>
-                        </il>
-                        <br />
-                    {% endfor %}
-                {% endif %}
-                </ul>
-            </div><!--END artist block-->
-        </div><!--END dual columns-->
+        <div class="content-box">
+            You're more than likely viewing this because my Echo Nest API key is exceeding it's access rate limit.  Please try again in 10-15 seconds.  If this problem persists contact me at bradleydchambers@gmail.com.  
+        </div>
     </div><!--END main-->
 
     <!--right column-->
     <div class="col-lg-1"></div>
-</div>
+
+</div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>

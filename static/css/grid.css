@@ -1,24 +1,62 @@
+/*9A9A9A*/
 body {
-    background: #9A9A9A;
-    margin:0px; 
-    padding:0px; 
-    color:white;
+    background: #9A8477;
+    margin: 0px; 
+    padding: 0px; 
+    color: black;
     font-family: Helvetica;
 }
 
 table {
     text-align: center;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
 }
 tr, td {
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
 }
 th {
     text-align: center;
+}
+
+/*#990033*/
+.content-box {
+    background: #7C9A77;
+    padding: 10px;
+    height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
+.index-box {
+    width: 330px;
+    padding: 10px;
+    background: #004224;
+    padding-bottom: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
+#trending-box:hover {
+    background: #3E8400;
+}
+#featured-box:hover {
+    background: #3E8400;
+}
+.compare-about-box:hover {
+    background: #3E8400;
+}
+
+a:link {
+    color:black;
+}
+a:visited {
+    color:black;
+}
+a:hover {
+    color:black;
+}
+a:active {
+    color:black;
 }
 
 .container {
@@ -132,25 +170,6 @@ th {
     width:100%;
 }
 
-.content-box {
-    background: #990033;
-    padding: 10px;
-    height: 100%;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-}
-
-.index-box {
-    width: 330px;
-    padding: 10px;
-    background: #990033;
-    padding-bottom: 0;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-}
-
 #trending-box {
     height: 260px;
 }
@@ -159,15 +178,6 @@ th {
 }
 .compare-about-box {
     height: 127px;
-}
-#trending-box:hover {
-    background: #FF66A3;
-}
-#featured-box:hover {
-    background: #FF66A3;
-}
-.compare-about-box:hover {
-    background: #FF66A3;
 }
 
 .double-col {
@@ -202,34 +212,17 @@ th {
     border-color: white;
 }
 
-a:link {
-    color:white;
-}
-a:visited {
-    color:white;
-}
-a:hover {
-    color:white;
-}
-a:active {
-    color:white;
-}
-
 .title-text {
     font-size: 23px;
 }
-
 .subtitle-text {
     font-size: 18px;
 }
-
 .ital {
     font-style: italic;
 }
-
 .indent {
-    position: relative;
-    left: 25px;
+    text-indent: 25px;
 }
 
 .clear {
@@ -237,6 +230,7 @@ a:active {
 }
 
 .nav-button {
+    background: #48734F;
     width: 196px;
     height: 40px;
     position: relative;
@@ -247,7 +241,7 @@ a:active {
     border-color: white;
 }
 .nav-button:hover {
-    background: green;
+    background: #7C9A77;
 }
 /*credit to stackoverflow*/
 .nav-link {
@@ -263,4 +257,9 @@ a:active {
     /* edit: fixes overlap error in IE7/8, 
      make sure you have an empty gif */
     background-image: url('empty.gif');
+}
+
+.uline {
+    border-bottom: 1px white dotted;
+    cursor: help;
 }

@@ -104,7 +104,7 @@
 
                         <il>
                             {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{artist}}</a>
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
                         </il>
                         <br>
 
