@@ -67,7 +67,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.0.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
                     featured
                 </div>
@@ -97,51 +97,58 @@
 
         <div class="row center">
             <div class="content-box">
-                <!--artists -->
-                <div id="compare-title" class="title-text">
-                    <a href = "{% url 'home.views.song_info' %}?q={{ title_one.split|join:'+' }}" > {{ title_one }}</a> 
-                    vs. 
-                    <a href = "{% url 'home.views.song_info' %}?q={{ title_two.split|join:'+' }}" > {{ title_two }}</a> 
-                </div><br /><!--END artists-->
 
-                <!--comparisons-->
-                <table class="center">
-                    <tr>
-                        <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
-                        <td class="col-lg-4">Artist</td>
-                        <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
-                        <td class="col-lg-4">Rating</td>
-                        <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4">{{ duration_one.0|floatformat:"0" }}</td>
-                        <td class="col-lg-4">Duration (s)</td>
-                        <td class="col-lg-4">{{ duration_two.0|floatformat:"0" }}</td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4">{{ dance_one.0|to_percent }}%</td>
-                        <td class="col-lg-4">Danceability</td>
-                        <td class="col-lg-4">{{ dance_two.0|to_percent }}%</td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4">{{ energy_one.0|to_percent }}%</td>
-                        <td class="col-lg-4">Energy</td>
-                        <td class="col-lg-4">{{ energy_two.0|to_percent }}%</td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4">{{ liveness_one.0|to_percent }}%</td>
-                        <td class="col-lg-4">Liveliness</td>
-                        <td class="col-lg-4">{{ liveness_two.0|to_percent }}%</td>
-                    </tr>
-                    <tr>
-                        <td class="col-lg-4">{{ speechiness_one.0|to_percent }}%</td>
-                        <td class="col-lg-4">Speechiness</td>
-                        <td class="col-lg-4">{{ speechiness_two.0|to_percent }}%</td>
-                    </tr>
-                </table><!--END comparisons-->
+                {% if results == True %}
+                    <!--artists -->
+                    <div id="compare-title" class="title-text">
+                        <a href = "{% url 'home.views.song_info' %}?q={{ title_one.split|join:'+' }}" > {{ title_one }}</a> 
+                        vs. 
+                        <a href = "{% url 'home.views.song_info' %}?q={{ title_two.split|join:'+' }}" > {{ title_two }}</a> 
+                    </div><br /><!--END artists-->
+
+                    <!--comparisons-->
+                    <table class="center">
+                        <tr>
+                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
+                            <td class="col-lg-4">Artist</td>
+                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
+                            <td class="col-lg-4">Rating</td>
+                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4">{{ duration_one|floatformat:"0" }}</td>
+                            <td class="col-lg-4">Duration (s)</td>
+                            <td class="col-lg-4">{{ duration_two|floatformat:"0" }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4">{{ dance_one|to_percent }}%</td>
+                            <td class="col-lg-4">Danceability</td>
+                            <td class="col-lg-4">{{ dance_two|to_percent }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4">{{ energy_one|to_percent }}%</td>
+                            <td class="col-lg-4">Energy</td>
+                            <td class="col-lg-4">{{ energy_two|to_percent }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4">{{ liveness_one|to_percent }}%</td>
+                            <td class="col-lg-4">Liveliness</td>
+                            <td class="col-lg-4">{{ liveness_two|to_percent }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="col-lg-4">{{ speechiness_one|to_percent }}%</td>
+                            <td class="col-lg-4">Speechiness</td>
+                            <td class="col-lg-4">{{ speechiness_two|to_percent }}%</td>
+                        </tr>
+                    </table><!--END comparisons-->
+                {% else %}
+                    <div class="subtitle-text ital">
+                        We could not find information on your search.  Try again with a different title.
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div><!--END main-->

@@ -95,63 +95,74 @@
 
         <div class="content-h-separator row"></div>
         
-        <!--song info-->
-        <div class="row center">
-            <div class="content-box">
-                <div class="title-text">
-                    {{ title }} - <span class="uline" title="A representation of how popular an artist or song is.">{{ hot|to_percent }}%</span>
-                </div>
+        {% if results == True %}
+            <!--song info-->
+            <div class="row center">
+                <div class="content-box">
+                    <div class="title-text">
+                        {{ title }} - <span class="uline" title="A representation of how popular an artist or song is.">{{ hot|to_percent }}%</span>
+                    </div>
 
-                <div class="subtitle-text ital"> 
-                    by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
-                </div>
-                <br />
+                    <div class="subtitle-text ital"> 
+                        by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
+                    </div>
+                    <br />
 
-                Duration: {{ duration|floatformat:"0" }} seconds<br />
-                Danceability: {{ dance|to_percent }}%<br />
-                Energy: {{ energy|to_percent }}%<br />
-                Liveliness: {{ liveness|to_percent }}%<br />
-                Speechines: {{ speechiness|to_percent }}%<br />
+                    Duration: {{ duration|floatformat:"0" }} seconds<br />
+                    Danceability: {{ dance|to_percent }}%<br />
+                    Energy: {{ energy|to_percent }}%<br />
+                    Liveliness: {{ liveness|to_percent }}%<br />
+                    Speechines: {{ speechiness|to_percent }}%<br />
+                </div>
+            </div><!--END song-->
+
+            <div class="content-h-separator row"></div>
+
+            <!--dual columns-->
+            <div class="row center">
+
+                <div class="col-lg-5 content-box double-col">
+                    <div class="subtitle-text">Similar Songs</div>
+                    <ul>
+                    {% if similar_songs %}
+                        {% for s in similar_songs %}
+                            <il>
+                                {{ forloop.counter }}.  
+                                <a href = "{% url 'home.views.song_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
+                            </il>
+                            <br />
+                        {% endfor %}
+                    {% endif %}
+                    </ul>
+                </div><!--END song block-->
+
+                <div class="content-w-separator col-lg-1"></div>
+
+                <div class="col-lg-5 content-box double-col">
+                     <div class="subtitle-text">Similar Artists</div>
+                    <ul>
+                    {% if similar_artists %}
+                        {% for a in similar_artists %}
+                            <il>
+                                {{ forloop.counter }}.  
+                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }}</a>
+                            </il>
+                            <br />
+                        {% endfor %}
+                    {% endif %}
+                    </ul>
+                </div><!--END artist block-->
+            </div><!--END dual columns-->
+
+        {% else %}
+            <div class="row center">
+                <div class="content-box">
+                    <div class="subtitle-text ital">
+                        We could not find information on this song.  Try again with a different title.
+                    </div>
+                </div>
             </div>
-        </div><!--END song-->
-
-        <div class="content-h-separator row"></div>
-
-        <!--dual columns-->
-        <div class="row center">
-
-            <div class="col-lg-5 content-box double-col">
-                <div class="subtitle-text">Similar Songs</div>
-                <ul>
-                {% if similar_songs %}
-                    {% for s in similar_songs %}
-                        <il>
-                            {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.song_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
-                        </il>
-                        <br />
-                    {% endfor %}
-                {% endif %}
-                </ul>
-            </div><!--END song block-->
-
-            <div class="content-w-separator col-lg-1"></div>
-
-            <div class="col-lg-5 content-box double-col">
-                 <div class="subtitle-text">Similar Artists</div>
-                <ul>
-                {% if similar_artists %}
-                    {% for a in similar_artists %}
-                        <il>
-                            {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }}</a>
-                        </il>
-                        <br />
-                    {% endfor %}
-                {% endif %}
-                </ul>
-            </div><!--END artist block-->
-        </div><!--END dual columns-->
+        {% endif %}
     </div><!--END main-->
 
     <!--right column-->

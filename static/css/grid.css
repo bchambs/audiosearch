@@ -1,9 +1,9 @@
 /*9A9A9A*/
 body {
-    background: #9A8477;
+    background: #A1A2A1;
     margin: 0px; 
     padding: 0px; 
-    color: black;
+    color: #d4d6a7;
     font-family: Helvetica;
 }
 
@@ -18,7 +18,7 @@ th {
 
 /*#990033*/
 .content-box {
-    background: #7C9A77;
+    background: #343434;
     padding: 10px;
     height: 100%;
     border-style: solid;
@@ -29,34 +29,44 @@ th {
 .index-box {
     width: 330px;
     padding: 10px;
-    background: #004224;
+    background: #391C1C;
     padding-bottom: 0;
     border-style: solid;
     border-width: 1px;
     border-color: white;
 }
 
+.title-box {
+    width: 1000px;
+    height: 100px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    background: #343434;
+    margin: 0 auto;
+}
+
 #trending-box:hover {
-    background: #3E8400;
+    background: #703838;
 }
 #featured-box:hover {
-    background: #3E8400;
+    background: #703838;
 }
 .compare-about-box:hover {
-    background: #3E8400;
+    background: #703838;
 }
 
 a:link {
-    color:black;
+    color: #ebd063;
 }
 a:visited {
-    color:black;
+    color: #ebd063;
 }
 a:hover {
-    color:black;
+    color: #ebd063;
 }
 a:active {
-    color:black;
+    color: #ebd063;
 }
 
 .container {
@@ -104,16 +114,6 @@ a:active {
     position: absolute;
     top: 20px;
     left: 20px;
-}
-
-.title-box {
-    width: 1000px;
-    height: 100px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-    background: #343535;
-    margin: 0 auto;
 }
 
 .center {
@@ -230,7 +230,7 @@ a:active {
 }
 
 .nav-button {
-    background: #48734F;
+    background: #391C1C;
     width: 196px;
     height: 40px;
     position: relative;
@@ -241,7 +241,7 @@ a:active {
     border-color: white;
 }
 .nav-button:hover {
-    background: #7C9A77;
+    background: #703838;
 }
 /*credit to stackoverflow*/
 .nav-link {

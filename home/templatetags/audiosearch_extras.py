@@ -4,7 +4,10 @@ register = template.Library()
 
 #take float f and conver to percentage
 def to_percent(f):
-    temp = round (f * 100)
-    return int(temp)
+    if type(f) == float:
+        temp = round (f * 100)
+        return int(temp)
+    else:
+        return '???'
 
 register.filter('to_percent',to_percent)
