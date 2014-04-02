@@ -14,3 +14,5 @@ urlpatterns = patterns('',
     url(r'^trending/$', 'home.views.trending'),
     #url(r'^admin/', include(admin.site.urls)),
 )
+
+handler500 = 'home.views.server_error'

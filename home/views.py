@@ -9,6 +9,8 @@ from util import *
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
 #store featured artist as globas to reduce our API call count
+#this is hacky and needs to replaced with a server startup script
+#maybe set this in an EV; that could be terrible I don't know...
 _featured_artist = 'M83'
 _featured_terms = []
 _featured_bio = ''
@@ -22,8 +24,8 @@ def startup():
 
     if not _initialized:
         print
-        print '_________________________________________________________________________________'
-        print 'Initializing featured artist... This should not happen more than once per deploy.'
+        print '_______________________________________________________________________________'
+        print 'Initializing featured artist. This should not happen more than once per deploy.'
         print
         print
 
@@ -259,3 +261,8 @@ def song_info(request):
         context['results'] = False
 
     return render(request, 'song.html', context)
+
+def server_error(request):
+    response = render(request, "500.html")
+    response.status_code = 500
+    return response
