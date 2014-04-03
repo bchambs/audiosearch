@@ -8,7 +8,7 @@ from util import *
 #globals
 config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
 
-#store featured artist as globas to reduce our API call count
+#store featured artist as global to reduce our API call count
 #this is hacky and needs to replaced with a server startup script
 #maybe set this in an EV; that could be terrible I don't know...
 _featured_artist = 'M83'

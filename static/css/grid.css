@@ -74,7 +74,7 @@ a:active {
 }
 
 #index-title-offset {
-    top: 230px;
+    top: 180px;
 }
 
 .content-main-col {
@@ -138,7 +138,7 @@ a:active {
 }
 .search-bar {
     position: absolute;
-    width: 450px ;
+    width: 430px ;
     color:black;
     left: 10px;
     bottom: 10px;

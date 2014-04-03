@@ -20,11 +20,17 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 SECRET_KEY = 'vchh__-$5w79n9h$o0)=5j^FF#5l1o=)m$h(45!!7)l@1ajce7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =  False
+DEBUG =  True
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
+
+ADMINS = (
+    ('Brad', 'bradleydchambers@gmail.com'),
+)
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '127.0.0.1:8888'
     'http://wwww.audiosearch.net',
 ]
 
@@ -51,8 +57,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'home',
-    'home.templatetags.audiosearch_extras'
+    'home',
+    'home.templatetags.audiosearch_extras',
+    'pyechonest',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,10 +105,10 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# STATICFILES_DIRS = (
-#     os.path.join(PROJECT_ROOT, "static"),
-# )
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, "static"),
+)
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
