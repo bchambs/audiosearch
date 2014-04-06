@@ -245,20 +245,21 @@ def song_info(request):
     if s_song_temp:
         temp_artist = artist.search(name=s_song_temp[0].artist_name, sort='hotttnesss-desc', results=1, buckets=['songs'])
 
-    if s_song_temp and temp_artist:
+    #if s_song_temp and temp_artist:
+    if s_song_temp:
         s_song = s_song_temp[0]
         context['results'] = True
 
-        if temp_artist[0].similar:
-            similar_artists = temp_artist[0].similar[:10]
+        #if temp_artist[0].similar:
+        #    similar_artists = temp_artist[0].similar[:10]
 
-        similar_songs = get_similar_songs(similar_artists)
+        #similar_songs = get_similar_songs(similar_artists)
 
         context['title'] = s_song.title
         context['artist'] = s_song.artist_name
         context['hot'] = s_song.song_hotttnesss
-        context['similar_songs'] = similar_songs
-        context['similar_artists'] = similar_artists
+        #context['similar_songs'] = similar_songs
+        #context['similar_artists'] = similar_artists
 
         #get song facts from audio dict
         context['dance'] = s_song.audio_summary['danceability']
