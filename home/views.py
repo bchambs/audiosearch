@@ -6,7 +6,7 @@ from random import choice
 from util import *
 
 #globals
-config.ECHO_NEST_API_KEY="ULIQ4Q3WGU8MM4W2F"
+config.ECHO_NEST_API_KEY=""
 
 #store featured artist as global to reduce our API call count
 #this is hacky and needs to replaced with a server startup script
@@ -16,17 +16,20 @@ _featured_terms = []
 _featured_bio = ''
 _initialized = False
 
+#store index trending so front page never displays 500
+_index_trending = []
+
 def startup():
     global _initialized
     global _featured_artist
     global _featured_terms
     global _featured_bio
+    global _index_trending
 
     if not _initialized:
         print
-        print '_______________________________________________________________________________'
-        print 'Initializing featured artist. This should not happen more than once per deploy.'
-        print
+        print '_____________________________________________________________________'
+        print 'Initializing index. This should not happen more than once per deploy.'
         print
 
         _initialized = True
@@ -43,14 +46,20 @@ def startup():
         _featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
         _featured_bio = _featured_bio[:197] + '...'
 
+        #populate trending artists for index
+        _index_trending = artist.top_hottt()
+        del _index_trending[10:]
+
 def index(request):
-    trending = artist.top_hottt()
-    del trending[10:]
+    global _index_trending
+    global _featured_bio
+    global _featured_artist
+    global _featured_terms
 
     startup()
 
     context = Context({
-        'trending': trending,
+        'trending': _index_trending,
         'featured_name': _featured_artist,
         'featured_terms': _featured_terms,
         'featured_bio': _featured_bio,
@@ -180,7 +189,7 @@ def artist_info(request):
     context['featured_name']= _featured_artist
 
     #set artist to first in list
-    s_artist_temp = artist.search(name=query)
+    s_artist_temp = artist.search(name=query, results=1, buckets=['biographies', 'hotttnesss', 'images', 'songs', 'terms'])
 
     if s_artist_temp:
         context['results'] = True
@@ -232,23 +241,24 @@ def song_info(request):
 
     s_song_temp = song.search(title=query, sort='song_hotttnesss-desc', results=1)
 
-    if s_song_temp:
-        temp_artist = artist.search(name=s_song_temp[0].artist_name, sort='hotttnesss-desc', results=1)
+    # if s_song_temp:
+    #     temp_artist = artist.search(name=s_song_temp[0].artist_name, sort='hotttnesss-desc', results=1)
 
-    if s_song_temp and temp_artist:
+    # if s_song_temp and temp_artist:
+    if s_song_temp:
         s_song = s_song_temp[0]
         context['results'] = True
 
-        if temp_artist[0].similar:
-            similar_artists = temp_artist[0].similar[:10]
+        # if temp_artist[0].similar:
+        #     similar_artists = temp_artist[0].similar[:10]
 
-        similar_songs = get_similar_songs(similar_artists)
+        # similar_songs = get_similar_songs(similar_artists)
 
         context['title'] = s_song.title
         context['artist'] = s_song.artist_name
         context['hot'] = s_song.song_hotttnesss
-        context['similar_songs'] = similar_songs
-        context['similar_artists'] = similar_artists
+        # context['similar_songs'] = similar_songs
+        # context['similar_artists'] = similar_artists
 
         #get song facts from audio dict
         context['dance'] = s_song.audio_summary['danceability']

@@ -48,7 +48,7 @@
             <div id="trending-box" class="index-box col-lg-3 box">
                 {% for t in trending %}
                     {{ forloop.counter }}.  
-                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t }}</a> <br />
+                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t.name }}</a> <br />
                 {% endfor %}
 
                 <div class="box-footer">
@@ -114,6 +114,12 @@
             </div>
 
         </div><!--END content-->
+
+        <div class="content-h-separator row"></div>
+
+        <div class="content-box">
+            Note: Echo Nest caps my data access rate which will prevent certain pages from displaying information during high load.  I am working to optimize server-side data requests to prevent this downtime.  Certain features have been temporarily disabled.  
+        </div>
     </div><!--END main-->
 
     <!--right column-->
@@ -123,7 +129,6 @@
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/script.js"></script>
 </body>
 
 </html>

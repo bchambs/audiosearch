@@ -123,6 +123,7 @@
 
                 <div class="col-lg-5 content-box double-col">
                     <div class="subtitle-text">Similar Songs</div>
+                    <!--
                     <ul>
                     {% if similar_songs %}
                         {% for s in similar_songs %}
@@ -134,12 +135,15 @@
                         {% endfor %}
                     {% endif %}
                     </ul>
+                    -->
+                    Temporarily disabled.
                 </div><!--END song block-->
 
                 <div class="content-w-separator col-lg-1"></div>
 
                 <div class="col-lg-5 content-box double-col">
                      <div class="subtitle-text">Similar Artists</div>
+                    <!--
                     <ul>
                     {% if similar_artists %}
                         {% for a in similar_artists %}
@@ -151,6 +155,8 @@
                         {% endfor %}
                     {% endif %}
                     </ul>
+                    -->
+                    Temporarily disabled.
                 </div><!--END artist block-->
             </div><!--END dual columns-->
 
@@ -163,6 +169,12 @@
                 </div>
             </div>
         {% endif %}
+
+        <div class="content-h-separator row"></div>
+
+        <div class="content-box">
+            Note: Similar songs and similar artists do not handle high load well.  These throw 500 errors if accessed more than ~8 times per minute.  I am working to optimize this.  
+        </div>
     </div><!--END main-->
 
     <!--right column-->
