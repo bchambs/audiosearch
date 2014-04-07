@@ -99,8 +99,9 @@
         <!--top artist-->
         <div class="row center">
             <div class="content-box">
-
+            
                 <!--images-->
+                <!--
                 {% for i in trending.0.images|slice:":3" %}
                 <div class="trending-image-container" align="right">
                     <a href="{{ i.url }}"><img src="{{ i.url }}" class="trending-image"></a>
@@ -110,19 +111,22 @@
                 <div class="title-text">
                 <!--
                     1. <a href= "{% url 'home.views.artist_info' %}?q={{ trending.0.name.split|join:'+' }}" > {{ trending.0.name }}</a> 
-                    -->
+                    
                     - <span class="uline" title="A representation of how popular an artist or song is.">{{ trending.0.hotttnesss|to_percent }}%</span><br />
+                    -->
                 </div>
 
                 <!--terms-->
                 <div class="subtitle-text">
                     <div class="ital">
+                    <!--
                         {% if trending.0.terms.0 %}
                             {{ trending.0.terms.0.name }}, 
                         {% endif %}
                         {% if trending.1.terms.1 %}
                             {{ trending.1.terms.1.name }}
                         {% endif %} <br /><br />
+                        -->
                     </div>
                 </div><!--END terms-->
                 
@@ -153,8 +157,10 @@
                             {{ forloop.counter }}. 
                             <!--
                             <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist.name }}</a> 
-                            -->
+
                             - <span class="uline" title="A representation of how popular an artist or song is.">{{ artist.hotttnesss|to_percent }}%</span>
+
+                            -->
                         </div>
                     </div>
                 </div>
