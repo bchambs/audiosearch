@@ -77,12 +77,12 @@ def search(request):
     if query:
 
         #search for 35 artists and trim duplicates
-        artists = artist.search(name=query, sort='hotttnesss-desc', results=35)
+        artists = artist.search(name=query, sort='hotttnesss-desc', results=10, buckets=['name'])
         trimmed_artists = remove_duplicate_artists(artists, 10)
         context['artists'] = trimmed_artists
 
         #search for 35 songs and trim duplicates
-        songs = song.search(title=query, sort='song_hotttnesss-desc', results=35)
+        songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
         trimmed_songs = remove_duplicate_songs(songs, 10)
         context['songs'] = trimmed_songs
 
