@@ -60,9 +60,11 @@
 
             <!--featured-block-->
             <div id="featured-box" class="index-box col-lg-3 box">
+            <!--
                 <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
 
                 <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"> {{ featured_name }}
+                -->
                 (
                 {% for t in featured_terms %}
                     {{ t }}
@@ -118,7 +120,7 @@
         <div class="content-h-separator row"></div>
 
         <div class="content-box">
-            Note: Echo Nest caps my data access rate which will prevent certain pages from displaying information during high load.  I am working to optimize server-side data requests to prevent this downtime.  Some features are temporarily disabled.
+            Note: Web crawlers are effectively DDoSing this application.  Echo Nest limits the amount of calls I can make per minute.  I am working to find a solution.  Some features are temporarily disabled.  
         </div>
     </div><!--END main-->
 

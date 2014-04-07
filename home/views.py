@@ -56,7 +56,7 @@ def index(request):
     global _featured_artist
     global _featured_terms
 
-    startup()
+    #startup()
 
     context = Context({
         'trending': _index_trending,
