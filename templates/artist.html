@@ -67,9 +67,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-            <!--
                 <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
-                -->
                 <div class="box-footer">
                     featured
                 </div>
@@ -122,8 +120,7 @@
                         {% endif %}
                     </div>
                     <br />
-                    <!--(Artist biographies will appear here when I develop an algorithm to return meaningful data.)-->
-                    <!--remove this until we have a reliable way to receive acceptable bios-->
+
                     {% if bio %}
                         <div class="indent">
                             {{ bio }}

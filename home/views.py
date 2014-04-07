@@ -56,7 +56,7 @@ def index(request):
     global _featured_artist
     global _featured_terms
 
-    #startup()
+    startup()
 
     context = Context({
         'trending': _index_trending,
@@ -77,7 +77,7 @@ def search(request):
     if query:
 
         #search for 35 artists and trim duplicates
-        artists = artist.search(name=query, sort='hotttnesss-desc', results=10, buckets=['name'])
+        artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
         trimmed_artists = remove_duplicate_artists(artists, 10)
         context['artists'] = trimmed_artists
 

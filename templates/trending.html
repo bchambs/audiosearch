@@ -66,9 +66,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-            <!--
                 <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
-                -->
                 <div class="box-footer">
                     featured
                 </div>
@@ -101,7 +99,6 @@
             <div class="content-box">
             
                 <!--images-->
-                <!--
                 {% for i in trending.0.images|slice:":3" %}
                 <div class="trending-image-container" align="right">
                     <a href="{{ i.url }}"><img src="{{ i.url }}" class="trending-image"></a>
@@ -109,31 +106,26 @@
                 {% endfor %}<!--END images-->
 
                 <div class="title-text">
-                <!--
                     1. <a href= "{% url 'home.views.artist_info' %}?q={{ trending.0.name.split|join:'+' }}" > {{ trending.0.name }}</a> 
                     
                     - <span class="uline" title="A representation of how popular an artist or song is.">{{ trending.0.hotttnesss|to_percent }}%</span><br />
-                    -->
                 </div>
 
                 <!--terms-->
                 <div class="subtitle-text">
                     <div class="ital">
-                    <!--
                         {% if trending.0.terms.0 %}
                             {{ trending.0.terms.0.name }}, 
                         {% endif %}
                         {% if trending.1.terms.1 %}
                             {{ trending.1.terms.1.name }}
                         {% endif %} <br /><br />
-                        -->
                     </div>
                 </div><!--END terms-->
                 
                 <!--songs-->
                 Songs: 
 
-                <!--
                 {% for s in top_songs %}
                     {% if forloop.counter0 == 2 %}
                         <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
@@ -155,12 +147,9 @@
                     <div class="content-box">
                         <div class="subtitle-text">
                             {{ forloop.counter }}. 
-                            <!--
                             <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist.name }}</a> 
 
                             - <span class="uline" title="A representation of how popular an artist or song is.">{{ artist.hotttnesss|to_percent }}%</span>
-
-                            -->
                         </div>
                     </div>
                 </div>

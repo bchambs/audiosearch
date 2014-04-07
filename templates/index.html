@@ -60,11 +60,9 @@
 
             <!--featured-block-->
             <div id="featured-box" class="index-box col-lg-3 box">
-            <!--
                 <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
 
                 <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"> {{ featured_name }}
-                -->
                 (
                 {% for t in featured_terms %}
                     {{ t }}
