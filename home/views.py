@@ -71,6 +71,7 @@ def search(request):
     global _featured_artist
 
     query = request.GET['q']
+    query = query.rstrip()
     context = Context({})
 
     #results is 1 when we have something to display
