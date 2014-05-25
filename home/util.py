@@ -1,5 +1,5 @@
-#bios = list of artist biographies
-#return one with min < len < max
+# bios = list of artist biographies
+# return one with min < len < max
 def get_good_bio(bios, min, max):
     #optimize
     if len(bios[0]['text']) > min and len(bios[0]['text']) < max:
@@ -11,6 +11,13 @@ def get_good_bio(bios, min, max):
                 return (b['text'])
 
         return 'Artist biography is not available.'
+
+# These two functions can easily be combined.
+# Have artist and song objects implement an
+# interface which returns the 'title' (name)
+# or (title) of the object.  Replace the
+# name/title calls with the interface getter.
+# I need to research how interfaces in python.
 
 #remove duplicates from list and return len = n
 #returns n = len(inc_list) if len < n
@@ -28,8 +35,8 @@ def remove_duplicate_artists(inc_list, n):
 
     return trunc_list
 
-#remove duplicates from list and return len = n
-#returns n = len(inc_list) if len < n
+# remove duplicates from list and return len = n
+# returns n = len(inc_list) if len < n
 def remove_duplicate_songs(inc_list, n):
     trunc_list = []
     temp = []
@@ -44,7 +51,7 @@ def remove_duplicate_songs(inc_list, n):
 
     return trunc_list
 
-#take a list of five artists, return a list containing the two most popular songs per artist
+# take a list of five artists, return a list containing the two most popular songs per artist
 def get_similar_songs(inc_list):
     similar_songs = []
     temp = []
