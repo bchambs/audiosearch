@@ -1,0 +1,17 @@
+This details project updates starting from 5/25/2014:
+
+5/25/2014
+
+- Replace the 'temp' list in remove_duplicate_artists and 
+remove_duplicate_songs with a dictionary.  This slightly increases 
+performance as object look up is now constant instead of O(len(temp)).
+
+- Replace the 'temp' list in get_similar_songs with a dictionary (see above).
+
+- Combine remove_duplicate_artists and remove_duplicate_songs into 
+remove_duplicates.
+
+- Fixed out of bounds exception when finding similar songs (queried artists 
+did not have enough songs).
+
+-Fixed forward reference error when displaying artists without similar artists.

@@ -5,20 +5,23 @@ from pyechonest import config, artist, song, track
 from random import choice
 from util import *
 
-#globals
+# globals
 config.ECHO_NEST_API_KEY=''
 
-#store featured artist as global to reduce our API call count
-#this is hacky and needs to replaced with a server startup script
-#maybe set this in an EV; that could be terrible I don't know...
+# store featured artist as global to reduce our API call count
+# this is hacky and needs to replaced.  
 _featured_artist = 'M83'
 _featured_terms = []
 _featured_bio = ''
 _initialized = False
 
-#store index trending so front page never displays 500
+# store index trending so front page never displays 500
 _index_trending = []
 
+# consider delegating this data population to a script which 
+# is scheduled to run at X rate (hourly?).  save results to
+# a file, and have an update function run to populate the index dictionary
+# ! -> is I/O on the index worth it?
 def startup():
     global _initialized
     global _featured_artist
@@ -36,17 +39,17 @@ def startup():
         featured_artist = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
         _featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
 
-        #ensure we have 2 terms
-        #needs error checking, what if artist does not have terms?
+        # ensure we have 2 terms
+        # needs error checking, what if artist does not have terms?
         _featured_terms.append(featured_artist.terms[0]['name'])
         _featured_terms[0] += ', '
         _featured_terms.append(featured_artist.terms[1]['name'])
 
-        #get displayable bio
+        # get displayable bio
         _featured_bio = get_good_bio (featured_artist.biographies, 200, 9999)
         _featured_bio = _featured_bio[:197] + '...'
 
-        #populate trending artists for index
+        # populate trending artists for index
         _index_trending = artist.top_hottt()
         del _index_trending[10:]
 
@@ -78,13 +81,15 @@ def search(request):
     if query:
 
         #search for 35 artists and trim duplicates
-        artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
-        trimmed_artists = remove_duplicate_artists(artists, 10)
+        artists = artist.search(name=query, sort='hotttnesss-desc', results=35)
+        #trimmed_artists = remove_duplicate_artists(artists, 10)
+        trimmed_artists = remove_duplicates(artists, 10)
         context['artists'] = trimmed_artists
 
         #search for 35 songs and trim duplicates
-        songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
-        trimmed_songs = remove_duplicate_songs(songs, 10)
+        songs = song.search(title=query, sort='song_hotttnesss-desc', results=35)
+        #trimmed_songs = remove_duplicate_songs(songs, 10)
+        trimmed_songs = remove_duplicates (songs, 10)
         context['songs'] = trimmed_songs
 
         if artists or songs:
@@ -171,7 +176,8 @@ def trending(request):
 
     trending = artist.search(sort='hotttnesss-desc', results=10, buckets=['hotttnesss', 'images', 'songs', 'terms'])
 
-    top_songs = remove_duplicate_songs (trending[0].songs, 3)
+    #top_songs = remove_duplicate_songs (trending[0].songs, 10)
+    top_songs = remove_duplicates (trending[0].songs, 10)
 
     context = Context({
         "top_songs": top_songs,
@@ -214,7 +220,8 @@ def artist_info(request):
             context['twitter']= s_artist.get_twitter_id
 
         if s_artist.similar:
-            context['artists']= remove_duplicate_artists(s_artist.similar, 10)
+            #context['artists']= remove_duplicate_artists(s_artist.similar, 10)
+            context['artists']= remove_duplicates(s_artist.similar, 10)
 
         if s_artist.biographies:
             bios = s_artist.get_biographies(results=20)
@@ -224,7 +231,8 @@ def artist_info(request):
 
         context['name']= s_artist.name
         context['hot']= s_artist.hotttnesss
-        context['songs']= remove_duplicate_songs(s_artist.get_songs(results=50), 10)
+        #context['songs']= remove_duplicate_songs(s_artist.get_songs(results=50), 10)
+        context['songs']= remove_duplicates(s_artist.get_songs(results=50), 10)
 
     else:
         context['results'] = False
@@ -251,14 +259,13 @@ def song_info(request):
 
         if temp_artist[0].similar:
            similar_artists = temp_artist[0].similar[:10]
-
-        similar_songs = get_similar_songs(similar_artists)
+           similar_songs = get_similar_songs(similar_artists)
+           context['similar_songs'] = similar_songs
+           context['similar_artists'] = similar_artists
 
         context['title'] = s_song.title
         context['artist'] = s_song.artist_name
         context['hot'] = s_song.song_hotttnesss
-        context['similar_songs'] = similar_songs
-        context['similar_artists'] = similar_artists
 
         #get song facts from audio dict
         context['dance'] = s_song.audio_summary['danceability']
