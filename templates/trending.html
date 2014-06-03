@@ -38,7 +38,7 @@
 
             <div class="tag-container col-lg-7">
                 <div class="tag-block">
-                    audiosearch is a simple way to find new music.
+                    a simple way to find new music.
                 </div>
             </div>
         </div><!--END header-->
@@ -66,7 +66,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
                     featured
                 </div>
@@ -128,9 +128,9 @@
 
                 {% for s in top_songs %}
                     {% if forloop.counter0 == 2 %}
-                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>
+                        <a href = "{% url 'home.views.song_info' %}?q={{ s.id.split|join:'+' }}" > {{ s }}</a>
                     {% else %}
-                        <a href = "{% url 'home.views.song_info' %}?q={{ s.title.split|join:'+' }}" > {{ s }}</a>, 
+                        <a href = "{% url 'home.views.song_info' %}?q={{ s.id.split|join:'+' }}" > {{ s }}</a>, 
                     {% endif %}
                 {% endfor %}<!--END songs-->
 
@@ -147,7 +147,7 @@
                     <div class="content-box">
                         <div class="subtitle-text">
                             {{ forloop.counter }}. 
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist.name }}</a> 
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.id.split|join:'+' }}" > {{ artist.name }}</a> 
 
                             - <span class="uline" title="A representation of how popular an artist or song is.">{{ artist.hotttnesss|to_percent }}%</span>
                         </div>

@@ -36,7 +36,7 @@
 
             <div class="tag-container col-lg-7">
                 <div class="tag-block">
-                    audiosearch is a simple way to find new music.
+                    a simple way to find new music.
                 </div>
             </div>
         </div><!--END header-->
@@ -64,7 +64,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
                     featured
                 </div>
@@ -98,15 +98,13 @@
                 What is this?
                 </div>
                 <div class="indent">
-                    Audiosearch is a music search engine developed in the Django web framework using the Echo Nest API.  Echo Nest provides the artist and song information.  Audiosearch manages this data and provides a clean interface for finding new music.
-                </div>
-                <br />
-
-                <div class="subtitle-text">
-                    I found a bug / I have a suggestion!
-                </div>
-                <div class="indent">
-                    Send an email to the address listed below.  I welcome all bug reports and criticism.
+                    audiosearch is an open source web application created in the Django web framework. This website acts as an interactive implementation of The Echo Nest's music services. It uses a python wrapper library (pyechnoest) to abstract the restful service calls into python objects.  I created this project for two reasons:
+                    <p />
+                    
+                    1.    I wanted to improve my front-end development.
+                    <p />
+                    2.    I want to host an open project which can be criticized for its visual design as well as its source code structure.
+                    
                 </div>
                 <br />
 
@@ -122,7 +120,7 @@
                 Source code:
                 </div>
                 <div class="indent">
-                    https://github.com/bchambs/audiosearch
+                    <a href="https://github.com/bchambs/audiosearch">https://github.com/bchambs/audiosearch</a>
                 </div>
                 <br />
 

@@ -220,7 +220,7 @@ def compare(request):
     global _featured_artist
 
     context = Context({
-        "featured_name": _featured_artist,
+        "featured": _featured_artist,
     })
 
     return render(request, 'compare.html', context)
@@ -232,45 +232,55 @@ def compare_results(request):
     global _featured_artist
 
     query = request.GET['q']
-    query_2 = request.GET['q2']
+    query2 = request.GET['q2']
     context = Context({})
 
-    context['featured_name'] = _featured_artist,
+    context['featured'] = _featured_artist,
 
-    #fill context with song 1 and song 2 data
-    if query and query_2:
-        song_one_temp = song.search(title=query, sort='song_hotttnesss-desc', results=1)
-        song_two_temp = song.search(title=query_2, sort='song_hotttnesss-desc', results=1)
+    if query and query2:
+        # search for songs, find their id, create song objects if they exist
+        song_one = song.search(title=query, sort='song_hotttnesss-desc', results=1)
+        song_two = song.search(title=query2, sort='song_hotttnesss-desc', results=1)
+        one = None
+        two = None
 
-        #see if each song has info, if not redirect to compare
-        if song_one_temp and song_two_temp:
-            song_one = song_one_temp[0]
-            song_two = song_two_temp[0]
+        if song_one:
+            one = song.Song (song_one[0].id, buckets=['song_hotttnesss', 'audio_summary'])
 
-            context['results'] = True
+        if song_two:
+            two = song.Song (song_two[0].id, buckets=['song_hotttnesss', 'audio_summary'])
 
-            context['title_one'] = song_one.title
-            context['artist_one'] = song_one.artist_name
-            context['hot_one'] = song_one.song_hotttnesss
-            context['dance_one'] = song_one.audio_summary['danceability']
-            context['duration_one'] = song_one.audio_summary['duration']
-            context['energy_one'] = song_one.audio_summary['energy']
-            context['liveness_one'] = song_one.audio_summary['liveness']
-            context['speechiness_one'] = song_one.audio_summary['speechiness']
+        # if both songs exist, populate context
+        if one and two:
+            context['display'] = True
 
-            song_two = song.search(title=query_2, sort='song_hotttnesss-desc', results=1)[0]
-            context['title_two'] = song_two.title
-            context['artist_two'] = song_two.artist_name
-            context['hot_two'] = song_two.song_hotttnesss
-            context['dance_two'] = song_two.audio_summary['danceability']
-            context['duration_two'] = song_two.audio_summary['duration']
-            context['energy_two'] = song_two.audio_summary['energy']
-            context['liveness_two'] = song_two.audio_summary['liveness']
-            context['speechiness_two'] = song_two.audio_summary['speechiness']
+            # one
+            context['one_title'] = one.title
+            context['one_artist'] = one.artist_name
+            context['one_id'] = one.id
+            context['one_artist_id'] = one.artist_id
+            context['one_hot'] = one.song_hotttnesss
+            context['one_dance'] = one.audio_summary['danceability']
+            context['one_duration'] = one.audio_summary['duration']
+            context['one_energy'] = one.audio_summary['energy']
+            context['one_liveness'] = one.audio_summary['liveness']
+            context['one_speechiness'] = one.audio_summary['speechiness']
+
+            # two
+            context['two_title'] = two.title
+            context['two_artist'] = two.artist_name
+            context['two_id'] = two.id
+            context['two_artist_id'] = two.artist_id
+            context['two_hot'] = two.song_hotttnesss
+            context['two_dance'] = two.audio_summary['danceability']
+            context['two_duration'] = two.audio_summary['duration']
+            context['two_energy'] = two.audio_summary['energy']
+            context['two_liveness'] = two.audio_summary['liveness']
+            context['two_speechiness'] = two.audio_summary['speechiness']
 
             return render(request, 'compare-results.html', context)
         else:
-            context['results'] = False
+            context['display'] = False
 
         return render(request, 'compare-results.html', context)
 
@@ -284,7 +294,7 @@ def about(request):
     global _featured_artist
 
     context = Context({
-        "featured_name": _featured_artist,
+        "featured": _featured_artist,
     })
 
     return render (request, 'about.html', context)
@@ -295,16 +305,22 @@ def about(request):
 def trending(request):
     global _featured_artist
 
+    context = Context({})
     trending = artist.search(sort='hotttnesss-desc', results=10, buckets=['hotttnesss', 'images', 'songs', 'terms'])
 
-    #top_songs = remove_duplicate_songs (trending[0].songs, 10)
-    top_songs = remove_duplicates (trending[0].songs, 10)
+    #REMOVE DUPLICATES
 
-    context = Context({
-        "top_songs": top_songs,
-        "trending": trending,
-        "featured_name": _featured_artist,
-    })
+    if trending:
+        if len (trending[0].songs) < 3:
+            top_count = len (trending[0].songs)
+        else:
+            top_count = 3
+
+        top_songs = trending[0].songs[0:3]
+
+        context['top_songs'] = top_songs
+        context['trending'] = trending
+        context['featured'] = _featured_artist
 
     return render (request, 'trending.html', context)
 
@@ -325,5 +341,10 @@ def server_error(request):
 # 1. is it better to pass song / artist objects to context dict, or define every field is a key / value pair?
 #   :succinct back-end code vs abstraction.  abstraction is probably faster (?)
 # 2. decide what fields need null checking for song / artist
-# 3. make remove_duplicatse check artist_id (?)
+# 3. make remove_duplicates check artist_id (?), add to trending / song / artist / result pages
 # 4. fix featured artist not using id
+# 5. make qstrings prettier (?)
+# 6. fix stretched images
+# 7. have failed compare redirect to /compare/ with the footer
+# 8. remake trending template
+# 9. more null checks (?)

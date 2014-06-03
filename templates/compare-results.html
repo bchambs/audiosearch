@@ -39,7 +39,7 @@
 
             <div class="tag-container col-lg-7">
                 <div class="tag-block">
-                    audiosearch is a simple way to find new music.
+                    a simple way to find new music.
                 </div>
             </div>
         </div><!--END header-->
@@ -67,7 +67,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.0.split|join:'+' }}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured.0.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
                     featured
                 </div>
@@ -98,50 +98,50 @@
         <div class="row center">
             <div class="content-box">
 
-                {% if results == True %}
+                {% if display == True %}
                     <!--artists -->
                     <div id="compare-title" class="title-text">
-                        <a href = "{% url 'home.views.song_info' %}?q={{ title_one.split|join:'+' }}" > {{ title_one }}</a> 
+                        <a href = "{% url 'home.views.song_info' %}?q={{ one_id.split|join:'+' }}" > {{ one_title }}</a> 
                         vs. 
-                        <a href = "{% url 'home.views.song_info' %}?q={{ title_two.split|join:'+' }}" > {{ title_two }}</a> 
+                        <a href = "{% url 'home.views.song_info' %}?q={{ two_id.split|join:'+' }}" > {{ two_title }}</a> 
                     </div><br /><!--END artists-->
 
                     <!--comparisons-->
                     <table class="center">
                         <tr>
-                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_one.split|join:'+' }}" > {{ artist_one }}</a></td>
+                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ one_artist_id.split|join:'+' }}" > {{ one_artist }}</a></td>
                             <td class="col-lg-4">Artist</td>
-                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ artist_two.split|join:'+' }}" > {{ artist_two }}</a></td>
+                            <td class="col-lg-4"><a href = "{% url 'home.views.artist_info' %}?q={{ two_artist_id.split|join:'+' }}" > {{ two_artist }}</a></td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
+                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ one_hot|to_percent }}%</span><br /></td>
                             <td class="col-lg-4">Rating</td>
-                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ hot_two|to_percent }}%</span><br /></td>
+                            <td class="col-lg-4"><span class="uline" title="A representation of how popular an artist or song is.">{{ two_hot|to_percent }}%</span><br /></td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4">{{ duration_one|floatformat:"0" }}</td>
+                            <td class="col-lg-4">{{ one_duration|floatformat:"0" }}</td>
                             <td class="col-lg-4">Duration (s)</td>
-                            <td class="col-lg-4">{{ duration_two|floatformat:"0" }}</td>
+                            <td class="col-lg-4">{{ two_duration|floatformat:"0" }}</td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4">{{ dance_one|to_percent }}%</td>
+                            <td class="col-lg-4">{{ one_dance|to_percent }}%</td>
                             <td class="col-lg-4">Danceability</td>
-                            <td class="col-lg-4">{{ dance_two|to_percent }}%</td>
+                            <td class="col-lg-4">{{ two_dance|to_percent }}%</td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4">{{ energy_one|to_percent }}%</td>
+                            <td class="col-lg-4">{{ one_energy|to_percent }}%</td>
                             <td class="col-lg-4">Energy</td>
-                            <td class="col-lg-4">{{ energy_two|to_percent }}%</td>
+                            <td class="col-lg-4">{{ two_energy|to_percent }}%</td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4">{{ liveness_one|to_percent }}%</td>
+                            <td class="col-lg-4">{{ one_liveness|to_percent }}%</td>
                             <td class="col-lg-4">Liveliness</td>
-                            <td class="col-lg-4">{{ liveness_two|to_percent }}%</td>
+                            <td class="col-lg-4">{{ two_liveness|to_percent }}%</td>
                         </tr>
                         <tr>
-                            <td class="col-lg-4">{{ speechiness_one|to_percent }}%</td>
+                            <td class="col-lg-4">{{ one_speechiness|to_percent }}%</td>
                             <td class="col-lg-4">Speechiness</td>
-                            <td class="col-lg-4">{{ speechiness_two|to_percent }}%</td>
+                            <td class="col-lg-4">{{ two_speechiness|to_percent }}%</td>
                         </tr>
                     </table><!--END comparisons-->
                 {% else %}
