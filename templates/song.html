@@ -67,7 +67,7 @@
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="nav-button col-lg-2">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
+                <a href="{% url 'home.views.artist_info' %}?q={{ featured.split|join:'+' }}"><span class="nav-link"></span></a>
                 <div class="box-footer">
                     featured
                 </div>
@@ -95,7 +95,7 @@
 
         <div class="content-h-separator row"></div>
         
-        {% if results == True %}
+        {% if display == True %}
             <!--song info-->
             <div class="row center">
                 <div class="content-box">
@@ -126,10 +126,7 @@
                     <ul>
                     {% if similar_songs %}
                         {% for s in similar_songs %}
-                            <il>
-                                {{ forloop.counter }}.  
-                                <a href = "{% url 'home.views.song_info' %}?q={{ s.split|join:'+' }}" > {{ s }}</a>
-                            </il>
+                            <li><a href = "{% url 'home.views.song_info' %}?q={{ s.id.split|join:'+' }}" > {{ s }}</a></li>
                             <br />
                         {% endfor %}
                     {% endif %}
@@ -143,10 +140,8 @@
                     <ul>
                     {% if similar_artists %}
                         {% for a in similar_artists %}
-                            <il>
                                 {{ forloop.counter }}.  
-                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.name.split|join:'+' }}" > {{ a }}</a>
-                            </il>
+                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.id.name.split|join:'+' }}" > {{ a }}</a>
                             <br />
                         {% endfor %}
                     {% endif %}

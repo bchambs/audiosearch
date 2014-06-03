@@ -1,3 +1,5 @@
+import random
+
 # bios = list of artist biographies
 # return one with min < len < max
 def get_good_bio(bios, min, max):
@@ -11,6 +13,9 @@ def get_good_bio(bios, min, max):
                 return (b['text'])
 
         return 'Artist biography is not available.'
+
+
+
 
 # remove duplicates from list and return len = n
 # returns n = len(inc_list) if len < n
@@ -28,6 +33,9 @@ def remove_duplicates (inc_list, n):
 
     return trunc_list
 
+
+
+
 # remove duplicates from list and return len = n
 # returns n = len(inc_list) if len < n
 # def remove_duplicate_artists(inc_list, n):
@@ -44,21 +52,38 @@ def remove_duplicates (inc_list, n):
 
 #     return trunc_list
 
-# take a list of five artists, return a list containing the two most popular songs per artist
-def get_similar_songs(inc_list):
-    similar_songs = []
-    temp = {}
 
-    for a in inc_list:
-        #boundary check range of song list
-        if len(a.songs) < 2:
+
+
+# artists = top 10 similar artists
+# similar = list containing 10 randomly chosen songs
+#
+# create a list containing three songs from each similar artist
+# note: this assumes best case of each artist having >= 3 songs
+def get_similar_songs(artists):
+    similar = []
+    temp = {}
+    count = 0
+
+    for a in artists:
+
+        # boundary check
+        if len(a.songs) < 3:
             song_range = len(a.songs)
         else:
-            song_range = 2
+            song_range = 3
 
-        for x in range(0,song_range):  
-            if a.songs[x].title.lower() not in temp:
-                temp[a.songs[x].title.lower()] = 1      # make this more legible
-                similar_songs.append(a.songs[x].title)
+        # build dict
+        for x in range(0, song_range):  
+            temp[count] = a.songs[x]
+            count += 1
 
-    return similar_songs[:10]
+    # randomly build return list
+    for x in range(0, 10):
+        key = random.choice (temp.keys())
+        s = temp[key]
+
+        similar.append(s)
+        del temp[key]
+
+    return similar

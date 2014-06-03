@@ -2,16 +2,27 @@ This details project updates starting from 5/25/2014:
 
 5/25/2014
 
-- Replace the 'temp' list in remove_duplicate_artists and 
+1.  Replace the 'temp' list in remove_duplicate_artists and 
 remove_duplicate_songs with a dictionary.  This slightly increases 
 performance as object look up is now constant instead of O(len(temp)).
 
-- Replace the 'temp' list in get_similar_songs with a dictionary (see above).
+2.  Replace the 'temp' list in get_similar_songs with a dictionary (see above).
 
-- Combine remove_duplicate_artists and remove_duplicate_songs into 
+3.  Combine remove_duplicate_artists and remove_duplicate_songs into 
 remove_duplicates.
 
-- Fixed out of bounds exception when finding similar songs (queried artists 
+4.  Fixed out of bounds exception when finding similar songs (queried artists 
 did not have enough songs).
 
--Fixed forward reference error when displaying artists without similar artists.
+5.  Fixed forward reference error when displaying artists without similar artists.
+_____________________________________________________
+
+6/2/2014
+
+1.  Update README for v1.1.
+
+2.  Change song / artist mapping to use id instead of title / name.
+
+3.  Refactor views.py functions to remove magic numbers and make variable names / layout more readable
+
+4.  Refactor 'get_similar_songs' to return more random results.  
