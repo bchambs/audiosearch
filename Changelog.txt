@@ -26,3 +26,5 @@ _____________________________________________________
 3.  Refactor views.py functions to remove magic numbers and make variable names / layout more readable
 
 4.  Refactor 'get_similar_songs' to return more random results.  
+
+5.  Refactor 'remove_duplicates' to test song title and artist id when comparing songs

@@ -96,24 +96,7 @@
         <!--dual columns, print if we have results-->
         {% if display == 1 %}
             <div class="row center">
-                <!--artist block-->
-                <div class="col-lg-5 content-box double-col">
-                     <div class="subtitle-text">Artists</div>
-                    <ul>
-                    {% for artist in artists %}
-
-                        <il>
-                            {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.name.split|join:'+' }}" > {{ artist }}</a>
-                        </il>
-                        <br>
-
-                    {% endfor %}
-                    </ul>
-                </div><!--END artist-->
-
-                <div class="content-w-separator col-lg-1"></div>
-
+    
                 <!--song block-->
                 <div class="col-lg-5 content-box double-col">
                     <div class="subtitle-text">Songs</div>
@@ -129,6 +112,25 @@
                     {% endfor %}
                     </ul>
                 </div><!--END song-->
+
+                <div class="content-w-separator col-lg-1"></div>
+
+                <!--artist block-->
+                <div class="col-lg-5 content-box double-col">
+                     <div class="subtitle-text">Artists</div>
+                    <ul>
+                    {% for artist in artists %}
+
+                        <il>
+                            {{ forloop.counter }}.  
+                            <a href = "{% url 'home.views.artist_info' %}?q={{ artist.id.split|join:'+' }}" > {{ artist }}</a>
+                        </il>
+                        <br>
+
+                    {% endfor %}
+                    </ul>
+                </div><!--END artist-->
+
             </div><!--END dual columns-->
 
         <!--no results-->

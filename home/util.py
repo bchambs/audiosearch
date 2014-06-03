@@ -17,40 +17,27 @@ def get_good_bio(bios, min, max):
 
 
 
-# remove duplicates from list and return len = n
-# returns n = len(inc_list) if len < n
-def remove_duplicates (inc_list, n):
-    trunc_list = []
+# songs = incoming list of songs
+# unique = list of songs without duplicates
+#
+# remove duplicates (based on artist_id) and return list of size n
+# if len (songs) < n, return list of size len (songs)
+def remove_duplicates (songs, n):
+    unique = []
     temp = {}
 
-    for i in inc_list:
-        if str(i).lower() not in temp:
-            temp[str(i).lower()] = 1
-            trunc_list.append(i)
+    for s in songs:
+        t = s.title.lower(), s.artist_id
 
-        if len(trunc_list) == n:
+        if t not in temp:
+            temp[t] = s
+            unique.append(s)
+
+        if len(unique) == n:
             break
 
-    return trunc_list
+    return unique
 
-
-
-
-# remove duplicates from list and return len = n
-# returns n = len(inc_list) if len < n
-# def remove_duplicate_artists(inc_list, n):
-#     trunc_list = []
-#     temp = {}
-
-#     for i in inc_list:
-#         if i.name not in temp:
-#             temp[i.name] = 1
-#             trunc_list.append(i.name)
-
-#         if len(trunc_list) == n:
-#             break
-
-#     return trunc_list
 
 
 

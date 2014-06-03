@@ -95,8 +95,8 @@ def search(request):
         artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
         context['artists'] = artists
 
-        songs = song.search(title=query, sort='song_hotttnesss-desc', results=10)
-        context['songs'] = songs
+        songs = song.search(title=query, sort='song_hotttnesss-desc', results=35)
+        context['songs'] = remove_duplicates(songs, 10)
 
         # print "none found" if false
         if artists or songs:
@@ -131,7 +131,6 @@ def song_info(request):
         a = artist.Artist (s.artist_id, buckets=[])
 
         if a:
-
             sim_artists = a.similar[:10]
             sim_songs = get_similar_songs(sim_artists)
 
@@ -165,7 +164,7 @@ def artist_info(request):
     context = Context({})
     context['featured'] = _featured_artist
 
-    a = artist.Artist (query, buckets=['biographies', 'hotttnesss', 'images', 'songs', 'terms'])
+    a = artist.Artist (query, buckets=['biographies', 'hotttnesss', 'images', 'terms'])
 
     if a:
         context['display'] = True
@@ -188,12 +187,6 @@ def artist_info(request):
             
             context['terms'] = terms
 
-        if a.get_twitter_id:
-            context['twitter'] = a.get_twitter_id
-
-        if a.similar:
-            context['artists'] = a.similar[:10]
-
         if a.biographies:
             bio_min = 200
             bio_max = 3000
@@ -206,7 +199,11 @@ def artist_info(request):
 
         context['name'] = a.name
         context['hot'] = a.hotttnesss
-        context['songs'] = a.songs[:10]
+        context['twitter'] = a.get_twitter_id
+        context['artists'] = a.similar[:10]
+
+        songs = song.search(artist_id=a.id, sort='song_hotttnesss-desc', results=35)
+        context['songs'] = remove_duplicates(songs, 10)
 
     else:
         context['display'] = False
@@ -340,11 +337,10 @@ def server_error(request):
 #
 # 1. is it better to pass song / artist objects to context dict, or define every field is a key / value pair?
 #   :succinct back-end code vs abstraction.  abstraction is probably faster (?)
-# 2. decide what fields need null checking for song / artist
+# 2. done
 # 3. make remove_duplicates check artist_id (?), add to trending / song / artist / result pages
 # 4. fix featured artist not using id
 # 5. make qstrings prettier (?)
 # 6. fix stretched images
 # 7. have failed compare redirect to /compare/ with the footer
 # 8. remake trending template
-# 9. more null checks (?)
