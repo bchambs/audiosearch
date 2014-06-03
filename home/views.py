@@ -40,19 +40,21 @@ def startup():
         bio_max = 3000
 
         featured = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-        _featured_bio = get_good_bio (featured_artist.biographies, bio_min, bio_max)
+        _featured_bio = get_good_bio (featured.biographies, bio_min, bio_max)
 
         # get terms
-        if len(featured_artist.terms) > 1:
+        if len(featured.terms) > 2:
             _featured_terms.append(featured.terms[0]['name'])
-        if len(featured_artist.terms) > 2:
             _featured_terms[0] += ', '
             _featured_terms.append(featured.terms[1]['name'])
+
+        elif len(featured.terms) > 1:
+            _featured_terms.append(featured.terms[0]['name'])
         else:
             _featured_terms.append ('Unknown')
 
         # get displayable bio
-        _featured_bio = get_good_bio (featured_artist.biographies, bio_min, bio_max)
+        _featured_bio = get_good_bio (featured.biographies, bio_min, bio_max)
         _featured_bio = _featured_bio[:bio_min] + '...'
 
         # populate trending artists
@@ -129,14 +131,16 @@ def song_info(request):
         a = artist.Artist (s.artist_id, buckets=[])
 
         if a:
-           sim_artists = a.similar[:10]
-           sim_songs = get_similar_songs(sim_artists)
 
-           context['similar_artists'] = sim_artists
-           context['similar_songs'] = sim_songs[:10]
+            sim_artists = a.similar[:10]
+            sim_songs = get_similar_songs(sim_artists)
+
+            context['similar_artists'] = sim_artists
+            context['similar_songs'] = sim_songs[:10]
 
         context['title'] = s.title
         context['artist'] = s.artist_name
+        context['artist_id'] = s.artist_id
         context['hot'] = s.song_hotttnesss
 
         #get facts from audio dict
@@ -159,50 +163,53 @@ def artist_info(request):
 
     query = request.GET['q']
     context = Context({})
-    context['featured_name']= _featured_artist
+    context['featured'] = _featured_artist
 
-    #set artist to first in list
-    s_artist_temp = artist.search(name=query, results=1, buckets=['biographies', 'hotttnesss', 'images', 'songs', 'terms'])
+    a = artist.Artist (query, buckets=['biographies', 'hotttnesss', 'images', 'songs', 'terms'])
 
-    if s_artist_temp:
-        context['results'] = True
-        s_artist = s_artist_temp[0]
+    if a:
+        context['display'] = True
 
-        #see if artist data exists, add to dict if true
-        if s_artist.images:
-            context['image']= choice(s_artist.images)['url']
+        if a.images:
+            context['image'] = choice(a.images)['url']
 
-        if s_artist.terms:
+        if a.terms:
             terms = []
-            if len(s_artist.terms) > 1:
-                terms.append(s_artist.terms[0]['name'])
+
+            if len(a.terms) > 2:
+                terms.append(a.terms[0]['name'])
                 terms[0] += ", "
-                terms.append(s_artist.terms[1]['name'])
+                terms.append(a.terms[1]['name'])
+
+            elif len(a.terms) > 1:
+                terms.append(a.terms[0]['name'])
             else:
-                terms.append(s_artist.terms[0]['name'])
+                terms.append("Unknown")
             
-            context['terms']= terms
+            context['terms'] = terms
 
-        if s_artist.get_twitter_id:
-            context['twitter']= s_artist.get_twitter_id
+        if a.get_twitter_id:
+            context['twitter'] = a.get_twitter_id
 
-        if s_artist.similar:
-            #context['artists']= remove_duplicate_artists(s_artist.similar, 10)
-            context['artists']= remove_duplicates(s_artist.similar, 10)
+        if a.similar:
+            context['artists'] = a.similar[:10]
 
-        if s_artist.biographies:
-            bios = s_artist.get_biographies(results=20)
-            good_bio = get_good_bio(bios, 150, 9999)
-            good_bio = good_bio[:350] + '...'
+        if a.biographies:
+            bio_min = 200
+            bio_max = 3000
+            bio_len = 500
+            bios = a.get_biographies(results=20)
+
+            good_bio = get_good_bio(bios, bio_min, bio_max)
+            good_bio = good_bio[:bio_len] + '...'
             context['bio'] = good_bio
 
-        context['name']= s_artist.name
-        context['hot']= s_artist.hotttnesss
-        #context['songs']= remove_duplicate_songs(s_artist.get_songs(results=50), 10)
-        context['songs']= remove_duplicates(s_artist.get_songs(results=50), 10)
+        context['name'] = a.name
+        context['hot'] = a.hotttnesss
+        context['songs'] = a.songs[:10]
 
     else:
-        context['results'] = False
+        context['display'] = False
 
     return render(request, 'artist.html', context)
 
@@ -308,3 +315,15 @@ def server_error(request):
     response = render(request, "500.html")
     response.status_code = 500
     return response
+
+
+
+######
+#NOTES
+######
+#
+# 1. is it better to pass song / artist objects to context dict, or define every field is a key / value pair?
+#   :succinct back-end code vs abstraction.  abstraction is probably faster (?)
+# 2. decide what fields need null checking for song / artist
+# 3. make remove_duplicatse check artist_id (?)
+# 4. fix featured artist not using id

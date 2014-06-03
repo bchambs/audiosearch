@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="subtitle-text ital"> 
-                        by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist.split|join:'+' }}" > {{ artist }}</a>
+                        by  <a href = "{% url 'home.views.artist_info' %}?q={{ artist_id.split|join:'+' }}" > {{ artist }}</a>
                     </div>
                     <br />
 
@@ -123,29 +123,33 @@
 
                 <div class="col-lg-5 content-box double-col">
                     <div class="subtitle-text">Similar Songs</div>
-                    <ul>
+                    
                     {% if similar_songs %}
+                    <ul>
                         {% for s in similar_songs %}
                             <li><a href = "{% url 'home.views.song_info' %}?q={{ s.id.split|join:'+' }}" > {{ s }}</a></li>
                             <br />
                         {% endfor %}
-                    {% endif %}
                     </ul>
+                    {% endif %}
+                    
                 </div><!--END song block-->
 
                 <div class="content-w-separator col-lg-1"></div>
 
                 <div class="col-lg-5 content-box double-col">
                      <div class="subtitle-text">Similar Artists</div>
-                    <ul>
+                    
                     {% if similar_artists %}
+                    <ul>
                         {% for a in similar_artists %}
                                 {{ forloop.counter }}.  
-                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.id.name.split|join:'+' }}" > {{ a }}</a>
+                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.id.split|join:'+' }}" > {{ a }}</a>
                             <br />
                         {% endfor %}
-                    {% endif %}
                     </ul>
+                    {% endif %}
+                    
                 </div><!--END artist block-->
             </div><!--END dual columns-->
 
@@ -163,7 +167,7 @@
 
         <div class="row center">
             <div class="content-box">
-                Note: The song information pages consume many Echo Nest calls.  I am working to optimize this.
+                Note: (nothing for now).
             </div>
         </div>
     </div><!--END main-->
