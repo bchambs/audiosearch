@@ -28,3 +28,7 @@ _____________________________________________________
 4.  Refactor 'get_similar_songs' to return more random results.  
 
 5.  Refactor 'remove_duplicates' to test song title and artist id when comparing songs
+
+6.  Refactor 'get_good_bios' to return the wikipedia summary for an artist.  If the wikipedia text is not available a notification is displayed.
+
+7.  Added google analytics script to all pages.
