@@ -134,9 +134,10 @@
                     <br />
 
                     {% if short_bio %}
-                        <div class="indent">
+                        <div id="bio-block" class="indent">
                             {{ short_bio|linebreaks }}
                         </div>
+                        <span id="bio-toggle" title="Expand this biography.">more</span>
                     {% endif %}
             
                     <div class="clear"></div>
@@ -204,6 +205,7 @@
 
     $(document).ready(function() {
         resize_image ({{ image_src }});
+        init_bio({{ lbq|escapejs|qsurround }}, {{ sbq|escapejs|qsurround }});
     });
 
 </script>

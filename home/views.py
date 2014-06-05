@@ -5,6 +5,7 @@ from pyechonest import config, artist, song
 from random import choice
 from util import *
 from django.utils.safestring import mark_safe
+import unicodedata
 
 # globals
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
@@ -189,13 +190,24 @@ def artist_info(request):
             
             context['terms'] = terms
 
+        # this section is inefficient because:
+        # 1. I need to add newlines in order to display the bio properly.
+        # 2. I need a separate bio instance without newlines so I can pass the object to a js function.
+        # 3. I have to escape the above object then surround with quotes with probably has to pass over the entire string at least once.
+        # there does not seem to be an easy way to pass django context values to JS.  JSON might be a solution.
+
         if a.biographies:
-            short = 800;
+            short = 1000;
 
-            bio = get_good_bio(a.biographies)
+            bio = get_good_bio(a.biographies).replace ('\n', '\n\n')
+            bio_js = get_good_bio(a.biographies).replace ('\n', '')
+            
             context['long_bio'] = bio
-            context['short_bio'] = bio[:short] + '...'
+            context['short_bio'] = bio[:short]
 
+            context['lbq'] = bio_js
+            context['sbq'] = bio_js[:short]
+            
         context['name'] = a.name
         context['hot'] = a.hotttnesss
         context['twitter'] = a.get_twitter_id
@@ -336,10 +348,10 @@ def server_error(request):
 #
 # 1. is it better to pass song / artist objects to context dict, or define every field is a key / value pair?
 #   :succinct back-end code vs abstraction.  abstraction is probably faster (?)
-# 2. done
-# 3. make remove_duplicates check artist_id (?), add to trending / song / artist / result pages
+# 2. 
+# 3. 
 # 4. fix featured artist not using id
 # 5. make qstrings prettier (?)
-# 6. fix stretched images
+# 6. 
 # 7. have failed compare redirect to /compare/ with the footer
 # 8. remake trending template

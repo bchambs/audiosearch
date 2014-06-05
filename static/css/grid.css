@@ -268,3 +268,11 @@ a:active {
     border-bottom: 1px white dotted;
     cursor: help;
 }
+
+#bio-toggle {
+    color: #ebd063;
+    cursor: pointer;
+}
+#bio-toggle:hover {
+    text-decoration: underline;
+}

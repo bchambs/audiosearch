@@ -37,3 +37,7 @@ _____________________________________________________
 6/4/2014
 
 1.  Created js function to resize images: function resize_image(url).
+
+2.  Add short and long biography toggle.
+
+3.  Add Django filter: qsurround, to allow the passing of django context dictionary values as parameters to javascript functions.
