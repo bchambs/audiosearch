@@ -2,12 +2,14 @@ from django import template
 
 register = template.Library()
 
-#take float f and conver to percentage
+# f = expected float object
+#
+# take float f and convert to percentage
 def to_percent(f):
     if type(f) == float:
         temp = round (f * 100)
         return int(temp)
     else:
-        return '???'
+        return '???'		# should throw an exception 
 
 register.filter('to_percent',to_percent)

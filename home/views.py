@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect
-from pyechonest import config, artist, song, track
+from pyechonest import config, artist, song
 from random import choice
 from util import *
+from django.utils.safestring import mark_safe
 
 # globals
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
@@ -40,7 +41,6 @@ def startup():
         bio_max = 3000
 
         featured = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-        _featured_bio = get_good_bio (featured.biographies, bio_min, bio_max)
 
         # get terms
         if len(featured.terms) > 2:
@@ -54,7 +54,7 @@ def startup():
             _featured_terms.append ('Unknown')
 
         # get displayable bio
-        _featured_bio = get_good_bio (featured.biographies, bio_min, bio_max)
+        _featured_bio = get_good_bio (featured.biographies)
         _featured_bio = _featured_bio[:bio_min] + '...'
 
         # populate trending artists
@@ -170,14 +170,16 @@ def artist_info(request):
         context['display'] = True
 
         if a.images:
-            context['image'] = choice(a.images)['url']
+            image = choice(a.images)['url']
+            context['image'] = image
+            context['image_src'] = mark_safe("\"" + image + "\"")   # allows us to pass url as a string to js function
 
         if a.terms:
             terms = []
 
             if len(a.terms) > 2:
                 terms.append(a.terms[0]['name'])
-                terms[0] += ", "
+                terms[0] += ", "                    # add this on template (?)
                 terms.append(a.terms[1]['name'])
 
             elif len(a.terms) > 1:
@@ -188,14 +190,11 @@ def artist_info(request):
             context['terms'] = terms
 
         if a.biographies:
-            bio_min = 200
-            bio_max = 3000
-            bio_len = 500
-            bios = a.get_biographies(results=20)
+            short = 800;
 
-            good_bio = get_good_bio(bios, bio_min, bio_max)
-            good_bio = good_bio[:bio_len] + '...'
-            context['bio'] = good_bio
+            bio = get_good_bio(a.biographies)
+            context['long_bio'] = bio
+            context['short_bio'] = bio[:short] + '...'
 
         context['name'] = a.name
         context['hot'] = a.hotttnesss

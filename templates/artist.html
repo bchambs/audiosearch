@@ -113,7 +113,7 @@
             <div class="row center">
                 <div class="content-box">
                     <div class="title-text">
-                        <div id="artist-image-container" align="right"> 
+                        <div id="artist-image-container"> 
                             {% if image %}
                                 <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
                             {% endif %}
@@ -133,9 +133,9 @@
                     </div>
                     <br />
 
-                    {% if bio %}
+                    {% if short_bio %}
                         <div class="indent">
-                            {{ bio }}
+                            {{ short_bio|linebreaks }}
                         </div>
                     {% endif %}
             
@@ -198,6 +198,15 @@
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/jsutils.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        resize_image ({{ image_src }});
+    });
+
+</script>
 </body>
 
 </html>
