@@ -344,13 +344,7 @@ def server_error(request):
 ######
 #NOTES
 ######
-#
-# 1. is it better to pass song / artist objects to context dict, or define every field is a key / value pair?
-#   :succinct back-end code vs abstraction.  abstraction is probably faster (?)
-# 2. 
-# 3. 
-# 4. fix featured artist not using id
+
 # 5. make qstrings prettier (?)
-# 6. 
 # 7. have failed compare redirect to /compare/ with the footer
 # 8. remake trending template

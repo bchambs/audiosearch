@@ -29,7 +29,10 @@
 
 <body>
 
-<div class="container">
+<div class="container"> 
+<div class="row">
+<!--main col-->
+<div class="col-lg-9">
     <!--header block-->
     <div id="title-box" class="row">
 
@@ -50,7 +53,7 @@
     </div><!--END header-->
 
     <!--nav buttons-->
-    <div id="nav-bar" class="row">
+    <div class="row">
         <div class="col-lg-3 no-padding">
             <div class="nav-button grid-space">
                 <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
@@ -86,18 +89,19 @@
         </div>
     </div><!--END nav-->
 
+    <!--content body-->
     <div class="row">
 
         {% if display == True %}
             <!--artist summary-->
-            <div class="col-lg-9 no-padding">
+            <div class="col-lg-9">
             <div class="content-box grid-space">
                 <div class="title-text">
-                    <div id="artist-image-container"> 
+                    <!-- <div id="artist-image-container"> 
                         {% if image %}
                             <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
                         {% endif %}
-                    </div>
+                    </div> -->
 
                     {{ name }} - <span class="uline" title="A representation of how popular an artist or song is.">{{ hot|to_percent }}%</span>
                     
@@ -166,7 +170,7 @@
                     </ul>
                 </div><!--END similar-->
             </div><!--END songs and similar-->
-        </div>
+    </div><!--END content body-->
 
     <!--no info-->
     {% else %}
@@ -176,7 +180,19 @@
             </div>
         </div>
     {% endif %}
-</div>
+</div><!--END main col-->
+
+<!--image col-->
+<div class="col-lg-3">
+    <div id="artist-image-container"> 
+        {% if image %}
+            <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
+        {% endif %}
+    </div>
+</div><!--end image col-->
+
+</div><!--END main row-->
+</div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
@@ -185,7 +201,7 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        resize_image ({{ image|qsurround }});
+        //resize_image ({{ image|qsurround }});
     });
 
 </script>

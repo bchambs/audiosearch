@@ -44,18 +44,9 @@ function resize_image(url) {
 function toggle_bio() {
     'use strict';
 
-    // var short_block = document.getElementById('short-bio-block'),
-    //     long_block = document.getElementById('long-bio-block'),
-    //     link_text = document.getElementById('bio-toggle');
-
     var short_block = document.getElementById('short-bio-block'),
         long_block = document.getElementById('long-bio-block'),
-        link_text = document.getElementById('bio-toggle'),
-        mmm = document.getElementById('content-main-col'),
-        lll = document.getElementById('lefty'),
-        rrr = document.getElementById('righty');
-
-    //alert ("pre: " + lll.offsetWidth  + ": " + mmm.offsetWidth + ": " + rrr.offsetWidth);
+        link_text = document.getElementById('bio-toggle');
 
     if (short_bio) {
         short_block.style.display = 'none';
@@ -71,5 +62,4 @@ function toggle_bio() {
 
         short_bio = !short_bio;
     }
-    //alert ("post: " + lll.offsetWidth  + ": " + mmm.offsetWidth + ": " + rrr.offsetWidth);
 }

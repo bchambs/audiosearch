@@ -17,17 +17,26 @@ th {
     text-align: center;
 }
 
+ul {
+    padding-left: 15px
+}
+
 .row {
-    margin: 0;
+    /*margin: 0;*/
     margin-bottom: 5px;
 }
 
-.no-padding {
-    padding: 0;
+.container {
+    width: 100%;
 }
 
+/*this fixes nav button grid
+/*.no-padding {
+    padding: 0;
+}*/
+
 .grid-space {
-    margin-right: 5px;
+    /*margin-right: 5px;*/
 }
 
 /*#990033*/
@@ -37,7 +46,8 @@ th {
     /*height: 100%;*/
     border-style: solid;
     border-width: 1px;
-    border-color: white;
+    /*border-color: white;*/
+    border-color: black;
 }
 
 .index-box {
@@ -47,7 +57,7 @@ th {
     padding-bottom: 0;
     border-style: solid;
     border-width: 1px;
-    border-color: white;
+    border-color: black;
 }
 
 #title-box {
@@ -55,7 +65,7 @@ th {
     height: 100px;
     border-style: solid;
     border-width: 1px;
-    border-color: white;
+    border-color: black;
     background: #343434;
 }
 
@@ -194,18 +204,22 @@ a:active {
     max-width: 100%;*/
     /*position: absolute;
     right: 10px;*/
-    float: right;
+    /*float: right;*/
 }
 #artist-image {
-    margin-left: 10px;
-    margin-bottom: 10px;
-    /*height: 200px;
+   /* margin-left: 10px;
+    margin-bottom: 10px;*/
+  /*  width:auto;
+    height: 200px;
     width: 200px;
     float:right;
-    overflow: hidden;
+    
     border-style: solid;
     border-width: 1px;
     border-color: white;*/
+    /*overflow: hidden;*/
+    max-width:100%; 
+    max-height:100%;
 }
 
 .trending-image-container {
@@ -251,7 +265,7 @@ a:active {
     /*margin: 0px;*/
     border-style: solid;
     border-width: 1px;
-    border-color: white;
+    border-color: black;
 }
 .nav-button:hover {
     background: #703838;
