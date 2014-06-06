@@ -1,10 +1,11 @@
 /*9A9A9A*/
 body {
     background: #A1A2A1;
-    margin: 0px; 
-    padding: 0px; 
+/*    margin: 0px; 
+    padding: 0px; */
     color: #d4d6a7;
     font-family: Helvetica;
+    overflow: hidden;
 }
 
 table {
@@ -16,11 +17,20 @@ th {
     text-align: center;
 }
 
+.row {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.no-padding {
+    padding: 0;
+}
+
 /*#990033*/
 .content-box {
     background: #343434;
     padding: 10px;
-    height: 100%;
+    /*height: 100%;*/
     border-style: solid;
     border-width: 1px;
     border-color: white;
@@ -36,14 +46,13 @@ th {
     border-color: white;
 }
 
-.title-box {
-    width: 1000px;
+#title-box {
+    /*width: 1000px;*/
     height: 100px;
     border-style: solid;
     border-width: 1px;
     border-color: white;
     background: #343434;
-    margin: 0 auto;
 }
 
 #trending-box:hover {
@@ -69,17 +78,14 @@ a:active {
     color: #ebd063;
 }
 
-.container {
-    height: 100%;
-}
-
 #index-title-offset {
     top: 180px;
 }
 
-.content-main-col {
+#content-main-col {
     position:relative;
-    width: 1000px;
+    /*width: 1000px;*/
+    width: 100%;
     height: 100%;
     margin: 0 auto;
 }
@@ -106,18 +112,14 @@ a:active {
 }
 
 .content-w-separator {
-    width: 5px;
-    padding: 0;
+    /*width: 5px;
+    padding: 0;*/
 }
 
 .title-img-container {
     position: absolute;
     top: 20px;
     left: 20px;
-}
-
-.center {
-    margin: 0 auto;
 }
 
 .tag-container {
@@ -180,10 +182,6 @@ a:active {
     height: 127px;
 }
 
-.double-col {
-    width: 497px;
-}
-
 #artist-image-container{
     /*max-height: 100%;
     max-width: 100%;*/
@@ -236,11 +234,14 @@ a:active {
 
 .nav-button {
     background: #391C1C;
-    width: 196px;
+    /*width: 196px;*/
+    /*width: 100%;*/
     height: 40px;
-    position: relative;
-    bottom: 0;
-    right: 0;
+    /*position: relative;*/
+    /*bottom: 0;
+    right: 0;*/
+    /*margin-right: 5px;*/
+    /*margin: 0px;*/
     border-style: solid;
     border-width: 1px;
     border-color: white;
@@ -277,6 +278,11 @@ a:active {
     text-decoration: underline;
 }
 
-#long-bio-block {
-    display:none;
+#short-bio-block {
+    /*word-wrap: break-word;*/
 }
+#long-bio-block {
+    display: none;
+    /*word-wrap: break-word;*/
+}
+

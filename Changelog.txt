@@ -47,4 +47,4 @@ _____________________________________________________
 
 1.  Complete biography toggle.
 
-
+2.  Update Artist template (grid layout).

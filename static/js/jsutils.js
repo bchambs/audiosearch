@@ -2,27 +2,12 @@
 /*jslint browser: true*/
 /*global $, jQuery, toggle_bio*/
 
-var long_bio_js;
-var short_bio_js;
 var short_bio = true;
 var bio_el = document.getElementById('bio-toggle');
 bio_el.addEventListener('click', function () {
     'use strict';
     toggle_bio();
 });
-
-
-/*
-    lbq = long bio escaped and surrounded by quotes
-    sbq = short bio escaped and surrounded by quotes
-
-    establish bio vars for toggle_bio()
-*/
-function init_bio(lbq, sbq) {
-    'use strict';
-    long_bio_js = lbq;
-    short_bio_js = sbq;
-}
 
 
 
@@ -59,22 +44,32 @@ function resize_image(url) {
 function toggle_bio() {
     'use strict';
 
+    // var short_block = document.getElementById('short-bio-block'),
+    //     long_block = document.getElementById('long-bio-block'),
+    //     link_text = document.getElementById('bio-toggle');
+
     var short_block = document.getElementById('short-bio-block'),
         long_block = document.getElementById('long-bio-block'),
-        link_text = document.getElementById('bio-toggle');
+        link_text = document.getElementById('bio-toggle'),
+        mmm = document.getElementById('content-main-col'),
+        lll = document.getElementById('lefty'),
+        rrr = document.getElementById('righty');
+
+    //alert ("pre: " + lll.offsetWidth  + ": " + mmm.offsetWidth + ": " + rrr.offsetWidth);
 
     if (short_bio) {
         short_block.style.display = 'none';
-        long_block.style.display = 'block';
+        long_block.style.display = 'inline';
         link_text.innerHTML = 'less';
 
         short_bio = !short_bio;
     }
     else {
         long_block.style.display = 'none';
-        short_block.style.display = 'block';
+        short_block.style.display = 'inline';
         link_text.innerHTML = 'more';
 
         short_bio = !short_bio;
     }
+    //alert ("post: " + lll.offsetWidth  + ": " + mmm.offsetWidth + ": " + rrr.offsetWidth);
 }
