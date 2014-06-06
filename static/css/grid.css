@@ -26,6 +26,10 @@ th {
     padding: 0;
 }
 
+.grid-space {
+    margin-right: 5px;
+}
+
 /*#990033*/
 .content-box {
     background: #343434;
@@ -94,8 +98,11 @@ a:active {
 .box-footer {
     position: absolute;
     bottom: -5px;
-    right: 5px;
+    right: 10px;
     font-size: 32px;
+}
+.right-box {
+    right:5px;
 }
 
 .index-w-separator {

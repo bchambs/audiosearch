@@ -51,30 +51,36 @@
 
     <!--nav buttons-->
     <div id="nav-bar" class="row">
-        <div class="col-lg-3 nav-button">
-            <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
-            <div class="box-footer">
-                home
+        <div class="col-lg-3 no-padding">
+            <div class="nav-button grid-space">
+                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    home
+                </div>
             </div>
         </div>
 
-        <div class="col-lg-3 nav-button">
-            <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
-            <div class="box-footer">
-                trending
+        <div class="col-lg-3 no-padding">
+            <div class="nav-button grid-space">
+                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    trending
+                </div>
             </div>
         </div>
 
-        <div class="col-lg-3 nav-button">
-            <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
-            <div class="box-footer">
-                compare
+        <div class="col-lg-3 no-padding">
+            <div class="nav-button grid-space">
+                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
+                <div class="box-footer">
+                    compare
+                </div>
             </div>
         </div>
 
         <div class="col-lg-3 nav-button">
             <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
-            <div class="box-footer">
+            <div class="box-footer right-box">
                 about
             </div>
         </div>
@@ -84,8 +90,8 @@
 
         {% if display == True %}
             <!--artist summary-->
-            <div class="col-lg-8 content-box">
-            
+            <div class="col-lg-9 no-padding">
+            <div class="content-box grid-space">
                 <div class="title-text">
                     <div id="artist-image-container"> 
                         {% if image %}
@@ -121,7 +127,7 @@
                 {% endif %}<!--END bio-->
 
                 <div class="clear"></div>
-                
+                </div>
             </div><!--END artist summary-->
 
             <!--songs and similar-->
