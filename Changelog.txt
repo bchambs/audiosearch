@@ -41,3 +41,10 @@ _____________________________________________________
 2.  Add short and long biography toggle.
 
 3.  Add Django filter: qsurround, to allow the passing of django context dictionary values as parameters to javascript functions.
+_____________________________________________________
+
+6/5/2014
+
+1.  Complete biography toggle.
+
+

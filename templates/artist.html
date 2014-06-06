@@ -133,12 +133,18 @@
                     </div>
                     <br />
 
+                    <!--bio-->
                     {% if short_bio %}
-                        <div id="bio-block" class="indent">
+                        <div id="short-bio-block" class="indent">
                             {{ short_bio|linebreaks }}
                         </div>
+
+                        <div id="long-bio-block" class="indent">
+                            {{ long_bio|linebreaks }}
+                        </div>
+
                         <span id="bio-toggle" title="Expand this biography.">more</span>
-                    {% endif %}
+                    {% endif %}<!--END bio-->
             
                     <div class="clear"></div>
                 </div>  
@@ -148,6 +154,7 @@
 
             <div class="row center">
 
+                <!--songs-->
                 <div class="col-lg-5 content-box double-col">
                     <div class="subtitle-text">Top Songs</div>
                     <ul>
@@ -204,8 +211,7 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        resize_image ({{ image_src }});
-        init_bio({{ lbq|escapejs|qsurround }}, {{ sbq|escapejs|qsurround }});
+        resize_image ({{ image|qsurround }});
     });
 
 </script>

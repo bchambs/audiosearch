@@ -276,3 +276,7 @@ a:active {
 #bio-toggle:hover {
     text-decoration: underline;
 }
+
+#long-bio-block {
+    display:none;
+}

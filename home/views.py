@@ -173,7 +173,6 @@ def artist_info(request):
         if a.images:
             image = choice(a.images)['url']
             context['image'] = image
-            context['image_src'] = mark_safe("\"" + image + "\"")   # allows us to pass url as a string to js function
 
         if a.terms:
             terms = []
@@ -193,7 +192,7 @@ def artist_info(request):
         # this section is inefficient because:
         # 1. I need to add newlines in order to display the bio properly.
         # 2. I need a separate bio instance without newlines so I can pass the object to a js function.
-        # 3. I have to escape the above object then surround with quotes with probably has to pass over the entire string at least once.
+        # 3. I have to escape the above object then surround with quotes which probably has to pass over the entire string at least once.
         # there does not seem to be an easy way to pass django context values to JS.  JSON might be a solution.
 
         if a.biographies:
@@ -205,8 +204,8 @@ def artist_info(request):
             context['long_bio'] = bio
             context['short_bio'] = bio[:short]
 
-            context['lbq'] = bio_js
-            context['sbq'] = bio_js[:short]
+            context['lb_js'] = bio_js
+            context['sb_js'] = bio_js[:short]
             
         context['name'] = a.name
         context['hot'] = a.hotttnesss
