@@ -63,8 +63,6 @@ def startup():
         del _index_trending[10:]
 
 
-
-
 def index(request):
     global _index_trending
     global _featured_bio
@@ -81,8 +79,6 @@ def index(request):
     })
 
     return render(request, 'index.html', context)
-
-
 
 
 def search(request):
@@ -111,8 +107,6 @@ def search(request):
     context['featured'] = _featured_artist
 
     return render(request, 'result.html', context)
-
-
 
 
 def song_info(request):
@@ -156,8 +150,6 @@ def song_info(request):
     return render(request, 'song.html', context)
 
 
-
-
 def artist_info(request):
     global _featured_artist
 
@@ -189,23 +181,12 @@ def artist_info(request):
             
             context['terms'] = terms
 
-        # this section is inefficient because:
-        # 1. I need to add newlines in order to display the bio properly.
-        # 2. I need a separate bio instance without newlines so I can pass the object to a js function.
-        # 3. I have to escape the above object then surround with quotes which probably has to pass over the entire string at least once.
-        # there does not seem to be an easy way to pass django context values to JS.  JSON might be a solution.
-
         if a.biographies:
-            short = 1000;
-
+            short = 1000
             bio = get_good_bio(a.biographies).replace ('\n', '\n\n')
-            bio_js = get_good_bio(a.biographies).replace ('\n', '')
             
             context['long_bio'] = bio
             context['short_bio'] = bio[:short]
-
-            context['lb_js'] = bio_js
-            context['sb_js'] = bio_js[:short]
             
         context['name'] = a.name
         context['hot'] = a.hotttnesss
@@ -221,8 +202,6 @@ def artist_info(request):
     return render(request, 'artist.html', context)
 
 
-
-
 def compare(request):
     global _featured_artist
 
@@ -231,8 +210,6 @@ def compare(request):
     })
 
     return render(request, 'compare.html', context)
-
-
 
 
 def compare_results(request):
@@ -295,18 +272,14 @@ def compare_results(request):
         return HttpResponseRedirect('/compare/')
 
 
-
-
 def about(request):
     global _featured_artist
 
     context = Context({
-        "featured": _featured_artist,
+        "featured": _featured_artist
     })
 
     return render (request, 'about.html', context)
-
-
 
 
 def trending(request):
@@ -315,15 +288,13 @@ def trending(request):
     context = Context({})
     trending = artist.search(sort='hotttnesss-desc', results=10, buckets=['hotttnesss', 'images', 'songs', 'terms'])
 
-    #REMOVE DUPLICATES
-
     if trending:
         if len (trending[0].songs) < 3:
-            top_count = len (trending[0].songs)
+            top_count = len(trending[0].songs)
         else:
             top_count = 3
 
-        top_songs = trending[0].songs[0:3]
+        top_songs = remove_duplicates(trending[0].songs, top_count)
 
         context['top_songs'] = top_songs
         context['trending'] = trending
@@ -332,13 +303,10 @@ def trending(request):
     return render (request, 'trending.html', context)
 
 
-
-
 def server_error(request):
     response = render(request, "500.html")
     response.status_code = 500
     return response
-
 
 
 ######
@@ -348,3 +316,4 @@ def server_error(request):
 # 5. make qstrings prettier (?)
 # 7. have failed compare redirect to /compare/ with the footer
 # 8. remake trending template
+# 9. during redesign: remove 'display' key from /compare-results/.  when one artist is not found, add 'display' key to request object and redirect to /compare/

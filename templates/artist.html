@@ -1,11 +1,10 @@
 ﻿{% load audiosearch_extras %}
+<!-- {% load staticfiles %} -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <!-- need to give credit for the font...-->
-
     <!--Google analytics-->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -22,189 +21,25 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/footer.css" rel="stylesheet">
 
-<title>audiosearch</title>
-
+    <title>audiosearch</title>
 </head>
-
 <body>
 
 <div class="container"> 
-<div class="row">
-<!--main col-->
-<div class="col-lg-9">
-    <!--header block-->
-    <div id="title-box" class="row">
 
-        <!--title block-->
-        <div class="search-container col-lg-5">
-            <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
-
-            <form action="/search/" method="GET">
-                <input class="search-bar" type="text" name="q">
-            </form>
-        </div><!--END title-->
-
-        <div class="tag-container col-lg-7">
-            <div class="tag-block">
-                a simple way to find new music.
-            </div>
-        </div>
-    </div><!--END header-->
-
-    <!--nav buttons-->
-    <div class="row">
-        <div class="col-lg-3 no-padding">
-            <div class="nav-button grid-space">
-                <a href="{% url 'home.views.index' %}"><span class="nav-link"></span></a>
-                <div class="box-footer">
-                    home
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 no-padding">
-            <div class="nav-button grid-space">
-                <a href="{% url 'home.views.trending' %}"><span class="nav-link"></span></a>
-                <div class="box-footer">
-                    trending
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 no-padding">
-            <div class="nav-button grid-space">
-                <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
-                <div class="box-footer">
-                    compare
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 nav-button">
-            <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
-            <div class="box-footer right-box">
-                about
-            </div>
-        </div>
-    </div><!--END nav-->
-
-    <!--content body-->
-    <div class="row">
-
-        {% if display == True %}
-            <!--artist summary-->
-            <div class="col-lg-9">
-            <div class="content-box grid-space">
-                <div class="title-text">
-                    <!-- <div id="artist-image-container"> 
-                        {% if image %}
-                            <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
-                        {% endif %}
-                    </div> -->
-
-                    {{ name }} - <span class="uline" title="A representation of how popular an artist or song is.">{{ hot|to_percent }}%</span>
-                    
-                    {% if twitter %}<br /> @{{ twitter }}{% endif %}
-                    <br />
-                    {% if terms %}
-                        <div class="ital">
-                            {% for t in terms %}
-                                {{ t }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                <br />
-
-                <!--bio-->
-                {% if short_bio %}
-                    <span id="short-bio-block" class="indent">
-                        {{ short_bio|linebreaks }}
-                    </span>
-
-                    <span id="long-bio-block" class="indent">
-                        {{ long_bio|linebreaks }}
-                    </span>    
-                    
-                    <span id="bio-toggle" title="Expand this biography.">more</span>
-                {% endif %}<!--END bio-->
-
-                <div class="clear"></div>
-                </div>
-            </div><!--END artist summary-->
-
-            <!--songs and similar-->
-            <div class="col-lg-3 no-padding pull-right">
-                
-                <!--songs-->
-                <div class="row content-box">
-           
-                    <div class="subtitle-text">Top Songs</div>
-                    <ul>
-                    {% for s in songs %}
-
-                        <il>
-                            {{ forloop.counter }}.  
-                            <a href = "{% url 'home.views.song_info' %}?q={{ s.id.split|join:'+' }}" > {{ s }}</a>
-                        </il>
-                        <br />
-
-                    {% endfor %}
-                    </ul>
-                </div><!--END song block-->
-
-                <!--similar-->
-                <div class="row content-box">
-                    <div class="subtitle-text">Similar Artists</div>
-                    <ul>
-                    {% if artists %}
-                        {% for a in artists %}
-                            <il>
-                                {{ forloop.counter }}.  
-                                <a href = "{% url 'home.views.artist_info' %}?q={{ a.id.split|join:'+' }}" > {{ a }}</a>
-                            </il>
-                            <br />
-                        {% endfor %}
-                    {% endif %}
-                    </ul>
-                </div><!--END similar-->
-            </div><!--END songs and similar-->
-    </div><!--END content body-->
-
-    <!--no info-->
-    {% else %}
-        <div class="content-box">
-            <div class ="subtitle-text ital">
-                We could not find information on this artist.  Try again with a different name.
-            </div>
-        </div>
-    {% endif %}
-</div><!--END main col-->
-
-<!--image col-->
-<div class="col-lg-3">
-    <div id="artist-image-container"> 
-        {% if image %}
-            <a href="{{ image }}"><img src="{{ image }}" id="artist-image"></a>
-        {% endif %}
-    </div>
-</div><!--end image col-->
-
-</div><!--END main row-->
 </div><!--END container-->
+
+<div class="footer navbar-fixed-bottom">
+    <div class="wave-far">
+        
+    </div>
+</div><!--END footer-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/jsutils.js"></script>
-
-<script type="text/javascript">
-
-    $(document).ready(function() {
-        //resize_image ({{ image|qsurround }});
-    });
-
-</script>
+<script src="{{ STATIC_URL }}js/artist-utils.js"></script>
+<script src="{{ STATIC_URL }}js/footer.js"></script>
 </body>
-
 </html>

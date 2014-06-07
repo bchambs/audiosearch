@@ -48,3 +48,8 @@ _____________________________________________________
 1.  Complete biography toggle.
 
 2.  Update Artist template (grid layout).
+_____________________________________________________
+
+6/7/2014
+
+1.  Begin developing v2.0.  I am refactoring current javascript files and remaking grid.css.  

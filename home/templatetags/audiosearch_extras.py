@@ -17,7 +17,6 @@ def to_percent(f):
 register.filter('to_percent',to_percent)
 
 
-
 # s = string
 #
 # surround the string with quotes and mark the object as 'javascript safe'.  this prevents JS from 

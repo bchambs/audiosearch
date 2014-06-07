@@ -1,0 +1,309 @@
+/*9A9A9A*/
+body {
+    background: #A1A2A1;
+/*    margin: 0px; 
+    padding: 0px; */
+    color: #d4d6a7;
+    font-family: Helvetica;
+    overflow: hidden;
+}
+
+table {
+    text-align: center;
+}
+tr, td {
+}
+th {
+    text-align: center;
+}
+
+ul {
+    padding-left: 15px
+}
+
+.row {
+    /*margin: 0;*/
+    margin-bottom: 5px;
+}
+
+.container {
+    width: 100%;
+}
+
+/*this fixes nav button grid
+/*.no-padding {
+    padding: 0;
+}*/
+
+.grid-space {
+    /*margin-right: 5px;*/
+}
+
+/*#990033*/
+.content-box {
+    background: #343434;
+    padding: 10px;
+    /*height: 100%;*/
+    border-style: solid;
+    border-width: 1px;
+    /*border-color: white;*/
+    border-color: black;
+}
+
+.index-box {
+    width: 330px;
+    padding: 10px;
+    background: #391C1C;
+    padding-bottom: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+#title-box {
+    /*width: 1000px;*/
+    height: 100px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    background: #343434;
+}
+
+#trending-box:hover {
+    background: #703838;
+}
+#featured-box:hover {
+    background: #703838;
+}
+.compare-about-box:hover {
+    background: #703838;
+}
+
+a:link {
+    color: #ebd063;
+}
+a:visited {
+    color: #ebd063;
+}
+a:hover {
+    color: #ebd063;
+}
+a:active {
+    color: #ebd063;
+}
+
+#index-title-offset {
+    top: 180px;
+}
+
+#content-main-col {
+    position:relative;
+    /*width: 1000px;*/
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+/*fix margins*/
+.box-footer {
+    position: absolute;
+    bottom: -5px;
+    right: 10px;
+    font-size: 32px;
+}
+.right-box {
+    right:5px;
+}
+
+.index-w-separator {
+    width: 4px;
+    padding: 0;
+}
+
+.content-h-separator {
+    height: 5px;
+}
+
+#half-box-h-separator {
+    height: 5px;
+}
+
+.content-w-separator {
+    /*width: 5px;
+    padding: 0;*/
+}
+
+.title-img-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.tag-container {
+    position: relative;
+    height: 100%;
+}
+
+.tag-block {
+    font-size: 25px;
+    font-style: italic;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.search-container {
+    height: 100%;
+}
+.search-bar {
+    position: absolute;
+    width: 430px ;
+    color:black;
+    left: 10px;
+    bottom: 10px;
+}
+
+.compare-search-bar {
+    color:black;
+    padding: 2px;
+    width: 330px;
+}
+.right {
+    right: 0;
+    float:right;
+}
+#compare-btn-container {
+   bottom: 2px;
+}
+.glyphicon {
+    top: 3px;
+}
+.glyphicon-play {
+    color:black;
+    height: 22px;
+    width: 100px;
+}
+
+#compare-title {
+    text-align: center;
+    width:100%;
+}
+
+#trending-box {
+    height: 260px;
+}
+#featured-box {
+    height: 260px;
+}
+.compare-about-box {
+    height: 127px;
+}
+
+#artist-image-container{
+    /*max-height: 100%;
+    max-width: 100%;*/
+    /*position: absolute;
+    right: 10px;*/
+    /*float: right;*/
+}
+#artist-image {
+   /* margin-left: 10px;
+    margin-bottom: 10px;*/
+  /*  width:auto;
+    height: 200px;
+    width: 200px;
+    float:right;
+    
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;*/
+    /*overflow: hidden;*/
+    max-width:100%; 
+    max-height:100%;
+}
+
+.trending-image-container {
+    max-height: 100%;
+    max-width: 100%;
+}
+.trending-image {
+    height: 100px;
+    width: 100px;
+    float:right;
+    overflow: hidden;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+}
+
+.title-text {
+    font-size: 23px;
+}
+.subtitle-text {
+    font-size: 18px;
+}
+.ital {
+    font-style: italic;
+}
+.indent {
+    text-indent: 25px;
+}
+
+.clear {
+    clear:both;
+}
+
+.nav-button {
+    background: #391C1C;
+    /*width: 196px;*/
+    /*width: 100%;*/
+    height: 40px;
+    /*position: relative;*/
+    /*bottom: 0;
+    right: 0;*/
+    /*margin-right: 5px;*/
+    /*margin: 0px;*/
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}
+.nav-button:hover {
+    background: #703838;
+}
+/*credit to stackoverflow*/
+.nav-link {
+    position:absolute; 
+    width:100%;
+    height:100%;
+    top:0;
+    left: 0;
+
+    /* edit: added z-index */
+    z-index: 1;
+
+    /* edit: fixes overlap error in IE7/8, 
+     make sure you have an empty gif */
+    background-image: url('empty.gif');
+}
+
+.uline {
+    border-bottom: 1px white dotted;
+    cursor: help;
+}
+
+#bio-toggle {
+    color: #ebd063;
+    cursor: pointer;
+}
+#bio-toggle:hover {
+    text-decoration: underline;
+}
+
+#short-bio-block {
+    /*word-wrap: break-word;*/
+}
+#long-bio-block {
+    display: none;
+    /*word-wrap: break-word;*/
+}
+

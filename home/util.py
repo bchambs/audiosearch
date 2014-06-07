@@ -12,10 +12,8 @@ def get_good_bio(bios):
     return 'Artist biography is not available.'
 
 
-
-
 # songs = incoming list of songs
-# unique = list of songs without duplicates
+# n = size of returned list
 #
 # remove duplicates (based on artist_id) and return list of size n
 # if len (songs) < n, return list of size len (songs)
@@ -34,9 +32,6 @@ def remove_duplicates (songs, n):
             break
 
     return unique
-
-
-
 
 
 # artists = top 10 similar artists
