@@ -7,20 +7,21 @@ from random import choice
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
-from django.utils.safestring import mark_safe
 
 from pyechonest import config, artist, song
 from pyechonest.util import EchoNestAPIError
 
 from util import *
-from async_map import AsyncMap
-from event_queue import EventQueue
-from request import Request
+from request import *
+from event_queue import *
+from worker import *
 
+import redis
 
 # globals
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
 event_queue = EventQueue()
+# redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 # store featured artist as global to reduce our API call count
 # this is hacky and needs to replaced.  
@@ -42,6 +43,7 @@ def startup():
     global _featured_terms
     global _featured_bio
     global _index_trending
+    global event_queue
 
     if not _initialized:
         print
@@ -73,6 +75,9 @@ def startup():
         # populate trending artists
         _index_trending = artist.top_hottt()
         del _index_trending[10:]
+        w1 = Worker(event_queue)
+        w1.start()
+        
 
 
 def index(request):
@@ -177,9 +182,6 @@ def artist_info(request):
     query = request.GET['q']
     context = Context({})
 
-    # test=====================================================
-    # thread = threading.Thread(target=defer_request, args=(query,))
-    # thread.start()
     req = Request(query)
     event_queue.enqueue(req)
 

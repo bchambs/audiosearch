@@ -1,5 +1,7 @@
 import time
 
+__all__ = ['Request']
+
 # encapsulate this in case I change what I want displayed
 class Request:
     def __init__(self, artist, song=None):
@@ -19,7 +21,7 @@ class Request:
     def serve(self):
         snooze = 2
 
-        while not self._ready:
+        while not self._request:
             try:
                 _request['_artist'] = artist.Artist(_request['_artid'], limit=True, buckets=['biographies', 'hotttnesss', 'images', 'terms'])
 
