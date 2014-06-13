@@ -1,10 +1,8 @@
 ﻿{% load audiosearch_extras %}
-<!-- {% load staticfiles %} -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!-- need to give credit for the font...-->
     <!--Google analytics-->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -21,25 +19,59 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/footer.css" rel="stylesheet">
 
     <title>audiosearch</title>
 </head>
 <body>
 
-<div class="container"> 
+<div class="container">
+    <div class="nav wrap">
 
-</div><!--END container-->
-
-<div class="footer navbar-fixed-bottom">
-    <div class="wave-far">
-        
     </div>
-</div><!--END footer-->
+
+    <div class="info-title wrap">
+        
+        <div id="title">{{ artist_name }}<br />
+
+        <span id="bio">{{ artist_short_bio }}</span>
+    </div>
+
+    <div class="content wrap">
+        <div class="row">
+            <div class="content-left col-lg-7">
+
+            </div>
+
+            <class="row">
+            <div class="content-right col-lg-5">
+                <div id="id">{{ artist_id }}</div>
+
+                <div id="name">{{ artist_name }}</div>
+
+                <div id="hot">{{ artist_artist_rating }}</div>
+
+                <div id="twitter">{{ artist_twitter }}</div>
+
+                <div id="artists">{{ artist_artists }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer wrap">
+        
+    </div><!--END footer-->
+
+    <!-- <div class="reflection main"></div> -->
+</div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/artist-utils.js"></script>
-<script src="{{ STATIC_URL }}js/footer.js"></script>
+{% if not served %}
+    <script type="text/javascript">
+        var q = fetch_query_string();
+        fetch_request(q);
+    </script>
+{% endif %}
 </body>
 </html>

@@ -61,7 +61,7 @@
             <div id="trending-box" class="index-box col-lg-3 box">
                 {% for t in trending %}
                     {{ forloop.counter }}.  
-                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.name.split|join:'+' }}"> {{ t.name }}</a> <br />
+                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.id.split|join:'+' }}"> {{ t.name }}</a> <br />
                 {% endfor %}
 
                 <div class="box-footer">

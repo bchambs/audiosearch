@@ -13,8 +13,8 @@ urlpatterns = patterns('',
     url(r'^compare/$', 'home.views.compare'),
     url(r'^compare_results/$', 'home.views.compare_results'),
     url(r'^trending/$', 'home.views.trending'),
+    url(r'^ajx/$', 'home.views.obtain_request'),
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
-    #url(r'^admin/', include(admin.site.urls)),
 )
 
 handler500 = 'home.views.server_error'

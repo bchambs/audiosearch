@@ -119,7 +119,7 @@
                 {% endfor %}<!--END images-->
 
                 <div class="title-text">
-                    1. <a href= "{% url 'home.views.artist_info' %}?q={{ trending.0.name.split|join:'+' }}" > {{ trending.0.name }}</a> 
+                    1. <a href= "{% url 'home.views.artist_info' %}?q={{ trending.0.id.split|join:'+' }}" > {{ trending.0.name }}</a> 
                     
                     - <span class="uline" title="A representation of how popular an artist or song is.">{{ trending.0.hotttnesss|to_percent }}%</span><br />
                 </div>

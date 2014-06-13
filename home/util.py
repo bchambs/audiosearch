@@ -1,4 +1,6 @@
-import random
+from random import choice
+
+__all__ = ['get_good_bio', 'remove_duplicates', 'get_similar_songs', 'map_artist_context', 'map_song_context']
 
 # bios = list of artist biographies (dict)
 # return wikipedia bio
@@ -66,3 +68,34 @@ def get_similar_songs(artists):
         del temp[key]
 
     return similar
+
+
+def map_artist_context (artist_, context):
+    context = {}
+    context['artist_id'] = artist_.id
+    context['artist_name'] = artist_.name
+    context['artist_terms'] = artist_.terms
+    context['artist_rating'] = artist_.hotttnesss
+    context['artist_twitter'] = artist_.get_twitter_id
+    context['artist_similar'] = artist_.similar[:10]
+
+    if artist_.images:
+        image = choice(artist_.images)['url']
+        context['artist_image'] = image
+
+    if artist_.biographies:
+        short = 300
+        bio = get_good_bio(artist_.biographies).replace ('\n', '\n\n')
+
+        context['artist_long_bio'] = bio
+        context['artist_short_bio'] = bio[:short]
+
+    # context['served'] = True
+
+def map_song_context(songs, context):
+    pass
+
+    # notes
+    # pyechonest.config.TRACE_API_CALLS = False, If true, API calls will be traced to the console
+    # pyechonest.config.CALL_TIMEOUT = 10, The API call timeout (seconds)
+    # 

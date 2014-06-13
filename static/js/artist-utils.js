@@ -1,43 +1,55 @@
 /* JSLint */
 /*jslint browser: true*/
-/*global $, jQuery, toggle_bio*/
-
-var short_bio = true;
+/*global $, jQuery*/
 
 /*
-    toggle to display short and long artist biography.  update toggle text. 
+    data = async music data from initial request.
+
+    fill the page with request data.
 */
-$('#bio-toggle').on('click', function () {
+function display_results(data) {
     'use strict';
-    if (short_bio) {
-        $('short-bio-block').style.display = 'none';
-        $('long-bio-block').style.display = 'inline';
-        $('bio-toggle').innerHTML = 'less';
 
-        short_bio = !short_bio;
-    } else {
-        $('long-bio-block').style.display = 'none';
-        $('short-bio-block').style.display = 'inline';
-        $('bio-toggle').innerHTML = 'more';
-
-        short_bio = !short_bio;
-    }
-});
+    $.each(data, function (i) {
+        // alert (data[i]);
+    });
+}
 
 
-/* 
-    check width and height for image. if dominate element is too large resize to our limit
+/*
+    id = artist / song id used to query data from Async_Map.
+
+    if user request was not served, run async call to retrieve music data.
 */
-$('#artist-image').load(function () {
+function fetch_request(id) {
     'use strict';
-    var dim_limit = 300;
-    
-    // find dominate dimension and resize if too large
-    if (this.width > this.height) {
-        if (this.width > dim_limit) {
-            this.width = dim_limit;
+
+    $.ajax({
+        url: '/ajx/',
+        data: {'id': id},
+        dataType: 'json',
+        type: 'GET',
+        success: function(data) {
+            display_results(data);
         }
-    } else if (this.height > dim_limit) {
-        this.height = dim_limit;
+    });
+}
+
+/*
+    retrieve query string param 'q'.
+*/
+function fetch_query_string() {
+    'use strict';
+
+    var query = window.location.search.split("="),
+        regex = /^[a-z0-9]+$/i;
+
+    // check for alphanumeric
+    if (query.length === 2) {
+        if (regex.test(query[1])) {
+            return query[1];
+        }
     }
-});
+
+    return '';
+}

@@ -1,14 +1,26 @@
+import unicodedata
+import json
+import threading
+from time import *
+from random import choice
+
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
-from django.http import HttpResponseRedirect
-from pyechonest import config, artist, song
-from random import choice
-from util import *
+from django.http import HttpResponseRedirect, HttpResponse
 from django.utils.safestring import mark_safe
-import unicodedata
+
+from pyechonest import config, artist, song
+from pyechonest.util import EchoNestAPIError
+
+from util import *
+from async_map import AsyncMap
+from event_queue import EventQueue
+from request import Request
+
 
 # globals
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
+event_queue = EventQueue()
 
 # store featured artist as global to reduce our API call count
 # this is hacky and needs to replaced.  
@@ -123,7 +135,7 @@ def song_info(request):
         context['display'] = True
 
         # check and populate similar artists
-        a = artist.Artist (s.artist_id, buckets=[])
+        a = artist.Artist (s.artist_id)
 
         if a:
             sim_artists = a.similar[:10]
@@ -150,56 +162,63 @@ def song_info(request):
     return render(request, 'song.html', context)
 
 
-def artist_info(request):
-    global _featured_artist
 
+
+
+
+
+
+
+
+
+
+
+def artist_info(request):
     query = request.GET['q']
     context = Context({})
-    context['featured'] = _featured_artist
 
-    a = artist.Artist (query, buckets=['biographies', 'hotttnesss', 'images', 'terms'])
+    # test=====================================================
+    # thread = threading.Thread(target=defer_request, args=(query,))
+    # thread.start()
+    req = Request(query)
+    event_queue.enqueue(req)
 
-    if a:
-        context['display'] = True
-
-        if a.images:
-            image = choice(a.images)['url']
-            context['image'] = image
-
-        if a.terms:
-            terms = []
-
-            if len(a.terms) > 2:
-                terms.append(a.terms[0]['name'])
-                terms[0] += ", "                    # add this on template (?)
-                terms.append(a.terms[1]['name'])
-
-            elif len(a.terms) > 1:
-                terms.append(a.terms[0]['name'])
-            else:
-                terms.append("Unknown")
-            
-            context['terms'] = terms
-
-        if a.biographies:
-            short = 1000
-            bio = get_good_bio(a.biographies).replace ('\n', '\n\n')
-            
-            context['long_bio'] = bio
-            context['short_bio'] = bio[:short]
-            
-        context['name'] = a.name
-        context['hot'] = a.hotttnesss
-        context['twitter'] = a.get_twitter_id
-        context['artists'] = a.similar[:10]
-
-        songs = song.search(artist_id=a.id, sort='song_hotttnesss-desc', results=35)
-        context['songs'] = remove_duplicates(songs, 10)
-
-    else:
-        context['display'] = False
+    context['served'] = False
 
     return render(request, 'artist.html', context)
+    # end test=================================================
+
+    # attempt to request echo nest data, catch limit exception
+    try:
+        artist_ = artist.Artist(query, buckets=['biographies', 'hotttnesss', 'images', 'terms'])
+        songs = song.search(artist_id=artist_.id, sort='song_hotttnesss-desc', results=35)
+
+        # pass context as param to avoid combining both dicts
+        map_artist_context(artist_, context)
+        map_song_context(songs, context)
+
+        return render(request, 'artist.html', context)
+
+    # defer the request, return an empty page, then do an async request
+    except EchoNestAPIError:
+        # thread = threading.Thread(target=defer_request, args=(query))
+        # thread.start()
+
+        context['served'] = False
+
+        return render(request, 'artist.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def compare(request):
@@ -302,12 +321,19 @@ def trending(request):
 
     return render (request, 'trending.html', context)
 
-
+# serves 500 pages
 def server_error(request):
     response = render(request, "500.html")
     response.status_code = 500
     return response
 
+# will continuously 
+# def defer_request(query):
+    
+
+def obtain_request(id):
+    data = {}
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 ######
 #NOTES

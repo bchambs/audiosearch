@@ -53,3 +53,8 @@ _____________________________________________________
 6/7/2014
 
 1.  Begin developing v2.0.  I am refactoring current javascript files and remaking grid.css.  
+_____________________________________________________
+
+6/8/2014
+
+1.  Begin refactoring views.py and artist template to use AJAX if the request cannot be serviced (EchoNestAPIexception).

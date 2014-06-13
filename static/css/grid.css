@@ -1,0 +1,66 @@
+html, body {
+    color: white;
+  /*  height: 100%;*/
+    font-family: Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 200%;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #FEF2CD;
+    text-align: center;
+}
+
+.wrap {
+    width: 1186px;
+    margin: 0 auto;
+}
+.nav {
+    height: 50px;
+    background-color: #1C2A3B;
+}
+.info-title {
+    min-height: 100px;
+    background-color: #346B7D;
+    padding-top: 15px;
+    font-size: 43px;
+    /*text-shadow: 1px 1px 3px rgba(0,0,0, .8);*/
+    text-shadow: 1px 1px 3px rgba(255,255,255, .5);
+}
+
+.row {
+    margin: 0;
+}
+.content {
+    height: 600px;
+    background-color: #A7E695;
+}
+.content-left {
+    padding: 0;
+    width: 735px;
+    height: 600px;
+    border-right: 2px solid black;
+    background-color: #A7E695;
+}
+.content-right {
+    padding: 0;
+    width: 451px;
+    height: 600px;
+    background-color: #A7E695;
+}
+
+.footer {
+    background-image: url('../img/wave-far2.svg');
+    background-color: #A7E695;
+    min-height: 95px;
+    max-height: 95px;
+}
+.reflection {
+    margin-bottom: 0px;
+    background-color: rgba(7, 95, 69, 100);
+    box-shadow: 0 -65px 140px #D1FF99;
+}
