@@ -1,4 +1,3 @@
-import unicodedata
 import json
 import threading
 from time import *
@@ -13,15 +12,11 @@ from pyechonest.util import EchoNestAPIError
 
 from util import *
 from request import *
-from event_queue import *
-from worker import *
 
+import tasks
 import redis
 
-# globals
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
-event_queue = EventQueue()
-# redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 # store featured artist as global to reduce our API call count
 # this is hacky and needs to replaced.  
@@ -43,7 +38,6 @@ def startup():
     global _featured_terms
     global _featured_bio
     global _index_trending
-    global event_queue
 
     if not _initialized:
         print
@@ -75,8 +69,6 @@ def startup():
         # populate trending artists
         _index_trending = artist.top_hottt()
         del _index_trending[10:]
-        w1 = Worker(event_queue)
-        w1.start()
         
 
 
@@ -98,92 +90,13 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def search(request):
-    global _featured_artist
-
-    query = request.GET['q']
-    query = query.rstrip()
-    context = Context({})
-
-    if query:
-        artists = artist.search(name=query, sort='hotttnesss-desc', results=10)
-        context['artists'] = artists
-
-        songs = song.search(title=query, sort='song_hotttnesss-desc', results=35)
-        context['songs'] = remove_duplicates(songs, 10)
-
-        # print "none found" if false
-        if artists or songs:
-            context['display'] = True
-        else:
-            context['display'] = False
-
-    else: 
-        context['display'] = False
-
-    context['featured'] = _featured_artist
-
-    return render(request, 'result.html', context)
-
-
-def song_info(request):
-    global _featured_artist
-
-    query = request.GET['q']
-    context = Context({})
-
-    context['featured'] = _featured_artist
-
-    s = song.Song (query, buckets=['song_hotttnesss', 'audio_summary'])
-
-    if s:
-        context['display'] = True
-
-        # check and populate similar artists
-        a = artist.Artist (s.artist_id)
-
-        if a:
-            sim_artists = a.similar[:10]
-            sim_songs = get_similar_songs(sim_artists)
-
-            context['similar_artists'] = sim_artists
-            context['similar_songs'] = sim_songs[:10]
-
-        context['title'] = s.title
-        context['artist'] = s.artist_name
-        context['artist_id'] = s.artist_id
-        context['hot'] = s.song_hotttnesss
-
-        #get facts from audio dict
-        context['dance'] = s.audio_summary['danceability']
-        context['duration'] = s.audio_summary['duration']
-        context['energy'] = s.audio_summary['energy']
-        context['liveness'] = s.audio_summary['liveness']
-        context['speechiness'] = s.audio_summary['speechiness']
-
-    else:
-        context['display'] = False
-
-    return render(request, 'song.html', context)
-
-
-
-
-
-
-
-
-
-
-
-
-
 def artist_info(request):
     query = request.GET['q']
     context = Context({})
 
     req = Request(query)
-    event_queue.enqueue(req)
+
+    tasks.mul.delay(2,4)
 
     context['served'] = False
 
@@ -210,118 +123,6 @@ def artist_info(request):
 
         return render(request, 'artist.html', context)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-def compare(request):
-    global _featured_artist
-
-    context = Context({
-        "featured": _featured_artist,
-    })
-
-    return render(request, 'compare.html', context)
-
-
-def compare_results(request):
-    global _featured_artist
-
-    query = request.GET['q']
-    query2 = request.GET['q2']
-    context = Context({})
-
-    context['featured'] = _featured_artist,
-
-    if query and query2:
-        # search for songs, find their id, create song objects if they exist
-        song_one = song.search(title=query, sort='song_hotttnesss-desc', results=1)
-        song_two = song.search(title=query2, sort='song_hotttnesss-desc', results=1)
-        one = None
-        two = None
-
-        if song_one:
-            one = song.Song (song_one[0].id, buckets=['song_hotttnesss', 'audio_summary'])
-
-        if song_two:
-            two = song.Song (song_two[0].id, buckets=['song_hotttnesss', 'audio_summary'])
-
-        # if both songs exist, populate context
-        if one and two:
-            context['display'] = True
-
-            # one
-            context['one_title'] = one.title
-            context['one_artist'] = one.artist_name
-            context['one_id'] = one.id
-            context['one_artist_id'] = one.artist_id
-            context['one_hot'] = one.song_hotttnesss
-            context['one_dance'] = one.audio_summary['danceability']
-            context['one_duration'] = one.audio_summary['duration']
-            context['one_energy'] = one.audio_summary['energy']
-            context['one_liveness'] = one.audio_summary['liveness']
-            context['one_speechiness'] = one.audio_summary['speechiness']
-
-            # two
-            context['two_title'] = two.title
-            context['two_artist'] = two.artist_name
-            context['two_id'] = two.id
-            context['two_artist_id'] = two.artist_id
-            context['two_hot'] = two.song_hotttnesss
-            context['two_dance'] = two.audio_summary['danceability']
-            context['two_duration'] = two.audio_summary['duration']
-            context['two_energy'] = two.audio_summary['energy']
-            context['two_liveness'] = two.audio_summary['liveness']
-            context['two_speechiness'] = two.audio_summary['speechiness']
-
-            return render(request, 'compare-results.html', context)
-        else:
-            context['display'] = False
-
-        return render(request, 'compare-results.html', context)
-
-    else:
-        return HttpResponseRedirect('/compare/')
-
-
-def about(request):
-    global _featured_artist
-
-    context = Context({
-        "featured": _featured_artist
-    })
-
-    return render (request, 'about.html', context)
-
-
-def trending(request):
-    global _featured_artist
-
-    context = Context({})
-    trending = artist.search(sort='hotttnesss-desc', results=10, buckets=['hotttnesss', 'images', 'songs', 'terms'])
-
-    if trending:
-        if len (trending[0].songs) < 3:
-            top_count = len(trending[0].songs)
-        else:
-            top_count = 3
-
-        top_songs = remove_duplicates(trending[0].songs, top_count)
-
-        context['top_songs'] = top_songs
-        context['trending'] = trending
-        context['featured'] = _featured_artist
-
-    return render (request, 'trending.html', context)
 
 # serves 500 pages
 def server_error(request):

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Django settings for audiosearch project.
 
@@ -43,9 +45,6 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
     'templates'
 )
 
@@ -76,10 +75,6 @@ ROOT_URLCONF = 'audiosearch.urls'
 
 WSGI_APPLICATION = 'audiosearch.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -87,23 +82,15 @@ DATABASES = {
     }
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 STATICFILES_FINDERS = ( 
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 STATICFILES_DIRS = (
@@ -113,3 +100,9 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# celery config
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
