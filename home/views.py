@@ -14,7 +14,6 @@ from util import *
 from request import *
 
 import tasks
-import redis
 
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
 
@@ -90,13 +89,14 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+
 def artist_info(request):
     query = request.GET['q']
     context = Context({})
 
     req = Request(query)
 
-    tasks.mul.delay(2,4)
+    tasks.defer_request.delay()
 
     context['served'] = False
 
@@ -124,6 +124,7 @@ def artist_info(request):
         return render(request, 'artist.html', context)
 
 
+
 # serves 500 pages
 def server_error(request):
     response = render(request, "500.html")
@@ -134,15 +135,7 @@ def server_error(request):
 # def defer_request(query):
     
 
+
 def obtain_request(id):
     data = {}
     return HttpResponse(json.dumps(data), content_type="application/json")
-
-######
-#NOTES
-######
-
-# 5. make qstrings prettier (?)
-# 7. have failed compare redirect to /compare/ with the footer
-# 8. remake trending template
-# 9. during redesign: remove 'display' key from /compare-results/.  when one artist is not found, add 'display' key to request object and redirect to /compare/
