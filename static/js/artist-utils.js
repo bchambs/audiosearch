@@ -10,8 +10,8 @@
 function display_results(data) {
     'use strict';
 
-    $.each(data, function (i) {
-        // alert (data[i]);
+    $.each(data, function (key, value) {
+        alert ('k: ' + key + ', v: ' + value);
     });
 }
 
@@ -26,11 +26,18 @@ function fetch_request(id) {
 
     $.ajax({
         url: '/ajx/',
-        data: {'id': id},
+        data: {'q': id},
         dataType: 'json',
         type: 'GET',
-        success: function(data) {
+        success: function(data, stat, o) {
+            alert('success')
             display_results(data);
+        },
+        error: function(o, stat, er) {
+            alert('fail: + ' + er);
+        },
+        complete: function(o, stat) {
+            // alert('complete: ' + stat);
         }
     });
 }

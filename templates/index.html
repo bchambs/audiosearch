@@ -59,10 +59,7 @@
             
             <!--trending block-->
             <div id="trending-box" class="index-box col-lg-3 box">
-                {% for t in trending %}
-                    {{ forloop.counter }}.  
-                    <a href = "{% url 'home.views.artist_info' %}?q={{ t.id.split|join:'+' }}"> {{ t.name }}</a> <br />
-                {% endfor %}
+
 
                 <div class="box-footer">
                     trending
@@ -71,56 +68,19 @@
 
             <div class="content-w-separator col-lg-1"></div>
 
-            <!--featured-block-->
-            <div id="featured-box" class="index-box col-lg-3 box">
-                <a href="{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"><span class="nav-link"></span></a>
-
-                <a id="featured-artist" class="subtitle-text" href = "{% url 'home.views.artist_info' %}?q={{ featured_name.split|join:'+' }}"> {{ featured_name }}
-                (
-                {% for t in featured_terms %}
-                    {{ t }}
-                {% endfor %}
-                )
-                </a><br />
-
-                {{ featured_bio }}<br />
-
-                <div class="box-footer">
-                    featured
-                </div>
-                
             </div><!--END featured-->
 
             <div class="content-w-separator col-lg-1"></div>
 
             <div class="col-lg-3">
                 <div class="row">
-
-                    <!--compare block-->
-                    <div class="index-box col-lg-11 compare-about-box">
-                        <a href="{% url 'home.views.compare' %}"><span class="nav-link"></span></a>
-
-                        See a side-by-side comparison of the analysis of two songs.<br />
-
-                        <div class="box-footer">
-                            compare
-                        </div>
-                    </div><!--END compare-->
+             
                 </div>
 
                 <div id="half-box-h-separator" class="row"></div>
 
                 <div class="row">
-                    <div class="content-w-separator col-lg-1"></div>
-
-                    <!--about block-->
-                    <div class="index-box col-lg-11  compare-about-box">
-                        <a href="{% url 'home.views.about' %}"><span class="nav-link"></span></a>
-                        Application FAQ, link to source code, and contact information.<br />
-
-                        <div class="box-footer">
-                            about
-                        </div>
+              
                     </div><!--END about-->
                 </div>
 
@@ -131,7 +91,7 @@
 
     <!--right column-->
     <div class="col-lg-1"></div>
-
+       ARH6W4X1187B99274F
 </div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>

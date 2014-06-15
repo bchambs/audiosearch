@@ -15,7 +15,7 @@ from request import *
 
 import tasks
 
-config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
+# config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
 
 # store featured artist as global to reduce our API call count
 # this is hacky and needs to replaced.  
@@ -94,9 +94,9 @@ def artist_info(request):
     query = request.GET['q']
     context = Context({})
 
-    req = Request(query)
+    # req = Request(query)
 
-    tasks.defer_request.delay()
+    tasks.call_API.delay(query)
 
     context['served'] = False
 
@@ -136,6 +136,12 @@ def server_error(request):
     
 
 
-def obtain_request(id):
-    data = {}
-    return HttpResponse(json.dumps(data), content_type="application/json")
+def obtain_request(request):
+    query = request.GET['q']
+    print 'in obtain_request'
+    data = tasks.get_data(query)
+    print 'completed task'
+    print data[0]
+    print data[1]
+
+    return HttpResponse(data[1], content_type="application/json")
