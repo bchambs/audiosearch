@@ -7,7 +7,7 @@ from time import sleep
 import json
 import redis
 
-__all__ = ['add, mul, xsum']
+
 config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
 rc = redis.StrictRedis(host='localhost', port=6379, db=0)
 

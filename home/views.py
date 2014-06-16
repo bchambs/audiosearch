@@ -18,7 +18,6 @@ import tasks
 # config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
 
 # store featured artist as global to reduce our API call count
-# this is hacky and needs to replaced.  
 _featured_artist = 'M83'
 _featured_terms = []
 _featured_bio = ''
@@ -145,3 +144,4 @@ def obtain_request(request):
     print data[1]
 
     return HttpResponse(data[1], content_type="application/json")
+
