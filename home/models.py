@@ -5,62 +5,42 @@ import urllib
 __all__ = ['ENCall']
 
 # Echo Nest call
-# URL = LEAD + VERSION + TYPE + METHOD + '?' + KEY + ...
 class ENCall:
-    LEAD = "http://developer.echonest.com/api/"
-    VERSION = "v4/"
-    CTYPE = ''
-    METHOD = ''
-    KEY = "api_key=QZQG43T7640VIF4FN"
-    FORMAT = "&format=json"
+    LEAD = "http://developer.echonest.com/api"
+    VERSION = "v4"
+    KEY = ("api_key", "QZQG43T7640VIF4FN")
+    FORMAT = ("format", "json")
 
 
-    # constructor will form a url string up to the method (artist or song)
-    # different calls (like get most popular artists / get top artist songs / etc will be created in build(**args)
+    # form url without query string
     def __init__(self, call_type, method):
-        self.METHOD = method
-
-        if call_type is 'artist' :
-            self.CTYPE = "artist/"
-        elif call_type is 'song':
-            self.CTYPE = "song/"
-        else:
-            raise InvalidCallType('Call type must be artist or song.')
+        self.ctype = call_type
+        self.method = method
+        self.path = '/'.join([ENCall.LEAD, ENCall.VERSION, self.ctype, self.method])
 
 
-    # build REST call using buckets
-    # return complete url
+    # return consumable url
+    # elements of url are stored tuples for .join.  we don't need ordered dicts (at this time)
     def build(self, EN_id, params):
-        if not EN_id or not params:
-            raise EmptyQuery('No parameters specified.')
+        param_list = [
+            ENCall.KEY,
+            ENCall.FORMAT,
+            ("id", EN_id)
+        ]
 
-        url = self.LEAD + self.VERSION + self.CTYPE + self.METHOD + "?" + self.KEY + self.FORMAT + "&id=" + EN_id
-        for p in params:
-            url += '&bucket=' + str(p)
+        param_list.extend( [('bucket', p) for p in params] )
+        query = urllib.urlencode(param_list)
 
-        print
-        print url
-        print
+        return '?'.join( (self.path, query) )
 
-        return url
 
     # consume call and return JSON
     @staticmethod
     def consume(url):
-
-
-
-        data = urllib.urlencode(data)
-        data = "&".join([data, params])
-        urllib.quote(string)
-
+        
+        
         return
 
-# expand
-class InvalidCallType(Exception):
-    pass
-class EmptyQuery(Exception):
-    pass
 
 #======================================================================================================
     # http://developer.echonest.com/api/v4/artist/search?api_key=YOUR_API_KEY&format=json&name=radiohead&results=1

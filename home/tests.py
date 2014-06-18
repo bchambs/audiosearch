@@ -3,11 +3,8 @@ from models import ENCall
 import urllib
 from collections import OrderedDict
 
-from pyechonest import config
-config.ECHO_NEST_API_KEY="QZQG43T7640VIF4FN"
-from pyechonest import artist
-
 # various unit tests
+# python manage.py test
 class ENCallTestCase(TestCase):
 
     def setUp(self):
@@ -29,51 +26,21 @@ class ENCallTestCase(TestCase):
 
     def test_constructor(self):
         # artist, profile
-        self.assertEqual(self.arty.LEAD, 'http://developer.echonest.com/api/')
-        self.assertEqual(self.arty.VERSION, 'v4/')
-        self.assertEqual(self.arty.CTYPE, 'artist/')
-        self.assertEqual(self.arty.METHOD, 'profile')
-        self.assertEqual(self.arty.KEY, 'api_key=QZQG43T7640VIF4FN')
-        self.assertEqual(self.arty.FORMAT, '&format=json')
+        self.assertEqual(self.arty.path, "http://developer.echonest.com/api/v4/artist/profile")
 
         # song, profile
-        self.assertEqual(self.song.LEAD, 'http://developer.echonest.com/api/')
-        self.assertEqual(self.song.VERSION, 'v4/')
-        self.assertEqual(self.song.CTYPE, 'song/')
-        self.assertEqual(self.song.METHOD, 'profile')
-        self.assertEqual(self.song.KEY, 'api_key=QZQG43T7640VIF4FN')
-        self.assertEqual(self.song.FORMAT, '&format=json')
+        self.assertEqual(self.song.path, "http://developer.echonest.com/api/v4/song/profile") 
 
-        # song, search
-        self.assertEqual(self.search.LEAD, 'http://developer.echonest.com/api/')
-        self.assertEqual(self.search.VERSION, 'v4/')
-        self.assertEqual(self.search.CTYPE, 'artist/')
-        self.assertEqual(self.search.METHOD, 'search')
-        self.assertEqual(self.search.KEY, 'api_key=QZQG43T7640VIF4FN')
-        self.assertEqual(self.search.FORMAT, '&format=json')
+        # artist, search
+        self.assertEqual(self.search.path, "http://developer.echonest.com/api/v4/artist/search")
 
 
     def test_build(self):
         # artist, standard build
         self.assertEqual(self.arty.build(self.EN_id, self.standard), 'http://developer.echonest.com/api/v4/artist/profile?api_key=QZQG43T7640VIF4FN&format=json&id=ARH6W4X1187B99274F&bucket=biographies&bucket=terms&bucket=hotttnesss&bucket=images&bucket=songs')
 
+        # song, standard build
+        self.assertEqual(self.song.build(self.EN_id, self.standard), 'http://developer.echonest.com/api/v4/song/profile?api_key=QZQG43T7640VIF4FN&format=json&id=ARH6W4X1187B99274F&bucket=biographies&bucket=terms&bucket=hotttnesss&bucket=images&bucket=songs')
 
-    def e(self):
-        d = OrderedDict()
-        d['key'] = 'api_key=QZQG43T7640VIF4FN'
-        d['format'] = '&format=json'
-        d['EN_id'] = '&id=ARH6W4X1187B99274F'
-        
-        d['bucket'] = 'biographies', 'terms'
-        #     'terms',
-        #     'hotttnesss',
-        #     'images',
-        #     'songs'
-        # ]
+    def test_consume(self):
 
-        url =  urllib.urlencode(d)
-        print urllib.unquote(url)
-
-    def f(self):
-        a = artist.Artist(id='ARH6W4X1187B99274F')
-        print a
