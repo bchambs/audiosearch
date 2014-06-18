@@ -2,51 +2,51 @@ import json
 import requests
 import urllib
 
-__all__ = ['ENC']
+__all__ = ['ENCall']
 
-# avoid side effects
-# represent echo nest call (artist and/or song)
-# contains rest API consumption code
-# need a better name
-
-# echo nest call
+# Echo Nest call
 # URL = LEAD + VERSION + TYPE + METHOD + '?' + KEY + ...
-class ENC:
+class ENCall:
     LEAD = "http://developer.echonest.com/api/"
     VERSION = "v4/"
+    CTYPE = ''
+    METHOD = ''
     KEY = "api_key=QZQG43T7640VIF4FN"
-    FORMAT = "&format=json" # request header might handle this
+    FORMAT = "&format=json"
 
-    # constructor will form a url string up to the type (artist or song)
+
+    # constructor will form a url string up to the method (artist or song)
     # different calls (like get most popular artists / get top artist songs / etc will be created in build(**args)
-    def __init__(self, method, artist_id=None, song_id=None):
-        if not artist_id and not song_id:
-            raise EmptyCall('EchoNest calls require an artist or song id.') # place in except msg
+    def __init__(self, call_type, method):
+        self.METHOD = method
 
-        self.METHOD = method + "/"
-
-        if artist_id:
-            self.TYPE = "artist/"
+        if call_type is 'artist' :
+            self.CTYPE = "artist/"
+        elif call_type is 'song':
+            self.CTYPE = "song/"
         else:
-            self.TYPE = "song/"
-
-    # build api url using buckets
-    # def build(self, **kwargs):
-    # do not modify self vars
-    def build(self, params):
-        if not kwargs:
-            raise EmptyQuery('No parameters specified.') # place in except msg
-
-        # self.URL = LEAD + VERSION + TYPE + METHOD + "?" + KEY + FORMAT
-        url = LEAD + VERSION + TYPE + METHOD + "?"
-
-        # parse params dict for invalid keys
+            raise InvalidCallType('Call type must be artist or song.')
 
 
-        return self.url
+    # build REST call using buckets
+    # return complete url
+    def build(self, EN_id, params):
+        if not EN_id or not params:
+            raise EmptyQuery('No parameters specified.')
 
-    # consume call and return JSON (should we catch access limit except here?)
-    def consume(self):
+        url = self.LEAD + self.VERSION + self.CTYPE + self.METHOD + "?" + self.KEY + self.FORMAT + "&id=" + EN_id
+        for p in params:
+            url += '&bucket=' + str(p)
+
+        print
+        print url
+        print
+
+        return url
+
+    # consume call and return JSON
+    @staticmethod
+    def consume(url):
 
 
 
@@ -57,7 +57,7 @@ class ENC:
         return
 
 # expand
-class EmptyCall(Exception):
+class InvalidCallType(Exception):
     pass
 class EmptyQuery(Exception):
     pass

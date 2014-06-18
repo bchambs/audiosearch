@@ -72,23 +72,23 @@ def get_similar_songs(artists):
 
 def map_artist_context (artist_, context):
     context = {}
-    context['artist_id'] = artist_.id
-    context['artist_name'] = artist_.name
-    context['artist_terms'] = artist_.terms
-    context['artist_rating'] = artist_.hotttnesss
+    # context['artist_id'] = artist_.id
+    # context['artist_name'] = artist_.name
+    # context['artist_terms'] = artist_.terms
+    # context['artist_rating'] = artist_.hotttnesss
     context['artist_twitter'] = artist_.get_twitter_id
     context['artist_similar'] = artist_.similar[:10]
 
-    if artist_.images:
-        image = choice(artist_.images)['url']
-        context['artist_image'] = image
+    # if artist_.images:
+    #     image = choice(artist_.images)['url']
+    #     context['artist_image'] = image
 
-    if artist_.biographies:
-        short = 300
-        bio = get_good_bio(artist_.biographies).replace ('\n', '\n\n')
+    # if artist_.biographies:
+    #     short = 300
+    #     bio = get_good_bio(artist_.biographies).replace ('\n', '\n\n')
 
-        context['artist_long_bio'] = bio
-        context['artist_short_bio'] = bio[:short]
+    #     context['artist_long_bio'] = bio
+    #     context['artist_short_bio'] = bio[:short]
 
     # context['served'] = True
 

@@ -16,6 +16,8 @@ from request import *
 import tasks
 
 # config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
+rc = redis.StrictRedis(host='localhost', port=6379, db=0)
+
 
 # store featured artist as global to reduce our API call count
 _featured_artist = 'M83'
@@ -88,8 +90,18 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+# check redis for request artist
+#     if hit -> return json
+#
+#     else -> defer request, poll response in ajax
 
 def artist_info(request):
+    EN_id = request.GET['q']
+
+    if 
+
+
+
     query = request.GET['q']
     context = Context({})
 
