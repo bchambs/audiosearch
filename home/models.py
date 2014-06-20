@@ -1,6 +1,12 @@
 import json
 import requests
 import urllib
+import requests
+from requests import ConnectionError
+from requests import HTTPError
+from requests import TooManyRedirects
+from time import sleep
+from util import debug, debug_l
 
 __all__ = ['ENCall']
 
@@ -8,8 +14,11 @@ __all__ = ['ENCall']
 class ENCall:
     LEAD = "http://developer.echonest.com/api"
     VERSION = "v4"
-    KEY = ("api_key", "QZQG43T7640VIF4FN")
-    FORMAT = ("format", "json")
+
+    QUERY_CONSTANTS = {
+        "api_key": "QZQG43T7640VIF4FN",
+        "format": "json"
+    }
 
 
     # form url without query string
@@ -17,48 +26,92 @@ class ENCall:
         self.ctype = call_type
         self.method = method
         self.path = '/'.join([ENCall.LEAD, ENCall.VERSION, self.ctype, self.method])
+        self.id = ''
+        self.data = {}
+
+        if method is 'profile' and call_type is 'artist':
+            self.type_key = 'artist'
+        else:
+            self.type_key = call_type + 's'
 
 
-    # return consumable url
-    # elements of url are stored tuples for .join.  we don't need ordered dicts (at this time)
-    def build(self, EN_id, params):
-        param_list = [
-            ENCall.KEY,
-            ENCall.FORMAT,
-            ("id", EN_id)
-        ]
+    # set query params to prepare call for consumption
+    def build(self, EN_id, params=None, bucket=None):
+        self.id = EN_id
+        self.data.update(ENCall.QUERY_CONSTANTS)
+        self.data['bucket'] = bucket
 
-        param_list.extend( [('bucket', p) for p in params] )
-        query = urllib.urlencode(param_list)
+        if params:
+            self.data.update(params)
 
-        return '?'.join( (self.path, query) )
+        # redo this asap
+        if self.method is 'search':
+            self.data['name'] = EN_id
+        else:
+            self.data['id'] = EN_id
 
 
     # consume call and return JSON
-    @staticmethod
-    def consume(url):
+    def consume(self):
+        snooze = 2
+        threshold = 0
+
+        while True:
+            try:
+                res = requests.get(self.path, params=self.data)
+                try:
+                    jobj = res.json()
+
+                    if jobj['response']['status']['code'] is not 0:
+                        debug_l(jobj['response']['status']['message'].lower())
+                        raise ExceededCallLimit
+
+                    return jobj['response'][self.type_key]
+
+                # CATCH not json object
+                except ValueError as e:
+                    # repr(e)
+                    debug_l('result not JSON...')
+                    sleep(snooze)
+
+            # CATCH requests error
+            except ConnectionError as e:
+                # repr(e)
+                debug_l('connection error (?)')
+                pass #handle this
+
+            # CATCH http error
+            except (HTTPError, TooManyRedirects) as e:
+                # repr(e)
+                debug_l('http problems...')
+                sleep(snooze)
+
+            # CATCH echo nest error
+            except ExceededCallLimit as e:
+                # repr(e)
+                debug_l('malformed call')
+                sleep(snooze)
+                
+
+            threshold += 2
+            debug('threshold: %s' % threshold)
+            if threshold is 4:
+                raise CallTimedOut
+                break
         
-        
-        return
 
+    class ExceededCallLimit(Exception):
+        debug_l('ExceededCallLimit thrown.')
+        pass
 
-#======================================================================================================
-    # http://developer.echonest.com/api/v4/artist/search?api_key=YOUR_API_KEY&format=json&name=radiohead&results=1
-    # http://developer.echonest.com/api/v4/song/search?api_key=YOUR_API_KEY&format=json&results=1&artist=radiohead&title=karma%20police
+    class CallTimedOut(Exception):
+        debug_l('CallTimedOut thrown.')
+        pass
 
-# def test_api(request):
-#     query = request.GET['q']
-
-#     import requests
-#     url = 'http://developer.echonest.com/api/v4/artist/hotttnesss'
-#     key = 'QZQG43T7640VIF4FN'
-#     data = {
-#         'api_key': key,
-#         'name': 'the beatles'
-#     }
-#     headers = {'Content-type': 'application/json'}
-#     data = requests.request('GET', url, params=data, headers=headers)
-
-#     j = data.json()
-
-#     return HttpResponse(json.dumps(j), content_type="application/json")
+class AudiosearchConstants:
+    ARTIST_PROFILE_B = [
+        'biographies',
+        'hotttnesss',
+        'images',
+        'terms',
+    ]

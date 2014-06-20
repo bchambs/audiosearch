@@ -1,6 +1,49 @@
 from random import choice
+import logging
+import sys
+import requests
 
-__all__ = ['get_good_bio', 'remove_duplicates', 'get_similar_songs', 'map_artist_context', 'map_song_context']
+__all__ = ['debug', 'debug_l', 'debug_title', 'get_test_json']
+
+# get_good_bio', 'remove_duplicates', 'get_similar_songs', 'map_artist_context', 'map_song_context']
+# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+def debug(s):
+    logging.debug(s)
+
+
+def debug_l(s):
+    logging.debug(s)
+
+def debug_subtitle(s):
+    logging.debug('')
+    logging.debug(':::::::%s' % s)
+    logging.debug('')
+
+def debug_title(s):
+    logging.debug('')
+    logging.debug('####################################################')
+    logging.debug('                %s' % s)
+    logging.debug('####################################################')
+
+
+# return JSON result of echo nest call
+def get_test_json(url, type_key):
+    res = requests.get(url)
+
+    try:
+        jobj = res.json()
+
+        if jobj['response']['status']['code'] is not 0:
+            raise ExceededCallLimit
+        
+        return jobj['response'][type_key]
+    except:
+        debug_l('unable to get test data')
+
+
+# all code below is subject to refactoring
+########################################################################
 
 # bios = list of artist biographies (dict)
 # return wikipedia bio

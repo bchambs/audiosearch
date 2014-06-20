@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from django.conf import settings
 from celery import Celery
 
-import redis
 import os
 
 # set the default Django settings module for the 'celery' program.

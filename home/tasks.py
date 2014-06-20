@@ -1,53 +1,23 @@
 from __future__ import absolute_import
 from celery import shared_task
-from pyechonest.util import EchoNestAPIError
-from pyechonest import config, artist, song
 from time import sleep
+from audiosearch.redis import client as RC
+from home.util import debug_title
 
 import json
-import redis
 
-
-config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
-rc = redis.StrictRedis(host='localhost', port=6379, db=0)
-
+# call Echo Nest, encode json to dict, store in redis as <id, dict>
 @shared_task
-def call_API(query, ignore_result=True):
-    ready = False
-    snooze = 2
-
-    while not ready:
-        sleep(4)
-        try:
-            # get artist
-            artist_ = artist.Artist(query, buckets=['biographies', 'hotttnesss', 'images', 'terms'])
-            
-            # create dict
-            context = {
-                'artist_name': artist_.name
-            }
-
-            # return if in cache
-            if rc.exists(query):
-                print 'hash exists'
-                return 
-
-            # store
-            else:
-                # serialize to json
-                js = json.JSONEncoder().encode(context)
-                rc.lpush(query, js)
-                print 'storing: %s, %s' % (query, rc.type(query))
-
-            ready = True
-
-        except EchoNestAPIError:
-            print 'snoozing'
-            sleep(snooze)
+def call_API(package, ignore_result=True):
+    pass
+    # result = package.consume()
+    # enc_result = json.JSONEncoder().encode(result)
+    # RC.lpush(package.id, enc_result)
+    # debug_title('stored woooo')
 
 
 @shared_task
-def get_data(query):
+def get_data(query, ignore_result=True):
     x = 0
 
     print '\tin get_data for: %s' % query

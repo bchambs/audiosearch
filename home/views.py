@@ -1,93 +1,36 @@
-import json
-import threading
-from time import *
-from random import choice
-
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
 
-from pyechonest import config, artist, song
-from pyechonest.util import EchoNestAPIError
-
-from util import *
-from request import *
-
+from audiosearch.redis import client as RC
+from models import ENCall, AudiosearchConstants as AC
 import tasks
+import util
 
-# config.ECHO_NEST_API_KEY='QZQG43T7640VIF4FN'
-rc = redis.StrictRedis(host='localhost', port=6379, db=0)
+def artist_info(request):
+    request_id = request.GET['q']
+    context = Context({})
 
+    # cache check
+    # HIT: get json and return
+    if RC.exists(request_id):
+        artist_json = RC.get(request_id)
+        context.update(artist_json)
+        context['served'] = True
 
-# store featured artist as global to reduce our API call count
-_featured_artist = 'M83'
-_featured_terms = []
-_featured_bio = ''
-_initialized = False
+        return render(request, 'artist.html', context)
 
-# store index trending so front page never displays 500
-_index_trending = []
+    # MISS: create request package, defer call, return pending context
+    package = ENCall('artist', 'profile')
+    package.build(request_id, bucket=AC.ARTIST_PROFILE_B)
+    tasks.call_API.delay(package)
+    context['served'] = False
 
-# consider delegating this data population to a script which 
-# is scheduled to run at X rate (hourly?).  save results to
-# a file, and have an update function run to populate the index dictionary
-# ! -> is I/O on the index worth it?
-def startup():
-    global _initialized
-    global _featured_artist
-    global _featured_terms
-    global _featured_bio
-    global _index_trending
-
-    if not _initialized:
-        print
-        print '_____________________________________________________________________'
-        print 'Initializing index. This should not happen more than once per deploy.'
-        print
-
-        _initialized = True
-        bio_min = 200
-        bio_max = 3000
-
-        featured = artist.search(name=_featured_artist, sort='hotttnesss-desc', results=1)[0]
-
-        # get terms
-        if len(featured.terms) > 2:
-            _featured_terms.append(featured.terms[0]['name'])
-            _featured_terms[0] += ', '
-            _featured_terms.append(featured.terms[1]['name'])
-
-        elif len(featured.terms) > 1:
-            _featured_terms.append(featured.terms[0]['name'])
-        else:
-            _featured_terms.append ('Unknown')
-
-        # get displayable bio
-        _featured_bio = get_good_bio (featured.biographies)
-        _featured_bio = _featured_bio[:bio_min] + '...'
-
-        # populate trending artists
-        _index_trending = artist.top_hottt()
-        del _index_trending[10:]
-        
+    return render(request, 'artist.html', context)
 
 
-def index(request):
-    global _index_trending
-    global _featured_bio
-    global _featured_artist
-    global _featured_terms
 
-    startup()
 
-    context = Context({
-        'trending': _index_trending,
-        'featured_name': _featured_artist,
-        'featured_terms': _featured_terms,
-        'featured_bio': _featured_bio,
-    })
-
-    return render(request, 'index.html', context)
 
 
 # check redis for request artist
@@ -95,10 +38,10 @@ def index(request):
 #
 #     else -> defer request, poll response in ajax
 
-def artist_info(request):
+def artist_info_OLD(request):
     EN_id = request.GET['q']
 
-    if 
+    tasks.queue_id(EN_id)
 
 
 
