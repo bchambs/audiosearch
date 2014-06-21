@@ -1,0 +1,7 @@
+to do:
+~ handle individual echo nest api codes
+~ refactor all imports to reduce overhead / have better namespace
+~ refactor ENCall to use params defined in Audiosearch constants.  This site will have at most 4-5 pages of 'static' content.  The code is simpler to maintain when creating and consuming a rest call uses the param ARTIST_PAGE instead of 'artist', 'profile', etc.
+
+random:
+~ two queues: storage and retrieval, retrieval check cache for id: if DNE sleep.  when storage task completes send broadcast to all retrieval workers.  on retrieval wake: check cache for id, etc

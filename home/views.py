@@ -8,11 +8,11 @@ import tasks
 import util
 import json
 
-'''
+"""
 ---------------------------
 Functions for serving pages
 ---------------------------
-'''
+"""
 
 # /artist/
 def artist_info(request):
@@ -28,12 +28,12 @@ def artist_info(request):
         context.update(artist_dict)
         context['served'] = True
 
-        debug_title('hit')
+        debug_title('hit: %s' % request_id)
 
         return render(request, 'artist.html', context)
 
     # MISS: create request package, defer call, return pending context
-    debug_title('miss')
+    debug_title('miss: %s' % request_id)
     tasks.call_API.delay(request_id, 'artist', 'profile')
     context['served'] = False
 
@@ -42,25 +42,24 @@ def artist_info(request):
 
 # HTTP 500
 def server_error(request):
-    response = render(request, "500.html")
+    response = render(request, '500.html')
     response.status_code = 500
     return response
 
 
-'''
+"""
 -------------------------------------
 Functions for handling ASYNC requests
 -------------------------------------
-'''
+"""
+
 def async_retrieve(request):
     debug('in async_retrieve')
 
     request_id = request.GET['q']
-    data = tasks.retrieve_json(query)
+    json_dict = tasks.retrieve_json(request_id)
     
     debug('completed async_retrieve')
-    print data[0]
-    print data[1]
 
-    return HttpResponse(data[1], content_type="application/json")
+    return HttpResponse(json_dict[1], content_type="application/json")
 
