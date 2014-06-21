@@ -31,28 +31,31 @@
 
     <div class="info-title wrap">
         
-        <div id="title">{{ artist_name }}<br />
+        {% if served %}
+            <div id="title"><br />complete</div>
+        {% else %}
+            <div id="title"><br />pending</div>
+        {% endif %}
 
-        <span id="bio">{{ artist_short_bio }}</span>
+        <span id="bio"></span>
     </div>
 
     <div class="content wrap">
         <div class="row">
             <div class="content-left col-lg-7">
+                <div id="artist_name">{{ name }}</div>
+                <p />
 
+                <div id="artist_hotttnesss">{{ hotttnesss }}</div>
+
+                <p />
+
+                <div id="artist_id">{{ id }}</div>
             </div>
 
             <class="row">
             <div class="content-right col-lg-5">
-                <div id="id">{{ artist_id }}</div>
 
-                <div id="name">{{ artist_name }}</div>
-
-                <div id="hot">{{ artist_artist_rating }}</div>
-
-                <div id="twitter">{{ artist_twitter }}</div>
-
-                <div id="artists">{{ artist_artists }}</div>
             </div>
         </div>
     </div>

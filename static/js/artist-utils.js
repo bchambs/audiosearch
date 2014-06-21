@@ -34,7 +34,7 @@ function fetch_request(id) {
             display_results(data);
         },
         error: function(o, stat, er) {
-            alert('fail: + ' + er);
+            // alert('fail: + ' + er);
         },
         complete: function(o, stat) {
             // alert('complete: ' + stat);

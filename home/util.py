@@ -6,11 +6,10 @@ import requests
 __all__ = ['debug', 'debug_l', 'debug_title', 'get_test_json']
 
 # get_good_bio', 'remove_duplicates', 'get_similar_songs', 'map_artist_context', 'map_song_context']
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 def debug(s):
     logging.debug(s)
-
 
 def debug_l(s):
     logging.debug(s)
@@ -21,7 +20,6 @@ def debug_subtitle(s):
     logging.debug('')
 
 def debug_title(s):
-    logging.debug('')
     logging.debug('####################################################')
     logging.debug('                %s' % s)
     logging.debug('####################################################')

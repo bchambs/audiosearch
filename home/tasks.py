@@ -2,31 +2,27 @@ from __future__ import absolute_import
 from celery import shared_task
 from time import sleep
 from audiosearch.redis import client as RC
-from home.util import debug_title
+from home.util import debug_title, debug
+from home.models import ENCall, AudiosearchConstants as AC
 
 import json
 
-# call Echo Nest, encode json to dict, store in redis as <id, dict>
+# call Echo Nest, encode json to dict, store in redis as <id, json_str>
 @shared_task
-def call_API(package, ignore_result=True):
-    pass
-    # result = package.consume()
-    # enc_result = json.JSONEncoder().encode(result)
-    # RC.lpush(package.id, enc_result)
-    # debug_title('stored woooo')
+def call_API(request_id, call_type, method):
+    package = ENCall(call_type, method)
+    package.build(request_id, bucket=AC.ARTIST_PROFILE_B)
+    result = package.consume()
 
+    enc_result = json.JSONEncoder().encode(result)
+    RC.set(request_id, enc_result)
 
+# block until requested json is available, then return json
 @shared_task
-def get_data(query, ignore_result=True):
-    x = 0
+def retrieve_json(request_id):
+    print '\tin retrieve_json'
 
-    print '\tin get_data for: %s' % query
-    while not rc.exists(query) and x < 5:
-        print '\tdne snooze'
-        sleep (2)
-        x += 1
+    
 
-    temp = rc.blpop(query,timeout=6)
-    print 'redis complete'
-
+    print '\texiting retrieve_json'
     return temp

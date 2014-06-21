@@ -6,7 +6,7 @@ from requests import ConnectionError
 from requests import HTTPError
 from requests import TooManyRedirects
 from time import sleep
-from util import debug, debug_l
+from util import debug
 
 __all__ = ['ENCall']
 
@@ -29,7 +29,7 @@ class ENCall:
         self.id = ''
         self.data = {}
 
-        if method is 'profile' and call_type is 'artist':
+        if call_type == 'artist' and method == 'profile':
             self.type_key = 'artist'
         else:
             self.type_key = call_type + 's'
@@ -59,11 +59,12 @@ class ENCall:
         while True:
             try:
                 res = requests.get(self.path, params=self.data)
+
                 try:
                     jobj = res.json()
 
                     if jobj['response']['status']['code'] is not 0:
-                        debug_l(jobj['response']['status']['message'].lower())
+                        debug(jobj['response']['status']['code'])
                         raise ExceededCallLimit
 
                     return jobj['response'][self.type_key]
@@ -71,42 +72,43 @@ class ENCall:
                 # CATCH not json object
                 except ValueError as e:
                     # repr(e)
-                    debug_l('result not JSON...')
+                    debug('result not JSON...')
                     sleep(snooze)
 
             # CATCH requests error
             except ConnectionError as e:
                 # repr(e)
-                debug_l('connection error (?)')
+                debug('connection error (?)')
                 pass #handle this
 
             # CATCH http error
             except (HTTPError, TooManyRedirects) as e:
                 # repr(e)
-                debug_l('http problems...')
+                debug('http problems...')
                 sleep(snooze)
 
             # CATCH echo nest error
             except ExceededCallLimit as e:
                 # repr(e)
-                debug_l('malformed call')
+                debug('malformed call')
                 sleep(snooze)
-                
+            except KeyError as e:
+                debug(repr(e))
 
             threshold += 2
             debug('threshold: %s' % threshold)
-            if threshold is 4:
+            if threshold is 6:
                 raise CallTimedOut
                 break
         
 
-    class ExceededCallLimit(Exception):
-        debug_l('ExceededCallLimit thrown.')
-        pass
+class ExceededCallLimit(Exception):
+    debug('ExceededCallLimit thrown.')
+    pass
 
-    class CallTimedOut(Exception):
-        debug_l('CallTimedOut thrown.')
-        pass
+class CallTimedOut(Exception):
+    debug('CallTimedOut thrown.')
+    pass
 
 class AudiosearchConstants:
     ARTIST_PROFILE_B = [
@@ -115,3 +117,8 @@ class AudiosearchConstants:
         'images',
         'terms',
     ]
+
+
+'''
+HANDLE INDIVIDUAL EN ERROR CODES
+'''
