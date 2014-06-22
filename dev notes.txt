@@ -7,7 +7,9 @@ the final site will have the following pages:
 index
     1. search bar
     2. popular list (top 10 artists by echo nest rating)
+        a) update this hourly with an async task
     3. trending list (top 10 searched artists / songs on audiosearch)
+        a) add js to check for updates async
     4. about icon -> modal
     5. footer containing github / email (?)
 
@@ -30,3 +32,10 @@ song
 
 search
     1. artist and song result column with 'show more results' button to show respective result pages -> DJANGO PAGINATION
+
+random:
+need to see if an item can expire from cache between the following two lines:
+    if RC.exists(request_id):
+        data_str = RC.get(request_id)
+
+this would throw an except because we are getting an item that expired 1 line above.  make it a block (?)

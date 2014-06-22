@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.http import HttpResponse
-
 from django.contrib import admin
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^compare_results/$', 'home.views.compare_results'),
     url(r'^trending/$', 'home.views.trending'),
 
-    url(r'^ajx/$', 'home.views.async_retrieve'),
+    url(r'^ajax/$', 'home.views.async_retrieve_general'),
     
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )

@@ -1,12 +1,14 @@
-from django.shortcuts import render
-from django.template import RequestContext, loader, Context
-from django.http import HttpResponseRedirect, HttpResponse
-from audiosearch.redis import client as RC
-from util import debug, debug_title
-
 import tasks
 import util
 import json
+
+from django.shortcuts import render
+from django.template import RequestContext, loader, Context
+from django.http import HttpResponseRedirect, HttpResponse
+
+from audiosearch.redis import client as RC
+from util import debug, debug_title
+from home.models import ENCall, ARTIST_BUCKET
 
 """
 ---------------------------
@@ -33,9 +35,12 @@ def artist_info(request):
         return render(request, 'artist.html', context)
 
     # MISS: create request package, defer call, return pending context
-    debug_title('miss: %s' % request_id)
-    tasks.call_API.delay(request_id, 'artist', 'profile')
+    package = ENCall('artist', 'profile')
+    package.build(request_id, bucket=ARTIST_BUCKET)
+    tasks.call_API.delay(package)
+
     context['served'] = False
+    debug_title('miss: %s' % request_id)
 
     return render(request, 'artist.html', context)
 
@@ -53,13 +58,17 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
-def async_retrieve(request):
-    debug('in async_retrieve')
-
+# async requests for general artist / song data
+def async_retrieve_general(request):
     request_id = request.GET['q']
-    json_dict = tasks.retrieve_json(request_id)
+    data = {}
+   
+    if RC.exists(request_id):
+        data_str = RC.get(request_id)
+        data = json.loads(data_str)
+        data['status'] = 'ready'
     
-    debug('completed async_retrieve')
+    else:
+        data['status'] = 'retry'
 
-    return HttpResponse(json_dict[1], content_type="application/json")
-
+    return HttpResponse(json.dumps(data), content_type="application/json")

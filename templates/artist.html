@@ -31,11 +31,10 @@
 
     <div class="info-title wrap">
         
-        {% if served %}
-            <div id="title"><br />complete</div>
-        {% else %}
-            <div id="title"><br />pending</div>
+        {% if not served %}
+            <img id="spinner" src="{{ STATIC_URL }}img/ajax-loader.gif" />
         {% endif %}
+        <div id="name">{{ name }}</div>
 
         <span id="bio"></span>
     </div>
@@ -43,14 +42,15 @@
     <div class="content wrap">
         <div class="row">
             <div class="content-left col-lg-7">
-                <div id="artist_name">{{ name }}</div>
-                <p />
-
-                <div id="artist_hotttnesss">{{ hotttnesss }}</div>
+                <div id="hotttnesss">{{ hotttnesss }}</div>
 
                 <p />
 
-                <div id="artist_id">{{ id }}</div>
+                <div id="biographies">{{ biographies.0.text }}</div>
+
+                <p />
+
+                {{ images.0.url }}
             </div>
 
             <class="row">
@@ -73,7 +73,7 @@
 {% if not served %}
     <script type="text/javascript">
         var q = fetch_query_string();
-        fetch_request(q);
+        fetch_request(q, 0);
     </script>
 {% endif %}
 </body>

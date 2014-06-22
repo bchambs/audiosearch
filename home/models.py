@@ -1,14 +1,32 @@
 import json
-import requests
 import urllib
+from time import sleep
+
 import requests
 from requests import ConnectionError
 from requests import HTTPError
 from requests import TooManyRedirects
-from time import sleep
+
 from util import debug
 
-__all__ = ['ENCall']
+"""
+---------------------
+audiosearch constants
+---------------------
+"""
+
+ARTIST_BUCKET = [
+    'biographies',
+    'hotttnesss',
+    'images',
+    'terms',
+]
+
+"""
+-------------------
+audiosearch classes
+-------------------
+"""
 
 # Echo Nest call
 class ENCall:
@@ -109,15 +127,6 @@ class ExceededCallLimit(Exception):
 class CallTimedOut(Exception):
     debug('CallTimedOut thrown.')
     pass
-
-class AudiosearchConstants:
-    ARTIST_PROFILE_B = [
-        'biographies',
-        'hotttnesss',
-        'images',
-        'terms',
-    ]
-
 
 '''
 HANDLE INDIVIDUAL EN ERROR CODES

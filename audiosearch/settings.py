@@ -20,7 +20,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # this is changed for production and test 
-SECRET_KEY = 'vchh__-$5w79n9h$o0)=5j^FF#5l1o=)m$h(45!!7)l@1ajce7'
+SECRET_KEY = 'vchh__-$5w79n9h$o03gsdgSDgl1o=)m$h(45!!7)l@1ajce7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  True
@@ -104,7 +104,7 @@ STATIC_URL = '/static/'
 # celery config
 BROKER_URL = 'redis://localhost:6379/0'
 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("home.tasks", )

@@ -1,11 +1,9 @@
 from random import choice
 import logging
 import sys
+
 import requests
 
-__all__ = ['debug', 'debug_l', 'debug_title', 'get_test_json']
-
-# get_good_bio', 'remove_duplicates', 'get_similar_songs', 'map_artist_context', 'map_song_context']
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 def debug(s):
