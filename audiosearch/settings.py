@@ -108,7 +108,3 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IMPORTS = ("home.tasks", )
-CELERY_ROUTES = {
-    'home.tasks.call_API': {'queue': 'storage'},
-    'home.tasks.retrieve_json': {'queue': 'retrieval'}
-}

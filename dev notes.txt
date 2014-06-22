@@ -1,7 +1,32 @@
 to do:
 ~ handle individual echo nest api codes
 ~ refactor all imports to reduce overhead / have better namespace
-~ refactor ENCall to use params defined in Audiosearch constants.  This site will have at most 4-5 pages of 'static' content.  The code is simpler to maintain when creating and consuming a rest call uses the param ARTIST_PAGE instead of 'artist', 'profile', etc.
 
-random:
-~ two queues: storage and retrieval, retrieval check cache for id: if DNE sleep.  when storage task completes send broadcast to all retrieval workers.  on retrieval wake: check cache for id, etc
+the final site will have the following pages:
+
+index
+    1. search bar
+    2. popular list (top 10 artists by echo nest rating)
+    3. trending list (top 10 searched artists / songs on audiosearch)
+    4. about icon -> modal
+    5. footer containing github / email (?)
+
+artist
+    1. main tab:
+        a) bio summary: use wiki and only display first paragraph -> rest in modal
+        b) terms
+        c) rating (hotttnesss)
+        d) images with title image (random ?)
+
+    2. songs tab:
+        a) first 15 songs obtained from initial call, more can be loaded asynchronously -> DJANGO PAGINATION
+
+    3. similar artists tab:
+        b) same as songs tab
+
+song
+    1. main tab:
+        a) misc song facts
+
+search
+    1. artist and song result column with 'show more results' button to show respective result pages -> DJANGO PAGINATION
