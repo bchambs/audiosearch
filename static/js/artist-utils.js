@@ -2,6 +2,11 @@
 /* jslint browser: true */
 /* global $, jQuery */
 
+var TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
+    AJAX_SNOOZE = 1000,
+    FADE_DELAY = 1000,
+    ATTEMPT_LIMIT = 5;
+
 /*
     data = async music data from initial request.
 
@@ -10,16 +15,30 @@
 function display_results(data) {
     'use strict';
 
-    console.log('displaying');
+    $('#spinner').hide();
 
     $.each(data, function (key, value) {
-        $("#" + key).html(value).hide().fadeIn(1000);
+        if (key === 'title-image') {
+            $("#" + key).attr("src", value).hide().fadeIn(FADE_DELAY);;
+        }
+        else if (key === 'songs') {
+            $.each(value, function (rank, song) {
+                $("#" + key).append(rank + 1 + '. ' + song['title']);
+                $("#" + key).append("<p />").hide().fadeIn(FADE_DELAY);
+            });
+        }
+        else {
+            $("#" + key).html(value).hide().fadeIn(FADE_DELAY);
+        }
     });
 }
 
 
-function handle_timeout() {
-    $("#name").text(":(").hide().fadeIn(1000);;
+function handle_timeout(message) {
+    'use strict';
+
+    $('#spinner').hide();
+    $("#name").text(message).hide().fadeIn(FADE_DELAY);;
 }
 
 
@@ -28,7 +47,7 @@ function handle_timeout() {
 
     if user request was not served, run async call to retrieve music data.
 */
-function fetch_request(id, timeout) {
+function fetch_request(id, attempt) {
     'use strict';
 
     $.ajax({
@@ -41,31 +60,33 @@ function fetch_request(id, timeout) {
                 console.log('ajax.success: ' + stat)
 
                 display_results(data);
-                $('#spinner').hide();
             }
-            else if (data['status'] === 'retry') {
-                timeout += 1;
+            else if (data['status'] === 'pending') {
+                attempt += 1;
 
-                if (timeout > 5) {
+                if (attempt > ATTEMPT_LIMIT) {
                     console.log('timeout')
-                    $('#spinner').hide();
-                    handle_timeout();
+                    handle_timeout(TIMEOUT_MESSAGE);
                 }
                 else {
-                    console.log('not ready, attempt: ' + timeout)
+                    console.log('not ready, attempt: ' + attempt)
 
                     setTimeout(function() {
-                        fetch_request(id, timeout)
+                        fetch_request(id, attempt)
                     }
-                    , 1000);
+                    , AJAX_SNOOZE);
                 }
+            }
+            else {
+                console.log('could not serve request: ' + data['message'])
+                handle_timeout(data['message']);
             }
         },
         error: function(o, stat, er) {
-            console.log('ajax.failed: ' + er);
+            // console.log('ajax.failed: ' + er);
         },
         complete: function(o, stat) {
-            console.log('ajax.complete: ' + stat);
+            // console.log('ajax.complete: ' + stat);
         }
     });
 }

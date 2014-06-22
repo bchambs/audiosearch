@@ -1,12 +1,11 @@
 to do:
-~ handle individual echo nest api codes
 ~ refactor all imports to reduce overhead / have better namespace
 
 the final site will have the following pages:
 
 index
     1. search bar
-    2. popular list (top 10 artists by echo nest rating)
+EN  2. popular list (top 10 artists by echo nest rating)
         a) update this hourly with an async task
     3. trending list (top 10 searched artists / songs on audiosearch)
         a) add js to check for updates async
@@ -14,28 +13,31 @@ index
     5. footer containing github / email (?)
 
 artist
-    1. main tab:
+EN  1. main tab:
         a) bio summary: use wiki and only display first paragraph -> rest in modal
         b) terms
         c) rating (hotttnesss)
         d) images with title image (random ?)
 
-    2. songs tab:
+EN  2. songs tab:
         a) first 15 songs obtained from initial call, more can be loaded asynchronously -> DJANGO PAGINATION
 
-    3. similar artists tab:
+EN  3. similar artists tab (there's a call for this):
         b) same as songs tab
 
 song
-    1. main tab:
+EN  1. main tab:
         a) misc song facts
 
 search
     1. artist and song result column with 'show more results' button to show respective result pages -> DJANGO PAGINATION
 
 random:
+=====
+
 need to see if an item can expire from cache between the following two lines:
     if RC.exists(request_id):
         data_str = RC.get(request_id)
 
 this would throw an except because we are getting an item that expired 1 line above.  make it a block (?)
+=====

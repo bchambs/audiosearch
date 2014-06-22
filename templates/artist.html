@@ -31,8 +31,10 @@
 
     <div class="info-title wrap">
         
-        {% if not served %}
+        {% if status == 'pending' %}
             <img id="spinner" src="{{ STATIC_URL }}img/ajax-loader.gif" />
+        {% elif status == 'failed' %}
+            {{ message }}
         {% endif %}
         <div id="name">{{ name }}</div>
 
@@ -42,20 +44,31 @@
     <div class="content wrap">
         <div class="row">
             <div class="content-left col-lg-7">
+                <img id="title-image"></img>
+
+                <p />
+                <div id="terms">{{ terms }}</div>
+
+                <p />
+
                 <div id="hotttnesss">{{ hotttnesss }}</div>
 
                 <p />
 
-                <div id="biographies">{{ biographies.0.text }}</div>
+                <div id="bio_trunc">{{ bio_trunc }}</div>
 
                 <p />
 
-                {{ images.0.url }}
             </div>
 
             <class="row">
             <div class="content-right col-lg-5">
 
+                <div id="songs">
+                    {% for song in songs %}
+                        {{ forloop.counter1 }}. {{ song }}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
@@ -70,7 +83,7 @@
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/artist-utils.js"></script>
-{% if not served %}
+{% if status == 'pending' %}
     <script type="text/javascript">
         var q = fetch_query_string();
         fetch_request(q, 0);

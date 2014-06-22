@@ -3,11 +3,7 @@ import urllib
 from time import sleep
 
 import requests
-from requests import ConnectionError
-from requests import HTTPError
-from requests import TooManyRedirects
 
-from util import debug
 
 """
 ---------------------
@@ -20,6 +16,7 @@ ARTIST_BUCKET = [
     'hotttnesss',
     'images',
     'terms',
+    'songs',
 ]
 
 """
@@ -29,14 +26,15 @@ audiosearch classes
 """
 
 # Echo Nest call
-class ENCall:
+class ENCall(object):
     LEAD = "http://developer.echonest.com/api"
     VERSION = "v4"
-
     QUERY_CONSTANTS = {
         "api_key": "QZQG43T7640VIF4FN",
         "format": "json"
     }
+    SNOOZE = 2
+    ATTEMPT_LIMIT = 5
 
 
     # form url without query string
@@ -52,6 +50,10 @@ class ENCall:
         else:
             self.type_key = call_type + 's'
 
+    # TODO: add url value to obj ?
+    def __str__(self):
+        return repr(self.id)
+
 
     # set query params to prepare call for consumption
     def build(self, EN_id, params=None, bucket=None):
@@ -62,72 +64,96 @@ class ENCall:
         if params:
             self.data.update(params)
 
-        # redo this asap
         if self.method is 'search':
             self.data['name'] = EN_id
         else:
             self.data['id'] = EN_id
 
 
+    """
+    handle handling:
+        return a dict containing a status key detailing why the call failed.
+        it is the client's responsibility to react to the status message.
+    """
     # consume call and return JSON
     def consume(self):
-        snooze = 2
         threshold = 0
+        result = {'status': 'failed'}
 
         while True:
+            # attempt to consume REST call
             try:
-                res = requests.get(self.path, params=self.data)
+                call = requests.get(self.path, params=self.data)
 
                 try:
-                    jobj = res.json()
+                    call_json = call.json()
 
-                    if jobj['response']['status']['code'] is not 0:
-                        debug(jobj['response']['status']['code'])
-                        raise ExceededCallLimit
+                    # branch by echo nest result code
+                    code = call_json['response']['status']['code']
 
-                    return jobj['response'][self.type_key]
+                    # success
+                    if code == 0:
+                        result = call_json['response'][self.type_key]
+                        result['status'] = 'ready'
 
-                # CATCH not json object
-                except ValueError as e:
-                    # repr(e)
-                    debug('result not JSON...')
-                    sleep(snooze)
+                        return result
 
-            # CATCH requests error
-            except ConnectionError as e:
-                # repr(e)
-                debug('connection error (?)')
-                pass #handle this
+                    # limit exceeded, snooze then retry
+                    elif code == 3:
+                        raise LimitError
 
-            # CATCH http error
-            except (HTTPError, TooManyRedirects) as e:
-                # repr(e)
-                debug('http problems...')
-                sleep(snooze)
+                    # bad parameter (TODO: this should be checked at instance creation)
+                    elif code == 4 or code == 5:
+                        result['message'] = 'Invalid request.'
+                        return result
 
-            # CATCH echo nest error
-            except ExceededCallLimit as e:
-                # repr(e)
-                debug('malformed call')
-                sleep(snooze)
-            except KeyError as e:
-                debug(repr(e))
+                    # unrecoverable error (bad key, unknown)
+                    else:
+                        result['message'] = 'Unrecoverable error.'
+                        return result
 
-            threshold += 2
-            debug('threshold: %s' % threshold)
-            if threshold is 6:
-                raise CallTimedOut
-                break
+                # CATCH result not json or corrupt
+                except (ValueError, KeyError):
+                    # TODO: log failure
+                    result['message'] = 'Received an invalid response from the Echo Nest.'
+                    return result
+
+            # CATCH requests errors
+            except requests.exceptions.RequestException:
+                # TODO: log failure
+                result['message'] = 'Unable to connect to the Echo Nest.'
+                return result
+
+            # CATCH echo nest limit exceeded
+            except LimitError:
+                threshold += 1
+
+                if threshold == ENCall.ATTEMPT_LIMIT:
+                    raise TimeOutError
+
+                else:
+                    sleep(ENCall.SNOOZE)
+
+            # CATCH exceeded attempt limit
+            except TimeOutError:
+                # TODO: log failure
+                result['message'] = 'Audiosearch is receiving too many requests!  Try again soon!'
+                return result
         
 
-class ExceededCallLimit(Exception):
-    debug('ExceededCallLimit thrown.')
+class LimitError(Exception):
     pass
+    # def __init__(self, value):
+    #     self.value = value
 
-class CallTimedOut(Exception):
-    debug('CallTimedOut thrown.')
+    # def __str__(self):
+    #     return repr(self.value)
+
+class TimeOutError(Exception):
     pass
+    # def __init__(self, value):
+    #     self.value = value
 
-'''
-HANDLE INDIVIDUAL EN ERROR CODES
-'''
+    # def __str__(self):
+    #     return repr(self.value)
+
