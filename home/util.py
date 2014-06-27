@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from random import choice
+from pprint import pprint
 import logging
 import sys
 
@@ -39,7 +40,13 @@ def process_artist(data):
 
     if 'images' in data:
         data['title-image'] = data['images'][0]['url']
-        del data['images']
+
+        data['images'] = data['images'][:4]
+        for x in range(0,4):
+            data['images'][x] = data['images'][x]['url']
+
+    for x in data['images']:
+        print x
 
     if 'terms' in data:
         try:

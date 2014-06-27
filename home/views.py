@@ -11,6 +11,7 @@ from home.models import ENCall, ARTIST_BUCKET
 from util import debug, debug_title
 
 """
+TODO: remove this
 Convention: 
     dict['status'] for request state:
         ready,

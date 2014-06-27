@@ -1,44 +1,32 @@
 /* JSLint */
 /* jslint browser: true */
 /* global $, jQuery */
+// TODO: move all 'use strict' to top of files
 
 var TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
     AJAX_SNOOZE = 1000,
     FADE_DELAY = 1000,
-    ATTEMPT_LIMIT = 5;
+    ATTEMPT_LIMIT = 5,
+    BANNER_HEIGHT = $(".image-banner").height;
+
 
 /*
-    data = async music data from initial request.
-
-    fill the page with request data.
+    retrieve query string param 'q'.
 */
-function display_results(data) {
+function fetch_query_string() {
     'use strict';
 
-    $('#spinner').hide();
+    var query = window.location.search.split("="),
+        regex = /^[a-z0-9]+$/i;
 
-    $.each(data, function (key, value) {
-        if (key === 'title-image') {
-            $("#" + key).attr("src", value).hide().fadeIn(FADE_DELAY);;
+    // check for alphanumeric
+    if (query.length === 2) {
+        if (regex.test(query[1])) {
+            return query[1];
         }
-        else if (key === 'songs') {
-            $.each(value, function (rank, song) {
-                $("#" + key).append(rank + 1 + '. ' + song['title']);
-                $("#" + key).append("<p />").hide().fadeIn(FADE_DELAY);
-            });
-        }
-        else {
-            $("#" + key).html(value).hide().fadeIn(FADE_DELAY);
-        }
-    });
-}
+    }
 
-
-function handle_timeout(message) {
-    'use strict';
-
-    $('#spinner').hide();
-    $("#name").text(message).hide().fadeIn(FADE_DELAY);;
+    return '';
 }
 
 
@@ -91,21 +79,62 @@ function fetch_request(id, attempt) {
     });
 }
 
+
 /*
-    retrieve query string param 'q'.
+    data = async music data from initial request.
+
+    fill the page with request data.
 */
-function fetch_query_string() {
+function display_results(data) {
     'use strict';
 
-    var query = window.location.search.split("="),
-        regex = /^[a-z0-9]+$/i;
+    $('#spinner').hide();
 
-    // check for alphanumeric
-    if (query.length === 2) {
-        if (regex.test(query[1])) {
-            return query[1];
+    // iterate over JSON and load data to divs
+    $.each(data, function (key, value) {
+        switch (key) {
+            case 'images':
+                var img_list, x = 0;
+
+                // prepare banner images: wrap, resize, append
+                $.each(value, function () {
+                    // create image, set class, run on load
+                    var image = $('<img />', {
+                        class: 'tile-image'
+                        }).attr('src', this).load(function () {
+
+                        var wrapper = $('<div />', {
+                            class: 'tile-wrapper'
+                        });
+
+                        if (image.height() > BANNER_HEIGHT) {
+                            image.height(BANNER_HEIGHT);
+                        }
+
+                        wrapper.append(image);
+                        $("#image-banner").append(wrapper);
+                    });
+                });
+                break;
+
+            case 'songs':
+                $.each(value, function (rank, song) {
+                    $("#" + key).append(rank + 1 + '. ' + song['title']);
+                    $("#" + key).append("<p />").hide().fadeIn(FADE_DELAY);
+                });
+                break;
+
+            default:
+                $("#" + key).html(value).hide().fadeIn(FADE_DELAY);
+                console.log(key + ': ' + value);
         }
-    }
+    });
+}
 
-    return '';
+
+function handle_timeout(message) {
+    'use strict';
+
+    $('#spinner').hide();
+    $("#name").text(message).hide().fadeIn(FADE_DELAY);;
 }

@@ -12,6 +12,7 @@ def call_API(package):
     result = package.consume()
 
     # reduce json size if artist
+    # TODO: this work needs to be done outside of the task
     if package.ctype == 'artist' and result['status'] == 'ready':
         process_artist(result)
 

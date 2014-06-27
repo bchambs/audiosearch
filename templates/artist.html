@@ -26,49 +26,44 @@
 
 <div class="container">
     <div class="nav wrap">
-
+-1
     </div>
 
-    <div class="info-title wrap">
-        
-        {% if status == 'pending' %}
-            <img id="spinner" src="{{ STATIC_URL }}img/ajax-loader.gif" />
-        {% elif status == 'failed' %}
-            {{ message }}
-        {% endif %}
-        <div id="name">{{ name }}</div>
+    <div class="banner-container wrap">
+       
 
-        <span id="bio"></span>
+        <!--image banner-->
+        <div id="image-banner">
+            <!--spinner display-->
+            {% if status == 'pending' %}
+                <img id="spinner" src="{{ STATIC_URL }}img/ajax-loader.gif" />
+            {% elif status == 'failed' %}
+                {{ message }}
+            {% endif %}
+            <!--END spinner-->
+
+            <!--container:: h=300, w=1186-->
+            <!--image:: h=300, w=296.5-->
+        </div><!--END image banner-->
+
+        <!--banner title-->
+        <div id="banner-title">
+            <div id="name">
+                {{ name }}
+            </div>
+        </div><!--END banner title-->
+
     </div>
 
     <div class="content wrap">
         <div class="row">
             <div class="content-left col-lg-7">
-                <img id="title-image"></img>
-
-                <p />
-                <div id="terms">{{ terms }}</div>
-
-                <p />
-
-                <div id="hotttnesss">{{ hotttnesss }}</div>
-
-                <p />
-
-                <div id="bio_trunc">{{ bio_trunc }}</div>
-
-                <p />
-
+                1
             </div>
-
+            
             <class="row">
             <div class="content-right col-lg-5">
-
-                <div id="songs">
-                    {% for song in songs %}
-                        {{ forloop.counter1 }}. {{ song }}
-                    {% endfor %}
-                </div>
+                3
             </div>
         </div>
     </div>
