@@ -43,7 +43,8 @@ html, body {
 }
 .content {
     height: 600px;
-    background-color: #A7E695;
+    /*background-color: #A7E695;*/
+    background-color: #215681;
 }
 .content-left {
     padding: 0;
@@ -87,7 +88,6 @@ html, body {
     overflow: hidden;
     float: left;
     background-color: white;
-
 }
 
 .tile-image {
@@ -114,5 +114,53 @@ html, body {
     text-shadow: 1px 1px 3px rgba(255,255,255, .5);
     text-align: left;
     text-indent: 30px;
-    background-image: url("/static/img/banner-text-bg.png");
+    color: white;
+    background-color: #1C2A3B;
 }
+
+.separator {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 15px;
+    background-color: #1C2A3B;
+}
+
+.rating-box {
+    border-right: 15px solid #1C2A3B;
+    height: 115px;
+    padding-top: 14px;
+    text-shadow: 1px 1px 3px rgba(255,255,255, .5);
+}
+
+.bio-box {
+    height: 115px;
+    padding: 15px;
+    text-align: left;
+    text-indent: 15px;
+}
+
+.artist-hint {
+    font-size: 43px;
+    content: "A representation of how popular an artist or song is.";
+    /*border-bottom: 1px white dotted;*/
+    cursor: help;
+
+}
+
+.glyphicon {
+    font-size: 30px;
+    padding-right: 10px
+}
+
+.rank {
+    font-size: 15px;
+}
+
+#hehe {
+    background-color: red;
+}
+
+
+
+

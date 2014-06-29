@@ -17,6 +17,7 @@ ARTIST_BUCKET = [
     'images',
     'terms',
     'songs',
+    'hotttnesss_rank',
 ]
 
 """

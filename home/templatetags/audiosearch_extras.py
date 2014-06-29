@@ -12,7 +12,7 @@ def to_percent(f):
         temp = round (f * 100)
         return int(temp)
     else:
-        return '???'        # should throw an exception 
+        return ''
 
 register.filter('to_percent',to_percent)
 

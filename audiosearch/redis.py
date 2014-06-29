@@ -14,7 +14,7 @@ DATABASE = 0
 CONNECTIONS = 20
 
 # in seconds
-EXPIRE_TIME = 3
+EXPIRE_TIME = 2
 
 
 """

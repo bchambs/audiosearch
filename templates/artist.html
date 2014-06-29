@@ -26,12 +26,10 @@
 
 <div class="container">
     <div class="nav wrap">
--1
+
     </div>
 
     <div class="banner-container wrap">
-       
-
         <!--image banner-->
         <div id="image-banner">
             <!--spinner display-->
@@ -41,6 +39,15 @@
                 {{ message }}
             {% endif %}
             <!--END spinner-->
+
+            <!--tiled images-->
+            {% for tile in tiles %}
+            <!--HIT: load tiles -->
+            <div class="tile-wrapper">
+                <img id={{ tile.0 }} class="tile-image" src={{ tile.1 }} />
+            </div>
+            {% endfor %}
+            <!--END tiles-->
 
             <!--container:: h=300, w=1186-->
             <!--image:: h=300, w=296.5-->
@@ -56,17 +63,63 @@
     </div>
 
     <div class="content wrap">
+        <div class="separator"></div>
+
+        <!--rating, rank, bio-->
+        <div class="row">
+            <div class="rating-box col-lg-2">
+                <span class="glyphicon glyphicon-fire"></span>
+                <span id="hotttnesss" class="artist-hint" title="A representation of how popular an artist is.">
+                    {{ hotttnesss }}
+                </span>
+                
+                <br />
+                Rank: 
+                <span id="hotttnesss_rank" class="rank">
+                    {{ hotttnesss_rank }}
+                </span>
+            </div>
+
+            <div id="bios" class="bio-box col-lg-10">
+                <span id="bio_trunc">
+                    {{ bio_trunc }}
+                </span>
+                <!-- TODO: add toggle for full bio modal -->
+                <!-- <span id="bio-toggle" title="Expand this biography.">
+                    more
+                </span> -->
+            </div>
+        </div>
+        <!--END rating, rank, bio-->
+
+        <div class="separator"></div>
+
+        <!--songs and similar-->
         <div class="row">
             <div class="content-left col-lg-7">
-                1
+                <table id="song-table" class="table">
+                    {% if songs %}
+                    <tbody>
+                        {% for song in songs %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ song.title }}</td>
+                                <td>{{ song.id }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% endif %}
+                </table>
             </div>
             
-            <class="row">
             <div class="content-right col-lg-5">
                 3
             </div>
         </div>
+        <!--END songs and similar-->
     </div>
+
+    <div class="separator"></div>
 
     <div class="footer wrap">
         

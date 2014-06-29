@@ -9,6 +9,10 @@ var TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
     ATTEMPT_LIMIT = 5,
     BANNER_HEIGHT = $(".image-banner").height;
 
+/*
+    event handlers
+*/
+
 
 /*
     retrieve query string param 'q'.
@@ -93,23 +97,18 @@ function display_results(data) {
     // iterate over JSON and load data to divs
     $.each(data, function (key, value) {
         switch (key) {
-            case 'images':
-                var img_list, x = 0;
-
+            case 'tiles':
                 // prepare banner images: wrap, resize, append
                 $.each(value, function () {
+
                     // create image, set class, run on load
                     var image = $('<img />', {
+                        id: this[0],
                         class: 'tile-image'
-                        }).attr('src', this).load(function () {
-
+                        }).attr('src', this[1]).load(function () {
                         var wrapper = $('<div />', {
                             class: 'tile-wrapper'
                         });
-
-                        if (image.height() > BANNER_HEIGHT) {
-                            image.height(BANNER_HEIGHT);
-                        }
 
                         wrapper.append(image);
                         $("#image-banner").append(wrapper);
@@ -118,15 +117,22 @@ function display_results(data) {
                 break;
 
             case 'songs':
+                // append entire table so we traverse DOM once instead of len(songs) times if we append row by row
+                var tb = $('<tbody />');
                 $.each(value, function (rank, song) {
-                    $("#" + key).append(rank + 1 + '. ' + song['title']);
-                    $("#" + key).append("<p />").hide().fadeIn(FADE_DELAY);
+                    var row = $('<tr>', {id: 'hehe'});
+
+                    row.append($('<td>').text(++rank));
+                    row.append($('<td>').text(song['title']));
+                    row.append($('<td>').text(song['id']));
+                    tb.append(row).fadeIn(FADE_DELAY);
                 });
+                $("#song-table").append(tb).fadeIn(FADE_DELAY);
                 break;
 
             default:
                 $("#" + key).html(value).hide().fadeIn(FADE_DELAY);
-                console.log(key + ': ' + value);
+                // console.log(key + ': ' + value);
         }
     });
 }
