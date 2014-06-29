@@ -7,7 +7,7 @@ from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
 
 from audiosearch.redis import client as RC
-from home.models import ENCall, ARTIST_BUCKET
+from home.models import ENCall, ARTIST_BUCKET, SIMILAR_BUCKET
 from util import debug, debug_title
 
 """
@@ -43,12 +43,16 @@ def artist_info(request):
 
         return render(request, 'artist.html', context)
 
-    # MISS: create request package, defer call, return pending context
+    # MISS: create request packages, defer call, return pending context
     debug_title ("MISS: %s" % request_id)
 
-    package = ENCall('artist', 'profile')
-    package.build(request_id, bucket=ARTIST_BUCKET)
-    tasks.call_API.delay(package)
+    profile = ENCall('artist', 'profile')
+    profile.build(request_id, bucket=ARTIST_BUCKET)
+
+    similar = ENCall('artist', 'similar')
+    similar.build(request_id, bucket=SIMILAR_BUCKET)
+
+    tasks.call_API.delay(profile, similar)
 
     context['status'] = 'pending'
 

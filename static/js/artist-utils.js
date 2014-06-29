@@ -120,9 +120,17 @@ function display_results(data) {
                 // append entire table so we traverse DOM once instead of len(songs) times if we append row by row
                 var tb = $('<tbody />');
                 $.each(value, function (rank, song) {
-                    var row = $('<tr>', {id: 'hehe'});
+                    var row;
+                    rank++;
 
-                    row.append($('<td>').text(++rank));
+                    if (rank % 2 == 0) {
+                        row = $('<tr>', {id: 'hehe', class:"row-even"});
+                    }
+                    else {
+                        row = $('<tr>', {id: 'hehe', class:"row-odd"});
+                    }
+
+                    row.append($('<td>').text(rank));
                     row.append($('<td>').text(song['title']));
                     row.append($('<td>').text(song['id']));
                     tb.append(row).fadeIn(FADE_DELAY);

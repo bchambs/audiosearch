@@ -44,7 +44,7 @@ def process_artist(data):
         # displayed in modal
         data['bio_full'] = get_good_bio(data['biographies'])
 
-        # summary: get first paragraph, if not optimal take first 400 letters
+        # summary: get first paragraph, if not optimal take first 500 letters
         paragraphs = data['bio_full'].split("\n")
 
         if len(paragraphs[0]) < 200 or len(paragraphs[0]) > 500:

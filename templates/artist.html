@@ -96,12 +96,17 @@
 
         <!--songs and similar-->
         <div class="row">
-            <div class="content-left col-lg-7">
+            <!--songs-->
+            <div class="song-content col-lg-7">
                 <table id="song-table" class="table">
                     {% if songs %}
                     <tbody>
                         {% for song in songs %}
-                            <tr>
+                            {% if forloop.counter|divisibleby:2 %}
+                            <tr class="row-even">
+                            {% else %}
+                            <tr class="row-odd">
+                            {% endif %}
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ song.title }}</td>
                                 <td>{{ song.id }}</td>
@@ -110,11 +115,12 @@
                     </tbody>
                     {% endif %}
                 </table>
-            </div>
-            
-            <div class="content-right col-lg-5">
-                3
-            </div>
+            </div><!--END songs-->
+
+            <!--similar-->
+            <div class="similar-content col-lg-5">
+                
+            </div><!--END similar-->
         </div>
         <!--END songs and similar-->
     </div>

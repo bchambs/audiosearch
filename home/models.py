@@ -20,6 +20,11 @@ ARTIST_BUCKET = [
     'hotttnesss_rank',
 ]
 
+SIMILAR_BUCKET = [
+    'familiarity_rank',
+    'hotttnesss',
+]
+
 """
 -------------------
 audiosearch classes
@@ -94,7 +99,12 @@ class ENCall(object):
 
                     # success
                     if code == 0:
-                        result = call_json['response'][self.type_key]
+                        # TODO: subclass ENCall according to method type.  
+                        #   refactor common code to methods, pass dicts as results, set resulting json based on method type key ?
+                        if self.method == 'similar':
+                            result['similar']  = call_json['response'][self.type_key]
+                        else:
+                            result = call_json['response'][self.type_key]
                         result['status'] = 'ready'
 
                         return result

@@ -46,19 +46,6 @@ html, body {
     /*background-color: #A7E695;*/
     background-color: #215681;
 }
-.content-left {
-    padding: 0;
-    width: 735px;
-    height: 600px;
-    border-right: 2px solid black;
-    background-color: #215681;
-}
-.content-right {
-    padding: 0;
-    width: 453px;
-    height: 600px;
-    background-color: #215681;
-}
 
 .footer {
     background-image: url('../img/wave-far2.svg');
@@ -145,7 +132,20 @@ html, body {
     content: "A representation of how popular an artist or song is.";
     /*border-bottom: 1px white dotted;*/
     cursor: help;
+}
 
+.song-content{
+    padding: 0;
+    width: 735px;
+    height: 600px;
+    border-right: 15px solid #1C2A3B;
+    background-color: #215681;
+}
+.similar-content {
+    padding: 0;
+    width: 453px;
+    height: 600px;
+    background-color: #215681;
 }
 
 .glyphicon {
@@ -157,9 +157,19 @@ html, body {
     font-size: 15px;
 }
 
-#hehe {
-    background-color: red;
+.row-even {
+    background-color: #4475AA;
+
 }
+.row-odd {
+    background-color: #215681;
+}
+
+table#song-table td, tr {
+    border-color: #1C2A3B;
+}
+
+
 
 
 
