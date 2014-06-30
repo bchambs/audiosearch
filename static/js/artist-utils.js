@@ -43,7 +43,7 @@ function fetch_request(id, attempt) {
     'use strict';
 
     $.ajax({
-        url: '/ajax/',
+        url: '/artistjx/',
         data: {'q': id},
         dataType: 'json',
         type: 'GET',
@@ -54,7 +54,7 @@ function fetch_request(id, attempt) {
                 display_results(data);
             }
             else if (data['status'] === 'pending') {
-                attempt += 1;
+                attempt++;
 
                 if (attempt > ATTEMPT_LIMIT) {
                     console.log('timeout')
@@ -123,6 +123,10 @@ function display_results(data) {
                     var row;
                     rank++;
 
+                    if (rank > 15) {
+                        return false;
+                    }
+
                     if (rank % 2 == 0) {
                         row = $('<tr>', {id: 'hehe', class:"row-even"});
                     }
@@ -132,7 +136,7 @@ function display_results(data) {
 
                     row.append($('<td>').text(rank));
                     row.append($('<td>').text(song['title']));
-                    row.append($('<td>').text(song['id']));
+                    row.append($('<td>').text(song['song_hotttnesss']));
                     tb.append(row).fadeIn(FADE_DELAY);
                 });
                 $("#song-table").append(tb).fadeIn(FADE_DELAY);

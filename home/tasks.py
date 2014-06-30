@@ -3,23 +3,31 @@ from json import JSONEncoder
 
 from celery import shared_task
 
+from home.call_consumer import ENConsumer
 from audiosearch.redis import client as RC, EXPIRE_TIME
-from home.util import process_artist
 
-# call Echo Nest, encode json to dict, store in redis as <id, json_str>
+# TODO: move this somewhere
+snooze = 2
+limit = 5
+
 @shared_task
-def call_API(*packages):
+def call_service(id_, packages):
+    """
+    Call Echo Nest, trim json result, encode json to dict, store in redis as <id, json_str>
+    """
     result = {}
 
     for package in packages:
-        temp_result = package.consume()
+        resource = ENConsumer.consume(package, snooze, limit)
 
-        # reduce json size if artist
-        # TODO: this work needs to be done outside of the task
-        if package.ctype == 'artist' and temp_result['status'] == 'ready':
-            process_artist(temp_result)
+        if resource['status'] == "ready":
+            result.update(package.trim(resource))
+        else:
+            encoded_result = JSONEncoder().encode(resource)
+            RC.set(id_, encoded_result, ex=EXPIRE_TIME)
+            return
 
-        result.update(temp_result)
-    
+    result['status'] = "ready"
     encoded_result = JSONEncoder().encode(result)
-    RC.set(package.id, encoded_result, ex=EXPIRE_TIME)
+    RC.set(id_, encoded_result, ex=EXPIRE_TIME)
+

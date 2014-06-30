@@ -119,7 +119,22 @@
 
             <!--similar-->
             <div class="similar-content col-lg-5">
-                
+                <table id="song-table" class="table">
+                    {% if similar %}
+                    <tbody>
+                        {% for artist in similar %}
+                            {% if forloop.counter|divisibleby:2 %}
+                            <tr class="row-even">
+                            {% else %}
+                            <tr class="row-odd">
+                            {% endif %}
+                                <td>{{ artist.name }}</td>
+                                <td>{{ artist.familiarity }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% endif %}
+                </table>
             </div><!--END similar-->
         </div>
         <!--END songs and similar-->

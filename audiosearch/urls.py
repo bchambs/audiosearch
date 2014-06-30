@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^compare_results/$', 'home.views.compare_results'),
     url(r'^trending/$', 'home.views.trending'),
 
-    url(r'^ajax/$', 'home.views.async_retrieve_general'),
+    url(r'^artistjx/$', 'home.views.async_artist'),
     
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )

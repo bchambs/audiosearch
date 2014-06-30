@@ -7,18 +7,9 @@ from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
 
 from audiosearch.redis import client as RC
-from home.models import ENCall, ARTIST_BUCKET, SIMILAR_BUCKET
+from home.calls import ArtistProfile, Playlist, SimilarArtists
 from util import debug, debug_title
 
-"""
-TODO: remove this
-Convention: 
-    dict['status'] for request state:
-        ready,
-        pending,
-        failed
-    dict['message'] for explanation
-"""
 
 """
 ---------------------------
@@ -46,13 +37,16 @@ def artist_info(request):
     # MISS: create request packages, defer call, return pending context
     debug_title ("MISS: %s" % request_id)
 
-    profile = ENCall('artist', 'profile')
-    profile.build(request_id, bucket=ARTIST_BUCKET)
+    packages = []
 
-    similar = ENCall('artist', 'similar')
-    similar.build(request_id, bucket=SIMILAR_BUCKET)
+    profile = ArtistProfile(request_id)
+    packages.append(profile)
+    playlist = Playlist(request_id)
+    packages.append(playlist)
+    similar = SimilarArtists(request_id)
+    packages.append(similar)
 
-    tasks.call_API.delay(profile, similar)
+    tasks.call_service.delay(request_id, packages)
 
     context['status'] = 'pending'
 
@@ -73,7 +67,7 @@ Functions for handling ASYNC requests
 """
 
 # check cache, if hit return json else return pending
-def async_retrieve_general(request):
+def async_artist(request):
     request_id = request.GET['q']
 
     data = {}
