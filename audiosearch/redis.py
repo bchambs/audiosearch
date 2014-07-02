@@ -2,6 +2,31 @@ from __future__ import absolute_import
 
 import redis
 
+"""
+------
+Schema
+------
+
+Key = artist, song, playlist... id
+Values by type:
+    Artist = {
+        status = {
+            'profile': string,
+            'songs': string,
+            'similar': string
+        }
+
+        profile = {
+            'bio_full': string
+            'bio_trunc': string
+            'tiles': list of (string, url) tuple
+            'terms': string
+            'hotttnesss': int
+        }
+        songs = list of dict
+        similar = list of dict
+    }
+"""
 
 """
 ---------------
@@ -17,10 +42,9 @@ CONNECTIONS = 20
 # in seconds
 EXPIRE_TIME = 200
 
-
 """
 ----------------------
-Establish Redis client
+Redis client
 ----------------------
 """
 

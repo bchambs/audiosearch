@@ -15,19 +15,17 @@ def call_service(id_, packages):
     """
     Call Echo Nest, trim json result, encode json to dict, store in redis as <id, json_str>
     """
-    result = {}
 
     for package in packages:
-        resource = ENConsumer.consume(package, snooze, limit)
+        raw = ENConsumer.consume(package, snooze, limit)
 
-        if resource['status'] == "ready":
-            result.update(package.trim(resource))
+        if raw[0] == 'ready':
+            resource = package.trim(raw)
+            pipe = RC.pipeline()
+            pipe.hset(id_, 'status', {package.REDIS_ID: 'ready'})
+            pipe.hset(id_, package.REDIS_ID, resource[1])
+            pipe.execute()
         else:
-            encoded_result = JSONEncoder().encode(resource)
-            RC.set(id_, encoded_result, ex=EXPIRE_TIME)
-            return
+            client.pipe.hset(id_, 'status', raw[0])
 
-    result['status'] = "ready"
-    encoded_result = JSONEncoder().encode(result)
-    RC.set(id_, encoded_result, ex=EXPIRE_TIME)
-
+        debug(s=raw[0], d=raw[1], keys=True)

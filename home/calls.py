@@ -28,9 +28,9 @@ class ArtistProfile(ENCall):
     Package representing all required data for an artist profile request from Echo Nest.
     """
 
+    # REST data
     TYPE_ = "artist"
     METHOD = "profile"
-
     BUCKETS = [
         'biographies',
         'hotttnesss',
@@ -39,9 +39,9 @@ class ArtistProfile(ENCall):
         'hotttnesss_rank',
     ]
 
-    # json key for request data
+    # REDIS data
     KEY_ = 'artist'
-    REDIS_ID = False
+    REDIS_ID = 'profile'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
@@ -96,14 +96,14 @@ class Playlist(ENCall):
     Package representing all required data for a playlist request from Echo Nest.
     """
 
+    # REST data
     TYPE_ = "playlist"
     METHOD = "static"
-
     BUCKETS = [
         'song_hotttnesss',
     ]
 
-    # json key for request data
+    # REDIS data
     KEY_ = 'songs'
     REDIS_ID = 'songs'
 
@@ -124,16 +124,16 @@ class SimilarArtists(ENCall):
     Package representing all required data for a similar artists request from Echo Nest.
     """
 
+    # REST data
     TYPE_ = "artist"
     METHOD = "similar"
-
     BUCKETS = [
         'images',
         'terms',
         'familiarity',
     ]
 
-    # json key for request data
+    # REDIS data
     KEY_ = 'artists'
     REDIS_ID = 'similar'
 
@@ -147,8 +147,3 @@ class SimilarArtists(ENCall):
             artist['familiarity'] = int(round(artist['familiarity'] * 100))
         return data
 
-#################################################
-    # SIMILAR = [
-    #     'familiarity_rank',
-    #     'hotttnesss',
-    # ]

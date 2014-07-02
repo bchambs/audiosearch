@@ -36,13 +36,11 @@ class ENConsumer(object):
 
         Return value
         ------------
-        result : dictionary
-            Contains one or two keys:
-                'status' = status of echo nest call
-                package.METHOD = echo nest resource for package's method (profile, search, etc)
+        result : (string, dict) tuple
+            if string is 'ready', dict contains completed ENCall
+            otherwise dict is None
         """
         attempt = 0
-        result = {'status': "failed"}
 
         while True:
             try:
@@ -56,12 +54,9 @@ class ENConsumer(object):
 
                     # success
                     if code == ENConsumer.SUCCESS:
-                        if package.REDIS_ID:
-                            result[package.REDIS_ID] = resource_json['response'][package.KEY_]
-                        else:
-                            result = resource_json['response'][package.KEY_]
+                        resource_dict = resource_json['response'][package.KEY_]
 
-                        result['status'] = "ready"
+                        result = ("ready", resource_dict)
                         return result
 
                     # limit exceeded, snooze then retry
@@ -70,24 +65,24 @@ class ENConsumer(object):
 
                     # bad parameter
                     elif code == ENConsumer.MISSING_PARAM or code == ENConsumer.INVALID_PARAM:
-                        result['message'] = "Invalid request."
+                        result = ("Invalid request.", None)
                         return result
 
                     # unrecoverable error (bad key, unknown)
                     else:
-                        result['message'] = "Unrecoverable error."
+                        result = ("Unrecoverable error.", None)
                         return result
 
                 # CATCH result not json or corrupt
                 except (ValueError, KeyError):
                     # TODO: log failure
-                    result['message'] = "Received an invalid response from the Echo Nest."
+                    result = ("Received an invalid response from the Echo Nest.", None)
                     return result
 
             # CATCH requests errors
             except requests.exceptions.RequestException:
                 # TODO: log failure
-                result['message'] = "Unable to connect to the Echo Nest."
+                result = ("Unable to connect to the Echo Nest.", None)
                 return result
 
             # CATCH echo nest limit exceeded
@@ -102,8 +97,8 @@ class ENConsumer(object):
 
             # CATCH exceeded attempt limit
             except TimeOutError:
-                # TODO: log failure
-                result['message'] = "Audiosearch is receiving too many requests!  Try again soon!"
+                # TODO: log failure and handle this more appropriately
+                result = ("Audiosearch is receiving too many requests!  Try again soon!", None)
                 return result
         
 
