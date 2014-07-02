@@ -152,11 +152,31 @@
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/artist-utils.js"></script>
-{% if status == 'pending' %}
+{% if not profile %}
+    <script type="text/javascript">
+        var q = fetch_query_string();
+        fetch_request(q, "profile", 0);
+    </script>
+{% endif %}
+
+{% if not songs %}
+    <script type="text/javascript">
+        var q = fetch_query_string();
+        fetch_request(q, "songs", 0);
+    </script>
+{% endif %}
+
+{% if not similar %}
+    <script type="text/javascript">
+        var q = fetch_query_string();
+        fetch_request(q, "similar", 0);
+    </script>
+{% endif %}
+<!-- {% if status == 'pending' %}
     <script type="text/javascript">
         var q = fetch_query_string();
         fetch_request(q, 0);
     </script>
-{% endif %}
+{% endif %} -->
 </body>
 </html>

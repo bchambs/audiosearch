@@ -156,3 +156,4 @@ function handle_timeout(message) {
     $('#spinner').hide();
     $("#name").text(message).hide().fadeIn(FADE_DELAY);;
 }
+
