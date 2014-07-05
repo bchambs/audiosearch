@@ -2,6 +2,7 @@ from random import choice, sample
 
 from home.util import get_good_bio, debug
 
+
 class ENCall(object):
     """
     Abstract class representing input to request.get().
@@ -48,7 +49,6 @@ class ArtistProfile(ENCall):
         self.payload['id'] = id_
 
 
-    # TODO: this needs to be abstracted to some other class
     def trim(self, data):
         result = {
             'hotttnesss_rank': data['hotttnesss_rank'],
@@ -114,7 +114,7 @@ class Playlist(ENCall):
         self.payload['sort'] = "song_hotttnesss-desc"
 
     def trim(self, data):
-        for song in data['songs']:
+        for song in data:
             song['song_hotttnesss'] = int(round(song['song_hotttnesss'] * 100))
         return data
 
@@ -142,8 +142,9 @@ class SimilarArtists(ENCall):
         self.payload['id'] = id_
         self.payload['results'] = 100
 
+
     def trim(self, data):
-        for artist in data['similar']:
+        for artist in data:
             artist['familiarity'] = int(round(artist['familiarity'] * 100))
         return data
 

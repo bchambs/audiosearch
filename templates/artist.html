@@ -1,6 +1,4 @@
-﻿{% load audiosearch_extras %}
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -41,7 +39,7 @@
             <!--END spinner-->
 
             <!--tiled images-->
-            {% for tile in tiles %}
+            {% for tile in profile.tiles %}
             <!--HIT: load tiles -->
             <div class="tile-wrapper">
                 <img id={{ tile.0 }} class="tile-image" src={{ tile.1 }} />
@@ -56,7 +54,7 @@
         <!--banner title-->
         <div id="banner-title">
             <div id="name">
-                {{ name }}
+                {{ profile.name }}
             </div>
         </div><!--END banner title-->
 
@@ -70,19 +68,19 @@
             <div class="rating-box col-lg-2">
                 <span class="glyphicon glyphicon-fire"></span>
                 <span id="hotttnesss" class="artist-hint" title="A representation of how popular an artist is.">
-                    {{ hotttnesss }}
+                    {{ profile.hotttnesss }}
                 </span>
                 
                 <br />
                 Rank: 
                 <span id="hotttnesss_rank" class="rank">
-                    {{ hotttnesss_rank }}
+                    {{ profile.hotttnesss_rank }}
                 </span>
             </div>
 
             <div id="bios" class="bio-box col-lg-10">
                 <span id="bio_trunc">
-                    {{ bio_trunc }}
+                    {{ profile.bio_trunc }}
                 </span>
                 <!-- TODO: add toggle for full bio modal -->
                 <!-- <span id="bio-toggle" title="Expand this biography.">
@@ -152,31 +150,24 @@
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/artist-utils.js"></script>
+
 {% if not profile %}
     <script type="text/javascript">
-        var q = fetch_query_string();
-        fetch_request(q, "profile", 0);
+        dispatch(q, 'profile', 0);
     </script>
 {% endif %}
 
 {% if not songs %}
     <script type="text/javascript">
-        var q = fetch_query_string();
-        fetch_request(q, "songs", 0);
+        dispatch(q, 'songs', 0);
     </script>
 {% endif %}
 
 {% if not similar %}
     <script type="text/javascript">
-        var q = fetch_query_string();
-        fetch_request(q, "similar", 0);
+        dispatch(q, 'similar', 0);
     </script>
 {% endif %}
-<!-- {% if status == 'pending' %}
-    <script type="text/javascript">
-        var q = fetch_query_string();
-        fetch_request(q, 0);
-    </script>
-{% endif %} -->
+
 </body>
 </html>

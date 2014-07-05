@@ -1,6 +1,7 @@
 import tasks
 import util
 import ast
+import json
 
 from django.shortcuts import render
 from django.template import RequestContext, loader, Context
@@ -22,57 +23,31 @@ def artist_info(request):
     """
     /artist/
     """
-    request_id = request.GET['q']
+    artist_id = request.GET['q']
     context = Context({})
+    artist = RC.hgetall(artist_id)
+    packages = []
 
-    context['test'] = True
-    context['param'] = "hi"
-    context['profile'] = None
+    if 'profile' in artist:
+        context['profile'] = ast.literal_eval(artist['profile'])
+    else:
+        packages.append(ArtistProfile(artist_id))
 
-    # packages = []
-    # profile = RC.hget(request_id, 'profile') 
-    # context['profile'] = ast.literal_eval(profile) if profile else packages.append(ArtistProfile(request_id))
-    
-    # songs = RC.hget(request_id, 'songs') 
-    # context['songs'] = ast.literal_eval(songs) if songs else packages.append(Playlist(request_id))
-    
-    # similar = RC.hget(request_id, 'similar') 
-    # context['similar'] = ast.literal_eval(similar) if similar else packages.append(SimilarArtists(request_id))
+    if 'songs' in artist:
+        context['songs'] = ast.literal_eval(artist['songs'])
+    else:
+        packages.append(Playlist(artist_id))
 
-    # if packages:
-    #     tasks.call_service.delay(request_id, packages)
+    if 'similar' in artist:
+        context['similar'] = ast.literal_eval(artist['similar'])
+    else:
+        packages.append(SimilarArtists(artist_id))
+
+    # MISS: defer call
+    if packages:
+        tasks.call_service.delay(packages)
 
     return render(request, 'artist.html', context)
-
-    # # cache check
-    # artist_str = RC.get(request_id)
-
-    # # HIT: get json_str, convert to dict, return template
-    # if artist_str:
-    #     debug_title ("HIT: %s" % request_id)
-
-    #     artist_dict = json.loads(artist_str)
-    #     context.update(artist_dict)
-
-    #     return render(request, 'artist.html', context)
-
-    # # MISS: create request packages, defer call, return pending context
-    # debug_title ("MISS: %s" % request_id)
-
-    # packages = []
-
-    # profile = ArtistProfile(request_id)
-    # packages.append(profile)
-    # playlist = Playlist(request_id)
-    # packages.append(playlist)
-    # similar = SimilarArtists(request_id)
-    # packages.append(similar)
-
-    # tasks.call_service.delay(request_id, packages)
-
-    # context['status'] = 'pending'
-
-    # return render(request, 'artist.html', context)
 
 
 # HTTP 500
@@ -90,10 +65,15 @@ Functions for handling ASYNC requests
 
 # check cache, if hit return json else return pending
 def async_artist(request):
-    request_id = request.GET['q']
-
+    artist_id = request.GET['q']
+    resource = request.GET['resource']
     data = {}
-    data_str = RC.get(request_id)
-    data = json.loads(data_str) if data_str else {'status': 'pending'}
+    data_str = RC.hget(artist_id, resource)
+
+    if data_str:
+        data[resource] = ast.literal_eval(data_str)
+        data['status'] = 'ready'
+    else:
+        data['status'] = 'pending'
 
     return HttpResponse(json.dumps(data), content_type="application/json")
