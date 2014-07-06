@@ -26,28 +26,49 @@ def artist_info(request):
     artist_id = request.GET['q']
     context = Context({})
     artist = RC.hgetall(artist_id)
-    packages = []
 
     if 'profile' in artist:
         context['profile'] = ast.literal_eval(artist['profile'])
     else:
-        packages.append(ArtistProfile(artist_id))
+        tasks.call_service.delay(ArtistProfile(artist_id))
 
     if 'songs' in artist:
         context['songs'] = ast.literal_eval(artist['songs'])
+        context['songs'] = context['songs'][:15]
     else:
-        packages.append(Playlist(artist_id))
+        tasks.call_service.delay(Playlist(artist_id))
 
     if 'similar' in artist:
         context['similar'] = ast.literal_eval(artist['similar'])
+        context['similar'] = context['similar'][:15]
+        
     else:
-        packages.append(SimilarArtists(artist_id))
-
-    # MISS: defer call
-    if packages:
-        tasks.call_service.delay(packages)
+        tasks.call_service.delay(SimilarArtists(artist_id))
 
     return render(request, 'artist.html', context)
+
+    # packages = []
+
+    # if 'profile' in artist:
+    #     context['profile'] = ast.literal_eval(artist['profile'])
+    # else:
+    #     packages.append(ArtistProfile(artist_id))
+
+    # if 'songs' in artist:
+    #     context['songs'] = ast.literal_eval(artist['songs'])
+    # else:
+    #     packages.append(Playlist(artist_id))
+
+    # if 'similar' in artist:
+    #     context['similar'] = ast.literal_eval(artist['similar'])
+    # else:
+    #     packages.append(SimilarArtists(artist_id))
+
+    # # MISS: defer call
+    # if packages:
+    #     tasks.call_service.delay(packages)
+
+    # return render(request, 'artist.html', context)
 
 
 # HTTP 500

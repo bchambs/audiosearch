@@ -17,6 +17,7 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
 
     <title>audiosearch</title>
 </head>
@@ -28,7 +29,6 @@
     </div>
 
     <div class="banner-container wrap">
-        <!--image banner-->
         <div id="image-banner">
             <!--spinner display-->
             {% if status == 'pending' %}
@@ -51,13 +51,11 @@
             <!--image:: h=300, w=296.5-->
         </div><!--END image banner-->
 
-        <!--banner title-->
         <div id="banner-title">
             <div id="name">
                 {{ profile.name }}
             </div>
         </div><!--END banner title-->
-
     </div>
 
     <div class="content wrap">
@@ -92,10 +90,52 @@
 
         <div class="separator"></div>
 
-        <!--songs and similar-->
+        <!--similar artists and songs-->
         <div class="row">
+            <div class="similar-content col-lg-7">
+                <table id="similar-table" class="table">
+                {% if similar %}
+                    <tbody>
+                        {% for artist in similar %}
+                            {% if forloop.counter|divisibleby:2 %}
+                            <tr class="row-even">
+                            {% else %}
+                            <tr class="row-odd">
+                            {% endif %}
+                                <td class="preview-image-width">
+                                    <div class="preview-container">
+                                        <img id='' class='preview-image' src="{{ artist.preview_image }}" />
+                                        <div class="preview-text">
+                                            <span class="preview-terms">{{ artist.terms }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <table class="preview-songs-table">
+                                        <tbody>
+                                            {% if forloop.counter|divisibleby:2 %}
+                                            <tr class="row-even">
+                                            {% else %}
+                                            <tr class="row-odd">
+                                            {% endif %}
+                                                <th class="preview-name-title">{{ artist.name }}</th>
+                                                <th class="preview-name-title">hehe</th>
+                                                <tr><td>{{ artist.songs.0.title }}</td></tr>
+                                                <tr><td>{{ artist.songs.1.title }}</td></tr>
+                                                <tr><td>{{ artist.songs.2.title }}</td></tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endif %}
+                </table>
+            </div><!--END similar-->
+
             <!--songs-->
-            <div class="song-content col-lg-7">
+            <div class="song-content col-lg-4">
                 <table id="song-table" class="table">
                     {% if songs %}
                     <tbody>
@@ -107,42 +147,21 @@
                             {% endif %}
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ song.title }}</td>
-                                <td>{{ song.id }}</td>
+                                <!-- <td>{{ song.id }}</td> -->
                             </tr>
                         {% endfor %}
                     </tbody>
                     {% endif %}
                 </table>
             </div><!--END songs-->
-
-            <!--similar-->
-            <div class="similar-content col-lg-5">
-                <table id="song-table" class="table">
-                    {% if similar %}
-                    <tbody>
-                        {% for artist in similar %}
-                            {% if forloop.counter|divisibleby:2 %}
-                            <tr class="row-even">
-                            {% else %}
-                            <tr class="row-odd">
-                            {% endif %}
-                                <td>{{ artist.name }}</td>
-                                <td>{{ artist.familiarity }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                    {% endif %}
-                </table>
-            </div><!--END similar-->
-        </div>
-        <!--END songs and similar-->
+        </div><!--END similar and songs-->
     </div>
 
-    <div class="separator"></div>
+    <!-- <div class="separator"></div>
 
     <div class="footer wrap">
         
-    </div><!--END footer-->
+    </div> --><!--END footer-->
 
     <!-- <div class="reflection main"></div> -->
 </div><!--END container-->

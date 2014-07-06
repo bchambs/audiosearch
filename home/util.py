@@ -42,3 +42,20 @@ def get_good_bio(bios):
             return b['text']
 
     return 'Artist biography is not available.'
+
+
+def remove_duplicate_songs (data, n):
+    trunc = []
+    comparisons = {}
+    
+    for song in data:
+        s = song['title'].lower()
+        
+        if s not in comparisons:
+            comparisons[s] = 1
+            trunc.append(song['title'])
+
+        if len(trunc) is n:
+            break
+
+    return trunc

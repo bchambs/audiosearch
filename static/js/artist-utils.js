@@ -50,6 +50,7 @@ function get_query_string() {
 function dispatch(id, resource, attempt) {
     'use strict';
 
+    // TODO: use AJAX fail instead of data['status']
     $.ajax({
         url: '/artistjx/',
         data: {
@@ -87,7 +88,7 @@ function dispatch(id, resource, attempt) {
                     console.log('not ready, attempt: ' + attempt)
 
                     setTimeout(function() {
-                        fetch_request(id, resource, attempt)
+                        dispatch(id, resource, attempt)
                     }
                     , AJAX_SNOOZE);
                 }
@@ -155,9 +156,8 @@ function display_songs(data) {
     var tb = $('<tbody />');
     $.each(data, function (rank, song) {
         var row;
-        rank++;
 
-        if (rank > 15) {
+        if (++rank > 15) {
             return false;
         }
 

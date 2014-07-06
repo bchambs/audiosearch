@@ -1,6 +1,6 @@
 from random import choice, sample
 
-from home.util import get_good_bio, debug
+from home.util import get_good_bio, debug, debug_subtitle, remove_duplicate_songs
 
 
 class ENCall(object):
@@ -51,6 +51,7 @@ class ArtistProfile(ENCall):
 
     def trim(self, data):
         result = {
+            'name': data['name'],
             'hotttnesss_rank': data['hotttnesss_rank'],
         }
 
@@ -64,6 +65,9 @@ class ArtistProfile(ENCall):
                 result['bio_trunc'] = result['bio_full'][:500]
             else:
                 result['bio_trunc'] = paragraphs[0]
+
+            # TODO: remove this
+            del result['bio_full']
 
         # banner images, take top 4 images, create (id, url) tuple, append to tiles key
         if 'images' in data:
@@ -131,6 +135,7 @@ class SimilarArtists(ENCall):
         'images',
         'terms',
         'familiarity',
+        'songs',
     ]
 
     # REDIS data
@@ -146,5 +151,23 @@ class SimilarArtists(ENCall):
     def trim(self, data):
         for artist in data:
             artist['familiarity'] = int(round(artist['familiarity'] * 100))
-        return data
+            if 'images' in artist:
+                artist['preview_image'] = artist['images'][0]['url']
+
+            if 'terms' in artist:
+                try:
+                    if len(artist['terms']) is 1:
+                        artist['terms'] = artist['terms'][0]['name']
+                    else:
+                        artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
+                
+                # CATCH handle the unlikely event that a term item exists without a name key
+                except KeyError:
+                    pass
+
+            if 'songs' in artist:
+                artist['songs'] = remove_duplicate_songs(artist['songs'], 3)
+
+        return data[:5]
+
 
