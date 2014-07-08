@@ -4,8 +4,6 @@ import logging
 import sys
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
 # examine value of string, dict, or list
 def debug(s=None, d=None, keys=None, values=None, l=None):
     if s:

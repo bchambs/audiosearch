@@ -162,10 +162,10 @@ function display_songs(data) {
         }
 
         if (rank % 2 == 0) {
-            row = $('<tr>', {id: 'hehe', class:"row-even"});
+            row = $('<tr>', {class:"row-even"});
         }
         else {
-            row = $('<tr>', {id: 'hehe', class:"row-odd"});
+            row = $('<tr>', {class:"row-odd"});
         }
 
         row.append($('<td>').text(rank));
@@ -183,29 +183,60 @@ function display_songs(data) {
     @param {string} data Object containing similar artists information.
 */
 function display_similar(data) {
-    // var tb = $('<tbody />');
+    'use strict'
+    var tb = $('<tbody />');
 
-    // $.each(data, function (rank, song) {
-    //     var row;
-    //     rank++;
+    $.each(data, function (index, artist) {
+        if (index > 5) {
+            return false;
+        }
+        var row,
+            td_ = $('<td>', {class:"preview-image-width"}), 
+            out_div = $('<div>', {class:"preview-container"}), 
+            image = $('<img>', {
+                class:"preview-image",
+                src: artist['preview_url']
+            }), 
+            in_div = $('<div>', {class:"preview-text"}), 
+            span = $('<span>', {class:"preview-terms"}).text(artist['terms']);
 
-    //     if (rank > 15) {
-    //         return false;
-    //     }
+        if (++index % 2 == 0) {
+            row = $('<tr>', {class:"row-even"});
+        }
+        else {
+            row = $('<tr>', {class:"row-odd"});
+        }
 
-    //     if (rank % 2 == 0) {
-    //         row = $('<tr>', {id: 'hehe', class:"row-even"});
-    //     }
-    //     else {
-    //         row = $('<tr>', {id: 'hehe', class:"row-odd"});
-    //     }
+        // preview image col
+        in_div.append(span);
+        out_div.append(image);
+        out_div.append(in_div);
+        td_.append(out_div);
+        row.append(td_);
 
-    //     row.append($('<td>').text(rank));
-    //     row.append($('<td>').text(song['title']));
-    //     row.append($('<td>').text(song['song_hotttnesss']));
-    //     tb.append(row).fadeIn(FADE_DELAY);
-    // });
-    // $("#song-table").append(tb).fadeIn(FADE_DELAY);
+        // info col
+        var info_table_ = $('<table />', {class:"preview-songs-table"}),
+            info_tbody_ = $('<tbody>'),
+            info_row1 = $('<tr />'),
+            info_row2 = $('<tr />');
+
+        info_row1.append($('<th>', {class:"preview-name-title"}).text(artist['name']));
+
+        $.each(artist['songs'], function (nested_index, song) {
+            var nested = ($('<tr>'));
+            nested.append($('<td>').text(song));
+            info_row2.append(nested);
+        });
+        info_tbody_.append(info_row1);
+        info_tbody_.append(info_row2);
+        info_table_.append(info_tbody_);
+        var temp_td = $('<td>');
+        temp_td.append(info_table_);
+        row.append(temp_td);
+
+        tb.append(row).fadeIn(FADE_DELAY);
+    });
+    $("#similar-table").append(tb).fadeIn(FADE_DELAY);
 }
 
 

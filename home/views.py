@@ -24,6 +24,11 @@ def artist_info(request):
     /artist/
     """
     artist_id = request.GET['q']
+
+    # TODO: remove
+    RC.delete(artist_id)
+
+
     context = Context({})
     artist = RC.hgetall(artist_id)
 
@@ -41,7 +46,6 @@ def artist_info(request):
     if 'similar' in artist:
         context['similar'] = ast.literal_eval(artist['similar'])
         context['similar'] = context['similar'][:15]
-        
     else:
         tasks.call_service.delay(SimilarArtists(artist_id))
 
@@ -94,7 +98,9 @@ def async_artist(request):
     if data_str:
         data[resource] = ast.literal_eval(data_str)
         data['status'] = 'ready'
+
     else:
         data['status'] = 'pending'
 
     return HttpResponse(json.dumps(data), content_type="application/json")
+

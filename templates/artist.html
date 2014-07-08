@@ -104,7 +104,7 @@
                             {% endif %}
                                 <td class="preview-image-width">
                                     <div class="preview-container">
-                                        <img id='' class='preview-image' src="{{ artist.preview_image }}" />
+                                        <img class="preview-image" src="{{ artist.preview_url }}" />
                                         <div class="preview-text">
                                             <span class="preview-terms">{{ artist.terms }}</span>
                                         </div>
@@ -119,7 +119,7 @@
                                             <tr class="row-odd">
                                             {% endif %}
                                                 <th class="preview-name-title">{{ artist.name }}</th>
-                                                <th class="preview-name-title">hehe</th>
+                                                <!-- <th class="preview-name-title">test</th> -->
                                                 <tr><td>{{ artist.songs.0.title }}</td></tr>
                                                 <tr><td>{{ artist.songs.1.title }}</td></tr>
                                                 <tr><td>{{ artist.songs.2.title }}</td></tr>

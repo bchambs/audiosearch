@@ -152,7 +152,7 @@ class SimilarArtists(ENCall):
         for artist in data:
             artist['familiarity'] = int(round(artist['familiarity'] * 100))
             if 'images' in artist:
-                artist['preview_image'] = artist['images'][0]['url']
+                artist['preview_url'] = artist['images'][0]['url']
 
             if 'terms' in artist:
                 try:
@@ -168,6 +168,9 @@ class SimilarArtists(ENCall):
             if 'songs' in artist:
                 artist['songs'] = remove_duplicate_songs(artist['songs'], 3)
 
+            del artist['images']
+
+            
         return data[:5]
 
 
