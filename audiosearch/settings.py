@@ -57,8 +57,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home',
-    'home.templatetags.audiosearch_extras',
+    'src',
+    'src.templatetags.audiosearch_extras',
     'pyechonest',
 )
 
@@ -107,4 +107,4 @@ BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
-CELERY_IMPORTS = ("home.tasks", )
+CELERY_IMPORTS = ("src.tasks", )

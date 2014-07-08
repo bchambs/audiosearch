@@ -24,11 +24,33 @@
 <body>
 
 <div class="container">
-    <div class="nav wrap">
+    <div class="nav row">
+        <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
 
+        <div id="nav-title" class="col-lg-3">
+            audiosearch :: 
+        </div>
+
+        <div id="nav-search"  class="col-lg-3">
+            <form action="/search/" method="GET">
+                <input class="search-bar" type="text" name="q">
+            </form>
+        </div>
+
+        <div id="nav-about" class="col-lg-2">
+            about
+        </div>
+        <div id="nav-contact" class="col-lg-2">
+            contact
+        </div>
     </div>
 
-    <div class="banner-container wrap">
+    <div class="nav-content-separator"></div>
+
+    <div class="banner-container">
+    <div class="wrap">
+        <div class="separator"></div>
+
         <div id="image-banner">
             <!--spinner display-->
             {% if status == 'pending' %}
@@ -56,11 +78,13 @@
                 {{ profile.name }}
             </div>
         </div><!--END banner title-->
+
+        <div class="separator"></div>
+    </div>
     </div>
 
-    <div class="content wrap">
-        <div class="separator"></div>
-
+    <div class="artist-brief-info">
+    <div class="wrap">
         <!--rating, rank, bio-->
         <div class="row">
             <div class="rating-box col-lg-2">
@@ -88,8 +112,13 @@
         </div>
         <!--END rating, rank, bio-->
 
-        <div class="separator"></div>
+        <!-- <div class="separator"></div> -->
+    </div>
+    </div>
 
+    <div class="recommended-content">
+    <div class="wrap">
+        <!-- <div class="separator"></div> -->
         <!--similar artists and songs-->
         <div class="row">
             <div class="similar-content col-lg-7">
@@ -155,6 +184,7 @@
                 </table>
             </div><!--END songs-->
         </div><!--END similar and songs-->
+    </div>
     </div>
 
     <!-- <div class="separator"></div>

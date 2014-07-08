@@ -5,18 +5,18 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'home.views.index'),   
-    url(r'^search/$', 'home.views.search'),
-    url(r'^artist/$', 'home.views.artist_info'),
-    url(r'^song/$', 'home.views.song_info'),
-    url(r'^about/$', 'home.views.about'),
-    url(r'^compare/$', 'home.views.compare'),
-    url(r'^compare_results/$', 'home.views.compare_results'),
-    url(r'^trending/$', 'home.views.trending'),
+    url(r'^$', 'src.views.index'),   
+    url(r'^search/$', 'src.views.search'),
+    url(r'^artist/$', 'src.views.artist_info'),
+    url(r'^song/$', 'src.views.song_info'),
+    url(r'^about/$', 'src.views.about'),
+    url(r'^compare/$', 'src.views.compare'),
+    url(r'^compare_results/$', 'src.views.compare_results'),
+    url(r'^trending/$', 'src.views.trending'),
 
-    url(r'^artistjx/$', 'home.views.async_artist'),
+    url(r'^artistjx/$', 'src.views.async_artist'),
     
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )
 
-handler500 = 'home.views.server_error'
+handler500 = 'src.views.server_error'
