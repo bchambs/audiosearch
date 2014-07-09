@@ -21,6 +21,8 @@
     /*padding-top: 16px;*/
     margin-left: 20%;
     text-align: right;
+    /*min-width: 250px;*/
+    width: 250px;
 }
 #title-search {
     padding-top: 16px;

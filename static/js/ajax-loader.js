@@ -44,10 +44,11 @@ function get_query_string() {
 */
 function dispatch(id, resource, attempt) {
     'use strict';
+    console.log("dispatching request for:" + resource);
 
     // TODO: use AJAX fail instead of data['status']
     $.ajax({
-        url: '/artistjx/',
+        url: '/ajax/',
         data: {
             'q': id,
             'resource': resource

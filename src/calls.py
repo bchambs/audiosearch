@@ -51,10 +51,12 @@ class ArtistProfile(ENCall):
 
 
     def trim(self, data):
-        result = {
-            'name': data['name'],
-            'hotttnesss_rank': data['hotttnesss_rank'],
-        }
+        result = {}
+        if 'name' in data:
+            result['name'] = data['name']
+
+        if 'hotttnesss_rank' in data:
+            result['hotttnesss_rank'] = data['hotttnesss_rank']
 
         if 'biographies' in data:
             result['bio_full'] = get_good_bio(data['biographies'])
@@ -73,22 +75,28 @@ class ArtistProfile(ENCall):
         # banner images, take top 4 images, create (id, url) tuple, append to tiles key
         if 'images' in data:
             result['tiles'] = []
-            temp = sample(data['images'], 4)
+            temp = []
+
+            if len(data['images']) > 4:
+                temp = sample(data['images'], 4)
+            else: 
+                temp = data['images']
 
             for x in range(0, len(temp)):
                 tup = 'tile-image-' + str(x + 1), temp[x]['url']
                 result['tiles'].append(tup)
 
         if 'terms' in data:
-            try:
-                if len(data['terms']) is 1:
-                    result['terms'] = data['terms'][0]['name']
-                else:
-                    result['terms'] = data['terms'][0]['name'] + ', ' + data['terms'][1]['name']
-            
-            # CATCH handle the unlikely event that a term item exists without a name key
-            except KeyError:
-                pass
+            if len(data['terms']) > 0:
+                try:
+                    if len(data['terms']) is 1:
+                        result['terms'] = data['terms'][0]['name']
+                    else:
+                        result['terms'] = data['terms'][0]['name'] + ', ' + data['terms'][1]['name']
+                
+                # CATCH handle the unlikely event that a term item exists without a name key
+                except KeyError:
+                    pass
 
         if 'hotttnesss' in data:
             result['hotttnesss'] = int(round(data['hotttnesss'] * 100))

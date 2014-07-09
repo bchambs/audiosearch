@@ -9,7 +9,7 @@
 
 /**
     Iterate over profile object and inject into html.
-    @param {string} data Object containing artist profile information.
+    @param {object} data Object containing artist profile information.
 */
 function display_profile(data) {
     'use strict';
@@ -46,7 +46,7 @@ function display_profile(data) {
 
 /**
     Iterate over songs object and inject into html.
-    @param {string} data Object containing songs information.
+    @param {list} data Object containing songs information.
 */
 function display_songs(data) {
     'use strict';
@@ -79,7 +79,7 @@ function display_songs(data) {
 
 /**
     Iterate over similar artists object and inject into html.
-    @param {string} data Object containing similar artists information.
+    @param {list} data Object containing similar artists information.
 */
 function display_similar(data) {
     'use strict'
@@ -137,4 +137,7 @@ function display_similar(data) {
     });
     $("#similar-table").append(tb).fadeIn(FADE_DELAY);
 }
+
+
+
 

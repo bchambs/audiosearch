@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 from audiosearch.redis import client as RC
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
-from util import debug, debug_title
 
 
 """
@@ -33,6 +32,8 @@ def search(request):
     search_name = request.GET['q'].lower()
     context = Context({})
 
+    RC.delete(search_name)
+
     if search_name:
         result = RC.hgetall(search_name)
 
@@ -46,8 +47,7 @@ def search(request):
         else:
             tasks.call_service.delay(SongSearch(search_name))
     else:
-        pass
-
+        context['empty'] = True
 
     return render(request, 'search.html', context)
 
@@ -129,11 +129,11 @@ Functions for handling ASYNC requests
 """
 
 # check cache, if hit return json else return pending
-def async_artist(request):
-    artist_id = request.GET['q']
+def retrieve_resource(request):
+    id_ = request.GET['q']
     resource = request.GET['resource']
     data = {}
-    data_str = RC.hget(artist_id, resource)
+    data_str = RC.hget(id_, resource)
 
     if data_str:
         data[resource] = ast.literal_eval(data_str)
@@ -143,4 +143,5 @@ def async_artist(request):
         data['status'] = 'pending'
 
     return HttpResponse(json.dumps(data), content_type="application/json")
+
 

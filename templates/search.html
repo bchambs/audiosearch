@@ -29,7 +29,8 @@
         <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
 
         <div id="nav-title" class="col-lg-3">
-            audiosearch :: 
+            <a href = "{% url 'src.views.index' %}" >audiosearch</a>
+            ::
         </div>
 
         <div id="nav-search"  class="col-lg-3">
@@ -57,6 +58,7 @@
         </div>
     </div><!--END results title-->
 
+    {% if not empty %}
     <div class="separator"></div>
 
     <div class="result-tables row">
@@ -72,7 +74,7 @@
                         {% endif %}
                             <td>{{ forloop.counter }}</td>
                             <td>
-                                <a href="{% url 'src.views.artist_info' %}?q={{ artist.id.split|join:'+' }}" > 
+                                <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" > 
                                     {{ artist.name }}
                                 </a>
                             </td>
@@ -84,7 +86,7 @@
         </div>
 
         <div id="song-results" class="col-lg-6 secondc">
-            <table id="artist-result-table" class="table">
+            <table id="song-result-table" class="table">
                 {% if songs %}
                 <tbody>
                     {% for song in songs %}
@@ -95,7 +97,7 @@
                         {% endif %}
                             <td>{{ forloop.counter }}</td>
                             <td>
-                                <a href="{% url 'src.views.song_info' %}?q={{ song.id.split|join:'+' }}" > 
+                                <a href="{% url 'src.views.song_info' %}?q={{ song.id }}" > 
                                     {{ song.title }}
                                 </a>
                             </td>
@@ -106,13 +108,28 @@
             </table>
         </div>
     </div><!--END results tables-->
+    {% endif %}
 </div>
 
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
-<script src="{{ STATIC_URL }}js/song-utils.js"></script>
+<script src="{{ STATIC_URL }}js/search-utils.js"></script>
+
+{% if not empty %}
+    {% if not artists %}
+        <script type="text/javascript">
+            dispatch(q, 'artists', 0);
+        </script>
+    {% endif %}
+
+    {% if not songs %}
+        <script type="text/javascript">
+            dispatch(q, 'songs', 0);
+        </script>
+    {% endif %}
+{% endif %}
 
 </body>
 </html>
