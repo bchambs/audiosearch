@@ -1,10 +1,7 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
-<!-- need to give credit for the font...-->
-
-<!--Google analytics-->
+    <!--Google analytics-->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -20,82 +17,30 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/index.css" rel="stylesheet">
 
-<title>audiosearch</title>
-
+    <title>audiosearch</title>
 </head>
-
 <body>
 
-<div class="container">
+<div class="index-container">
+    <div class="top-offset"></div>
 
-    <!--left column-->
-    <div class="col-lg-1"></div>
+    <div id="title-bar" class="container row">
+        <span id="title-text" class="col-lg-2">
+            audiosearch :: 
+        </span>
 
-    <!--main column-->
-    <div id="index-title-offset" class="content-main-col" class="col-lg-10">
-        <!--header block-->
-        <div class="title-box row">
-
-            <!--title block-->
-            <div class="search-container col-lg-5">
-                <img src="{{ STATIC_URL }}img/title.png" class="title-img-container">
-
-                <form action="/search/" method="GET">
-                    <input class="search-bar" type="text" name="q">
-                </form>
-            </div><!--END title-->
-
-            <div class="tag-container col-lg-7">
-                <div class="tag-block">
-                    a simple way to find new music.
-                </div>
-            </div>
-        </div><!--END header-->
-
-        <div class="content-h-separator row"></div>
-
-        <div class= "row center">
-            
-            <!--trending block-->
-            <div id="trending-box" class="index-box col-lg-3 box">
-
-
-                <div class="box-footer">
-                    trending
-                </div>
-            </div><!--END trending-->
-
-            <div class="content-w-separator col-lg-1"></div>
-
-            </div><!--END featured-->
-
-            <div class="content-w-separator col-lg-1"></div>
-
-            <div class="col-lg-3">
-                <div class="row">
-             
-                </div>
-
-                <div id="half-box-h-separator" class="row"></div>
-
-                <div class="row">
-              
-                    </div><!--END about-->
-                </div>
-
-            </div>
-
-        </div><!--END content-->
-    </div><!--END main-->
-
-    <!--right column-->
-    <div class="col-lg-1"></div>
-       ARH6W4X1187B99274F
+        <span id="title-search" class="col-lg-3">
+            <form action="/search/" method="GET">
+                <input id="title-search-bar" type="text" name="q">
+            </form>
+        </span>
+    </div>
 </div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-</body>
 
+</body>
 </html>

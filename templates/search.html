@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--Google analytics-->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-51583732-1', 'audiosearch.net');
+      ga('send', 'pageview');
+
+    </script><!--END analytics-->
+
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+   
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/search.css" rel="stylesheet">
+
+    <title>audiosearch</title>
+</head>
+<body>
+
+<!--nav-->
+<div class="container">
+   <div class="nav row">
+        <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
+
+        <div id="nav-title" class="col-lg-3">
+            audiosearch :: 
+        </div>
+
+        <div id="nav-search"  class="col-lg-3">
+            <form action="/search/" method="GET">
+                <input class="search-bar" type="text" name="q">
+            </form>
+        </div>
+
+        <div id="nav-about" class="col-lg-2">
+            about
+        </div>
+        <div id="nav-contact" class="col-lg-2">
+            contact
+        </div>
+    </div>
+</div><!--END nav container-->
+
+<!--results-->
+<div class="container content-wrap red">
+    <div class="result-title row">
+        <div class="col-lg-6 content-title secondc">artists
+        </div>
+
+        <div class="col-lg-6 content-title secondc">songs
+        </div>
+    </div><!--END results title-->
+
+    <div class="separator"></div>
+
+    <div class="result-tables row">
+        <div id="artist-results" class="col-lg-6 secondc">
+            <table id="artist-result-table" class="table">
+                {% if artists %}
+                <tbody>
+                    {% for artist in artists %}
+                        {% if forloop.counter|divisibleby:2 %}
+                        <tr class="row-even">
+                        {% else %}
+                        <tr class="row-odd">
+                        {% endif %}
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="{% url 'src.views.artist_info' %}?q={{ artist.id.split|join:'+' }}" > 
+                                    {{ artist.name }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {% endif %}
+            </table>
+        </div>
+
+        <div id="song-results" class="col-lg-6 secondc">
+            <table id="artist-result-table" class="table">
+                {% if songs %}
+                <tbody>
+                    {% for song in songs %}
+                        {% if forloop.counter|divisibleby:2 %}
+                        <tr class="row-even">
+                        {% else %}
+                        <tr class="row-odd">
+                        {% endif %}
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="{% url 'src.views.song_info' %}?q={{ song.id.split|join:'+' }}" > 
+                                    {{ song.title }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {% endif %}
+            </table>
+        </div>
+    </div><!--END results tables-->
+</div>
+
+
+<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
+<script src="{{ STATIC_URL }}js/song-utils.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+.index-container{
+    height: 100%;
+}
+
+.top-offset {
+    height: 40%;
+    min-height: 40%;
+    width: 100%;
+}
+
+#title-bar {
+    background-color: #1C2A3B;
+    height: 70px;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+}
+#title-text {
+    font-size: 34px;
+    padding-top: 10px;
+    min-height: 100%;
+    /*padding-top: 16px;*/
+    margin-left: 20%;
+    text-align: right;
+}
+#title-search {
+    padding-top: 16px;
+    height: 100%;
+    /*display: inline;*/
+    float: left;
+    text-align: left;
+}
+#title-search-bar {
+    padding: 2px;
+    padding-left: 6px;
+    width: 550px;
+    height: 34px;
+    color: black;
+}

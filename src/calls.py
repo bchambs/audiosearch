@@ -17,8 +17,9 @@ class ENCall(object):
         self.payload = {
             'api_key': "QZQG43T7640VIF4FN",
             'format': "json",
-            'bucket': buckets,
         }
+        if buckets:
+            self.payload['bucket'] = buckets
 
     def trim(self, data):
         return data
@@ -172,5 +173,53 @@ class SimilarArtists(ENCall):
 
             
         return data[:5]
+
+
+class ArtistSearch(ENCall):
+    """
+    Package representing all required data for an artist search request from Echo Nest.
+    """
+
+    # REST data
+    TYPE_ = "artist"
+    METHOD = "suggest"
+
+    # REDIS data
+    KEY_ = 'artists'
+    REDIS_ID = 'artists'
+
+    def __init__(self, id_):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
+        self.payload['name'] = id_
+        self.payload['results'] = 100
+
+
+    def trim(self, data):
+        return data
+
+
+class SongSearch(ENCall):
+    """
+    Package representing all required data for an artist search request from Echo Nest.
+    """
+
+    # REST data
+    TYPE_ = "song"
+    METHOD = "search"
+
+    # REDIS data
+    KEY_ = 'songs'
+    REDIS_ID = 'songs'
+
+    def __init__(self, id_):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
+        self.payload['title'] = id_
+        self.payload['results'] = 100
+        self.payload['sort'] = "song_hotttnesss-desc"
+
+
+    def trim(self, data):
+        return data
+
 
 

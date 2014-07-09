@@ -8,7 +8,7 @@ from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
 
 from audiosearch.redis import client as RC
-from src.calls import ArtistProfile, Playlist, SimilarArtists
+from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
 from util import debug, debug_title
 
 
@@ -17,6 +17,39 @@ from util import debug, debug_title
 Functions for serving pages
 ---------------------------
 """
+
+
+def index(request):
+    context = Context({})
+
+    return render(request, 'index.html', context)
+
+
+def search(request):
+    """
+    /search/
+    """
+
+    search_name = request.GET['q'].lower()
+    context = Context({})
+
+    if search_name:
+        result = RC.hgetall(search_name)
+
+        if 'artists' in result:
+            context['artists'] = ast.literal_eval(result['artists'])[:15]
+        else:
+            tasks.call_service.delay(ArtistSearch(search_name))
+
+        if 'songs' in result:
+            context['songs'] = ast.literal_eval(result['songs'])[:15]
+        else:
+            tasks.call_service.delay(SongSearch(search_name))
+    else:
+        pass
+
+
+    return render(request, 'search.html', context)
 
 
 def artist_info(request):
@@ -73,6 +106,13 @@ def artist_info(request):
     #     tasks.call_service.delay(packages)
 
     # return render(request, 'artist.html', context)
+
+
+def song_info (request):
+    context = Context({})
+    song_id = request.GET['q']
+
+    return render(request, 'index.html', context)
 
 
 # HTTP 500
