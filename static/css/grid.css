@@ -173,3 +173,10 @@ a:hover {
     background-color: #4475AA;
 }
 
+.pagination {
+    font-size: 30px;
+}
+
+.no-results {
+    font-size: 20px;
+}

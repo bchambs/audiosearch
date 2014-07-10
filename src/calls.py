@@ -164,15 +164,16 @@ class SimilarArtists(ENCall):
                 artist['preview_url'] = artist['images'][0]['url']
 
             if 'terms' in artist:
-                try:
-                    if len(artist['terms']) is 1:
-                        artist['terms'] = artist['terms'][0]['name']
-                    else:
-                        artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
+                if len(data['terms']) > 0:
+                    try:
+                        if len(artist['terms']) is 1:
+                            artist['terms'] = artist['terms'][0]['name']
+                        else:
+                            artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
                 
-                # CATCH handle the unlikely event that a term item exists without a name key
-                except KeyError:
-                    pass
+                    # CATCH handle the unlikely event that a term item exists without a name key
+                    except KeyError:
+                        pass
 
             if 'songs' in artist:
                 artist['songs'] = remove_duplicate_songs(artist['songs'], 3)

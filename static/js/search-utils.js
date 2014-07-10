@@ -36,6 +36,7 @@ function display_artists(data) {
 
         tb.append(row).fadeIn(FADE_DELAY);
     });
+
     
     $("#artist-result-table").append(tb).fadeIn(FADE_DELAY);
 }

@@ -24,7 +24,6 @@ SECRET_KEY = 'vchh__-$5w79n9h$o03gsdgSDgl1o=)m$h(45!!7)l@1ajce7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  True
-
 TEMPLATE_DEBUG = True
 
 ADMINS = (
@@ -108,3 +107,14 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
+
+# Audiosearch settings
+SEARCH_RESULT_DISPLAYED = 15
+MORE_RESULTS = 10
+ARTIST_SONGS_DISPLAYED = 15
+SIMILAR_ARTIST_DISPLAYED = 5
+
+# set to True to delete cached data before serving page requests
+REDIS_DEBUG = False
+
+

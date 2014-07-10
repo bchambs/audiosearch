@@ -1,13 +1,15 @@
 import tasks
-import util
 import ast
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 
-from audiosearch.redis import client as RC, DEBUG as REDIS_DEBUG
+from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS
+from audiosearch.redis import client as RC
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
 
 
@@ -24,12 +26,16 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def search(request):
+def search(request, qq=None, redirect_qq=None):
     """
     /search/
     """
 
-    search_name = request.GET['q'].lower()
+    try:
+        search_name = request.GET['q'].lower()
+    except KeyError:
+        search_name = 'asdf'
+
     context = Context({
         'q': search_name
     })
@@ -41,7 +47,9 @@ def search(request):
         result = RC.hgetall(search_name)
 
         if 'artists' in result:
-            context['artists'] = ast.literal_eval(result['artists'])[:15]
+            artists = ast.literal_eval(result['artists'])
+            context['artists_has_pages'] = True if len(artists) > SEARCH_RESULT_DISPLAYED else False
+            context['artists'] = artists[:SEARCH_RESULT_DISPLAYED]
         else:
             tasks.call_service.delay(ArtistSearch(search_name))
 
@@ -53,6 +61,38 @@ def search(request):
         context['empty'] = True
 
     return render(request, 'search.html', context)
+
+
+def more_artists_results(request):
+    search_name = request.GET['q'].lower()
+    page = request.GET.get('page')
+    context = Context({
+        'q': search_name
+    })
+
+    if REDIS_DEBUG:
+        RC.delete(search_name)
+
+    raw = RC.hget(search_name, 'artists')
+    if raw:
+        artists = ast.literal_eval(raw)
+        paginator = Paginator(artists, MORE_RESULTS)
+
+        try:
+            results = paginator.page(page)
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        except EmptyPage:
+            results = paginator.page(paginator.num_pages)
+
+        context['results'] = results
+    else: 
+        # return redirect('/search/', kwargs={'request':request, 'q':search_name})
+        print 'q: %s' % search_name
+        print 'redirecting'
+        return redirect('/search/', q=search_name, redirect_q=search_name)
+
+    return render(request, 'search-artists.html', context)
 
 
 def artist_info(request):
@@ -76,13 +116,13 @@ def artist_info(request):
 
     if 'songs' in artist:
         context['songs'] = ast.literal_eval(artist['songs'])
-        context['songs'] = context['songs'][:15]
+        context['songs'] = context['songs'][:SEARCH_RESULT_DISPLAYED]
     else:
         tasks.call_service.delay(Playlist(artist_id))
 
     if 'similar' in artist:
         context['similar'] = ast.literal_eval(artist['similar'])
-        context['similar'] = context['similar'][:15]
+        context['similar'] = context['similar'][:SEARCH_RESULT_DISPLAYED]
     else:
         tasks.call_service.delay(SimilarArtists(artist_id))
 
