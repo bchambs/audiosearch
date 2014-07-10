@@ -7,26 +7,7 @@ var TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
     AJAX_SNOOZE = 1000,
     ATTEMPT_LIMIT = 10,
     FADE_DELAY = 1000,
-    q = get_query_string();
-
-
-/**
-    @return {string} q Query string.
-*/
-function get_query_string() {
-    'use strict';
-
-    var query = window.location.search.split("="),
-        regex = /^[a-z0-9]+$/i;
-
-    if (query.length === 2) {
-        if (regex.test(query[1])) {
-            return query[1];
-        }
-    }
-
-    return '';
-}
+    JS_DEBUG = true;
 
 
 /**
@@ -44,7 +25,10 @@ function get_query_string() {
 */
 function dispatch(id, resource, attempt) {
     'use strict';
-    console.log("dispatching request for:" + resource);
+    if (JS_DEBUG) {
+        console.log("dispatching request for: " + resource);
+        console.log("\t using id: " + id);
+    }
 
     // TODO: use AJAX fail instead of data['status']
     $.ajax({
@@ -57,7 +41,7 @@ function dispatch(id, resource, attempt) {
         type: 'GET',
         success: function(data, stat, o) {
             if (data['status'] === 'ready') {
-                console.log('ajax.success: ' + stat)
+                if (JS_DEBUG) {console.log('ajax.success: ' + stat);}
 
                 switch(resource) {
                     case 'profile':
@@ -81,11 +65,11 @@ function dispatch(id, resource, attempt) {
                 attempt++;
 
                 if (attempt > ATTEMPT_LIMIT) {
-                    console.log('timeout')
+                    if (JS_DEBUG) {console.log('timeout');}
                     handle_timeout(TIMEOUT_MESSAGE);
                 }
                 else {
-                    console.log('not ready, attempt: ' + attempt)
+                    if (JS_DEBUG) {console.log('not ready, attempt: ' + attempt);}
 
                     setTimeout(function() {
                         dispatch(id, resource, attempt)
@@ -94,7 +78,7 @@ function dispatch(id, resource, attempt) {
                 }
             }
             else {
-                console.log('could not serve request: ' + data['message'])
+                if (JS_DEBUG) {console.log('could not serve request: ' + data['message']);}
                 handle_timeout(data['message']);
             }
         },

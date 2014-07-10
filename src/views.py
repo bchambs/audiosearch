@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.template import RequestContext, loader, Context
 from django.http import HttpResponseRedirect, HttpResponse
 
-from audiosearch.redis import client as RC
+from audiosearch.redis import client as RC, DEBUG as REDIS_DEBUG
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
 
 
@@ -30,9 +30,12 @@ def search(request):
     """
 
     search_name = request.GET['q'].lower()
-    context = Context({})
+    context = Context({
+        'q': search_name
+    })
 
-    RC.delete(search_name)
+    if REDIS_DEBUG:
+        RC.delete(search_name)
 
     if search_name:
         result = RC.hgetall(search_name)
@@ -57,12 +60,13 @@ def artist_info(request):
     /artist/
     """
     artist_id = request.GET['q']
+    context = Context({
+        'q': artist_id
+    })
 
-    # TODO: remove
-    # RC.delete(artist_id)
+    if REDIS_DEBUG:
+        RC.delete(artist_id)
 
-
-    context = Context({})
     artist = RC.hgetall(artist_id)
 
     if 'profile' in artist:
@@ -83,29 +87,6 @@ def artist_info(request):
         tasks.call_service.delay(SimilarArtists(artist_id))
 
     return render(request, 'artist.html', context)
-
-    # packages = []
-
-    # if 'profile' in artist:
-    #     context['profile'] = ast.literal_eval(artist['profile'])
-    # else:
-    #     packages.append(ArtistProfile(artist_id))
-
-    # if 'songs' in artist:
-    #     context['songs'] = ast.literal_eval(artist['songs'])
-    # else:
-    #     packages.append(Playlist(artist_id))
-
-    # if 'similar' in artist:
-    #     context['similar'] = ast.literal_eval(artist['similar'])
-    # else:
-    #     packages.append(SimilarArtists(artist_id))
-
-    # # MISS: defer call
-    # if packages:
-    #     tasks.call_service.delay(packages)
-
-    # return render(request, 'artist.html', context)
 
 
 def song_info (request):

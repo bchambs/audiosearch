@@ -39,6 +39,9 @@ PORT = 6379
 DATABASE = 0
 CONNECTIONS = 20
 
+# set to True to delete cached data before serving page requests
+DEBUG = True
+
 # in seconds
 EXPIRE_TIME = 200
 

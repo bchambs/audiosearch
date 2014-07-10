@@ -202,19 +202,19 @@
 
 {% if not profile %}
     <script type="text/javascript">
-        dispatch(q, 'profile', 0);
+        dispatch("{{ q|escapejs }}", 'profile', 0);
     </script>
 {% endif %}
 
 {% if not songs %}
     <script type="text/javascript">
-        dispatch(q, 'songs', 0);
+        dispatch("{{ q|escapejs }}", 'songs', 0);
     </script>
 {% endif %}
 
 {% if not similar %}
     <script type="text/javascript">
-        dispatch(q, 'similar', 0);
+        dispatch("{{ q|escapejs }}", 'similar', 0);
     </script>
 {% endif %}
 

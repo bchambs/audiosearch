@@ -120,13 +120,13 @@
 {% if not empty %}
     {% if not artists %}
         <script type="text/javascript">
-            dispatch(q, 'artists', 0);
+            dispatch("{{ q|escapejs }}", 'artists', 0);
         </script>
     {% endif %}
 
     {% if not songs %}
         <script type="text/javascript">
-            dispatch(q, 'songs', 0);
+            dispatch("{{ q|escapejs }}", 'songs', 0);
         </script>
     {% endif %}
 {% endif %}

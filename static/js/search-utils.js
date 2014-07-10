@@ -34,14 +34,6 @@ function display_artists(data) {
         temp.append(link);
         row.append(temp);
 
-        // row.append($('<td>').text(index));
-        // link = $('<a>', {href:"{% url 'src.views.artist_info' %}?q=" + artist['id']});
-        // link.append(artist['name']);
-        // var temp = $('<td>');
-        // temp.append(link);
-        // row.append(temp);
-        // row.append($('<td>').text(artist['name']));
-
         tb.append(row).fadeIn(FADE_DELAY);
     });
     
