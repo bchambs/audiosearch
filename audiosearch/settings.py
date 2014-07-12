@@ -109,12 +109,12 @@ CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
 
 # Audiosearch settings
-SEARCH_RESULT_DISPLAYED = 15
+SEARCH_RESULT_DISPLAYED = 10
 MORE_RESULTS = 10
 ARTIST_SONGS_DISPLAYED = 15
 SIMILAR_ARTIST_DISPLAYED = 5
 
 # set to True to delete cached data before serving page requests
-REDIS_DEBUG = False
-
+REDIS_DEBUG = True
+VIEW_DEBUG = True
 

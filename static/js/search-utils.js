@@ -15,7 +15,7 @@ function display_artists(data) {
     $.each(data, function (index, artist) {
         var row, url, link, temp;
 
-        if (++index > 15) {
+        if (++index > ROWS_TO_DISPLAY) {
             return false;
         }
 
@@ -54,7 +54,7 @@ function display_songs(data) {
     $.each(data, function (index, song) {
         var row, url, link, temp;
 
-        if (++index > 15) {
+        if (++index > ROWS_TO_DISPLAY) {
             return false;
         }
 
@@ -77,5 +77,12 @@ function display_songs(data) {
     });
     
     $("#song-result-table").append(tb).fadeIn(FADE_DELAY);
+
+    var more_url = "{% url 'src.views.search' %}?q={{ q }}&type=songs&page=" + page_number,
+        more_link = $('<a>', {href: more_url});
+
+    $("#song-view-more").append(more_link).fadeIn(FADE_DELAY);
+
+    $("#song-view-more").append( document.createTextNode( "Hello" ) );
 }
 

@@ -1,6 +1,7 @@
 import tasks
 import ast
 import json
+import pprint
 
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader, Context
@@ -8,9 +9,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
-from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS
+from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS, VIEW_DEBUG
 from audiosearch.redis import client as RC
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
+from src.util import as_page
 
 
 """
@@ -26,73 +28,69 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def search(request, qq=None, redirect_qq=None):
+def search(request):
     """
     /search/
     """
 
-    try:
-        search_name = request.GET['q'].lower()
-    except KeyError:
-        search_name = 'asdf'
+    # obtain query params
+    display_type = request.GET.get('type', "all").lower()
+    search_name = request.GET.get('q')
+    page = request.GET.get('page')
+
+    # redirect on malformed request
+    if search_name:
+        search_name = search_name.lower()
+    else:
+        return HttpResponseRedirect('/')
 
     context = Context({
-        'q': search_name
+        'q': search_name,
+        'type': display_type,
     })
 
     if REDIS_DEBUG:
         RC.delete(search_name)
 
-    if search_name:
-        result = RC.hgetall(search_name)
+    resource = RC.hgetall(search_name)
 
-        if 'artists' in result:
-            artists = ast.literal_eval(result['artists'])
-            context['artists_has_pages'] = True if len(artists) > SEARCH_RESULT_DISPLAYED else False
-            context['artists'] = artists[:SEARCH_RESULT_DISPLAYED]
+    # branch on @type, add paged results to context, call celery on missing resources
+    if display_type == "artists":
+        if 'artists' in resource:
+            artists = ast.literal_eval(resource['artists'])
+            context['paged_type'] = as_page(page, artists)
         else:
             tasks.call_service.delay(ArtistSearch(search_name))
+            context['artists_pending'] = True
 
-        if 'songs' in result:
-            context['songs'] = ast.literal_eval(result['songs'])[:15]
+    elif display_type == "songs":
+        if 'songs' in resource:
+            songs = ast.literal_eval(resource['songs'])
+            context['paged_type'] = as_page(page, songs)
         else:
             tasks.call_service.delay(SongSearch(search_name))
+            context['songs_pending'] = True
     else:
-        context['empty'] = True
+        if 'artists' in resource:
+            artists = ast.literal_eval(resource['artists'])
+            context['paged_artists'] = as_page(page, artists)
+        else:
+            tasks.call_service.delay(ArtistSearch(search_name))
+            context['artists_pending'] = True
+
+        if 'songs' in resource:
+            songs = ast.literal_eval(resource['songs'])
+            context['paged_songs'] = as_page(page, songs)
+        else:
+            tasks.call_service.delay(SongSearch(search_name))
+            context['songs_pending'] = True
+
+    if VIEW_DEBUG:
+        print
+        print context
+        print
 
     return render(request, 'search.html', context)
-
-
-def more_artists_results(request):
-    search_name = request.GET['q'].lower()
-    page = request.GET.get('page')
-    context = Context({
-        'q': search_name
-    })
-
-    if REDIS_DEBUG:
-        RC.delete(search_name)
-
-    raw = RC.hget(search_name, 'artists')
-    if raw:
-        artists = ast.literal_eval(raw)
-        paginator = Paginator(artists, MORE_RESULTS)
-
-        try:
-            results = paginator.page(page)
-        except PageNotAnInteger:
-            results = paginator.page(1)
-        except EmptyPage:
-            results = paginator.page(paginator.num_pages)
-
-        context['results'] = results
-    else: 
-        # return redirect('/search/', kwargs={'request':request, 'q':search_name})
-        print 'q: %s' % search_name
-        print 'redirecting'
-        return redirect('/search/', q=search_name, redirect_q=search_name)
-
-    return render(request, 'search-artists.html', context)
 
 
 def artist_info(request):
@@ -151,14 +149,15 @@ Functions for handling ASYNC requests
 
 # check cache, if hit return json else return pending
 def retrieve_resource(request):
-    id_ = request.GET['q']
-    resource = request.GET['resource']
+    id_ = request.GET.get['q']
+    resource = request.GET.get['resource']
     data = {}
     data_str = RC.hget(id_, resource)
 
     if data_str:
         data[resource] = ast.literal_eval(data_str)
         data['status'] = 'ready'
+        data['page'] = request.GET.get['page']
 
     else:
         data['status'] = 'pending'

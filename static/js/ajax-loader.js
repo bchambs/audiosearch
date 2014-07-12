@@ -2,12 +2,23 @@
 /* jslint browser: true */
 /* global $, jQuery */
 
-
-var TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
-    AJAX_SNOOZE = 1000,
+    /*
+        Load behavior
+    */
+var AJAX_SNOOZE = 1000,
     ATTEMPT_LIMIT = 10,
+
+    /*
+        Display behavior
+    */
     FADE_DELAY = 1000,
+    ROWS_TO_DISPLAY = 10,
+    /*
+        Debug
+    */
+    TIMEOUT_MESSAGE = 'Unable to connect to the Echo Nest.',
     JS_DEBUG = true;
+    
 
 
 /**

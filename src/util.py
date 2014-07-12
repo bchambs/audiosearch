@@ -3,6 +3,24 @@ from random import choice, sample
 import logging
 import sys
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from audiosearch.settings import MORE_RESULTS
+
+# page
+def as_page(page, resource):
+    result = {}
+    paginator = Paginator(resource, MORE_RESULTS)
+
+    try:
+        result = paginator.page(page)
+    except PageNotAnInteger:
+        result = paginator.page(1)
+    except EmptyPage:
+        result = paginator.page(paginator.num_pages)
+
+    return result
+
 
 # examine value of string, dict, or list
 def debug(s=None, d=None, keys=None, values=None, l=None):

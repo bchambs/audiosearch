@@ -164,7 +164,7 @@ class SimilarArtists(ENCall):
                 artist['preview_url'] = artist['images'][0]['url']
 
             if 'terms' in artist:
-                if len(data['terms']) > 0:
+                if len(artist['terms']) > 0:
                     try:
                         if len(artist['terms']) is 1:
                             artist['terms'] = artist['terms'][0]['name']

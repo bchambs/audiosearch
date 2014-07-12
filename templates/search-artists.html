@@ -83,8 +83,6 @@
             <div class="pagination">
                 {{ results.number }} of {{ results.paginator.num_pages }}
 
-                <br />
-
                 {% if results.has_previous %}
                     <a href="?q={{ q }}&page={{ results.previous_page_number }}">previous</a>
                 {% endif %}

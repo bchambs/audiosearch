@@ -26,6 +26,7 @@ def call_service(package):
         pipe = RC.pipeline()
         pipe.hset(package.id_, 'status', {package.REDIS_ID: 'ready'})
         pipe.hset(package.id_, package.REDIS_ID, resource)
+        pipe.expire(package.id_, EXPIRE_TIME)
         pipe.execute()
 
         # logging.info(' ')

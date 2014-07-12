@@ -5,12 +5,14 @@
     /*height: 100%;*/
 }
 
+#type-results 
+
 #artist-result-table {
 
 }
 
 #song-result-table {
-    
+    width: 100%;
 }
 
 

@@ -49,79 +49,144 @@
 </div><!--END nav container-->
 
 <!--results-->
-<div class="container content-wrap red">
-    <div class="result-title row">
-        <div class="col-lg-6 content-title secondc">
-            artists
-            
-        </div>
+<div class="container content-wrap">
 
-        <div class="col-lg-6 content-title secondc">
-            songs
-            {% if song_has_pages %}
-                has pages
-            {% endif %}
-        </div>
-    </div><!--END results title-->
-
-    {% if not empty %}
-    <div class="separator"></div>
-
-    <div class="result-tables row">
-        <div id="artist-results" class="col-lg-6 secondc">
-            <table id="artist-result-table" class="table">
-                {% if artists %}
-                <tbody>
-                    {% for artist in artists %}
-                        {% if forloop.counter|divisibleby:2 %}
-                        <tr class="row-even">
-                        {% else %}
-                        <tr class="row-odd">
-                        {% endif %}
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" > 
-                                    {{ artist.name }}
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                {% endif %}
-            </table>
-            {% if artists_has_pages %}
-                <div class="show-more">
-                    <a href="{% url 'src.views.more_artists_results' %}?q={{ q }}" > 
-                        more
-                    </a>
+    <!--headers-->
+    <div class="secondc">
+        {% if type != "all" %}
+            <div class="content-title">
+                {{ type }}
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="content-title col-lg-6">
+                    artists
                 </div>
-            {% endif %}
-        </div>
+                <div class="content-title col-lg-6">
+                    songs
+                </div>
+            </div>
+        {% endif %}
+    </div><!--END headers-->
 
-        <div id="song-results" class="col-lg-6 secondc">
+    <!--single results-->
+    {% if type != "all" %}
+    <div class="result-tables">
+        <div id="type-results" class="secondc">
+            {% if type == "artists" %}
+            <table id="artist-result-table" class="table">
+            {% else %}
             <table id="song-result-table" class="table">
-                {% if songs %}
-                <tbody>
-                    {% for song in songs %}
-                        {% if forloop.counter|divisibleby:2 %}
-                        <tr class="row-even">
-                        {% else %}
-                        <tr class="row-odd">
-                        {% endif %}
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                <a href="{% url 'src.views.song_info' %}?q={{ song.id }}" > 
-                                    {{ song.title }}
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+            {% endif %}
+            <tbody>
+            {% for item in paged_type %}
+                {% if forloop.counter|divisibleby:2 %}
+                <tr class="row-even">
+                {% else %}
+                <tr class="row-odd">
                 {% endif %}
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if type == "artists" %}
+                            <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" > 
+                                {{ item.name }}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'src.views.song_info' %}?q={{ title.id }}" > 
+                                {{ item.title }}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
             </table>
+
+            <div class="show-more">
+                {% if paged_type.has_previous %}
+                    <a href="?q={{ q }}&type=songs&page={{ paged_type.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ paged_type.number }} of {{ paged_type.paginator.num_pages }}.
+                </span>
+
+                {% if paged_type.has_next %}
+                    <a href="?q={{ q }}&type=songs&page={{ paged_type.next_page_number }}">next</a>
+                {% endif %}
+            </div>
         </div>
-    </div><!--END results tables-->
+    </div><!--END single results table-->
+
+    <!--all results-->
+    {% else %}
+    <div class="container">
+        <div class="row result-tables">
+
+            <!--artists-->
+            <div id="artist-results" class="col-lg-6 secondc">
+                <table id="artist-result-table" class="table">
+                <tbody>
+                {% for artist in paged_artists %}
+                    {% if forloop.counter|divisibleby:2 %}
+                    <tr class="row-even">
+                    {% else %}
+                    <tr class="row-odd">
+                    {% endif %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" >
+                                {{ artist.name }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+
+                {% if paged_artists.has_next %}
+                    <a href="{% url 'src.views.search' %}?q={{ q }}&type=artists&page=1" >view more</a>
+                {% endif %}
+            </div>
+
+            <!--songs-->
+            <div id="songs-results" class="col-lg-6 secondc">
+                <table id="song-result-table" class="table">
+                <tbody>
+                {% for song in paged_songs %}
+                    {% if forloop.counter|divisibleby:2 %}
+                    <tr class="row-even">
+                    {% else %}
+                    <tr class="row-odd">
+                    {% endif %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'src.views.song_info' %}?q={{ song.id }}" >
+                                {{ song.title }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+
+                <div id="song-view-more">
+                    {% if paged_songs.has_next %}
+                        <a href="{% url 'src.views.search' %}?q={{ q }}&type=songs&page=1">view more</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div><!--END all results table-->
     {% endif %}
+
+    <!--END paged results-->
+    {% if type == 'artists' %}
+    {% elif type == 'songs' %}
+    {% else %}
+    {% endif %}
+
+
 </div>
 
 
@@ -130,18 +195,16 @@
 <script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
 <script src="{{ STATIC_URL }}js/search-utils.js"></script>
 
-{% if not empty %}
-    {% if not artists %}
-        <script type="text/javascript">
-            dispatch("{{ q|escapejs }}", 'artists', 0);
-        </script>
-    {% endif %}
+{% if artists_pending %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'artists', 0);
+    </script>
+{% endif %}
 
-    {% if not songs %}
-        <script type="text/javascript">
-            dispatch("{{ q|escapejs }}", 'songs', 0);
-        </script>
-    {% endif %}
+{% if songs_pending %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'songs', 0);
+    </script>
 {% endif %}
 
 </body>
