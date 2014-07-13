@@ -9,7 +9,7 @@ GENERAL
 Variable names become increasingly accurate from right to left. Adjectives always go left. (http://javascript.info/draft/variable-naming)
 
 AJAX
-data:           object containing all info from views.py
+data:           object containing info from views.py
 data[rtype]:    resource
 data[status]:   represent state of resource
 """

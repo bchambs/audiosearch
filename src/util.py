@@ -4,7 +4,6 @@ import logging
 import sys
 import ast
 
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from audiosearch.settings import MORE_RESULTS
@@ -26,19 +25,20 @@ def page_resource(page, resource):
 # paginator objects cannot be serialized, recreate everything we need
 def page_resource_async(page, resource, rtype):
     result = {}
-    paged_resource = page_resource(page, resource) # TODO: this is ridiculous, rename something
-    result[rtype] = paged_resource.object_list
-    result['has_next'] = True if paged_resource.has_next else False
-    result['has_previous'] = True if paged_resource.has_previous else False
-    result['current_page'] = paged_resource.number
-    result['total_pages'] = paged_resource.paginator.num_pages
+    paged = page_resource(page, resource) # TODO: this is ridiculous, rename something
+    result[rtype] = paged.object_list
+    result['has_next'] = True if paged.has_next() else False
+    result['has_previous'] = True if paged.has_previous() else False
+    result['current_page'] = paged.number
+    result['total_pages'] = paged.paginator.num_pages
+    result['offset'] = paged.start_index()
 
     try:
-        result['previous_page_number'] = paged_resource.previous_page_number()
+        result['previous_page_number'] = paged.previous_page_number()
     except EmptyPage:
         pass
     try:
-        result['next_page_number'] = paged_resource.next_page_number()
+        result['next_page_number'] = paged.next_page_number()
     except EmptyPage:
         pass
 

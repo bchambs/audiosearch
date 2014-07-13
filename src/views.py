@@ -50,6 +50,7 @@ def search(request):
     context = Context({
         'q': search_name,
         'type': display_type,
+        'page': page,
     })
 
     if REDIS_DEBUG:
@@ -87,6 +88,8 @@ def search(request):
         else:
             tasks.call_service.delay(SongSearch(search_name))
             context['songs_pending'] = True
+
+    # print context['offset']
 
     return render(request, 'search.html', context)
 
@@ -147,9 +150,13 @@ Functions for handling ASYNC requests
 
 # check cache, if hit return json else return pending
 def retrieve_resource(request):
-    id_ = request.GET.get("q")
-    rtype = request.GET.get("rtype")
-    page = request.GET.get("page")
+    id_ = request.GET.get('q')
+    rtype = request.GET.get('rtype')
+    page = request.GET.get('page')
+
+    # print id_
+    # print rtype
+    # print page
 
     context = {}
     resource_string = RC.hget(id_, rtype)
@@ -159,10 +166,9 @@ def retrieve_resource(request):
         context = page_resource_async(page, resource, rtype)
         context['q'] = id_
         context['status'] = "ready"
+
     else:
         context['status'] = "pending"
-
-    print context.keys()
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 

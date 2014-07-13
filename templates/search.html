@@ -85,7 +85,7 @@
                 {% else %}
                 <tr class="row-odd">
                 {% endif %}
-                    <td>{{ forloop.counter }}</td>
+                    <td>{{ forloop.counter0|add:paged_type.start_index }}</td>
                     <td>
                         {% if type == "artists" %}
                             <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" > 
@@ -103,17 +103,23 @@
             </table>
 
             <div class="show-more">
+                <div id="previous">
                 {% if paged_type.has_previous %}
                     <a href="?q={{ q }}&type=songs&page={{ paged_type.previous_page_number }}">previous</a>
                 {% endif %}
+                </div>
 
-                <span class="current">
+                <div id="current">
+                {% if paged_type.number %}
                     Page {{ paged_type.number }} of {{ paged_type.paginator.num_pages }}.
-                </span>
+                {% endif %}
+                </div>
 
+                <div id="next">
                 {% if paged_type.has_next %}
                     <a href="?q={{ q }}&type=songs&page={{ paged_type.next_page_number }}">next</a>
                 {% endif %}
+                </div>
             </div>
         </div>
     </div><!--END single results table-->
@@ -144,9 +150,11 @@
                 </tbody>
                 </table>
 
-                {% if paged_artists.has_next %}
-                    <a href="{% url 'src.views.search' %}?q={{ q }}&type=artists&page=1" >view more</a>
-                {% endif %}
+                <div id="artist-view-more">
+                    {% if paged_songs.has_next %}
+                        <a href="{% url 'src.views.search' %}?q={{ q }}&type=songs&page=1">view more</a>
+                    {% endif %}
+                </div>
             </div>
 
             <!--songs-->
@@ -180,6 +188,7 @@
     </div><!--END all results table-->
     {% endif %}
 </div>
+<br />
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
@@ -188,13 +197,13 @@
 
 {% if artists_pending %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'artists', "{{ paged_type.number }}", 0);
+        dispatch("{{ q|escapejs }}", 'artists', "{{ page }}", 0);
     </script>
 {% endif %}
 
 {% if songs_pending %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', "{{ paged_type.number }}", 0);
+        dispatch("{{ q|escapejs }}", 'songs', "{{ page }}", 0);
     </script>
 {% endif %}
 

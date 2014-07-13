@@ -91,7 +91,7 @@ function dispatch(id, rtype, page, attempt) {
                     if (JS_DEBUG) {console.log("not ready, attempt: " + attempt);}
 
                     setTimeout(function() {
-                        dispatch(id, rtype, page, attempt)
+                        dispatch(id, rtype, page, attempt);
                     }
                     , AJAX_SNOOZE);
                 }
