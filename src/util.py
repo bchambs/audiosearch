@@ -2,13 +2,14 @@ from __future__ import absolute_import
 from random import choice, sample
 import logging
 import sys
+import ast
+
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from audiosearch.settings import MORE_RESULTS
 
-# page
-def as_page(page, resource):
+def page_resource(page, resource):
     result = {}
     paginator = Paginator(resource, MORE_RESULTS)
 
@@ -21,6 +22,27 @@ def as_page(page, resource):
 
     return result
 
+
+# paginator objects cannot be serialized, recreate everything we need
+def page_resource_async(page, resource, rtype):
+    result = {}
+    paged_resource = page_resource(page, resource) # TODO: this is ridiculous, rename something
+    result[rtype] = paged_resource.object_list
+    result['has_next'] = True if paged_resource.has_next else False
+    result['has_previous'] = True if paged_resource.has_previous else False
+    result['current_page'] = paged_resource.number
+    result['total_pages'] = paged_resource.paginator.num_pages
+
+    try:
+        result['previous_page_number'] = paged_resource.previous_page_number()
+    except EmptyPage:
+        pass
+    try:
+        result['next_page_number'] = paged_resource.next_page_number()
+    except EmptyPage:
+        pass
+
+    return result
 
 # examine value of string, dict, or list
 def debug(s=None, d=None, keys=None, values=None, l=None):

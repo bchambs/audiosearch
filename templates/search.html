@@ -179,16 +179,7 @@
         </div>
     </div><!--END all results table-->
     {% endif %}
-
-    <!--END paged results-->
-    {% if type == 'artists' %}
-    {% elif type == 'songs' %}
-    {% else %}
-    {% endif %}
-
-
 </div>
-
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
@@ -197,13 +188,13 @@
 
 {% if artists_pending %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'artists', 0);
+        dispatch("{{ q|escapejs }}", 'artists', "{{ paged_type.number }}", 0);
     </script>
 {% endif %}
 
 {% if songs_pending %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', 0);
+        dispatch("{{ q|escapejs }}", 'songs', "{{ paged_type.number }}", 0);
     </script>
 {% endif %}
 

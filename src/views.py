@@ -1,7 +1,6 @@
 import tasks
 import ast
 import json
-import pprint
 
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader, Context
@@ -12,7 +11,11 @@ from django.core.urlresolvers import reverse
 from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS, VIEW_DEBUG
 from audiosearch.redis import client as RC
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
-from src.util import as_page
+from src.util import page_resource, page_resource_async
+
+"""
+audiosearch conventions:
+"""
 
 
 """
@@ -58,7 +61,7 @@ def search(request):
     if display_type == "artists":
         if 'artists' in resource:
             artists = ast.literal_eval(resource['artists'])
-            context['paged_type'] = as_page(page, artists)
+            context['paged_type'] = page_resource(page, artists)
         else:
             tasks.call_service.delay(ArtistSearch(search_name))
             context['artists_pending'] = True
@@ -66,29 +69,24 @@ def search(request):
     elif display_type == "songs":
         if 'songs' in resource:
             songs = ast.literal_eval(resource['songs'])
-            context['paged_type'] = as_page(page, songs)
+            context['paged_type'] = page_resource(page, songs)
         else:
             tasks.call_service.delay(SongSearch(search_name))
             context['songs_pending'] = True
     else:
         if 'artists' in resource:
             artists = ast.literal_eval(resource['artists'])
-            context['paged_artists'] = as_page(page, artists)
+            context['paged_artists'] = page_resource(page, artists)
         else:
             tasks.call_service.delay(ArtistSearch(search_name))
             context['artists_pending'] = True
 
         if 'songs' in resource:
             songs = ast.literal_eval(resource['songs'])
-            context['paged_songs'] = as_page(page, songs)
+            context['paged_songs'] = page_resource(page, songs)
         else:
             tasks.call_service.delay(SongSearch(search_name))
             context['songs_pending'] = True
-
-    if VIEW_DEBUG:
-        print
-        print context
-        print
 
     return render(request, 'search.html', context)
 
@@ -97,7 +95,7 @@ def artist_info(request):
     """
     /artist/
     """
-    artist_id = request.GET['q']
+    artist_id = request.GET.get("q")
     context = Context({
         'q': artist_id
     })
@@ -124,19 +122,19 @@ def artist_info(request):
     else:
         tasks.call_service.delay(SimilarArtists(artist_id))
 
-    return render(request, 'artist.html', context)
+    return render(request, "artist.html", context)
 
 
 def song_info (request):
     context = Context({})
-    song_id = request.GET['q']
+    song_id = request.GET.get("q")
 
-    return render(request, 'index.html', context)
+    return render(request, "index.html", context)
 
 
 # HTTP 500
 def server_error(request):
-    response = render(request, '500.html')
+    response = render(request, "500.html")
     response.status_code = 500
     return response
 
@@ -149,19 +147,23 @@ Functions for handling ASYNC requests
 
 # check cache, if hit return json else return pending
 def retrieve_resource(request):
-    id_ = request.GET.get['q']
-    resource = request.GET.get['resource']
-    data = {}
-    data_str = RC.hget(id_, resource)
+    id_ = request.GET.get("q")
+    rtype = request.GET.get("rtype")
+    page = request.GET.get("page")
 
-    if data_str:
-        data[resource] = ast.literal_eval(data_str)
-        data['status'] = 'ready'
-        data['page'] = request.GET.get['page']
+    context = {}
+    resource_string = RC.hget(id_, rtype)
 
+    if resource_string:
+        resource = ast.literal_eval(resource_string)
+        context = page_resource_async(page, resource, rtype)
+        context['q'] = id_
+        context['status'] = "ready"
     else:
-        data['status'] = 'pending'
+        context['status'] = "pending"
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    print context.keys()
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 

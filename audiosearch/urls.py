@@ -7,12 +7,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'src.views.index'),   
     url(r'^search/$', 'src.views.search'),
-    # url(r'^search/artists$', 'src.views.more_artists_results'),
-
-    # url(r'^search/$', 'src.views.search'),
-    # url(r'^search/$', 'src.views.search'),
-
-    
     url(r'^artist/$', 'src.views.artist_info'),
     url(r'^song/$', 'src.views.song_info'),
     # url(r'^about/$', 'src.views.about'),
