@@ -92,6 +92,7 @@ function display_songs(data, rtype) {
     display_page_nav(data, rtype);
 }
 
+
 function display_page_nav(data, rtype) {
     if (data['has_previous']) {
         var prev_url = "?q=" + data['q'] + "&type=" + rtype + "&page=" + data['previous_page_number'],
