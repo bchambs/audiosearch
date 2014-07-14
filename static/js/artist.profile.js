@@ -11,12 +11,12 @@
     Iterate over profile object and inject into html.
     @param {object} data Object containing artist profile information.
 */
-function display_profile(data) {
+function display_profile(data, rtype) {
     'use strict';
 
     $('#spinner').hide();
 
-    $.each(data, function (key, value) {
+    $.each(data[rtype], function (key, value) {
         switch(key) {
             case 'tiles':
                 // prepare banner images: wrap, resize, append
@@ -48,17 +48,13 @@ function display_profile(data) {
     Iterate over songs object and inject into html.
     @param {list} data Object containing songs information.
 */
-function display_songs(data) {
+function display_songs(data, rtype) {
     'use strict';
 
     // append entire table so we traverse DOM once instead of len(songs) times if we append row by row
     var tb = $('<tbody />');
-    $.each(data, function (rank, song) {
+    $.each(data[rtype], function (rank, song) {
         var row;
-
-        if (++rank > 15) {
-            return false;
-        }
 
         if (rank % 2 == 0) {
             row = $('<tr>', {class:"row-even"});
@@ -67,13 +63,21 @@ function display_songs(data) {
             row = $('<tr>', {class:"row-odd"});
         }
 
-        row.append($('<td>').text(rank));
+        row.append($('<td>').text(++rank));
         row.append($('<td>').text(song['title']));
         row.append($('<td>').text(song['song_hotttnesss']));
         tb.append(row).fadeIn(FADE_DELAY);
     });
     
     $("#song-table").append(tb).fadeIn(FADE_DELAY);
+
+    // append 'view more' link
+    if (data['total_pages'] > 1) {
+        var more_url = "/artist/songs?q=" + data['q'] + "&page=1",
+        more_link = $('<a>', {href: more_url});
+        more_link.append("view more");
+        $("#songs-view-more").append(more_link).fadeIn(FADE_DELAY);
+    }
 }
 
 
@@ -81,12 +85,12 @@ function display_songs(data) {
     Iterate over similar artists object and inject into html.
     @param {list} data Object containing similar artists information.
 */
-function display_similar(data) {
+function display_similar(data, rtype) {
     'use strict'
     var tb = $('<tbody />');
 
-    $.each(data, function (index, artist) {
-        if (index > 5) {
+    $.each(data[rtype], function (index, artist) {
+        if (++index > 3) {
             return false;
         }
         var row,
@@ -136,6 +140,14 @@ function display_similar(data) {
         tb.append(row).fadeIn(FADE_DELAY);
     });
     $("#similar-table").append(tb).fadeIn(FADE_DELAY);
+
+    // append 'view more' link
+    if (data['total_pages'] > 1) {
+        var more_url = "/artist/similar?q=" + data['q'] + "&page=1",
+        more_link = $('<a>', {href: more_url});
+        more_link.append("view more");
+        $("#similar-view-more").append(more_link).fadeIn(FADE_DELAY);
+    }
 }
 
 

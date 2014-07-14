@@ -160,6 +160,12 @@
                     </tbody>
                 {% endif %}
                 </table>
+
+                <div id="similar-view-more" class="secondc content-title">
+                    {% if more_similar %}
+                        <a href="{% url 'src.views.artist_similar' %}?q={{ q }}&page=1">view more</a>
+                    {% endif %}
+                </div>
             </div><!--END similar-->
 
             <!--songs-->
@@ -174,13 +180,22 @@
                             <tr class="row-odd">
                             {% endif %}
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ song.title }}</td>
-                                <!-- <td>{{ song.id }}</td> -->
+                                <td>
+                                    <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}">
+                                        {{ song.title }}
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                     {% endif %}
                 </table>
+
+                <div id="songs-view-more" class="secondc content-title">
+                    {% if more_songs %}
+                        <a href="{% url 'src.views.artist_songs' %}?q={{ q }}&page=1">view more</a>
+                    {% endif %}
+                </div>
             </div><!--END songs-->
         </div><!--END similar and songs-->
     </div>
@@ -197,8 +212,8 @@
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
-<script src="{{ STATIC_URL }}js/artist-utils.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+<script src="{{ STATIC_URL }}js/artist.profile.js"></script>
 
 {% if not profile %}
     <script type="text/javascript">

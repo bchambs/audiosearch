@@ -21,10 +21,21 @@ Values by type:
             'bio_trunc': string
             'tiles': list of (string, url) tuple
             'terms': string
-            'hotttnesss': int
+            'hotttnesss': float
         }
         songs = list of dict
         similar = list of dict
+    }
+    Song = {
+        status = {
+            'profile': string,
+        }
+
+        profile = {
+            'audio_summary': dict
+            'song_hotttnesss': float
+            'song_hotttnesss_rank': float
+        }
     }
 """
 

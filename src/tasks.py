@@ -21,32 +21,13 @@ def call_service(package):
 
     raw = ENConsumer.consume(package, SNOOZE, LIMIT)
 
-    if raw[0] == 'ready':
+    if raw[0] == "ready":
         resource = package.trim(raw[1])
         pipe = RC.pipeline()
-        pipe.hset(package.id_, 'status', {package.REDIS_ID: 'ready'})
+        pipe.hset(package.id_, "status", {package.REDIS_ID: "ready"})
         pipe.hset(package.id_, package.REDIS_ID, resource)
         pipe.expire(package.id_, EXPIRE_TIME)
         pipe.execute()
-
-        # logging.info(' ')
-        # logging.info('=========================')
-        # logging.info(len(resource))
-        # logging.info('=========================')
-        # logging.info(' ')
-
-        # if resource:
-        #     logging.info('=========================')
-        #     logging.info(package.REDIS_ID)
-        #     if isinstance(resource, dict):
-        #         for k in resource.keys():
-        #             logging.info(k)
-        #     elif isinstance(resource, list):
-        #         logging.info(resource[0])
-        #     else:
-        #         logging.info("INVALID RESOURCE")
-        #     logging.info('=========================')
-
     else:
-        RC.hset(package.id_, 'status', raw[0])
+        RC.hset(package.id_, "status", raw[0])
 

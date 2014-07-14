@@ -64,7 +64,7 @@ function dispatch(id, rtype, page, attempt) {
 
                 switch(rtype) {
                     case 'profile':
-                        display_profile(data[rtype]);
+                        display_profile(data, rtype);
                         break;
 
                     case 'artists':
@@ -76,7 +76,7 @@ function dispatch(id, rtype, page, attempt) {
                         break;
 
                     case 'similar':
-                        display_similar(data[rtype]);
+                        display_similar(data, rtype);
                         break;
                 }
             }
@@ -84,8 +84,11 @@ function dispatch(id, rtype, page, attempt) {
                 attempt++;
 
                 if (attempt > ATTEMPT_LIMIT) {
-                    if (JS_DEBUG) {console.log("timeout");}
-                    handle_timeout(rtype, TIMEOUT_MESSAGE);
+                    if (JS_DEBUG) {
+                        console.log("timeout");
+                        console.log(data['message']);
+                    }
+                    handle_timeout(rtype, data['status']);
                 }
                 else {
                     if (JS_DEBUG) {console.log("not ready, attempt: " + attempt);}
@@ -111,14 +114,31 @@ function dispatch(id, rtype, page, attempt) {
 }
 
 
+function display_page_nav(data, rtype) {
+    if (data['has_previous']) {
+        var prev_url = "?q=" + data['q'] + "&type=" + rtype + "&page=" + data['previous_page_number'],
+        prev_link = $('<a>', {href: prev_url});
+        prev_link.append("previous");
+        $("#previous").append(prev_link).fadeIn(FADE_DELAY);
+    }
+
+    $("#current").append("Page " + data['current_page'] + " of " + data['total_pages'] + ".");
+
+    if (data['has_next']) {
+        var next_url = "?q=" + data['q'] + "&type=" + rtype + "&page=" + data['next_page_number'],
+        next_link = $('<a>', {href: next_url});
+        next_link.append("next");
+        $("#next").append(next_link).fadeIn(FADE_DELAY);
+    }
+}
+
+
 /**
     Display error message for failed AJAX retrievals.
     @param {string} message Error message.
 */
 function handle_timeout(resource, message) {
     'use strict';
-
-    alert(resource + " timed out.");
 
     $('#spinner').hide();
     $("#name").text(message).hide().fadeIn(FADE_DELAY);;

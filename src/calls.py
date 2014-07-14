@@ -180,8 +180,7 @@ class SimilarArtists(ENCall):
 
             del artist['images']
 
-            
-        return data[:5]
+        return data
 
 
 class ArtistSearch(ENCall):
@@ -231,4 +230,35 @@ class SongSearch(ENCall):
         return data
 
 
+class SongProfile(ENCall):
+    """
+    Package representing all required data for an song profile request from Echo Nest.
+    """
 
+    # REST data
+    TYPE_ = "song"
+    METHOD = "profile"
+    BUCKETS = [
+        'audio_summary',
+        'song_hotttnesss', 
+        'song_hotttnesss_rank', 
+        # 'tracks'
+    ]
+
+    # REDIS data
+    KEY_ = 'songs'
+    REDIS_ID = 'profile'
+
+    def __init__(self, id_):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
+        self.payload['id'] = id_
+
+
+    def trim(self, data):
+        if len(data) > 0:
+            data = data[0]
+            
+        if 'song_hotttnesss' in data:
+            data['song_hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
+
+        return data

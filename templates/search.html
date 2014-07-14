@@ -88,11 +88,11 @@
                     <td>{{ forloop.counter0|add:paged_type.start_index }}</td>
                     <td>
                         {% if type == "artists" %}
-                            <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" > 
+                            <a href="{% url 'src.views.artist_profile' %}?q={{ artist.id }}" > 
                                 {{ item.name }}
                             </a>
                         {% else %}
-                            <a href="{% url 'src.views.song_info' %}?q={{ title.id }}" > 
+                            <a href="{% url 'src.views.song_profile' %}?q={{ title.id }}" > 
                                 {{ item.title }}
                             </a>
                         {% endif %}
@@ -141,7 +141,7 @@
                     {% endif %}
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="{% url 'src.views.artist_info' %}?q={{ artist.id }}" >
+                            <a href="{% url 'src.views.artist_profile' %}?q={{ artist.id }}" >
                                 {{ artist.name }}
                             </a>
                         </td>
@@ -169,7 +169,7 @@
                     {% endif %}
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="{% url 'src.views.song_info' %}?q={{ song.id }}" >
+                            <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}" >
                                 {{ song.title }}
                             </a>
                         </td>
@@ -192,8 +192,8 @@
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/ajax-loader.js"></script>
-<script src="{{ STATIC_URL }}js/search-utils.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+<script src="{{ STATIC_URL }}js/search.js"></script>
 
 {% if artists_pending %}
     <script type="text/javascript">

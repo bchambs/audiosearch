@@ -85,7 +85,7 @@ function display_songs(data, rtype) {
     if (data['total_pages'] > 1) {
         var more_url = "/search/?q=" + data['q'] + "&type=songs&page=" + data['current_page'],
         more_link = $('<a>', {href: more_url});
-        more_link.append("more");
+        more_link.append("view more");
         $("#song-view-more").append(more_link).fadeIn(FADE_DELAY);
     }
 
@@ -93,23 +93,7 @@ function display_songs(data, rtype) {
 }
 
 
-function display_page_nav(data, rtype) {
-    if (data['has_previous']) {
-        var prev_url = "?q=" + data['q'] + "&type=" + rtype + "&page=" + data['previous_page_number'],
-        prev_link = $('<a>', {href: prev_url});
-        prev_link.append("previous");
-        $("#previous").append(prev_link).fadeIn(FADE_DELAY);
-    }
 
-    $("#current").append("Page " + data['current_page'] + " of " + data['total_pages'] + ".");
-
-    if (data['has_next']) {
-        var next_url = "?q=" + data['q'] + "&type=" + rtype + "&page=" + data['next_page_number'],
-        next_link = $('<a>', {href: next_url});
-        next_link.append("next");
-        $("#next").append(next_link).fadeIn(FADE_DELAY);
-    }
-}
 
 
 

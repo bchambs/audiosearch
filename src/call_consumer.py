@@ -91,7 +91,6 @@ class ENConsumer(object):
 
                 if attempt == limit:
                     raise TimeOutErrorself
-
                 else:
                     sleep(snooze)
 

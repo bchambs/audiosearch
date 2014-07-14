@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 
 from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS, VIEW_DEBUG
 from audiosearch.redis import client as RC
-from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch
+from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch, SongProfile
 from src.util import page_resource, page_resource_async
 
 """
@@ -94,11 +94,11 @@ def search(request):
     return render(request, 'search.html', context)
 
 
-def artist_info(request):
+def artist_profile(request):
     """
     /artist/
     """
-    artist_id = request.GET.get("q")
+    artist_id = request.GET.get('q')
     context = Context({
         'q': artist_id
     })
@@ -114,25 +114,90 @@ def artist_info(request):
         tasks.call_service.delay(ArtistProfile(artist_id))
 
     if 'songs' in artist:
-        context['songs'] = ast.literal_eval(artist['songs'])
-        context['songs'] = context['songs'][:SEARCH_RESULT_DISPLAYED]
+        songs = ast.literal_eval(artist['songs'])
+        context['songs'] = page_resource(None, songs)
+        if len (songs) > SEARCH_RESULT_DISPLAYED:
+            context['more_songs'] = True
     else:
         tasks.call_service.delay(Playlist(artist_id))
 
     if 'similar' in artist:
-        context['similar'] = ast.literal_eval(artist['similar'])
-        context['similar'] = context['similar'][:SEARCH_RESULT_DISPLAYED]
+        similar = ast.literal_eval(artist['similar'])
+        context['similar'] = page_resource(None, similar)
+        if len (similar) > SIMILAR_ARTIST_DISPLAYED:
+            context['more_similar'] = True
     else:
         tasks.call_service.delay(SimilarArtists(artist_id))
 
-    return render(request, "artist.html", context)
+    return render(request, "artist-profile.html", context)
 
 
-def song_info (request):
-    context = Context({})
-    song_id = request.GET.get("q")
+def artist_similar(request):
+    id_ = request.GET.get('q')
+    page = request.GET.get('page')
+    context = Context({
+        'q': id_,
+        'page': page,
+    })
 
-    return render(request, "index.html", context)
+    if REDIS_DEBUG:
+        RC.delete(id_)
+
+    resource = RC.hget(id_, 'similar')
+
+    if resource:
+        similar = ast.literal_eval(resource)
+        context['similar'] = page_resource(page, similar)
+    else:
+        tasks.call_service.delay(SimilarArtists(id_))
+        tasks.call_service.delay(ArtistProfile(id_))
+        tasks.call_service.delay(Playlist(id_))
+
+    return render(request, "artist-similar.html", context)
+
+
+def artist_songs(request):
+    id_ = request.GET.get('q')
+    page = request.GET.get('page')
+    context = Context({
+        'q': id_,
+        'page': page,
+    })
+
+    if REDIS_DEBUG:
+        RC.delete(id_)
+
+    resource = RC.hget(id_, 'songs')
+
+    if resource:
+        songs = ast.literal_eval(resource)
+        context['songs'] = page_resource(page, songs)
+    else:
+        tasks.call_service.delay(Playlist(id_))
+        tasks.call_service.delay(SimilarArtists(id_))
+        tasks.call_service.delay(ArtistProfile(id_))
+
+    return render(request, "artist-songs.html", context)
+
+
+def song_profile(request):
+    id_ = request.GET.get('q')
+
+    context = Context({
+        'q': id_
+    })
+
+    if REDIS_DEBUG:
+        RC.delete(id_)
+
+    resource = RC.hget(id_, 'profile')
+
+    if resource:
+        context['profile'] = ast.literal_eval(resource)
+    else:
+        tasks.call_service.delay(SongProfile(id_))
+
+    return render(request, "song-profile.html", context)
 
 
 # HTTP 500
@@ -154,21 +219,26 @@ def retrieve_resource(request):
     rtype = request.GET.get('rtype')
     page = request.GET.get('page')
 
-    # print id_
-    # print rtype
-    # print page
-
     context = {}
     resource_string = RC.hget(id_, rtype)
 
     if resource_string:
         resource = ast.literal_eval(resource_string)
-        context = page_resource_async(page, resource, rtype)
+
+        if rtype == "profile":
+            context[rtype] = resource
+        else:
+            context = page_resource_async(page, resource, rtype)
+
         context['q'] = id_
         context['status'] = "ready"
 
     else:
         context['status'] = "pending"
+
+    if VIEW_DEBUG and context['status'] == "ready":
+        print "in async for: %s" % rtype
+        # print context.keys()
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 
