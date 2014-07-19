@@ -67,8 +67,16 @@
     <!-- wrap artists -->
     <span id="similar-artists" class="secondc">
         <div id="similar-artists-title" class="secondc">
-            Similar artists
+            <span class="title-text">
+                Similar artists
+            </span>
+            <span>
+            {% if more_similar %}
+                <a href="{% url 'src.views.artist_similar' %}?q={{ q }}&page=1">view more</a>
+            {% endif %}
+            </span>
         </div>
+
         <table id="similar-table" border="1" frame="void" rules="all">
             <tbody>
                 {% if similar %}
@@ -100,7 +108,15 @@
 
     <span id="artist-songs" class="secondc">
         <div id="artist-songs-title" class="secondc">
-            Songs
+            <span class="title-text">
+                Songs
+            </span>
+
+            <span>
+                {% if more_songs %}
+                    <a href="{% url 'src.views.artist_songs' %}?q={{ q }}&page=1">view more</a>
+                {% endif %}
+            </span>
         </div>
         <table id="songs-table" border="1" frame="void" rules="all">
             <tbody>
@@ -108,7 +124,11 @@
                     {% for song in songs %}
                     <tr>
                         <td class="song-index"> {{ forloop.counter }}</td>
-                        <td class="song-title"> {{ song.title }}</td>
+                        <td class="song-title"> 
+                            <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}" > 
+                                {{ song.title }}
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 {% endif %}

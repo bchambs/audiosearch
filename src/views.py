@@ -116,8 +116,7 @@ def artist_profile(request):
     if 'songs' in resource:
         songs = ast.literal_eval(resource['songs'])
         context['songs'] = page_resource(None, songs)
-        print len(context['songs'])
-        if len (songs) > SEARCH_RESULT_DISPLAYED:
+        if len(songs) > SEARCH_RESULT_DISPLAYED:
             context['more_songs'] = True
     else:
         tasks.call_service.delay(Playlist(id_))
@@ -125,6 +124,8 @@ def artist_profile(request):
     if 'similar' in resource:
         similar = ast.literal_eval(resource['similar'])
         context['similar'] = similar[:18]
+        if len(similar) > 18:
+            context['more_similar'] = True
     else:
         tasks.call_service.delay(SimilarArtists(id_))
 
