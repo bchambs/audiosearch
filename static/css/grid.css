@@ -6,6 +6,7 @@ html, body {
     font-family: Helvetica, sans-serif;
     font-size: 15px;
     /*background-color: #215681;*/
+    background-color: #808073;
 }
 
 .container {
@@ -36,7 +37,7 @@ html, body {
 .row {
     margin: 0;
 }
-.content {
+.contentf {
     /*height: 600px;*/
     /*background-color: #A7E695;*/
     background-color: #215681;
@@ -172,7 +173,10 @@ a:hover {
 }
 .accentc {
     /*background-color: #4475AA;*/
-    background-color: #4475AA;
+    background-color: #808073;
+}
+.white {
+    background-color: white;
 }
 
 .pagination {
@@ -182,3 +186,13 @@ a:hover {
 .no-results {
     font-size: 20px;
 }
+
+.block-link {
+    position:absolute; 
+    width:100%;
+    height:100%;
+    top:0;
+    left: 0;
+    z-index: 1;
+    background-image: url('empty.gif');
+}   

@@ -53,6 +53,9 @@ class ArtistProfile(ENCall):
     def trim(self, data):
         result = {}
 
+        if 'name' in data:
+            result['name'] = data['name']
+
         if 'images' in data:
             result['title_image'] = data['images'][0]['url']
 
@@ -165,9 +168,11 @@ class SimilarArtists(ENCall):
 
 
     def trim(self, data):
-        result = {}
+        result = []
 
-        return result
+        result = data
+
+        return data
 
         # result = {}
         # terms = {}

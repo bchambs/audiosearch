@@ -115,6 +115,6 @@ ARTIST_SONGS_DISPLAYED = 10
 SIMILAR_ARTIST_DISPLAYED = 3
 
 # set to True to delete cached data before serving page requests
-REDIS_DEBUG = True
+REDIS_DEBUG = False
 VIEW_DEBUG = True
 

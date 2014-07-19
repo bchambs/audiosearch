@@ -24,7 +24,7 @@
 <body>
 
 <div class="container">
-    <div class="nav row">
+    <div class="nav secondc row">
         <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
 
         <div id="nav-title" class="col-lg-3">
@@ -45,176 +45,84 @@
             contact
         </div>
     </div>
+</div>
 
-    <div class="banner-container">
-    <div class="wrap">
-        <div class="separator"></div>
-
-        <div id="image-banner">
-            <!--spinner display-->
-            {% if status == 'pending' %}
-                <img id="spinner" src="{{ STATIC_URL }}img/ajax-loader.gif" />
-            {% elif status == 'failed' %}
-                {{ message }}
-            {% endif %}
-            <!--END spinner-->
-
-            <!--tiled images-->
-            {% for tile in profile.tiles %}
-            <!--HIT: load tiles -->
-            <div class="tile-wrapper">
-                <img id={{ tile.0 }} class="tile-image" src={{ tile.1 }} />
-            </div>
-            {% endfor %}
-            <!--END tiles-->
-
-            <!--container:: h=300, w=1186-->
-            <!--image:: h=300, w=296.5-->
-        </div><!--END image banner-->
-
-        <div id="banner-title">
-            <div id="name">
-                {{ profile.name }}
-            </div>
-        </div><!--END banner title-->
-
-        <div class="separator"></div>
-    </div>
-    </div>
-
-    <div class="artist-brief-info">
-    <div class="wrap">
-        <!--rating, rank, bio-->
-        <div class="row">
-            <div class="rating-box col-lg-2">
-                <span class="glyphicon glyphicon-fire"></span>
-                <span id="hotttnesss" class="artist-hint" title="A representation of how popular an artist is.">
-                    {{ profile.hotttnesss }}
-                </span>
-                
-                <br />
-                Rank: 
-                <span id="hotttnesss_rank" class="rank">
-                    {{ profile.hotttnesss_rank }}
-                </span>
+<div class="container primec">
+    <div class="row">
+        <div class="content-title accentc">
+            <div id="artist-image" class="secondc col-lg-4">
+                {% if profile.title_image %}
+                    <img id="title-image" src="{{ profile.title_image }}" />
+                {% endif %}
             </div>
 
-            <div id="bios" class="bio-box col-lg-10">
-                <span id="bio_trunc">
-                    {{ profile.bio_trunc }}
-                </span>
-                <!-- TODO: add toggle for full bio modal -->
-                <!-- <span id="bio-toggle" title="Expand this biography.">
-                    more
-                </span> -->
+            <div id="artist-info" class="secondc col-lg-8">{{ profile.name }}
             </div>
         </div>
-        <!--END rating, rank, bio-->
-
-        <!-- <div class="separator"></div> -->
     </div>
-    </div>
+</div>
 
-    <div class="recommended-content">
-    <div class="wrap">
-        <!-- <div class="separator"></div> -->
-        <!--similar artists and songs-->
-        <div class="row">
-            <div class="similar-content col-lg-7">
-                <table id="similar-table" class="table">
+<!-- wrap suggestions -->
+<div class="content primec">
+    <!-- wrap artists -->
+    <span id="similar-artists" class="secondc">
+        <div id="similar-artists-title" class="secondc">
+            Similar artists
+        </div>
+        <table id="similar-table" border="1" frame="void" rules="all">
+            <tbody>
                 {% if similar %}
-                    <tbody>
-                        {% for artist in similar %}
-                            {% if forloop.counter|divisibleby:2 %}
-                            <tr class="row-even">
-                            {% else %}
-                            <tr class="row-odd">
-                            {% endif %}
-                                <td class="preview-image-width">
-                                    <div class="preview-container">
-                                        <img class="preview-image" src="{{ artist.preview_url }}" />
-                                        <div class="preview-text">
-                                            <span class="preview-terms">{{ artist.terms }}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <table class="preview-songs-table">
-                                        <tbody>
-                                            {% if forloop.counter|divisibleby:2 %}
-                                            <tr class="row-even">
-                                            {% else %}
-                                            <tr class="row-odd">
-                                            {% endif %}
-                                                <th class="preview-name-title">{{ artist.name }}</th>
-                                                <!-- <th class="preview-name-title">test</th> -->
-                                                <tr><td>{{ artist.songs.0.title }}</td></tr>
-                                                <tr><td>{{ artist.songs.1.title }}</td></tr>
-                                                <tr><td>{{ artist.songs.2.title }}</td></tr>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
+                    {% for artist in similar %}
+                        {% if forloop.counter0 == 0 or forloop.counter0 == 6 or forloop.counter0 == 12 %}
+                        <tr>
+                        {% endif %}
+                        <td>
+                            <div class="artist-preview-image">
+                                <img class="preview-image" src="{{ artist.images.0.url }}" />
+
+                                <span class="artist-block-name secondc">
+                                    {{ artist.name }}
+                                </span>
+
+                                <a href="{% url 'src.views.artist_profile' %}?q={{ artist.id }}">
+                                    <span class="block-link"></span>
+                                </a>
+                            </div>
+                        </td>
+                        
+                    {% endfor %}
                 {% endif %}
-                </table>
+            </tbody>
+        </table>
+    </span><!-- end artists -->
 
-                <div id="similar-view-more" class="secondc content-title">
-                    {% if more_similar %}
-                        <a href="{% url 'src.views.artist_similar' %}?q={{ q }}&page=1">view more</a>
-                    {% endif %}
-                </div>
-            </div><!--END similar-->
+    <span id="separator"></span>
 
-            <!--songs-->
-            <div class="song-content col-lg-4">
-                <table id="song-table" class="table">
-                    {% if songs %}
-                    <tbody>
-                        {% for song in songs %}
-                            {% if forloop.counter|divisibleby:2 %}
-                            <tr class="row-even">
-                            {% else %}
-                            <tr class="row-odd">
-                            {% endif %}
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}">
-                                        {{ song.title }}
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                    {% endif %}
-                </table>
+    <span id="artist-songs" class="secondc">
+        <div id="artist-songs-title" class="secondc">
+            Songs
+        </div>
+        <table id="songs-table" border="1" frame="void" rules="all">
+            <tbody>
+                {% if songs %}
+                    {% for song in songs %}
+                    <tr>
+                        <td class="song-index"> {{ forloop.counter }}</td>
+                        <td class="song-title"> {{ song.title }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </span><!-- end songs -->
+</div><!-- end suggestions -->
 
-                <div id="songs-view-more" class="secondc content-title">
-                    {% if more_songs %}
-                        <a href="{% url 'src.views.artist_songs' %}?q={{ q }}&page=1">view more</a>
-                    {% endif %}
-                </div>
-            </div><!--END songs-->
-        </div><!--END similar and songs-->
-    </div>
-    </div>
-
-    <!-- <div class="separator"></div>
-
-    <div class="footer wrap">
-        
-    </div> --><!--END footer-->
-
-    <!-- <div class="reflection main"></div> -->
-</div><!--END container-->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/artist.profile.js"></script>
-
+<!-- 
 {% if not profile %}
     <script type="text/javascript">
         dispatch("{{ q|escapejs }}", 'profile', false, 0);
@@ -231,7 +139,7 @@
     <script type="text/javascript">
         dispatch("{{ q|escapejs }}", 'similar', true, 0);
     </script>
-{% endif %}
+{% endif %} -->
 
 </body>
 </html>

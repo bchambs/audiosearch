@@ -98,38 +98,37 @@ def artist_profile(request):
     """
     /artist/
     """
-    artist_id = request.GET.get('q')
+    id_ = request.GET.get('q')
     context = Context({
-        'q': artist_id
+        'q': id_
     })
 
     if REDIS_DEBUG:
-        RC.delete(artist_id)
+        RC.delete(id_)
 
-    artist = RC.hgetall(artist_id)
+    resource = RC.hgetall(id_)
 
-    if 'profile' in artist:
-        context['profile'] = ast.literal_eval(artist['profile'])
+    if 'profile' in resource:
+        context['profile'] = ast.literal_eval(resource['profile'])
     else:
-        tasks.call_service.delay(ArtistProfile(artist_id))
+        tasks.call_service.delay(ArtistProfile(id_))
 
-    if 'songs' in artist:
-        songs = ast.literal_eval(artist['songs'])
+    if 'songs' in resource:
+        songs = ast.literal_eval(resource['songs'])
         context['songs'] = page_resource(None, songs)
+        print len(context['songs'])
         if len (songs) > SEARCH_RESULT_DISPLAYED:
             context['more_songs'] = True
     else:
-        tasks.call_service.delay(Playlist(artist_id))
+        tasks.call_service.delay(Playlist(id_))
 
-    if 'similar' in artist:
-        similar = ast.literal_eval(artist['similar'])
-        context['similar'] = page_resource(None, similar)
-        if len (similar) > SIMILAR_ARTIST_DISPLAYED:
-            context['more_similar'] = True
+    if 'similar' in resource:
+        similar = ast.literal_eval(resource['similar'])
+        context['similar'] = similar[:18]
     else:
-        tasks.call_service.delay(SimilarArtists(artist_id))
+        tasks.call_service.delay(SimilarArtists(id_))
 
-    return render(request, "artist-profile-experimental.html", context)
+    return render(request, "artist-profile.html", context)
 
 
 def artist_similar(request):
@@ -205,45 +204,6 @@ def server_error(request):
     response = render(request, "500.html")
     response.status_code = 500
     return response
-
-
-def artist_profile_exp(request):
-    """
-    /artist/
-    """
-    id_ = request.GET.get('q')
-    context = Context({
-        'q': id_
-    })
-
-    if REDIS_DEBUG:
-        RC.delete(id_)
-
-    resource = RC.hgetall(id_)
-
-    if 'profile' in resource:
-        context['profile'] = ast.literal_eval(resource['profile'])
-    else:
-        tasks.call_service.delay(ArtistProfile(id_))
-
-    if 'songs' in resource:
-        songs = ast.literal_eval(resource['songs'])
-        context['songs'] = page_resource(None, songs)
-        if len (songs) > SEARCH_RESULT_DISPLAYED:
-            context['more_songs'] = True
-    else:
-        tasks.call_service.delay(Playlist(id_))
-
-    if 'similar' in resource:
-        similar = ast.literal_eval(resource['similar'])
-        context['similar'] = page_resource(None, similar)
-        if len (similar) > SIMILAR_ARTIST_DISPLAYED:
-            context['more_similar'] = True
-    else:
-        tasks.call_service.delay(SimilarArtists(id_))
-
-    return render(request, "artist-profile-experimental.html", context)
-
 
 
 """

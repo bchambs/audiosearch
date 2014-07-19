@@ -17,7 +17,7 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/artist-exp.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
 
     <title>audiosearch</title>
 </head>
@@ -51,59 +51,77 @@
     <div class="row">
         <div class="content-title accentc">
             <div id="artist-image" class="secondc col-lg-4">
-                <img id="title-image" src="{{ profile.title_image }}" />
+                {% if profile.title_image %}
+                    <img id="title-image" src="{{ profile.title_image }}" />
+                {% endif %}
             </div>
 
-            <div id="artist-info" class="secondc col-lg-8">the artist stuff
+            <div id="artist-info" class="secondc col-lg-8">{{ profile.name }}
             </div>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <div class="content primec row">
-        <div id="similar-artists" class="accentc col-lg-4">
-            <table>
-                <tbody>
+<!-- wrap suggestions -->
+<div class="content primec">
+    <!-- wrap artists -->
+    <span id="similar-artists" class="secondc">
+        <div id="similar-artists-title" class="secondc">
+            Similar artists
+        </div>
+        <table id="similar-table" border="1" frame="void" rules="all">
+            <tbody>
+                {% if similar %}
+                    {% for artist in similar %}
+                        {% if forloop.counter0 == 0 or forloop.counter0 == 6 or forloop.counter0 == 12 %}
+                        <tr>
+                        {% endif %}
+                        <td>
+                            <div class="artist-preview-image">
+                                <img class="preview-image" src="{{ artist.images.0.url }}" />
+
+                                <span class="artist-block-name secondc">
+                                    {{ artist.name }}
+                                </span>
+
+                                <a href="{% url 'src.views.artist_profile' %}?q={{ artist.id }}">
+                                    <span class="block-link"></span>
+                                </a>
+                            </div>
+                        </td>
+                        
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </span><!-- end artists -->
+
+    <span id="separator"></span>
+
+    <span id="artist-songs" class="secondc">
+        <div id="artist-songs-title" class="secondc">
+            Songs
+        </div>
+        <table id="songs-table" border="1" frame="void" rules="all">
+            <tbody>
+                {% if songs %}
+                    {% for song in songs %}
                     <tr>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                    </tr><tr>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                    </tr><tr>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                    </tr><tr>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
-                        <td>hello</td>
+                        <td class="song-index"> {{ forloop.counter }}</td>
+                        <td class="song-title"> {{ song.title }}</td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="artist-songs" class="accentc col-lg-3">list
-        </div>
-    </div>
-</div>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </span><!-- end songs -->
+</div><!-- end suggestions -->
 
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
-<script src="{{ STATIC_URL }}js/artist.profile.exp.js"></script>
+<script src="{{ STATIC_URL }}js/artist.profile.js"></script>
 <!-- 
 {% if not profile %}
     <script type="text/javascript">
