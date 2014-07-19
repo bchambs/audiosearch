@@ -1,0 +1,45 @@
+.content-title {
+    height: 200px;
+    width: 1000px;
+    /*display: inline;*/
+    margin: 0 auto;
+}
+
+#artist-image {
+    padding: 0;
+}
+#title-image {
+    height: 200px;
+    width: 200px;
+    padding: 0;
+    margin: 0 auto;
+}
+#artist-info {
+    height: 200px;
+}
+
+.content {
+    height: 600px;
+    padding-top: 50px;
+}
+
+.st {
+    font-size: 12px;
+}
+
+table{
+    border: 2px solid black;
+    table-layout: fixed;
+    width: 200px;
+    border-collapse: collapse;
+}
+th, td {
+    border: 2px solid black;
+    overflow: hidden;
+    width: 150px;
+    height: 150px;
+}
+#similar-artists {
+    margin-left: 200px;
+    padding: 0;
+}

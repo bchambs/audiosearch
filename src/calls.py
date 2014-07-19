@@ -52,56 +52,63 @@ class ArtistProfile(ENCall):
 
     def trim(self, data):
         result = {}
-        if 'name' in data:
-            result['name'] = data['name']
 
-        if 'hotttnesss_rank' in data:
-            result['hotttnesss_rank'] = data['hotttnesss_rank']
-
-        if 'biographies' in data:
-            result['bio_full'] = get_good_bio(data['biographies'])
-
-            # summary: get first paragraph, if not optimal take first 500 letters
-            paragraphs = result['bio_full'].split("\n")
-
-            if len(paragraphs[0]) < 200 or len(paragraphs[0]) > 500:
-                result['bio_trunc'] = result['bio_full'][:500]
-            else:
-                result['bio_trunc'] = paragraphs[0]
-
-            # TODO: remove this
-            del result['bio_full']
-
-        # banner images, take top 4 images, create (id, url) tuple, append to tiles key
         if 'images' in data:
-            result['tiles'] = []
-            temp = []
-
-            if len(data['images']) > 4:
-                temp = sample(data['images'], 4)
-            else: 
-                temp = data['images']
-
-            for x in range(0, len(temp)):
-                tup = 'tile-image-' + str(x + 1), temp[x]['url']
-                result['tiles'].append(tup)
-
-        if 'terms' in data:
-            if len(data['terms']) > 0:
-                try:
-                    if len(data['terms']) is 1:
-                        result['terms'] = data['terms'][0]['name']
-                    else:
-                        result['terms'] = data['terms'][0]['name'] + ', ' + data['terms'][1]['name']
-                
-                # CATCH handle the unlikely event that a term item exists without a name key
-                except KeyError:
-                    pass
-
-        if 'hotttnesss' in data:
-            result['hotttnesss'] = int(round(data['hotttnesss'] * 100))
+            result['title_image'] = data['images'][0]['url']
 
         return result
+
+        # result = {}
+        # if 'name' in data:
+        #     result['name'] = data['name']
+
+        # if 'hotttnesss_rank' in data:
+        #     result['hotttnesss_rank'] = data['hotttnesss_rank']
+
+        # if 'biographies' in data:
+        #     result['bio_full'] = get_good_bio(data['biographies'])
+
+        #     # summary: get first paragraph, if not optimal take first 500 letters
+        #     paragraphs = result['bio_full'].split("\n")
+
+        #     if len(paragraphs[0]) < 200 or len(paragraphs[0]) > 500:
+        #         result['bio_trunc'] = result['bio_full'][:500]
+        #     else:
+        #         result['bio_trunc'] = paragraphs[0]
+
+        #     # TODO: remove this
+        #     del result['bio_full']
+
+        # # banner images, take top 4 images, create (id, url) tuple, append to tiles key
+        # if 'images' in data:
+        #     result['tiles'] = []
+        #     temp = []
+
+        #     if len(data['images']) > 4:
+        #         temp = sample(data['images'], 4)
+        #     else: 
+        #         temp = data['images']
+
+        #     for x in range(0, len(temp)):
+        #         tup = 'tile-image-' + str(x + 1), temp[x]['url']
+        #         result['tiles'].append(tup)
+
+        # if 'terms' in data:
+        #     if len(data['terms']) > 0:
+        #         try:
+        #             if len(data['terms']) is 1:
+        #                 result['terms'] = data['terms'][0]['name']
+        #             else:
+        #                 result['terms'] = data['terms'][0]['name'] + ', ' + data['terms'][1]['name']
+                
+        #         # CATCH handle the unlikely event that a term item exists without a name key
+        #         except KeyError:
+        #             pass
+
+        # if 'hotttnesss' in data:
+        #     result['hotttnesss'] = int(round(data['hotttnesss'] * 100))
+
+        # return result
 
 
 class Playlist(ENCall):
@@ -158,29 +165,54 @@ class SimilarArtists(ENCall):
 
 
     def trim(self, data):
-        for artist in data:
-            artist['familiarity'] = int(round(artist['familiarity'] * 100))
-            if 'images' in artist:
-                artist['preview_url'] = artist['images'][0]['url']
+        result = {}
 
-            if 'terms' in artist:
-                if len(artist['terms']) > 0:
-                    try:
-                        if len(artist['terms']) is 1:
-                            artist['terms'] = artist['terms'][0]['name']
-                        else:
-                            artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
+        return result
+
+        # result = {}
+        # terms = {}
+
+        # for i in range(0,20):
+        #     sim = data[i]
+        #     for t in range(0,5):
+        #         try:
+        #             term = sim['terms'][t]['name']
+        #             terms[term] = terms.get(term, 0) + 1
+        #         except IndexError:
+        #             break
+
+        # result['terms'] = terms
+
+        # for k, v in terms.items():
+        #     print "%s: %s" % (k, v)
+
+        # return result
+
+
+
+        # for artist in data:
+        #     artist['familiarity'] = int(round(artist['familiarity'] * 100))
+        #     if 'images' in artist:
+        #         artist['preview_url'] = artist['images'][0]['url']
+
+        #     if 'terms' in artist:
+        #         if len(artist['terms']) > 0:
+        #             try:
+        #                 if len(artist['terms']) is 1:
+        #                     artist['terms'] = artist['terms'][0]['name']
+        #                 else:
+        #                     artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
                 
-                    # CATCH handle the unlikely event that a term item exists without a name key
-                    except KeyError:
-                        pass
+        #             # CATCH handle the unlikely event that a term item exists without a name key
+        #             except KeyError:
+        #                 pass
 
-            if 'songs' in artist:
-                artist['songs'] = remove_duplicate_songs(artist['songs'], 3)
+        #     if 'songs' in artist:
+        #         artist['songs'] = remove_duplicate_songs(artist['songs'], 3)
 
-            del artist['images']
+        #     del artist['images']
 
-        return data
+        # return data
 
 
 class ArtistSearch(ENCall):

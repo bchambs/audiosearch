@@ -5,7 +5,7 @@ html, body {
     width: 100%;
     font-family: Helvetica, sans-serif;
     font-size: 15px;
-    background-color: #215681;
+    /*background-color: #215681;*/
 }
 
 .container {
@@ -67,7 +67,6 @@ html, body {
 /*TODO: combine like elements*/
 .nav {
     height: 54px;
-    background-color: #1C2A3B;
     border-bottom: 2px solid white;
 }
 #nav-home-icon {
@@ -122,10 +121,10 @@ html, body {
 }
 
 /*TABLE*/
-table td, tr {
+/*table td, tr {
     border: none !important;
     text-align: left;
-}
+}*/
 .row-even {
     background-color: #4475AA;
 }
@@ -164,12 +163,15 @@ a:hover {
 
 /*COLOR*/
 .primec {
-    background-color: #215681;
+    /*background-color: #215681;*/
+    background-color: #808073;
 }
 .secondc {
-    background-color: #1C2A3B;
+    /*background-color: #1C2A3B;*/
+    background-color: #422A05;
 }
 .accentc {
+    /*background-color: #4475AA;*/
     background-color: #4475AA;
 }
 
