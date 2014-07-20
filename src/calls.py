@@ -1,4 +1,5 @@
 from random import choice, sample
+import datetime
 
 from src.util import get_good_bio, debug, debug_subtitle, remove_duplicate_songs
 
@@ -261,6 +262,7 @@ class SongSearch(ENCall):
         self.payload['title'] = id_
         self.payload['results'] = 100
         self.payload['sort'] = "song_hotttnesss-desc"
+        self.payload['song_type'] = "studio"
 
 
     def trim(self, data):
@@ -292,10 +294,41 @@ class SongProfile(ENCall):
 
 
     def trim(self, data):
-        if len(data) > 0:
+        # song search returns a list. we're using an id so we'll always use the first item
+        if len(data) == 0:
+            return data
+        else:
             data = data[0]
-            
-        if 'song_hotttnesss' in data:
-            data['song_hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
 
-        return data
+        result = {}
+
+        if 'title' in data:
+            result['title'] = data['title']
+
+        if 'artist_name' in data:
+            result['artist_name'] = data['artist_name']
+            
+        if 'audio_summary' in data:
+            result['audio_summary'] = data['audio_summary']
+
+            song_duration = data['audio_summary']['duration'] / 60
+            song_duration = str(round(song_duration,2))
+            song_duration = song_duration.replace('.', ':')
+
+            result['duration'] = song_duration
+
+        if 'song_hotttnesss_rank' in data:
+            result['rank'] = data['song_hotttnesss_rank']
+
+        if 'song_hotttnesss' in data:
+            result['hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
+
+        return result
+
+        # if len(data) > 0:
+        #     data = data[0]
+            
+        # if 'song_hotttnesss' in data:
+        #     data['song_hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
+
+        # return data

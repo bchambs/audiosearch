@@ -1,0 +1,32 @@
+
+
+.title-info {
+    width:100%;
+}
+#song-title {
+    display: inline-block;
+    float:left;
+}
+#duration {
+    display: inline-block;
+    float:left;
+}
+#rank {
+    display: inline-block;
+    float:right;
+}
+#hotttnesss {
+    display: inline-block;
+    float:right;
+}
+#artist-name {
+    /*width: 100%;*/
+    font-size: 18px;
+    text-indent: 50px;
+}
+
+.subtitle {
+    font-size: 20px;
+    margin-top: 30px;
+    margin-right: 30px;
+}

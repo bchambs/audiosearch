@@ -1,0 +1,31 @@
+.content-title {
+    height: 200px;
+    min-height: 200px;
+    width: 1000px;
+    /*display: inline;*/
+    margin: 0 auto;
+}
+
+.content {
+    width: 100%;
+    width: 1465px;
+    height: 700px;
+    padding-top: 50px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+.song-index {
+    width: 50px;
+    height: 45px;
+
+}
+.song-title {
+    width: 600px;
+}
+
+
+
+

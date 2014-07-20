@@ -4,7 +4,7 @@ from time import sleep
 
 import requests
 
-from src.util import debug
+from audiosearch.settings import ENC_DEBUG
 
 class ENConsumer(object):
     """
@@ -52,11 +52,20 @@ class ENConsumer(object):
                     # branch by echo nest result code
                     code = resource_json['response']['status']['code']
 
+                    if ENC_DEBUG:
+                        print code
+
                     # success
                     if code == ENConsumer.SUCCESS:
                         resource_dict = resource_json['response'][package.KEY_]
-
                         result = ("ready", resource_dict)
+                        
+                        if ENC_DEBUG:
+                            try:
+                                print resource_dict[0].keys()
+                            except IndexError:
+                                pass
+
                         return result
 
                     # limit exceeded, snooze then retry

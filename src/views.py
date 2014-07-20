@@ -13,10 +13,6 @@ from audiosearch.redis import client as RC
 from src.calls import ArtistProfile, Playlist, SimilarArtists, ArtistSearch, SongSearch, SongProfile
 from src.util import page_resource, page_resource_async
 
-"""
-audiosearch conventions:
-"""
-
 
 """
 ---------------------------
@@ -165,6 +161,10 @@ def artist_songs(request):
     })
 
     if REDIS_DEBUG:
+        print
+        print "deleting %s" % id_
+        print
+
         RC.delete(id_)
 
     resource = RC.hget(id_, 'songs')
@@ -182,12 +182,15 @@ def artist_songs(request):
 
 def song_profile(request):
     id_ = request.GET.get('q')
+    db = request.GET.get('debug')
+    exp = request.GET.get('expire')
 
     context = Context({
         'q': id_
     })
 
-    if REDIS_DEBUG:
+    if REDIS_DEBUG or db:
+        print "deleting %s" % id_
         RC.delete(id_)
 
     resource = RC.hget(id_, 'profile')
@@ -195,7 +198,7 @@ def song_profile(request):
     if resource:
         context['profile'] = ast.literal_eval(resource)
     else:
-        tasks.call_service.delay(SongProfile(id_))
+        tasks.call_service.delay(SongProfile(id_), expire_in=exp)
 
     return render(request, "song-profile.html", context)
 
@@ -238,7 +241,7 @@ def retrieve_resource(request):
 
     if VIEW_DEBUG and context['status'] == "ready":
         print "in async for: %s" % rtype
-        # print context.keys()
+        print context.keys()
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 

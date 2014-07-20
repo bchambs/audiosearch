@@ -17,51 +17,75 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/song.css" rel="stylesheet">
 
     <title>audiosearch</title>
 </head>
 <body>
 
-<!--nav-->
-<div class="container">
-    <div class="nav row">
-        <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
+<div class="nav secondc">
+    <span id="nav-home-icon" class="glyphicon glyphicon-music"></span>
 
-        <div id="nav-title" class="col-lg-3">
-            <a href = "{% url 'src.views.index' %}" >audiosearch</a>
-            ::
-        </div>
+    <div id="nav-title">
+        <a href = "{% url 'src.views.index' %}" >audiosearch</a>
+        ::
+    </div>
 
-        <div id="nav-search"  class="col-lg-3">
-            <form action="/search/" method="GET">
-                <input class="search-bar" type="text" name="q">
-            </form>
-        </div>
+    <div id="nav-search">
+        <form action="/search/" method="GET">
+            <input class="search-bar" type="text" name="q">
+        </form>
+    </div>
 
-        <div id="nav-about" class="col-lg-2">
-            about
-        </div>
-        <div id="nav-contact" class="col-lg-2">
-            contact
-        </div>
-    </div><!--END nav-->
-</div><!--END container-->
-
-<div id="values">
-    
+    <div class="nav-buttton">
+        about
+    </div>
+    <div id="nav-contact" class="nav-buttton">
+        contact
+    </div>
 </div>
+
+<div class="content-title secondc">
+    <span id="song-title">
+        {{ profile.title }}
+    </span>
+    <span id="duration">
+        {% if profile.duration %}
+            ({{ profile.duration }})
+        {% endif %}
+    </span>
+
+    <br />
+
+    <span id="artist-name" class="secondc">
+        {% if profile.title and profile.artist_name %}
+        by 
+        {% endif %}
+        <a href="{% url 'src.views.artist_profile' %}?q={{ profile.artist_id }}">{{ profile.artist_name }}
+    </span>
+
+    <span id="rank" class="subtitle">
+        {{ profile.rank }}
+    </span>
+    <span id="hotttnesss" class="subtitle">
+        {{ profile.hotttnesss }}
+    </span>
+</div>
+
+
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/song.profile.js"></script>
 
-{% if not profile %}
+<!-- {% if not profile %}
     <script type="text/javascript">
         dispatch("{{ q|escapejs }}", 'profile', false, 0);
     </script>
-{% endif %}
+{% endif %} -->
 
 </body>
 </html>

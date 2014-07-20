@@ -21,28 +21,15 @@ html, body {
     text-align: center;
 }
 
-.wrap {
+/*.wrap {
     width: 1188px;
     height: 100%;
     min-height: 100%;
     margin: 0 auto;
-}
-
-/*what is this*/
-/*.banner-conftainer {
-    min-height: 300px;
-    width: 1188px;
 }*/
 
 .row {
     margin: 0;
-}
-.contentf {
-    /*height: 600px;*/
-    /*background-color: #A7E695;*/
-    background-color: #215681;
-    height: 100%;
-    min-height: 100%;
 }
 
 .footer {
@@ -66,61 +53,6 @@ html, body {
 }*/
 
 /*TODO: combine like elements*/
-.nav {
-    height: 54px;
-    border-bottom: 2px solid white;
-}
-#nav-home-icon {
-    width: 54px;
-    margin-left: 8px;
-    padding-top: 14px;
-}
-#nav-title {
-    width: 180px;
-    font-size: 25px;
-    padding-top: 12px;
-    padding-right: 0;
-    padding-left: 0;
-    /*text-align: right;*/
-}
-#nav-search {
-    padding-top: 14px;
-    padding-left: 10px;
-    text-align: left;
-}
-#nav-about {
-    height: 100%;
-    padding-top: 14px;
-    font-size: 25px;
-    text-align: center;
-    float:right;
-}
-#nav-contact {
-    height: 100%;
-    padding-top: 14px;
-    font-size: 25px;
-    text-align: center;
-    float:right;
-    border-left: 2px solid white;
-    border-right: 2px solid white;
-}
-.search-bar {
-    color: black;
-    width: 350px;
-}
-.nav-content-separator {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 2px;
-    background-color: white;
-}
-
-.glyphicon {
-    font-size: 30px;
-    padding-right: 10px
-}
-
 /*TABLE*/
 /*table td, tr {
     border: none !important;
@@ -175,16 +107,9 @@ a:hover {
     /*background-color: #4475AA;*/
     background-color: #808073;
 }
-.white {
-    background-color: white;
-}
 
 .pagination {
     font-size: 30px;
-}
-
-.no-results {
-    font-size: 20px;
 }
 
 .block-link {
@@ -196,3 +121,9 @@ a:hover {
     z-index: 1;
     background-image: url('empty.gif');
 }   
+
+#separator {
+    min-height: 1px;
+    min-width: 50px;
+    display: inline-block;
+}
