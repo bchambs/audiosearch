@@ -1,7 +1,10 @@
+from __future__ import absolute_import
+
 from random import choice, sample
 import datetime
 
-from src.util import get_good_bio, debug, debug_subtitle, remove_duplicate_songs
+# from src.util import get_good_bio, debug, debug_subtitle, remove_duplicate_songs
+import src.util as util
 
 
 class ENCall(object):
@@ -60,6 +63,15 @@ class ArtistProfile(ENCall):
         if 'images' in data:
             result['title_image'] = data['images'][0]['url']
 
+        if 'terms' in data:
+            result['terms'] = []
+
+            for x in range(0,5):
+                try:
+                    result['terms'].append(data['terms'][x]['name'])
+                except IndexError:
+                    break
+
         return result
 
         # result = {}
@@ -70,7 +82,7 @@ class ArtistProfile(ENCall):
         #     result['hotttnesss_rank'] = data['hotttnesss_rank']
 
         # if 'biographies' in data:
-        #     result['bio_full'] = get_good_bio(data['biographies'])
+        #     result['bio_full'] = util.get_good_bio(data['biographies'])
 
         #     # summary: get first paragraph, if not optimal take first 500 letters
         #     paragraphs = result['bio_full'].split("\n")
@@ -214,7 +226,7 @@ class SimilarArtists(ENCall):
         #                 pass
 
         #     if 'songs' in artist:
-        #         artist['songs'] = remove_duplicate_songs(artist['songs'], 3)
+        #         artist['songs'] = util.remove_duplicate_songs(artist['songs'], 3)
 
         #     del artist['images']
 
@@ -246,7 +258,7 @@ class ArtistSearch(ENCall):
 
 class SongSearch(ENCall):
     """
-    Package representing all required data for an artist search request from Echo Nest.
+    Package representing all required data for an song search request from Echo Nest.
     """
 
     # REST data
@@ -263,6 +275,57 @@ class SongSearch(ENCall):
         self.payload['results'] = 100
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
+
+
+    def trim(self, data):
+        return data
+
+
+class SimilarSongs(SongSearch):
+    """
+    Package representing all required data for an similar songs request from Echo Nest.
+    """
+
+
+    REDIS_ID = 'similar_songs' 
+
+
+    def __init__(self, id_, base, offset):
+        SongSearch.__init__(self, id_)
+        # self.payload['sort'] = "song_hotttnesss-desc"
+        self.payload['sort'] = "artist_familiarity-desc"
+        self.payload['limit'] = True
+        self.payload['bucket'] = 'id:7digital-US'
+
+        offset = .1
+        styles = ['indie rock', 'indie', 'folk', 'emo', 'rock']
+        self.payload['style'] = styles
+
+        del(self.payload['title'])
+
+        if 'tempo' in base:
+            self.payload['max_tempo'] = util.calculate_offset(base['tempo'], offset * 1000, 500) # TODO: move limits to a constants file
+            self.payload['min_tempo'] = util.calculate_offset(base['tempo'], offset * 1000, 0)
+
+        if 'loudness' in base:
+            self.payload['max_loudness'] = util.calculate_offset(base['loudness'], offset * 100, 100)
+            self.payload['min_loudness'] = util.calculate_offset(base['loudness'], offset * 100, -100)
+
+        if 'danceability' in base:
+            self.payload['max_danceability'] = util.calculate_offset(base['danceability'], offset, 1)
+            self.payload['min_danceability'] = util.calculate_offset(base['danceability'], offset, 0)
+
+        if 'energy' in base:
+            self.payload['max_energy'] = util.calculate_offset(base['energy'], offset, 1)
+            self.payload['min_energy'] = util.calculate_offset(base['energy'], offset, 0)
+
+        if 'liveness' in base:
+            self.payload['max_liveness'] = util.calculate_offset(base['liveness'], offset, 1)
+            self.payload['min_liveness'] = util.calculate_offset(base['liveness'], offset, 0)
+
+        if 'max_speechiness' in base:
+            self.payload['max_max_speechiness'] = util.calculate_offset(base['max_speechiness'], offset, 1)
+            self.payload['min_max_speechiness'] = util.calculate_offset(base['max_speechiness'], offset, 0)
 
 
     def trim(self, data):
@@ -307,6 +370,9 @@ class SongProfile(ENCall):
 
         if 'artist_name' in data:
             result['artist_name'] = data['artist_name']
+
+        if 'artist_id' in data:
+            result['artist_id'] = data['artist_id']
             
         if 'audio_summary' in data:
             result['audio_summary'] = data['audio_summary']

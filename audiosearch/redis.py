@@ -52,11 +52,11 @@ DATABASE = 0
 CONNECTIONS = 20
 
 # in seconds
-try:
-    from audiosearch.settings import REDIS_EXPIRE_DURATION
-    EXPIRE_TIME = REDIS_EXPIRE_DURATION 
-except ImportError:
-    EXPIRE_TIME = 2000
+# try:
+#     from audiosearch.settings import REDIS_EXPIRE_DURATION
+#     EXPIRE_TIME = REDIS_EXPIRE_DURATION 
+# except ImportError:
+#     EXPIRE_TIME = 2000
 
 """
 ----------------------

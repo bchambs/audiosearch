@@ -67,16 +67,16 @@ html, body {
 
 
 /* TEXT */
-.content-title {
+/*.content-title {
     padding: 0;
     margin: 0;
     font-size: 43px;
-    /*text-shadow: 1px 1px 3px rgba(0,0,0, .8);*/
     text-shadow: 1px 1px 3px rgba(255,255,255, .5);
     text-align: left;
     text-indent: 30px;
     color: white;
-}
+}*/
+
 a {
     color: white;
 }

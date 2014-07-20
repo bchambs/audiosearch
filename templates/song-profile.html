@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load humanize %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -26,7 +28,7 @@
 <body>
 
 <div class="nav secondc">
-    <span id="nav-home-icon" class="glyphicon glyphicon-music"></span>
+    <span id="nav-home-icon" class="glyphicon glyphicon-music nav-glyphicon"></span>
 
     <div id="nav-title">
         <a href = "{% url 'src.views.index' %}" >audiosearch</a>
@@ -47,32 +49,70 @@
     </div>
 </div>
 
-<div class="content-title secondc">
-    <span id="song-title">
-        {{ profile.title }}
-    </span>
-    <span id="duration">
-        {% if profile.duration %}
-            ({{ profile.duration }})
-        {% endif %}
-    </span>
+<div class="song-content-header secondc">
+    <div class="song-content-title">
+        <span id="song-title" class="title-text">
+            {{ profile.title }}
+        </span>
+        <span id="duration" class="title-text">
+            {% if profile.duration %}
+                ({{ profile.duration }})
+            {% endif %}
+        </span>
+    </div>
 
     <br />
+    <hr class="custom-hr" />
 
     <span id="artist-name" class="secondc">
         {% if profile.title and profile.artist_name %}
         by 
         {% endif %}
-        <a href="{% url 'src.views.artist_profile' %}?q={{ profile.artist_id }}">{{ profile.artist_name }}
+        <a href="{% url 'src.views.artist_profile' %}?q={{ profile.artist_id }}">{{ profile.artist_name }}</a>
     </span>
 
-    <span id="rank" class="subtitle">
-        {{ profile.rank }}
-    </span>
     <span id="hotttnesss" class="subtitle">
+        <span id="hotttnesss-icon" class="glyphicon glyphicon-fire small-glyph"></span>
         {{ profile.hotttnesss }}
     </span>
+    <span id="rank" class="subtitle">
+        <span id="rank-icon" class="glyphicon glyphicon-stats small-glyph" /></span>
+        {{ profile.rank|intcomma }}
+    </span>
 </div>
+
+<span id="similar-songs" class="secondc">
+    <div id="similar-songs-title" class="secondc">
+        <span class="title-text">
+            Similar Songs
+        </span>
+
+        <span>
+            {% if more_songs %}
+                <a href="{% url 'src.views.artist_songs' %}?q={{ q }}&page=1">view more</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <table id="similar-songs-table" border="1" frame="void" rules="all">
+        <tbody>
+            {% if similar_songs %}
+                {% for song in similar_songs %}
+                <tr>
+                    <td class="song-index"> {{ forloop.counter }}</td>
+                    <td class="song-title"> 
+                        <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}" > 
+                            {{ song.title }}
+                        </a>
+                    </td>
+                    <td> {{song.artist_name }} </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</span><!-- end songs -->
+
 
 
 

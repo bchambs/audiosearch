@@ -58,7 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'src',
     'src.templatetags.audiosearch_extras',
-    'pyechonest',
+    'django.contrib.humanize',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -115,9 +115,9 @@ MORE_RESULTS = 10
 ARTIST_SONGS_DISPLAYED = 10
 SIMILAR_ARTIST_DISPLAYED = 3
 
-REDIS_EXPIRE_DURATION = 60
+# redis
+REDIS_KEY_TTL = 9000
 
 # set to True to delete cached data before serving page requests
 REDIS_DEBUG = False
 VIEW_DEBUG = False
-ENC_DEBUG = False

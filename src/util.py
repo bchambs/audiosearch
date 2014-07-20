@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+# from __future__ import absolute_import
 from random import choice, sample
 import logging
 import sys
@@ -7,6 +7,7 @@ import ast
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from audiosearch.settings import MORE_RESULTS
+
 
 def page_resource(page, resource):
     result = {}
@@ -25,7 +26,7 @@ def page_resource(page, resource):
 # paginator objects cannot be serialized, recreate everything we need
 def page_resource_async(page, resource, rtype):
     result = {}
-    paged = page_resource(page, resource) # TODO: this is ridiculous, rename something
+    paged = page_resource(page, resource) # TODO: rename something
     result[rtype] = paged.object_list
     result['has_next'] = True if paged.has_next() else False
     result['has_previous'] = True if paged.has_previous() else False
@@ -43,6 +44,24 @@ def page_resource_async(page, resource, rtype):
         pass
 
     return result
+
+
+def calculate_offset(base, offset, limit):
+    if limit > 0:
+        combined = base + offset 
+        result = combined if combined <= limit else limit
+    else:
+        combined = base - offset 
+        result = combined if combined >= limit else limit
+
+    return result
+
+
+
+
+
+
+
 
 # examine value of string, dict, or list
 def debug(s=None, d=None, keys=None, values=None, l=None):

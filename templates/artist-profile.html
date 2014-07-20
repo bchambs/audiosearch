@@ -17,6 +17,7 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
 
@@ -24,27 +25,25 @@
 </head>
 <body>
 
-<div class="container">
-    <div class="nav secondc row">
-        <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
+<div class="nav secondc">
+    <span id="nav-home-icon" class="glyphicon glyphicon-music nav-glyphicon"></span>
 
-        <div id="nav-title" class="col-lg-3">
-            <a href = "{% url 'src.views.index' %}" >audiosearch</a>
-            ::
-        </div>
+    <div id="nav-title">
+        <a href = "{% url 'src.views.index' %}" >audiosearch</a>
+        ::
+    </div>
 
-        <div id="nav-search"  class="col-lg-3">
-            <form action="/search/" method="GET">
-                <input class="search-bar" type="text" name="q">
-            </form>
-        </div>
+    <div id="nav-search">
+        <form action="/search/" method="GET">
+            <input class="search-bar" type="text" name="q">
+        </form>
+    </div>
 
-        <div id="nav-about" class="col-lg-2">
-            about
-        </div>
-        <div id="nav-contact" class="col-lg-2">
-            contact
-        </div>
+    <div class="nav-buttton">
+        about
+    </div>
+    <div id="nav-contact" class="nav-buttton">
+        contact
     </div>
 </div>
 
@@ -59,6 +58,11 @@
 
             <div id="artist-info" class="secondc col-lg-8">{{ profile.name }}
             </div>
+
+            <br />
+            {% for term in profile.terms %}
+                {{ term }},
+            {% endfor %}
         </div>
     </div>
 </div>
