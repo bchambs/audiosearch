@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from random import choice, sample
 import datetime
 
-# from src.util import get_good_bio, debug, debug_subtitle, remove_duplicate_songs
+import audiosearch.config as cfg
 import src.util as util
 
 
@@ -19,7 +19,7 @@ class ENCall(object):
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
         self.id_ = id_
         self.payload = {
-            'api_key': "QZQG43T7640VIF4FN",
+            'api_key': cfg.API_KEY,
             'format': "json",
         }
         if buckets:
@@ -73,58 +73,6 @@ class ArtistProfile(ENCall):
                     break
 
         return result
-
-        # result = {}
-        # if 'name' in data:
-        #     result['name'] = data['name']
-
-        # if 'hotttnesss_rank' in data:
-        #     result['hotttnesss_rank'] = data['hotttnesss_rank']
-
-        # if 'biographies' in data:
-        #     result['bio_full'] = util.get_good_bio(data['biographies'])
-
-        #     # summary: get first paragraph, if not optimal take first 500 letters
-        #     paragraphs = result['bio_full'].split("\n")
-
-        #     if len(paragraphs[0]) < 200 or len(paragraphs[0]) > 500:
-        #         result['bio_trunc'] = result['bio_full'][:500]
-        #     else:
-        #         result['bio_trunc'] = paragraphs[0]
-
-        #     # TODO: remove this
-        #     del result['bio_full']
-
-        # # banner images, take top 4 images, create (id, url) tuple, append to tiles key
-        # if 'images' in data:
-        #     result['tiles'] = []
-        #     temp = []
-
-        #     if len(data['images']) > 4:
-        #         temp = sample(data['images'], 4)
-        #     else: 
-        #         temp = data['images']
-
-        #     for x in range(0, len(temp)):
-        #         tup = 'tile-image-' + str(x + 1), temp[x]['url']
-        #         result['tiles'].append(tup)
-
-        # if 'terms' in data:
-        #     if len(data['terms']) > 0:
-        #         try:
-        #             if len(data['terms']) is 1:
-        #                 result['terms'] = data['terms'][0]['name']
-        #             else:
-        #                 result['terms'] = data['terms'][0]['name'] + ', ' + data['terms'][1]['name']
-                
-        #         # CATCH handle the unlikely event that a term item exists without a name key
-        #         except KeyError:
-        #             pass
-
-        # if 'hotttnesss' in data:
-        #     result['hotttnesss'] = int(round(data['hotttnesss'] * 100))
-
-        # return result
 
 
 class Playlist(ENCall):
@@ -187,51 +135,6 @@ class SimilarArtists(ENCall):
 
         return data
 
-        # result = {}
-        # terms = {}
-
-        # for i in range(0,20):
-        #     sim = data[i]
-        #     for t in range(0,5):
-        #         try:
-        #             term = sim['terms'][t]['name']
-        #             terms[term] = terms.get(term, 0) + 1
-        #         except IndexError:
-        #             break
-
-        # result['terms'] = terms
-
-        # for k, v in terms.items():
-        #     print "%s: %s" % (k, v)
-
-        # return result
-
-
-
-        # for artist in data:
-        #     artist['familiarity'] = int(round(artist['familiarity'] * 100))
-        #     if 'images' in artist:
-        #         artist['preview_url'] = artist['images'][0]['url']
-
-        #     if 'terms' in artist:
-        #         if len(artist['terms']) > 0:
-        #             try:
-        #                 if len(artist['terms']) is 1:
-        #                     artist['terms'] = artist['terms'][0]['name']
-        #                 else:
-        #                     artist['terms'] = artist['terms'][0]['name'] + ', ' + artist['terms'][1]['name']
-                
-        #             # CATCH handle the unlikely event that a term item exists without a name key
-        #             except KeyError:
-        #                 pass
-
-        #     if 'songs' in artist:
-        #         artist['songs'] = util.remove_duplicate_songs(artist['songs'], 3)
-
-        #     del artist['images']
-
-        # return data
-
 
 class ArtistSearch(ENCall):
     """
@@ -290,42 +193,10 @@ class SimilarSongs(SongSearch):
     REDIS_ID = 'similar_songs' 
 
 
-    def __init__(self, id_, base, offset):
+    def __init__(self, id_):
         SongSearch.__init__(self, id_)
-        # self.payload['sort'] = "song_hotttnesss-desc"
-        self.payload['sort'] = "artist_familiarity-desc"
-        self.payload['limit'] = True
-        self.payload['bucket'] = 'id:7digital-US'
-
-        offset = .1
-        styles = ['indie rock', 'indie', 'folk', 'emo', 'rock']
-        self.payload['style'] = styles
 
         del(self.payload['title'])
-
-        if 'tempo' in base:
-            self.payload['max_tempo'] = util.calculate_offset(base['tempo'], offset * 1000, 500) # TODO: move limits to a constants file
-            self.payload['min_tempo'] = util.calculate_offset(base['tempo'], offset * 1000, 0)
-
-        if 'loudness' in base:
-            self.payload['max_loudness'] = util.calculate_offset(base['loudness'], offset * 100, 100)
-            self.payload['min_loudness'] = util.calculate_offset(base['loudness'], offset * 100, -100)
-
-        if 'danceability' in base:
-            self.payload['max_danceability'] = util.calculate_offset(base['danceability'], offset, 1)
-            self.payload['min_danceability'] = util.calculate_offset(base['danceability'], offset, 0)
-
-        if 'energy' in base:
-            self.payload['max_energy'] = util.calculate_offset(base['energy'], offset, 1)
-            self.payload['min_energy'] = util.calculate_offset(base['energy'], offset, 0)
-
-        if 'liveness' in base:
-            self.payload['max_liveness'] = util.calculate_offset(base['liveness'], offset, 1)
-            self.payload['min_liveness'] = util.calculate_offset(base['liveness'], offset, 0)
-
-        if 'max_speechiness' in base:
-            self.payload['max_max_speechiness'] = util.calculate_offset(base['max_speechiness'], offset, 1)
-            self.payload['min_max_speechiness'] = util.calculate_offset(base['max_speechiness'], offset, 0)
 
 
     def trim(self, data):
@@ -391,10 +262,4 @@ class SongProfile(ENCall):
 
         return result
 
-        # if len(data) > 0:
-        #     data = data[0]
-            
-        # if 'song_hotttnesss' in data:
-        #     data['song_hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
 
-        # return data

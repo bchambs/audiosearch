@@ -108,16 +108,3 @@ CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
 
-# Audiosearch settings 
-# TODO: move these to constant.py file or something then replace imports with import "asdf" for namespace
-SEARCH_RESULT_DISPLAYED = 15
-MORE_RESULTS = 10
-ARTIST_SONGS_DISPLAYED = 10
-SIMILAR_ARTIST_DISPLAYED = 3
-
-# redis
-REDIS_KEY_TTL = 9000
-
-# set to True to delete cached data before serving page requests
-REDIS_DEBUG = False
-VIEW_DEBUG = False

@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
 import services
-from audiosearch.settings import SEARCH_RESULT_DISPLAYED, ARTIST_SONGS_DISPLAYED, SIMILAR_ARTIST_DISPLAYED, REDIS_DEBUG, MORE_RESULTS, VIEW_DEBUG
+import audiosearch.config as cfg
 from audiosearch.redis import client as RC
 from src.util import page_resource, page_resource_async
 
@@ -49,7 +49,7 @@ def search(request):
         'page': page,
     })
 
-    if REDIS_DEBUG:
+    if cfg.REDIS_DEBUG:
         RC.delete(search_name)
 
     resource = RC.hgetall(search_name)
@@ -85,7 +85,8 @@ def search(request):
             tasks.call.delay(services.SongSearch(search_name))
             context['songs_pending'] = True
 
-    # print context['offset']
+    if cfg.VIEW_DEBUG:
+        print context.keys()
 
     return render(request, 'search.html', context)
 
@@ -99,7 +100,7 @@ def artist_profile(request):
         'q': id_
     })
 
-    if REDIS_DEBUG:
+    if cfg.REDIS_DEBUG:
         RC.delete(id_)
 
     resource = RC.hgetall(id_)
@@ -112,18 +113,21 @@ def artist_profile(request):
     if 'songs' in resource:
         songs = ast.literal_eval(resource['songs'])
         context['songs'] = page_resource(None, songs)
-        if len(songs) > SEARCH_RESULT_DISPLAYED:
+        if len(songs) > cfg.ITEMS_PER_SEARCH:
             context['more_songs'] = True
     else:
         tasks.call.delay(services.Playlist(id_))
 
     if 'similar' in resource:
         similar = ast.literal_eval(resource['similar'])
-        context['similar'] = similar[:18]
-        if len(similar) > 18:
+        context['similar'] = similar[:cfg.SIM_ART_DISPLAYED]
+        if len(similar) > cfg.SIM_ART_DISPLAYED:
             context['more_similar'] = True
     else:
         tasks.call.delay(services.SimilarArtists(id_))
+
+    if cfg.VIEW_DEBUG:
+        print context.keys()
 
     return render(request, "artist-profile.html", context)
 
@@ -136,7 +140,7 @@ def artist_similar(request):
         'page': page,
     })
 
-    if REDIS_DEBUG:
+    if cfg.REDIS_DEBUG:
         RC.delete(id_)
 
     resource = RC.hget(id_, 'similar')
@@ -149,6 +153,9 @@ def artist_similar(request):
         tasks.call.delay(services.ArtistProfile(id_))
         tasks.call.delay(services.Playlist(id_))
 
+    if cfg.VIEW_DEBUG:
+        print context.keys()
+
     return render(request, "artist-similar.html", context)
 
 
@@ -160,11 +167,7 @@ def artist_songs(request):
         'page': page,
     })
 
-    if REDIS_DEBUG:
-        print
-        print "deleting %s" % id_
-        print
-
+    if cfg.REDIS_DEBUG:
         RC.delete(id_)
 
     resource = RC.hget(id_, 'songs')
@@ -177,22 +180,20 @@ def artist_songs(request):
         tasks.call.delay(services.SimilarArtists(id_))
         tasks.call.delay(services.ArtistProfile(id_))
 
+    if cfg.VIEW_DEBUG:
+        print context.keys()
+
     return render(request, "artist-songs.html", context)
 
 
 def song_profile(request):
     id_ = request.GET.get('q')
-    db = request.GET.get('debug')
-    REC_OFFSET = .10
 
     context = Context({
         'q': id_
     })
 
-    if REDIS_DEBUG or db:
-        print
-        print "deleting %s" % id_
-
+    if cfg.REDIS_DEBUG:
         RC.delete(id_)
 
     resource = RC.hgetall(id_)
@@ -203,21 +204,9 @@ def song_profile(request):
         if 'similar_songs' in resource:
             context['similar_songs'] = ast.literal_eval(resource['similar_songs'])
         else:
-            tasks.call.delay(services.SimilarSongs(id_, context['profile']['audio_summary'], REC_OFFSET))
+            tasks.call.delay(services.SimilarSongs(id_))
     else:
         tasks.call.delay(services.SongProfile(id_))
-
-    
-
-    # if 'profile' in resource:
-    #     context['profile'] = ast.literal_eval(resource['profile'])
-    # else:
-    #     tasks.call.delay(services.SongProfile(id_))
-
-    # if 'similar_songs' in resource:
-    #     context['similar_songs'] = ast.literal_eval(resource['similar_songs'])
-    # else:
-    #     tasks.call.delay(services.SimilarSongs(id_))
 
     return render(request, "song-profile.html", context)
 
@@ -258,8 +247,7 @@ def retrieve_resource(request):
     else:
         context['status'] = "pending"
 
-    if VIEW_DEBUG and context['status'] == "ready":
-        print "in async for: %s" % rtype
+    if cfg.VIEW_DEBUG and context['status'] == "ready":
         print context.keys()
 
     return HttpResponse(json.dumps(context), content_type="application/json")

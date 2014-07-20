@@ -4,6 +4,8 @@ from time import sleep
 
 import requests
 
+import audiosearch.config as cfg
+import src.util as util
 
 class ENConsumer(object):
     """
@@ -44,7 +46,8 @@ class ENConsumer(object):
         while True:
             try:
                 resource = requests.get(package.url, params=package.payload)
-
+                if cfg.CONSUMER_DEBUG:
+                    util.examine_request(resource)
                 try:
                     resource_json = resource.json()
 
