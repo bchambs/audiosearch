@@ -57,8 +57,51 @@ def calculate_offset(base, offset, limit):
     return result
 
 
+def examine_request(result):
+    # trim result to echo nest object
+    print "EXAMINE RESULT,"
+    try:
+        js = result.json()
+    except ValueError:
+        print "   ERROR: could not get json"
+        return
+        
+    if js['response']['status']['code'] is not 0:
+        print "   ERROR: %s" % js['response']['status']['message']
+        return
 
+    temp = js['response']
+    del temp['status']
+    if len(temp.keys()) > 1:
+        print "   ERROR: unexpected format"
+        return
+    
+    try:
+        key = temp.keys()[0]
+    except IndexError:
+        print "   ERROR: unexpected format"
+        return
 
+    item = temp[key]
+
+    print "   ================================================="
+    print
+    print "REQUEST RESULT,"
+    print "   length: %s" % len(item)
+    print "   result type: %s" % type(item)
+    try:
+        print "   item type: %s" % type(item[0])
+    except TypeError:
+        print item.keys()
+    print "   ================================================="
+    print
+    print "REQUEST ITEM,"
+    try:
+        print "   keys: %s" % item[0].keys()
+    except TypeError:
+        print "   wat: %s" %item[0]
+    print "   ================================================="
+    print
 
 
 
