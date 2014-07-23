@@ -10,16 +10,16 @@ from django.core.urlresolvers import reverse
 
 import services
 import audiosearch.config as cfg
+import src.util as util
 from audiosearch.redis import client as RC
-from src.util import page_resource, page_resource_async
 
 
+# from src.util import db2
 """
 ---------------------------
 Functions for serving pages
 ---------------------------
 """
-
 
 def index(request):
     context = Context({})
@@ -58,7 +58,7 @@ def search(request):
     if display_type == "artists":
         if 'artists' in resource:
             artists = ast.literal_eval(resource['artists'])
-            context['paged_type'] = page_resource(page, artists)
+            context['paged_type'] = util.page_resource(page, artists)
         else:
             tasks.call.delay(services.ArtistSearch(search_name))
             context['artists_pending'] = True
@@ -66,21 +66,21 @@ def search(request):
     elif display_type == "songs":
         if 'songs' in resource:
             songs = ast.literal_eval(resource['songs'])
-            context['paged_type'] = page_resource(page, songs)
+            context['paged_type'] = util.page_resource(page, songs)
         else:
             tasks.call.delay(services.SongSearch(search_name))
             context['songs_pending'] = True
     else:
         if 'artists' in resource:
             artists = ast.literal_eval(resource['artists'])
-            context['paged_artists'] = page_resource(page, artists)
+            context['paged_artists'] = util.page_resource(page, artists)
         else:
             tasks.call.delay(services.ArtistSearch(search_name))
             context['artists_pending'] = True
 
         if 'songs' in resource:
             songs = ast.literal_eval(resource['songs'])
-            context['paged_songs'] = page_resource(page, songs)
+            context['paged_songs'] = util.page_resource(page, songs)
         else:
             tasks.call.delay(services.SongSearch(search_name))
             context['songs_pending'] = True
@@ -112,7 +112,7 @@ def artist_profile(request):
 
     if 'songs' in resource:
         songs = ast.literal_eval(resource['songs'])
-        context['songs'] = page_resource(None, songs)
+        context['songs'] = util.page_resource(None, songs)
         if len(songs) > cfg.ITEMS_PER_SEARCH:
             context['more_songs'] = True
     else:
@@ -127,7 +127,14 @@ def artist_profile(request):
         tasks.call.delay(services.SimilarArtists(id_))
 
     if cfg.VIEW_DEBUG:
-        print context.keys()
+        try:
+            for k, v in context.dicts[1].items():
+                try:
+                    print "   %s: %s" % (k, len(v))
+                except TypeError:
+                    print "   %s: %s" % (k, v)
+        except IndexError:
+            print "DEBUG: problem in view"
 
     return render(request, "artist-profile.html", context)
 
@@ -147,7 +154,7 @@ def artist_similar(request):
 
     if resource:
         similar = ast.literal_eval(resource)
-        context['similar'] = page_resource(page, similar)
+        context['similar'] = util.page_resource(page, similar)
     else:
         tasks.call.delay(services.SimilarArtists(id_))
         tasks.call.delay(services.ArtistProfile(id_))
@@ -174,7 +181,7 @@ def artist_songs(request):
 
     if resource:
         songs = ast.literal_eval(resource)
-        context['songs'] = page_resource(page, songs)
+        context['songs'] = util.page_resource(page, songs)
     else:
         tasks.call.delay(services.Playlist(id_))
         tasks.call.delay(services.SimilarArtists(id_))
@@ -239,7 +246,7 @@ def retrieve_resource(request):
         if rtype == "profile":
             context[rtype] = resource
         else:
-            context = page_resource_async(page, resource, rtype)
+            context = util.page_resource_async(page, resource, rtype)
 
         context['q'] = id_
         context['status'] = "ready"

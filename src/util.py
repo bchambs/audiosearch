@@ -46,15 +46,14 @@ def page_resource_async(page, resource, rtype):
     return result
 
 
-def examine_request(result):
+def inspect_response(response):
     """
     debug echo nest response 
-    @result = request.get result
+    @response = request.get response
     """
-    print "EXAMINE RESULT,"
     try:
-        js = result.json()
-    except ValueError:
+        js = response.json()
+    except ValueError, AttributeError:
         print "   ERROR: could not get json"
         return
         
@@ -75,8 +74,7 @@ def examine_request(result):
         return
 
     item = temp[key]
-
-    print "   ================================================="
+    print "==========EXAMINE RESPONSE=========="
     print
     print "REQUEST RESULT,"
     print "   length: %s" % len(item)
@@ -104,3 +102,14 @@ def get_good_bio(bios):
 
     return 'Artist biography is not available.'
 
+
+# recipe from some site
+def expand_keys(dictionary, ident = '', braces=1):
+    """ Recursively prints nested dictionaries."""
+
+    for key, value in dictionary.iteritems():
+        if isinstance(value, dict):
+            print '%s%s%s%s' %(ident,braces*'[',key,braces*']') 
+            print_dict(value, ident+'  ', braces+1)
+        else:
+            print ident+'%s' %key

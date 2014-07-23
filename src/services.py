@@ -25,6 +25,9 @@ class ENCall(object):
         if buckets:
             self.payload['bucket'] = buckets
 
+        self.ttl = cfg.REDIS_TTL
+        self.debug = True if cfg.CONSUMER_DEBUG else False
+
     def trim(self, data):
         return data
 
@@ -46,8 +49,8 @@ class ArtistProfile(ENCall):
     ]
 
     # REDIS data
-    KEY_ = 'artist'
-    REDIS_ID = 'profile'
+    CALL_KEY = 'artist'
+    REDIS_KEY = 'profile'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
@@ -88,8 +91,8 @@ class Playlist(ENCall):
     ]
 
     # REDIS data
-    KEY_ = 'songs'
-    REDIS_ID = 'songs'
+    CALL_KEY = 'songs'
+    REDIS_KEY = 'songs'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
@@ -119,21 +122,13 @@ class SimilarArtists(ENCall):
     ]
 
     # REDIS data
-    KEY_ = 'artists'
-    REDIS_ID = 'similar'
+    CALL_KEY = 'artists'
+    REDIS_KEY = 'similar'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
         self.payload['id'] = id_
         self.payload['results'] = 100
-
-
-    def trim(self, data):
-        result = []
-
-        result = data
-
-        return data
 
 
 class ArtistSearch(ENCall):
@@ -146,17 +141,13 @@ class ArtistSearch(ENCall):
     METHOD = "suggest"
 
     # REDIS data
-    KEY_ = 'artists'
-    REDIS_ID = 'artists'
+    CALL_KEY = 'artists'
+    REDIS_KEY = 'artists'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
         self.payload['name'] = id_
         self.payload['results'] = 100
-
-
-    def trim(self, data):
-        return data
 
 
 class SongSearch(ENCall):
@@ -169,8 +160,8 @@ class SongSearch(ENCall):
     METHOD = "search"
 
     # REDIS data
-    KEY_ = 'songs'
-    REDIS_ID = 'songs'
+    CALL_KEY = 'songs'
+    REDIS_KEY = 'songs'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
@@ -180,27 +171,20 @@ class SongSearch(ENCall):
         self.payload['song_type'] = "studio"
 
 
-    def trim(self, data):
-        return data
-
-
 class SimilarSongs(SongSearch):
     """
     Package representing all required data for an similar songs request from Echo Nest.
     """
 
-
-    REDIS_ID = 'similar_songs' 
+    REDIS_KEY = 'similar_songs' 
 
 
     def __init__(self, id_):
         SongSearch.__init__(self, id_)
+        self.payload['type'] = 'song-radio'
+        self.payload['song_id'] = id_
 
         del(self.payload['title'])
-
-
-    def trim(self, data):
-        return data
 
 
 class SongProfile(ENCall):
@@ -219,8 +203,8 @@ class SongProfile(ENCall):
     ]
 
     # REDIS data
-    KEY_ = 'songs'
-    REDIS_ID = 'profile'
+    CALL_KEY = 'songs'
+    REDIS_KEY = 'profile'
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
@@ -263,3 +247,5 @@ class SongProfile(ENCall):
         return result
 
 
+class ENCallFailure(Exception):
+    pass

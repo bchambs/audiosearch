@@ -6,15 +6,9 @@ import requests
 
 import audiosearch.config as cfg
 import src.util as util
+from src.services import ENCallFailure
 
 class ENConsumer(object):
-    """
-    Takes ENCall as input, consumes REST call, returns result or throws on fail.
-
-    Error handling:
-        Return a dict containing a status key detailing why the call failed.
-        it is the client's responsibility to react to the status message.
-    """
 
     # EchoNest result codes
     SUCCESS = 0
@@ -24,98 +18,36 @@ class ENConsumer(object):
 
 
     @staticmethod
-    def consume(package, snooze, limit):
-        """
-        Parameters
-        ----------
-        package : ENCall
-           URL and query params used to consume Echo Nest REST service.
-        snooze : int
-            Time to sleep between failed consumptions.
-        limit : int
-            The number of attempts before a TimeOutError exception is thrown.
-
-        Return value
-        ------------
-        result : (string, dict) tuple
-            if string is 'ready', dict contains completed ENCall
-            otherwise dict is None
-        """
+    def consume(package):
         attempt = 0
 
-        while True:
+        while attempt < cfg.CALL_LIMIT:
             try:
-                resource = requests.get(package.url, params=package.payload)
-                if cfg.CONSUMER_DEBUG:
-                    util.examine_request(resource)
-                try:
-                    resource_json = resource.json()
+                response = requests.get(package.url, params=package.payload)
+                json_response = response.json()
 
-                    # branch by echo nest result code
-                    code = resource_json['response']['status']['code']
+                if package.debug:
+                    util.inspect_response(response)
 
-                    # success
-                    if code == ENConsumer.SUCCESS:
-                        resource_dict = resource_json['response'][package.KEY_]
-                        result = ("ready", resource_dict)
+                code = json_response['response']['status']['code']
 
-                        return result
+                # success, return echo nest resource
+                if code == ENConsumer.SUCCESS:
+                    return json_response['response'][package.CALL_KEY]
 
-                    # limit exceeded, snooze then retry
-                    elif code == ENConsumer.LIMIT_EXCEEDED:
-                        raise LimitError
+                # exceeded api_key limit, snooze until timeout
+                elif code == ENConsumer.LIMIT_EXCEEDED:
+                    attempt += 1
+                    sleep(CALL_SNOOZE)
 
-                    # bad parameter
-                    elif code == ENConsumer.MISSING_PARAM or code == ENConsumer.INVALID_PARAM:
-                        result = ("Invalid request.", None)
-                        return result
-
-                    # unrecoverable error (bad key, unknown)
-                    else:
-                        result = ("Unrecoverable error.", None)
-                        return result
-
-                # CATCH result not json or corrupt
-                except (ValueError, KeyError):
-                    # TODO: log failure
-                    result = ("Received an invalid response from the Echo Nest.", None)
-                    return result
-
-            # CATCH requests errors
-            except requests.exceptions.RequestException:
-                # TODO: log failure
-                result = ("Unable to connect to the Echo Nest.", None)
-                return result
-
-            # CATCH echo nest limit exceeded
-            except LimitError:
-                attempt += 1
-
-                if attempt == limit:
-                    raise TimeOutErrorself
+                # call rejected by echo nest
                 else:
-                    sleep(snooze)
+                    raise ENCallFailure(json_response['response']['status']['message'])
 
-            # CATCH exceeded attempt limit
-            except TimeOutError:
-                # TODO: log failure and handle this more appropriately
-                result = ("Audiosearch is receiving too many requests!  Try again soon!", None)
-                return result
+            # invalid request or unable to parse json
+            except (requests.RequestException, ValueError, KeyError) as e:
+                raise ENCallFailure(e)
+
+        # timeout
+        raise ENCallFailure("Audiosearch is receiving too many requests.  Try again soon!")
         
-
-class LimitError(Exception):
-    pass
-    # def __init__(self, value):
-    #     self.value = value
-
-    # def __str__(self):
-    #     return repr(self.value)
-
-class TimeOutError(Exception):
-    pass
-    # def __init__(self, value):
-    #     self.value = value
-
-    # def __str__(self):
-    #     return repr(self.value)
-

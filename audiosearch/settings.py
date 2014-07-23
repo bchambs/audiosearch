@@ -68,6 +68,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'audiosearch.middlewares.AudiosearchDebug',
 )
 
 ROOT_URLCONF = 'audiosearch.urls'
@@ -107,4 +108,6 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
+
+
 
