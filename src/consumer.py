@@ -28,6 +28,7 @@ class ENConsumer(object):
 
                 if package.debug:
                     util.inspect_response(response)
+                    print response.url
 
                 code = json_response['response']['status']['code']
 

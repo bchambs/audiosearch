@@ -113,3 +113,19 @@ def expand_keys(dictionary, ident = '', braces=1):
             print_dict(value, ident+'  ', braces+1)
         else:
             print ident+'%s' %key
+
+
+def inspect_context(context):
+    try:
+        for k, v in context.dicts[1].items():
+            try:
+                if not isinstance(str, v):
+                    print "   %s: %s" % (k, len(v))
+                else:
+                    print v
+            except TypeError:
+                print "   %s: %s" % (k, v)
+    except IndexError:
+        print "DEBUG: invalid context"
+
+

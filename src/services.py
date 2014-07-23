@@ -171,20 +171,27 @@ class SongSearch(ENCall):
         self.payload['song_type'] = "studio"
 
 
-class SimilarSongs(SongSearch):
+class SimilarSongs(ENCall):
     """
     Package representing all required data for an similar songs request from Echo Nest.
     """
 
+    # REST data
+    TYPE_ = "playlist"
+    METHOD = "static"
+
+    # REDIS data
+    CALL_KEY = 'songs'
     REDIS_KEY = 'similar_songs' 
 
 
     def __init__(self, id_):
-        SongSearch.__init__(self, id_)
-        self.payload['type'] = 'song-radio'
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
+        self.payload['results'] = 100
+        self.payload['sort'] = "song_hotttnesss-desc"
+        # self.payload['sort'] = "artist_familiarity-desc"
+        self.payload['type'] = "song-radio"
         self.payload['song_id'] = id_
-
-        del(self.payload['title'])
 
 
 class SongProfile(ENCall):
