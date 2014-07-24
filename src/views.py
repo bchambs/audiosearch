@@ -1,20 +1,22 @@
-import tasks
 import ast
 import json
+import logging
+import tasks
 
-from django.shortcuts import render, redirect
-from django.template import RequestContext, loader, Context
-from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect
+from django.template import RequestContext, loader, Context
 
-import services
 import audiosearch.config as cfg
+import services
 import src.util as util
 from audiosearch.redis import client as RC
 
 
-# from src.util import db2
+log = logging.getLogger("audiosearch")
+
 """
 ---------------------------
 Functions for serving pages

@@ -28,7 +28,6 @@
 
 <!-- nav -->
 <div class="nav aaa">
-   <!-- <span class="glyphicon glyphicon-music"></span> -->
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -37,7 +36,7 @@
         </form>
     </div>
 
-    <div class="debug ">
+    <div class="debug">
         <div class="zone normal ddd">
             <a href="{% url 'src.views.artist_profile' %}?q={{ q }}">
                 <span class="link"></span>normal
@@ -70,17 +69,32 @@
     </div>
 </div><!--END nav -->
 
-
 <!-- dir -->
 <div class="dir">
     <div class="general">
         audiosearch / artist 
+        
+        <span id="profile.name">
+            {% if profile.name %}
+                / {{ profile.name }}
+            {% endif %}
+        </span>
     </div>
 
-    <div class="specific">
-        {{ profle.artist_name }}
+    <div id="profile.name" class="specific">
+
     </div>
+
+    <hr>
 </div><!--END dir -->
+
+<!-- content -->
+<div class="content bbb">
+    content
+</div><!--END content -->
+
+
+<!-- -->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>

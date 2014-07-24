@@ -15,11 +15,10 @@
 }
 .nav .search {
     margin-left: 25px;
-    margin-top: 2px;
 }
 .nav .search .search-bar {
     color: black;
-    height: 23px;
+    /*height: 23px;*/
     padding: 3px 6px;
     width: 300px;
 }
@@ -31,15 +30,18 @@
 .dir {
     font-size: 30px;
     margin-top: 30px;
+}
+.dir .general{
     margin-left: 50px;
 }
-
-.dir .general{
-
-}
-
 .dir .specific{
-
+    margin-left: 100px;
+}
+.dir hr {
+    border: none;
+    background-color: black;
+    color: black;
+    height: 2px;
 }
 
 
@@ -48,32 +50,30 @@
     debug
 */
 .debug {
-    float: left;
-    margin-left: 100px;
-    height: 40px;
     color: black;
+    float: left;
+    font-size: 30px;
+    height: 40px;
+    margin-left: 100px;
 }
 .debug .zone {
-    width: 70px;
-    font-size: 30px;
-    text-align: center;
-    position: relative;
     margin: 0 10px;
+    position: relative;
+    text-align: center;
+    width: 70px;
 }
 .debug .normal {
-    width: 170px;
-    font-size: 30px;
     text-align: center;
-    position: relative;
+    width: 170px;
 }
 .debug .zone .link {
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0;
-    left: 0;
-    z-index: 1;
     background-image: url('empty.gif');
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
 }
 
 

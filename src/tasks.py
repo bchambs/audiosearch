@@ -31,5 +31,5 @@ def call(package):
         RC.hset(package.id_, "status", err_msg)
 
         if package.debug:
-            print "Call failed: %s" % err_msg
+            log.warning("Call failed: %s" % err_msg)
 
