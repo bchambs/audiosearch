@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import audiosearch.config as cfg
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("audiosearch")
 
 def page_resource(page, resource):
     result = {}
@@ -48,11 +48,12 @@ def page_resource_async(page, resource, rtype):
     return result
 
 
-def inspect_response(response):
+def inspect_response(response, service):
     """
     debug echo nest response 
     @response = request.get response
     """
+    log.info("===%s" %(service))
     try:
         js = response.json()
     except ValueError, AttributeError:
@@ -76,20 +77,16 @@ def inspect_response(response):
         return
 
     item = temp[key]
-    log.debug("==========EXAMINE RESPONSE==========")
-    log.debug("   length: %s" % len(item))
-    log.debug("   result type: %s" % type(item))
+    log.debug("length: %s" % len(item))
+    log.debug("result type: %s" % type(item))
     try:
-        log.debug("   item type: %s" % type(item[0]))
+        log.debug("item type: %s" % type(item[0]))
     except TypeError:
-        log.error( item.keys())
-    log.debug("   =================================================")
-    log.debug("REQUEST ITEM,")
+        log.error(item.keys())
     try:
-        log.debug("   keys: %s" % item[0].keys())
+        log.debug("buckets: %s" % item[0].keys())
     except TypeError:
-        log.error("   wat: %s" %item[0])
-    log.debug("   =================================================")
+        log.error("Invalid response (no keys): %s" %item[0])
 
 
 # return wikipedia summary string of artist or 'nothing'
@@ -104,24 +101,20 @@ def get_good_bio(bios):
 def inspect_context(context):
     try:
         for k, v in context.dicts[1].items():
-            try:
-                log.debug(" key: %s" %(k))
+            log.debug("key: %s" %(k))
 
-                if isinstance(v, dict):
-                    log.debug(" val:",)
-                    for item in v.keys():
-                        log.debug("%s," %(item),)
-                elif isinstance(v, list):
-                    log.debug(" typ: list")
-                elif isinstance(v, str) or isinstance(v, unicode):
-                    log.debug(" val: \"%s\"" %(v if v else "{EMPTY}"))
-                else:
-                    log.debug(" typ: %s" %(type(v)))
+            if isinstance(v, dict):
+                log.debug("dict: %s" %(v.keys()))
 
-                log.debug(" len: %s" %(len(v)))
+            elif isinstance(v, list):
+                log.debug("list = %s\n" %(len(v))) 
 
-            except TypeError:
-                log.error(" %s: %s" % (k, v))
+            elif isinstance(v, str) or isinstance(v, unicode):
+                log.debug("str: \"%s\"\n" %(v if v else "{EMPTY}"))
+
+            else:
+                log.debug("typ: %s\n" %(type(v)))
+
     except IndexError:
         log.error("Invalid context.")
 

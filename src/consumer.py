@@ -1,4 +1,5 @@
 import json
+import logging
 import urllib
 from time import sleep
 
@@ -7,6 +8,7 @@ import requests
 import audiosearch.config as cfg
 import src.util as util
 from src.services import ENCallFailure
+
 
 class ENConsumer(object):
 
@@ -27,7 +29,7 @@ class ENConsumer(object):
                 json_response = response.json()
 
                 if package.debug:
-                    util.inspect_response(response)
+                    util.inspect_response(response, package.__class__)
 
                 code = json_response['response']['status']['code']
 

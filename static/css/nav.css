@@ -28,13 +28,14 @@
     dir bar
 */
 .dir {
-    font-size: 30px;
     margin-top: 30px;
 }
-.dir .general{
+.dir .title{
+    font-size: 30px;
     margin-left: 50px;
 }
-.dir .specific{
+.dir .subtitle{
+    font-size: 22px;
     margin-left: 100px;
 }
 .dir hr {
@@ -42,6 +43,8 @@
     background-color: black;
     color: black;
     height: 2px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 

@@ -71,9 +71,9 @@
 
 <!-- dir -->
 <div class="dir">
-    <div class="general">
-        audiosearch / artist 
-        
+    <div class="title">
+        <a href = "{% url 'src.views.index' %}" >audiosearch</a> / artist 
+
         <span id="profile.name">
             {% if profile.name %}
                 / {{ profile.name }}
@@ -81,16 +81,51 @@
         </span>
     </div>
 
-    <div id="profile.name" class="specific">
-
+    <div id="profile.location">
+        {% if profile.location %}
+            <div class="subtitle">.location ::
+                {{ profile.location }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div id="profile.genre">
+        {% if profile.genre %}
+            <span class="subtitle">.genre :: 
+                {% for genre in profile.genre %}
+                    {% if forloop.first %}  
+                        {{ genre.name }}
+                    {% else %}
+                        , {{ genre.name }}
+                    {% endif %}
+                {% endfor %}
+            </span>
+        {% endif %}
     </div>
 
     <hr>
 </div><!--END dir -->
 
 <!-- content -->
-<div class="content bbb">
-    content
+<div class="content">
+    <div class="column bbb">
+        <div class="title">
+            Similar Artists
+        </div>
+    </div>
+
+    <div class="column bbb">
+        <div class="title">
+            Songs
+        </div>
+    </div>
+
+    <div class="column bbb">
+        <div class="title">
+            Similar Songs
+        </div>
+    </div>
+
 </div><!--END content -->
 
 

@@ -11,7 +11,7 @@ class AudiosearchDebug(object):
         """
         If project is in debug mode, use query params to enable debugging.
         """
-        
+
         if DJANGO_DEBUG:
             query_params = request.GET.dict()
             debug_params = query_params.get('debug')
@@ -40,7 +40,7 @@ class AudiosearchDebug(object):
                     cfg.REDIS_DEBUG = False
 
                 if len(opts) > 0:
-                    log.debug(opts)
+                    log.info(opts)
 
             else:
                 cfg.VIEW_DEBUG = False

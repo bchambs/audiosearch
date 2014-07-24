@@ -10,6 +10,8 @@ from src.consumer import ENConsumer
 from src.services import ENCallFailure
 
 
+log = logging.getLogger("audiosearch")
+
 @shared_task
 def call(package):
     """

@@ -9,4 +9,17 @@ html, body {
 */
 
 .content {
+    display: inline-block;
+    margin-left: 125px;
+}
+
+.content .column {
+    float: left;
+    margin-right: 100px;
+    width: 250px;
+}
+
+.content .column .title {
+    font-size: 30px;
+    text-align: center;
 }

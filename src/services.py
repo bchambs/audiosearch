@@ -37,18 +37,18 @@ class ArtistProfile(ENCall):
     Package representing all required data for an artist profile request from Echo Nest.
     """
 
-    # REST data
     TYPE_ = "artist"
     METHOD = "profile"
     BUCKETS = [
-        'biographies',
-        'hotttnesss',
-        'images',
+        # 'biographies',
+        # 'hotttnesss',
+        # 'images',
         'terms',
-        'hotttnesss_rank',
+        # 'hotttnesss_rank',
+        'artist_location',
+        'years_active'
     ]
 
-    # REDIS data
     CALL_KEY = 'artist'
     REDIS_KEY = 'profile'
 
@@ -60,20 +60,16 @@ class ArtistProfile(ENCall):
     def trim(self, data):
         result = {}
 
-        if 'name' in data:
-            result['name'] = data['name']
+        result['name'] = data.get('name')
+        result['genre'] = data.get('terms')[:5]
 
-        if 'images' in data:
-            result['title_image'] = data['images'][0]['url']
+        city = data.get('artist_location').get('city')
+        country = data.get('artist_location').get('country')
 
-        if 'terms' in data:
-            result['terms'] = []
-
-            for x in range(0,5):
-                try:
-                    result['terms'].append(data['terms'][x]['name'])
-                except IndexError:
-                    break
+        if city and country:
+            result['location'] = city + ", " + country
+        elif country:
+            result['location'] = country
 
         return result
 
