@@ -17,131 +17,70 @@
    
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
+    <!-- <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet"> -->
+    <!-- <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet"> -->
 
     <title>audiosearch</title>
 </head>
 <body>
 
-<div class="nav secondc">
-    <span id="nav-home-icon" class="glyphicon glyphicon-music nav-glyphicon"></span>
+<!-- nav -->
+<div class="nav aaa">
+   <!-- <span class="glyphicon glyphicon-music"></span> -->
+   <span class="zone glyphicon glyphicon-th-large"></span>
 
-    <div id="nav-title">
-        <a href = "{% url 'src.views.index' %}" >audiosearch</a>
-        ::
-    </div>
-
-    <div id="nav-search">
+    <div class="zone search">
         <form action="/search/" method="GET">
             <input class="search-bar" type="text" name="q">
         </form>
     </div>
 
-    <div class="nav-buttton">
-        about
-    </div>
-    <div id="nav-contact" class="nav-buttton">
-        contact
-    </div>
-</div>
-
-<div class="container primec">
-    <div class="row">
-        <div class="content-title accentc">
-            <div id="artist-image" class="secondc col-lg-4">
-                {% if profile.title_image %}
-                    <img id="title-image" src="{{ profile.title_image }}" />
-                {% endif %}
-            </div>
-
-            <div id="artist-info" class="secondc col-lg-8">{{ profile.name }}
-            </div>
-
-            <br />
-            {% for term in profile.terms %}
-                {{ term }},
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<!-- wrap suggestions -->
-<div class="content primec">
-    <!-- wrap artists -->
-    <span id="similar-artists" class="secondc">
-        <div id="similar-artists-title" class="secondc">
-            <span class="title-text">
-                Similar artists
-            </span>
-            <span>
-            {% if more_similar %}
-                <a href="{% url 'src.views.artist_similar' %}?q={{ q }}&page=1">view more</a>
-            {% endif %}
-            </span>
+    <div class="debug ">
+        <div class="zone normal ddd">
+            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}">
+                <span class="link"></span>normal
+            </a>
         </div>
 
-        <table id="similar-table" border="1" frame="void" rules="all">
-            <tbody>
-                {% if similar %}
-                    {% for artist in similar %}
-                        {% if forloop.counter0 == 0 or forloop.counter0 == 6 or forloop.counter0 == 12 %}
-                        <tr>
-                        {% endif %}
-                        <td>
-                            <div class="artist-preview-image">
-                                <img class="preview-image" src="{{ artist.images.0.url }}" />
-
-                                <span class="artist-block-name secondc">
-                                    {{ artist.name }}
-                                </span>
-
-                                <a href="{% url 'src.views.artist_profile' %}?q={{ artist.id }}">
-                                    <span class="block-link"></span>
-                                </a>
-                            </div>
-                        </td>
-                        
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
-    </span><!-- end artists -->
-
-    <span id="separator"></span>
-
-    <span id="artist-songs" class="secondc">
-        <div id="artist-songs-title" class="secondc">
-            <span class="title-text">
-                Songs
-            </span>
-
-            <span>
-                {% if more_songs %}
-                    <a href="{% url 'src.views.artist_songs' %}?q={{ q }}&page=1">view more</a>
-                {% endif %}
-            </span>
+        <div class="zone ddd">
+            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=v">
+                <span class="link"></span>v
+            </a>
         </div>
-        <table id="songs-table" border="1" frame="void" rules="all">
-            <tbody>
-                {% if songs %}
-                    {% for song in songs %}
-                    <tr>
-                        <td class="song-index"> {{ forloop.counter }}</td>
-                        <td class="song-title"> 
-                            <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}" > 
-                                {{ song.title }}
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
-    </span><!-- end songs -->
-</div><!-- end suggestions -->
 
+        <div class="zone ddd">
+            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=r">
+                <span class="link"></span>r
+            </a>
+        </div>
+
+        <div class="zone ddd">
+            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=cr">
+                <span class="link"></span>c, r
+            </a>
+        </div>
+
+        <div class="zone ddd">
+            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=vr">
+                <span class="link"></span>v, r
+            </a>
+        </div>
+    </div>
+</div><!--END nav -->
+
+
+<!-- dir -->
+<div class="dir">
+    <div class="general">
+        audiosearch / artist 
+    </div>
+
+    <div class="specific">
+        {{ profle.artist_name }}
+    </div>
+</div><!--END dir -->
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>

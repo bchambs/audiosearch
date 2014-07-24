@@ -75,8 +75,6 @@ def inspect_response(response):
 
     item = temp[key]
     print "==========EXAMINE RESPONSE=========="
-    print
-    print "REQUEST RESULT,"
     print "   length: %s" % len(item)
     print "   result type: %s" % type(item)
     try:
@@ -119,12 +117,25 @@ def inspect_context(context):
     try:
         for k, v in context.dicts[1].items():
             try:
-                if not isinstance(str, v):
-                    print "   %s: %s" % (k, len(v))
+                print " key: %s" %(k)
+
+                if isinstance(v, dict):
+                    print " val:",
+                    for item in v.keys():
+                        print "%s," %(item),
+                    print
+                elif isinstance(v, list):
+                    print " typ: list"
+                elif isinstance(v, str) or isinstance(v, unicode):
+                    print " val: \"%s\"" %(v)
                 else:
-                    print v
+                    print " typ: %s" %(type(v))
+
+                print " len: %s" %(len(v))
+                print
+
             except TypeError:
-                print "   %s: %s" % (k, v)
+                print " %s: %s" % (k, v)
     except IndexError:
         print "DEBUG: invalid context"
 

@@ -97,7 +97,7 @@ class Playlist(ENCall):
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
         self.payload['artist_id'] = id_
-        self.payload['results'] = 100
+        self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
 
     def trim(self, data):
@@ -128,7 +128,7 @@ class SimilarArtists(ENCall):
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
         self.payload['id'] = id_
-        self.payload['results'] = 100
+        self.payload['results'] = cfg.RESULTS
 
 
 class ArtistSearch(ENCall):
@@ -147,7 +147,7 @@ class ArtistSearch(ENCall):
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
         self.payload['name'] = id_
-        self.payload['results'] = 100
+        self.payload['results'] = cfg.RESULTS
 
 
 class SongSearch(ENCall):
@@ -166,7 +166,7 @@ class SongSearch(ENCall):
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
         self.payload['title'] = id_
-        self.payload['results'] = 100
+        self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
 
@@ -187,7 +187,7 @@ class SimilarSongs(ENCall):
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
-        self.payload['results'] = 100
+        # self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         # self.payload['sort'] = "artist_familiarity-desc"
         self.payload['type'] = "song-radio"

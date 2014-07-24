@@ -1,0 +1,155 @@
+========
+RULES
+========
+group:
+    h1, h2, p {...}
+        ... applied to h1, h2, p
+
+
+block = takes up full width, line break before and after
+inline: takes up minimum width, no line breaks
+
+position:
+    -HTML elements are positioned static by default.
+    -Elements can be positioned using the top, bottom, left, and right properties. However, these properties will not work unless the position property is set first.
+
+    fixed = positioned relative to the browser window.  It will not move even if the window is scrolled:
+    relative = positioned relative to its original position.
+    absolute = An absolute position element is positioned relative to the first parent element that has a position other than static. If no such element is found, the containing block is <html>
+
+float:
+    clear = The clear property specifies which side(s) of an element other floating elements are not allowed.
+
+horizontal aligning:
+    -Block elements can be center-aligned by setting the left and right margins to "auto".
+        Center-aligning has no effect if the width is 100%.
+
+combinators:
+    There are four different combinators in CSS3
+
+    descendant selector = matches all element that are descendants of a specified element.
+        div p {...}
+
+    child selector = selects all elements that are the immediate children of a specified element.
+        div > p {...}
+
+    adjacent sibling selector = selects all elements that are the adjacent siblings of a specified element.
+        div + p {...}
+
+    general sibling selector = selects all elements that are siblings of a specified element.
+        div ~p {...}
+
+pseudo classes:
+    ::before
+        p::before {...}
+    ::after
+
+focus:
+    The :focus selector is used to select the element that has focus.
+        Tip: The :focus selector is allowed on elements that accept keyboard events or other user inputs.
+
+========
+COOL
+========
+attributes:
+    css = [w] {background-color: yellow;} 
+    html: div w="..."
+
+    css = [class|="top"] {background-color: yellow;}
+    html: <p class="top-text">Hello world!</p>
+
+text:
+    text-transform: capitalize;
+    letter-spacing: 3px;
+    word-spacing: 30px;
+    vertical-align: text-top;
+
+tables:
+    border-collapse = The border-collapse property sets whether the table borders are collapsed into a single border or separated:
+    
+    caption-side: bottom;
+
+outline:
+    outline
+
+random:
+    cursor:wait
+
+
+========
+OTHER
+========
+The <br> element is an empty HTML element. It has no end tag.
+
+Remember that browsers will always truncate spaces in HTML pages. If you write 10 spaces in your text, the browser will remove 9 of them. To add real spaces to your text, you can use the &nbsp; character entity.
+
+links:
+    The four links states are:
+
+    a:link - a normal, unvisited link
+    a:visited - a link the user has visited
+    a:hover - a link when the user mouses over it
+    a:active - a link the moment it is clicked
+
+em:
+    1em is equal to the current font size. The default text size in browsers is 16px. So, the default size of 1em is 16px.
+
+    body {
+        font-size: 100%;
+    }
+    h1 {
+        font-size: 2.5em;
+    }
+    p {
+        font-size: 0.875em;
+    }
+
+cascade order (4 = highest, 1 = lowest):
+    1. Browser default
+    2. External style sheet
+    3. Internal style sheet (in the head section)
+    4. Inline style (inside an HTML element)
+
+overloading rules:
+    
+    margin: 25px 50px 75px 100px;
+        top margin is 25px
+        right margin is 50px
+        bottom margin is 75px
+        left margin is 100px
+
+    margin: 25px 50px 75px;
+        top margin is 25px
+        right and left margins are 50px
+        bottom margin is 75px
+
+    margin: 25px 50px;
+        top and bottom margins are 25px
+        right and left margins are 50px
+
+    margin: 25px;
+        all four margins are 25px
+
+
+
+
+
+The following tags can be added to the head section: <title>, <style>, <meta>, <link>, <script>, <noscript>, and <base>.
+
+
+Inline elements:
+
+    respect left & right margins and padding, but not top & bottom
+    cannot have a width and height set
+    allow other elements to sit to their left and right.
+
+Block elements:
+
+    respect all of those
+    force a line break after the block element
+
+Inline-block elements:
+
+    allow other elements to sit to their left and right
+    respect top & bottom margins and padding
+    respect height and width

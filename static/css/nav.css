@@ -1,53 +1,79 @@
+/*
+    nav bar
+*/
 .nav {
-    height: 54px;
-    border-bottom: 2px solid white;
-    width: 100%;
+    border-bottom: 2px solid black;
+    color: white;
+    display: block;
+    padding: 12px;
 }
-#nav-home-icon {
-    width: 54px;
-    margin-left: 8px;
-    padding-top: 14px;
-    display: inline;
-    float:left;
+.nav .zone {
+    float: left;
 }
-#nav-title {
-    width: 165px;
+.nav .glyphicon {
     font-size: 25px;
-    padding-top: 12px;
-    padding-right: 0;
-    padding-left: 0;
-    /*text-align: right;*/
-    display: inline;
-    float:left;
 }
-#nav-search {
-    padding-top: 14px;
-    padding-left: 10px;
-    text-align: left;
-    display: inline;
-    float:left;
+.nav .search {
+    margin-left: 25px;
+    margin-top: 2px;
 }
-.nav-buttton {
-    width: 250px;
-    height: 100%;
-    padding-top: 14px;
-    font-size: 25px;
-    text-align: center;
-    display: inline;
-    float:right;
+.nav .search .search-bar {
+    color: black;
+    height: 23px;
+    padding: 3px 6px;
+    width: 300px;
 }
-#nav-contact {
-    border-left: 2px solid white;
-    border-right: 2px solid white;
-}
-.nav-content-separator {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 2px;
-    background-color: white;
-}
-.nav-glyphicon {
+
+
+/*
+    dir bar
+*/
+.dir {
     font-size: 30px;
-    padding-right: 10px
+    margin-top: 30px;
+    margin-left: 50px;
 }
+
+.dir .general{
+
+}
+
+.dir .specific{
+
+}
+
+
+
+/*
+    debug
+*/
+.debug {
+    float: left;
+    margin-left: 100px;
+    height: 40px;
+    color: black;
+}
+.debug .zone {
+    width: 70px;
+    font-size: 30px;
+    text-align: center;
+    position: relative;
+    margin: 0 10px;
+}
+.debug .normal {
+    width: 170px;
+    font-size: 30px;
+    text-align: center;
+    position: relative;
+}
+.debug .zone .link {
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0;
+    left: 0;
+    z-index: 1;
+    background-image: url('empty.gif');
+}
+
+

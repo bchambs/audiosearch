@@ -22,6 +22,7 @@ def call(package):
         pipe = RC.pipeline()
 
         pipe.hset(package.id_, "status", {package.REDIS_KEY: "ready"})
+        pipe.hset(package.id_, "type", package.TYPE_) # REDO
         pipe.hset(package.id_, package.REDIS_KEY, resource)
         pipe.expire(package.id_, package.ttl)
         pipe.execute()

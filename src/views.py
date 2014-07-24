@@ -126,6 +126,9 @@ def artist_profile(request):
     else:
         tasks.call.delay(services.SimilarArtists(id_))
 
+    if 'type' in resource:
+        context['type'] = resource['type']
+
     if cfg.VIEW_DEBUG:
         util.inspect_context(context)
 
