@@ -47,6 +47,11 @@ class AudiosearchDebug(object):
                 cfg.CONSUMER_DEBUG = False
                 cfg.REDIS_DEBUG = False
 
+            ###############################
+
+            if cfg.REDIS_DEBUG:
+                RC.delete(resource_id)
+
         return None
 
 

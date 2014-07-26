@@ -23,7 +23,7 @@ RESULTS = 100
 #########
 # REDIS #
 #########
-REDIS_TTL = 300     # in seconds
+REDIS_TTL = 3000     # in seconds
 
 
 ################

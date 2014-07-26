@@ -11,6 +11,7 @@ import audiosearch.config as cfg
 
 log = logging.getLogger("audiosearch")
 
+# use result.object_list for async
 def page_resource(page, resource):
     result = {}
     paginator = Paginator(resource, cfg.ITEMS_PER_PAGE)
@@ -104,7 +105,7 @@ def inspect_context(context):
             log.debug("key: %s" %(k))
 
             if isinstance(v, dict):
-                log.debug("dict: %s" %(v.keys()))
+                log.debug("dict: %s\n" %(v.keys()))
 
             elif isinstance(v, list):
                 log.debug("list = %s\n" %(len(v))) 
@@ -113,7 +114,8 @@ def inspect_context(context):
                 log.debug("str: \"%s\"\n" %(v if v else "{EMPTY}"))
 
             else:
-                log.debug("typ: %s\n" %(type(v)))
+                log.debug("typ: %s" %(type(v)))
+                log.debug("len: %s\n" %(len(v)))
 
     except IndexError:
         log.error("Invalid context.")

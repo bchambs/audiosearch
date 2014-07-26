@@ -14,3 +14,16 @@
     background-color: #E8F3F8;
 }
 
+a {
+    color: #81A8B8;
+    text-decoration: none;
+}
+a:hover {
+    color: #A4BCC2;
+}
+a:visited {
+    color: #81A8B8;
+}
+a:active {
+    
+}

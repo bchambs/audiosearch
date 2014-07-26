@@ -8,16 +8,13 @@ import src.util as util
 
 
 class ENCall(object):
-    """
-    Abstract class representing input to request.get().
-    """
-
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
 
-    def __init__(self, type_, method, id_, buckets):
+    def __init__(self, type_, method, id_, buckets=None):
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
         self.id_ = id_
+        self.ttl = cfg.REDIS_TTL
         self.payload = {
             'api_key': cfg.API_KEY,
             'format': "json",
@@ -25,43 +22,34 @@ class ENCall(object):
         if buckets:
             self.payload['bucket'] = buckets
 
-        self.ttl = cfg.REDIS_TTL
-        self.debug = True if cfg.CONSUMER_DEBUG else False
+        self.debug = True if cfg.CONSUMER_DEBUG else False # TODO: remove
 
     def trim(self, data):
         return data
 
 
 class ArtistProfile(ENCall):
-    """
-    Package representing all required data for an artist profile request from Echo Nest.
-    """
-
-    TYPE_ = "artist"
-    METHOD = "profile"
+    TYPE_ = 'artist'
+    METHOD = 'profile'
     BUCKETS = [
-        # 'biographies',
-        # 'hotttnesss',
         # 'images',
         'terms',
-        # 'hotttnesss_rank',
         'artist_location',
-        'years_active'
+        'years_active',
     ]
-
     CALL_KEY = 'artist'
     REDIS_KEY = 'profile'
+
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
         self.payload['id'] = id_
 
-
     def trim(self, data):
         result = {}
 
         result['name'] = data.get('name')
-        result['genre'] = data.get('terms')[:5]
+        result['genres'] = data.get('terms')[:5]
 
         city = data.get('artist_location').get('city')
         country = data.get('artist_location').get('country')
@@ -74,79 +62,32 @@ class ArtistProfile(ENCall):
         return result
 
 
-class Playlist(ENCall):
-    """
-    Package representing all required data for a playlist request from Echo Nest.
-    """
-
-    # REST data
-    TYPE_ = "playlist"
-    METHOD = "static"
-    BUCKETS = [
-        'song_hotttnesss',
-    ]
-
-    # REDIS data
+class ArtistSongs(ENCall):
+    TYPE_ = 'playlist'
+    METHOD = 'static'
     CALL_KEY = 'songs'
     REDIS_KEY = 'songs'
 
     def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
         self.payload['artist_id'] = id_
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
 
-    def trim(self, data):
-        for song in data:
-            song['song_hotttnesss'] = int(round(song['song_hotttnesss'] * 100))
-        return data
 
-
-class SimilarArtists(ENCall):
-    """
-    Package representing all required data for a similar artists request from Echo Nest.
-    """
-
-    # REST data
-    TYPE_ = "artist"
-    METHOD = "similar"
-    BUCKETS = [
-        'images',
-        'terms',
-        'familiarity',
-        'songs',
-    ]
-
-    # REDIS data
-    CALL_KEY = 'artists'
-    REDIS_KEY = 'similar'
-
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
-        self.payload['id'] = id_
-        self.payload['results'] = cfg.RESULTS
-
-
-class ArtistSearch(ENCall):
-    """
-    Package representing all required data for an artist search request from Echo Nest.
-    """
-
-    # REST data
-    TYPE_ = "artist"
-    METHOD = "suggest"
-
-    # REDIS data
+class SearchArtists(ENCall):
+    TYPE_ = 'artist'
+    METHOD = 'suggest'
     CALL_KEY = 'artists'
     REDIS_KEY = 'artists'
 
     def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
         self.payload['name'] = id_
         self.payload['results'] = cfg.RESULTS
 
 
-class SongSearch(ENCall):
+class SearchSongs(ENCall):
     """
     Package representing all required data for an song search request from Echo Nest.
     """
@@ -167,27 +108,37 @@ class SongSearch(ENCall):
         self.payload['song_type'] = "studio"
 
 
+class SimilarArtists(ENCall):
+    TYPE_ = 'artist'
+    METHOD = 'similar'
+    BUCKETS = [
+        'images',
+        'terms',
+        'songs',
+    ]
+    CALL_KEY = 'artists'
+    REDIS_KEY = 'similar_artists'
+
+    def __init__(self, id_):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
+        self.payload['id'] = id_
+        self.payload['results'] = cfg.RESULTS
+
+
 class SimilarSongs(ENCall):
-    """
-    Package representing all required data for an similar songs request from Echo Nest.
-    """
-
-    # REST data
-    TYPE_ = "playlist"
-    METHOD = "static"
-
-    # REDIS data
+    TYPE_ = 'playlist'
+    METHOD = 'static'
     CALL_KEY = 'songs'
     REDIS_KEY = 'similar_songs' 
 
-
+# id=-AR633SY1187B9AC3B9
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
-        # self.payload['results'] = cfg.RESULTS
+        self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         # self.payload['sort'] = "artist_familiarity-desc"
-        self.payload['type'] = "song-radio"
         self.payload['song_id'] = id_
+        self.payload['type'] = "song-radio"
 
 
 class SongProfile(ENCall):

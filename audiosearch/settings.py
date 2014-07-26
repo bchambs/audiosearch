@@ -161,3 +161,7 @@ LOGGING = {
     }
 }
 
+if __debug__:
+    print "got the flag"
+else:
+    print "red wins"

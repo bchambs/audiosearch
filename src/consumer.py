@@ -28,6 +28,8 @@ class ENConsumer(object):
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
 
+                print response.url
+
                 if package.debug:
                     util.inspect_response(response, package.__class__)
 

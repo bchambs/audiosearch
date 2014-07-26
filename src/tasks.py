@@ -17,14 +17,15 @@ def call(package):
     """
     Consume Echo Nest service according to package spec.  Store result in Redis.
     """
-
+    print str(package.__class__)
+    
     try:
         echo_nest_resource = ENConsumer.consume(package)
         resource = package.trim(echo_nest_resource)
         pipe = RC.pipeline()
 
-        pipe.hset(package.id_, "status", {package.REDIS_KEY: "ready"})
-        pipe.hset(package.id_, "type", package.TYPE_) # REDO
+        # pipe.hset(package.id_, "status", {package.REDIS_KEY: "ready"})
+        # pipe.hset(package.id_, "type", package.TYPE_) # REDO
         pipe.hset(package.id_, package.REDIS_KEY, resource)
         pipe.expire(package.id_, package.ttl)
         pipe.execute()

@@ -93,48 +93,41 @@ def search(request):
     return render(request, 'search.html', context)
 
 
-def artist_profile(request):
-    """
-    /artist/
-    """
+def artist(request, artist):
     id_ = request.GET.get('q')
     context = Context({
         'q': id_
     })
 
-    if cfg.REDIS_DEBUG:
-        RC.delete(id_)
+    resources = RC.hgetall(id_)
 
-    resource = RC.hgetall(id_)
-
-    if 'profile' in resource:
-        context['profile'] = ast.literal_eval(resource['profile'])
+    if 'profile' in resources:
+        context['profile'] = ast.literal_eval(resources['profile'])
     else:
         tasks.call.delay(services.ArtistProfile(id_))
 
-    if 'songs' in resource:
-        songs = ast.literal_eval(resource['songs'])
+    if 'songs' in resources:
+        songs = ast.literal_eval(resources['songs'])
         context['songs'] = util.page_resource(None, songs)
-        if len(songs) > cfg.ITEMS_PER_SEARCH:
-            context['more_songs'] = True
     else:
-        tasks.call.delay(services.Playlist(id_))
+        tasks.call.delay(services.ArtistSongs(id_))
 
-    if 'similar' in resource:
-        similar = ast.literal_eval(resource['similar'])
-        context['similar'] = similar[:cfg.SIM_ART_DISPLAYED]
-        if len(similar) > cfg.SIM_ART_DISPLAYED:
-            context['more_similar'] = True
+    if 'similar_artists' in resources:
+        similar_artists = ast.literal_eval(resources['similar_artists'])
+        context['similar_artists'] = util.page_resource(None, similar_artists)
     else:
         tasks.call.delay(services.SimilarArtists(id_))
 
-    if 'type' in resource:
-        context['type'] = resource['type']
+    if 'similar_songs' in resources:
+        similar_songs = ast.literal_eval(resources['similar_songs'])
+        context['similar_songs'] = util.page_resource(None, similar_songs)
+    else:
+        tasks.call.delay(services.SimilarSongs(id_))
 
     if cfg.VIEW_DEBUG:
         util.inspect_context(context)
 
-    return render(request, "artist-profile.html", context)
+    return render(request, "artist.html", context)
 
 
 def artist_similar(request):
@@ -154,9 +147,9 @@ def artist_similar(request):
         similar = ast.literal_eval(resource)
         context['similar'] = util.page_resource(page, similar)
     else:
-        tasks.call.delay(services.SimilarArtists(id_))
+        tasks.call.delay(services.ArtistSimilar(id_))
         tasks.call.delay(services.ArtistProfile(id_))
-        tasks.call.delay(services.Playlist(id_))
+        tasks.call.delay(services.ArtistSongs(id_))
 
     if cfg.VIEW_DEBUG:
         util.inspect_context(context)
@@ -181,8 +174,8 @@ def artist_songs(request):
         songs = ast.literal_eval(resource)
         context['songs'] = util.page_resource(page, songs)
     else:
-        tasks.call.delay(services.Playlist(id_))
-        tasks.call.delay(services.SimilarArtists(id_))
+        tasks.call.delay(services.ArtistSongs(id_))
+        tasks.call.delay(services.ArtistSimilar(id_))
         tasks.call.delay(services.ArtistProfile(id_))
 
     if cfg.VIEW_DEBUG:

@@ -15,9 +15,8 @@
 
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
     <!-- <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet"> -->
     <!-- <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet"> -->
@@ -27,7 +26,7 @@
 <body>
 
 <!-- nav -->
-<div class="nav aaa">
+<div id="nav" class="aaa">
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -38,31 +37,31 @@
 
     <div class="debug">
         <div class="zone normal ddd">
-            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}">
+            <a href="{% url 'src.views.artist' %}?q={{ q }}">
                 <span class="link"></span>normal
             </a>
         </div>
 
         <div class="zone ddd">
-            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=v">
+            <a href="{% url 'src.views.artist' %}?q={{ q }}&debug=v">
                 <span class="link"></span>v
             </a>
         </div>
 
         <div class="zone ddd">
-            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=r">
+            <a href="{% url 'src.views.artist' %}?q={{ q }}&debug=r">
                 <span class="link"></span>r
             </a>
         </div>
 
         <div class="zone ddd">
-            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=cr">
+            <a href="{% url 'src.views.artist' %}?q={{ q }}&debug=cr">
                 <span class="link"></span>c, r
             </a>
         </div>
 
         <div class="zone ddd">
-            <a href="{% url 'src.views.artist_profile' %}?q={{ q }}&debug=vr">
+            <a href="{% url 'src.views.artist' %}?q={{ q }}&debug=vr">
                 <span class="link"></span>v, r
             </a>
         </div>
@@ -83,16 +82,16 @@
 
     <div id="profile.location">
         {% if profile.location %}
-            <div class="subtitle">.location ::
+            <div class="subtitle">
                 {{ profile.location }}
             </div>
         {% endif %}
     </div>
     
     <div id="profile.genre">
-        {% if profile.genre %}
-            <span class="subtitle">.genre :: 
-                {% for genre in profile.genre %}
+        {% if profile.genres %}
+            <span class="subtitle">
+                {% for genre in profile.genres %}
                     {% if forloop.first %}  
                         {{ genre.name }}
                     {% else %}
@@ -108,23 +107,30 @@
 
 <!-- content -->
 <div class="content">
-    <div class="column bbb">
+
+    {% if similar_artists %}
+    <div id="similar_artists" class="column bbb">
         <div class="title">
             Similar Artists
         </div>
     </div>
+    {% endif %}
 
-    <div class="column bbb">
+    {% if songs %}
+    <div id="songs" class="column bbb">
         <div class="title">
             Songs
         </div>
     </div>
+    {% endif %}
 
-    <div class="column bbb">
+    {% if similar_songs %}
+    <div id="similar_songs" class="column bbb">
         <div class="title">
             Similar Songs
         </div>
     </div>
+    {% endif %}
 
 </div><!--END content -->
 
