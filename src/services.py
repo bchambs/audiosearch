@@ -147,10 +147,10 @@ class SimilarSongs(ENCall):
     REDIS_KEY = 'similar_songs' 
 
 
-    def __init__(self, id_, page):
+    def __init__(self, id_, page_type):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
         self.payload['results'] = cfg.RESULTS
-        if page == "artist":
+        if page_type == "artist":
             self.payload['artist'] = id_
         else:
             self.payload['song_id'] = id_

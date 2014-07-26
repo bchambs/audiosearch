@@ -18,9 +18,7 @@
     <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
-    <!-- <link href="{{ STATIC_URL }}css/profile.css" rel="stylesheet"> -->
-    <!-- <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet"> -->
-
+   
     <title>audiosearch</title>
 </head>
 <body>
@@ -37,55 +35,30 @@
 
     <div class="debug">
         <div class="zone normal ddd">
-            <a href="{% url 'src.views.debug' %}?q={{ name }}">
+            <a href="" id="debug">
                 <span class="link"></span>debug
             </a>
         </div>
     </div>
 
-    {% if old_debug %}
     <div class="debug">
         <div class="zone normal ddd">
-            <a href="{% url 'src.views.artist' name %}">
-                <span class="link"></span>normal
-            </a>
-        </div>
-
-        <div class="zone ddd">
-            <a href="{% url 'src.views.artist' name %}?debug=v">
-                <span class="link"></span>v
-            </a>
-        </div>
-
-        <div class="zone ddd">
-            <a href="{% url 'src.views.artist' name %}?debug=r">
-                <span class="link"></span>r
-            </a>
-        </div>
-
-        <div class="zone ddd">
-            <a href="{% url 'src.views.artist' name %}?debug=cr">
-                <span class="link"></span>c, r
-            </a>
-        </div>
-
-        <div class="zone ddd">
-            <a href="{% url 'src.views.artist' name %}?debug=vr">
-                <span class="link"></span>v, r
+            <a href="" id="clear">
+                <span class="link"></span>clear
             </a>
         </div>
     </div>
-    {% endif %}
+    
 </div><!--END nav -->
 
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "{% url 'src.views.index' %}" >audiosearch</a> / artist / music
+        <a href = "{% url 'src.views.index' %}">audiosearch</a> / similar 
 
         <span id="profile.name">
             {% if profile.name %}
-                / {{ profile.name }}
+                / <a href = "{% url 'src.views.artist' name %}">{{ profile.name }}</a>
             {% endif %}
         </span>
     </div>
@@ -119,32 +92,82 @@
 <div class="content">
 
     {% if similar_artists %}
-    <div id="similar_artists" class="column bbb">
-        <div class="title">
-            Similar Artists
+        <div id="similar_artists" class="bbb">
+            <div class="title">
+                Similar Artists
+            </div>
+
+            <ol>
+            {% for artist in similar_artists.data %}
+                <li>{{ artist.name }} </li>
+            {% endfor %}
+            </ol>
+
+            {% if similar_artists.next %}
+                <div class="title">
+                    <a href = "/music/{{name}}/similar" >view more</a>
+                </div>
+            {% endif %}
+
         </div>
+    {% endif %}
 
-        <ol>
-        {% for artist in similar_artists.data %}
-            <li>{{ artist.name }} </li>
-        {% endfor %}
-        </ol>
+    {% if similar_songs %}
+        <div id="similar_songs" class="bbb">
+            <div class="title header">
+                Similar Songs
+            </div>
 
-        {% if similar_artists.next %}
+            <ul>
+            {% for song in similar_songs.data %}
+                <li>{{ song.title }} </li>
+            {% endfor %}
+            </ul>
 
-        {% endif %}
+            <div class="title header">
+                {% if similar_songs.previous %}
+                    <div id="previous">
+                        <a href = "/music/{{name}}/similar/?type=songs&page={{ similar_songs.previous }}" >previous</a>
+                    </div>
+                {% endif %}
 
-    </div>
+                {% if similar_songs.current %}
+                    <div id="current">
+                        {{ similar_songs.current }} of {{ similar_songs.total }}
+                    </div>
+                {% endif %}
+
+                {% if similar_songs.next %}
+                    <div id="next">
+                        <a href = "/music/{{name}}/similar/?type=songs&page={{ similar_songs.next }}" >next</a>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
     {% endif %}
 
 </div><!--END content -->
 
 
-<!-- -->
-
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
-<script src="{{ STATIC_URL }}js/artist.profile.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
+
+{% if debug %}
+    <script type="text/javascript">
+        $('a#debug').click( function() { 
+            debug_template(); 
+            return false; 
+        });
+
+        $('a#clear').click( function() { 
+            remove_resource("{{name}}"); 
+            return false; 
+        });
+    </script>
+{% endif %}
+
 <!-- 
 {% if not profile %}
     <script type="text/javascript">

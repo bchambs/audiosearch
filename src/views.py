@@ -23,14 +23,12 @@ def index(request):
 
 def artist(request, *args, **kwargs):
     artist = kwargs['artist']
-    if artist not in cache:
-        cache[artist] = {}  
-    cc = cache[artist]
+    
 
     ###############################################
     context = Context({
         'name': artist,
-        'debug': kwargs.get('debug')
+        'debug': kwargs.get('debug'),
     })
 
     resources = RC.hgetall(artist)
@@ -58,6 +56,9 @@ def artist(request, *args, **kwargs):
     else:
         tasks.call.delay(services.SimilarSongs(artist, "artist"))
 
+    if artist not in cache:
+        cache[artist] = {}  
+    cc = cache[artist]
     if 'context' in cc:
         wrap = {'context': context.dicts[1]}
         cc['context'].update(wrap)
@@ -69,27 +70,48 @@ def artist(request, *args, **kwargs):
 
 
 def similar(request, *args, **kwargs):
-    if artist not in cache:
-        cache[artist] = {}  
-    cc = cache[artist]
+    artist = kwargs['artist']
+    song = kwargs.get('song')
+    resource_type = request.GET.get('type')
+    page = request.GET.get('page')
+    page_type = "song" if song else "artist"
+    resource_id = song if song else artist
 
-    ###############################################
     context = Context({
-        'name': artist,
+        'name': resource_id,
+        'debug': kwargs.get('debug'),
     })
 
-    resources = RC.hgetall(artist)
+    resources = RC.hgetall(resource_id)
 
     if 'profile' in resources:
         context['profile'] = ast.literal_eval(resources['profile'])
     else:
-        tasks.call.delay(services.ArtistProfile(artist))
+        service = services.SongProfile(resource_id) if song else services.ArtistProfile(resource_id)
+        tasks.call.delay(service)
 
-    if 'similar_artists' in resources:
-        similar_artists = ast.literal_eval(resources['similar_artists'])
-        context['similar_artists'] = util.page_resource(None, similar_artists)
+    if resource_type == "artists":
+        if 'similar_artists' in resources:
+            similar_artists = ast.literal_eval(resources['similar_artists'])
+            context['similar_artists'] = util.page_resource(page, similar_artists)
+        else:
+            tasks.call.delay(services.SimilarArtists(resource_id))
+
+    elif resource_type == "songs":
+        if 'similar_songs' in resources:
+            similar_songs = ast.literal_eval(resources['similar_songs'])
+            context['similar_songs'] = util.page_resource(page, similar_songs)
+        else:
+            tasks.call.delay(services.SimilarSongs(resource_id, page_type))
+
+    if artist not in cache:
+        cache[artist] = {}  
+    cc = cache[artist]
+    if 'context' in cc:
+        wrap = {'context': context.dicts[1]}
+        cc['context'].update(wrap)
     else:
-        tasks.call.delay(services.SimilarArtists(artist))
+        cc['context'] = context.dicts[1]
 
     return render(request, "similar.html", context)
 

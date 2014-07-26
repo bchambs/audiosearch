@@ -93,7 +93,7 @@
 
     {% if similar_artists %}
     <div id="similar_artists" class="column bbb">
-        <div class="title">
+        <div class="title header">
             Similar Artists
         </div>
 
@@ -104,7 +104,9 @@
         </ol>
 
         {% if similar_artists.next %}
-
+            <div class="title header">
+                <a href = "/music/{{name}}/similar/?type=artists&page=1" >view more</a>
+            </div>
         {% endif %}
 
     </div>
@@ -112,7 +114,7 @@
 
     {% if songs %}
     <div id="songs" class="column bbb">
-        <div class="title">
+        <div class="title header">
             Songs
         </div>
 
@@ -122,12 +124,18 @@
         {% endfor %}
         </ol>
 
+        {% if songs.next %}
+            <div class="title header">
+                <a href = "/music/{{name}}/similar/?type=artists&page=1" >view more</a>
+            </div>
+        {% endif %}
+
     </div>
     {% endif %}
 
     {% if similar_songs %}
     <div id="similar_songs" class="column bbb">
-        <div class="title">
+        <div class="title header">
             Similar Songs
         </div>
 
@@ -136,6 +144,12 @@
             <li>{{ song.title }} </li>
         {% endfor %}
         </ol>
+
+        {% if similar_songs.next %}
+            <div class="title header">
+                <a href = "/music/{{name}}/similar/?type=songs&page=1" >view more</a>
+            </div>
+        {% endif %}
 
     </div>
     {% endif %}

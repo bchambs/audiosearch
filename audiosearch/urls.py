@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'src.views.index'), 
 
-    url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar, {'type': "artist"}),
+    url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar),
     url(r'^music/(?P<artist>[\w|\W]+)/$', views.artist),
 
     url(r'^ajax/clear/$', 'src.views.clear_resource'),
