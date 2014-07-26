@@ -33,19 +33,12 @@ SIM_ART_DISPLAYED = 100
 ART_SONGS_DISPLAYED = 10
 ITEMS_PER_SEARCH = 100
 ITEMS_PER_PAGE = 10
+GENRE_COUNT = 5
 
 
 #############
 # DEBUGGING #
 #############
 
-# delete requested key from cache before serving request
-REDIS_DEBUG = False
-
-# print context before returning template
-VIEW_DEBUG = False
-
-# print echo nest response info
-CONSUMER_DEBUG = False
-
+DEBUG_TOOLBAR = True
 

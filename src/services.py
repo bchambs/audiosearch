@@ -11,9 +11,9 @@ class ENCall(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
 
-    def __init__(self, type_, method, id_, buckets=None):
+    def __init__(self, type_, method, call_id, buckets=None):
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
-        self.id_ = id_
+        self.call_id = call_id
         self.ttl = cfg.REDIS_TTL
         self.payload = {
             'api_key': cfg.API_KEY,
@@ -22,10 +22,12 @@ class ENCall(object):
         if buckets:
             self.payload['bucket'] = buckets
 
-        self.debug = True if cfg.CONSUMER_DEBUG else False # TODO: remove
-
     def trim(self, data):
         return data
+
+
+    def __str__(self):
+        return "service.encall"
 
 
 class ArtistProfile(ENCall):
@@ -41,15 +43,15 @@ class ArtistProfile(ENCall):
     REDIS_KEY = 'profile'
 
 
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
-        self.payload['id'] = id_
+    def __init__(self, name):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, name, self.BUCKETS)
+        self.payload['name'] = name
 
     def trim(self, data):
         result = {}
 
         result['name'] = data.get('name')
-        result['genres'] = data.get('terms')[:5]
+        result['genres'] = data.get('terms')[:cfg.GENRE_COUNT]
 
         city = data.get('artist_location').get('city')
         country = data.get('artist_location').get('country')
@@ -62,6 +64,10 @@ class ArtistProfile(ENCall):
         return result
 
 
+    def __str__(self):
+        return "service.artist profile"
+
+
 class ArtistSongs(ENCall):
     TYPE_ = 'playlist'
     METHOD = 'static'
@@ -70,9 +76,13 @@ class ArtistSongs(ENCall):
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
-        self.payload['artist_id'] = id_
+        self.payload['artist'] = id_
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
+
+
+    def __str__(self):
+        return "service.artist songs"
 
 
 class SearchArtists(ENCall):
@@ -87,16 +97,13 @@ class SearchArtists(ENCall):
         self.payload['results'] = cfg.RESULTS
 
 
-class SearchSongs(ENCall):
-    """
-    Package representing all required data for an song search request from Echo Nest.
-    """
+    def __str__(self):
+        return "service.search artists"
 
-    # REST data
+
+class SearchSongs(ENCall):
     TYPE_ = "song"
     METHOD = "search"
-
-    # REDIS data
     CALL_KEY = 'songs'
     REDIS_KEY = 'songs'
 
@@ -106,6 +113,10 @@ class SearchSongs(ENCall):
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
+
+
+    def __str__(self):
+        return "service.search songs"
 
 
 class SimilarArtists(ENCall):
@@ -121,8 +132,12 @@ class SimilarArtists(ENCall):
 
     def __init__(self, id_):
         ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
-        self.payload['id'] = id_
+        self.payload['name'] = id_
         self.payload['results'] = cfg.RESULTS
+
+
+    def __str__(self):
+        return "service.artist similar artists"
 
 
 class SimilarSongs(ENCall):
@@ -131,22 +146,21 @@ class SimilarSongs(ENCall):
     CALL_KEY = 'songs'
     REDIS_KEY = 'similar_songs' 
 
-# id=-AR633SY1187B9AC3B9
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
+
+    def __init__(self, id_, page):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
         self.payload['results'] = cfg.RESULTS
-        self.payload['sort'] = "song_hotttnesss-desc"
-        # self.payload['sort'] = "artist_familiarity-desc"
-        self.payload['song_id'] = id_
-        self.payload['type'] = "song-radio"
+        if page == "artist":
+            self.payload['artist'] = id_
+        else:
+            self.payload['song_id'] = id_
+
+
+    def __str__(self):
+        return "service.artist similar songs"
 
 
 class SongProfile(ENCall):
-    """
-    Package representing all required data for an song profile request from Echo Nest.
-    """
-
-    # REST data
     TYPE_ = "song"
     METHOD = "profile"
     BUCKETS = [
@@ -155,8 +169,6 @@ class SongProfile(ENCall):
         'song_hotttnesss_rank', 
         # 'tracks'
     ]
-
-    # REDIS data
     CALL_KEY = 'songs'
     REDIS_KEY = 'profile'
 
@@ -199,6 +211,10 @@ class SongProfile(ENCall):
             result['hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
 
         return result
+
+
+    def __str__(self):
+        return "service.song profile"
 
 
 class ENCallFailure(Exception):

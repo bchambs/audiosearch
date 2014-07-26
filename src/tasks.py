@@ -4,21 +4,14 @@ import sys
 
 from celery import shared_task
 
-import audiosearch.config as cfg
 from audiosearch.redis import client as RC
 from src.consumer import ENConsumer
 from src.services import ENCallFailure
 
 
-log = logging.getLogger("audiosearch")
-
 @shared_task
 def call(package):
-    """
-    Consume Echo Nest service according to package spec.  Store result in Redis.
-    """
-    print str(package.__class__)
-    
+
     try:
         echo_nest_resource = ENConsumer.consume(package)
         resource = package.trim(echo_nest_resource)
@@ -26,13 +19,12 @@ def call(package):
 
         # pipe.hset(package.id_, "status", {package.REDIS_KEY: "ready"})
         # pipe.hset(package.id_, "type", package.TYPE_) # REDO
-        pipe.hset(package.id_, package.REDIS_KEY, resource)
-        pipe.expire(package.id_, package.ttl)
+        pipe.hset(package.call_id, package.REDIS_KEY, resource)
+        pipe.expire(package.call_id, package.ttl)
         pipe.execute()
 
     except ENCallFailure as err_msg:
-        RC.hset(package.id_, "status", err_msg)
+        RC.hset(package.call_id, "error_msg", err_msg)  # this overwrites
+        print "%s failed: %s" % (str(package), err_msg)
 
-        if package.debug:
-            log.warning("Call failed: %s" % err_msg)
 

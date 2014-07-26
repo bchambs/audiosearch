@@ -30,9 +30,6 @@ class ENConsumer(object):
 
                 print response.url
 
-                if package.debug:
-                    util.inspect_response(response, package.__class__)
-
                 code = json_response['response']['status']['code']
 
                 # success, return echo nest resource
@@ -46,12 +43,24 @@ class ENConsumer(object):
 
                 # call rejected by echo nest
                 else:
+                    print "call rejected by echo nest"
                     raise ENCallFailure(json_response['response']['status']['message'])
 
             # invalid request or unable to parse json
-            except (requests.RequestException, ValueError, KeyError) as e:
+            # except (requests.RequestException, ValueError, KeyError) as e:
+            #     print "=====================invalid request or unable to parse json"
+            #     raise ENCallFailure(e)
+            except requests.RequestException as e:
+                print "1::%s" % str(package)
+                raise ENCallFailure(e)
+            except ValueError as e:
+                print "2::%s" % str(package)
+                raise ENCallFailure(e)
+            except KeyError as e:
+                print "3::%s" % str(package)
                 raise ENCallFailure(e)
 
         # timeout
+        print "====================timeout"
         raise ENCallFailure("Audiosearch is receiving too many requests.  Try again soon!")
         

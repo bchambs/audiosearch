@@ -9,19 +9,11 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader, Context
 
-import audiosearch.config as cfg
 import services
 import src.util as util
 from audiosearch.redis import client as RC
-
-
-log = logging.getLogger("audiosearch")
-
-"""
----------------------------
-Functions for serving pages
----------------------------
-"""
+from audiosearch.config import DEBUG_TOOLBAR
+cache = {}
 
 def index(request):
     context = Context({})
@@ -29,184 +21,77 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def search(request):
-    """
-    /search/
-    """
+def artist(request, *args, **kwargs):
+    artist = kwargs['artist']
+    if artist not in cache:
+        cache[artist] = {}  
+    cc = cache[artist]
 
-    # obtain query params
-    display_type = request.GET.get('type', "all").lower()
-    search_name = request.GET.get('q')
-    page = request.GET.get('page')
-
-    # redirect on malformed request
-    if search_name:
-        search_name = search_name.lower()
-    else:
-        return HttpResponseRedirect('/')
-
+    ###############################################
     context = Context({
-        'q': search_name,
-        'type': display_type,
-        'page': page,
+        'name': artist,
+        'debug': kwargs.get('debug')
     })
 
-    if cfg.REDIS_DEBUG:
-        RC.delete(search_name)
-
-    resource = RC.hgetall(search_name)
-
-    # branch on @type, add paged results to context, call celery on missing resources
-    if display_type == "artists":
-        if 'artists' in resource:
-            artists = ast.literal_eval(resource['artists'])
-            context['paged_type'] = util.page_resource(page, artists)
-        else:
-            tasks.call.delay(services.ArtistSearch(search_name))
-            context['artists_pending'] = True
-
-    elif display_type == "songs":
-        if 'songs' in resource:
-            songs = ast.literal_eval(resource['songs'])
-            context['paged_type'] = util.page_resource(page, songs)
-        else:
-            tasks.call.delay(services.SongSearch(search_name))
-            context['songs_pending'] = True
-    else:
-        if 'artists' in resource:
-            artists = ast.literal_eval(resource['artists'])
-            context['paged_artists'] = util.page_resource(page, artists)
-        else:
-            tasks.call.delay(services.ArtistSearch(search_name))
-            context['artists_pending'] = True
-
-        if 'songs' in resource:
-            songs = ast.literal_eval(resource['songs'])
-            context['paged_songs'] = util.page_resource(page, songs)
-        else:
-            tasks.call.delay(services.SongSearch(search_name))
-            context['songs_pending'] = True
-
-    if cfg.VIEW_DEBUG:
-        util.inspect_context(context)
-
-    return render(request, 'search.html', context)
-
-
-def artist(request, artist):
-    id_ = request.GET.get('q')
-    context = Context({
-        'q': id_
-    })
-
-    resources = RC.hgetall(id_)
+    resources = RC.hgetall(artist)
 
     if 'profile' in resources:
         context['profile'] = ast.literal_eval(resources['profile'])
     else:
-        tasks.call.delay(services.ArtistProfile(id_))
+        tasks.call.delay(services.ArtistProfile(artist))
 
     if 'songs' in resources:
         songs = ast.literal_eval(resources['songs'])
         context['songs'] = util.page_resource(None, songs)
     else:
-        tasks.call.delay(services.ArtistSongs(id_))
+        tasks.call.delay(services.ArtistSongs(artist))
 
     if 'similar_artists' in resources:
         similar_artists = ast.literal_eval(resources['similar_artists'])
         context['similar_artists'] = util.page_resource(None, similar_artists)
     else:
-        tasks.call.delay(services.SimilarArtists(id_))
+        tasks.call.delay(services.SimilarArtists(artist))
 
     if 'similar_songs' in resources:
         similar_songs = ast.literal_eval(resources['similar_songs'])
         context['similar_songs'] = util.page_resource(None, similar_songs)
     else:
-        tasks.call.delay(services.SimilarSongs(id_))
+        tasks.call.delay(services.SimilarSongs(artist, "artist"))
 
-    if cfg.VIEW_DEBUG:
-        util.inspect_context(context)
+    if 'context' in cc:
+        wrap = {'context': context.dicts[1]}
+        cc['context'].update(wrap)
+    else:
+        cc['context'] = context.dicts[1]
+
 
     return render(request, "artist.html", context)
 
 
-def artist_similar(request):
-    id_ = request.GET.get('q')
-    page = request.GET.get('page')
+def similar(request, *args, **kwargs):
+    if artist not in cache:
+        cache[artist] = {}  
+    cc = cache[artist]
+
+    ###############################################
     context = Context({
-        'q': id_,
-        'page': page,
+        'name': artist,
     })
 
-    if cfg.REDIS_DEBUG:
-        RC.delete(id_)
+    resources = RC.hgetall(artist)
 
-    resource = RC.hget(id_, 'similar')
-
-    if resource:
-        similar = ast.literal_eval(resource)
-        context['similar'] = util.page_resource(page, similar)
+    if 'profile' in resources:
+        context['profile'] = ast.literal_eval(resources['profile'])
     else:
-        tasks.call.delay(services.ArtistSimilar(id_))
-        tasks.call.delay(services.ArtistProfile(id_))
-        tasks.call.delay(services.ArtistSongs(id_))
+        tasks.call.delay(services.ArtistProfile(artist))
 
-    if cfg.VIEW_DEBUG:
-        util.inspect_context(context)
-
-    return render(request, "artist-similar.html", context)
-
-
-def artist_songs(request):
-    id_ = request.GET.get('q')
-    page = request.GET.get('page')
-    context = Context({
-        'q': id_,
-        'page': page,
-    })
-
-    if cfg.REDIS_DEBUG:
-        RC.delete(id_)
-
-    resource = RC.hget(id_, 'songs')
-
-    if resource:
-        songs = ast.literal_eval(resource)
-        context['songs'] = util.page_resource(page, songs)
+    if 'similar_artists' in resources:
+        similar_artists = ast.literal_eval(resources['similar_artists'])
+        context['similar_artists'] = util.page_resource(None, similar_artists)
     else:
-        tasks.call.delay(services.ArtistSongs(id_))
-        tasks.call.delay(services.ArtistSimilar(id_))
-        tasks.call.delay(services.ArtistProfile(id_))
+        tasks.call.delay(services.SimilarArtists(artist))
 
-    if cfg.VIEW_DEBUG:
-        util.inspect_context(context)
-
-    return render(request, "artist-songs.html", context)
-
-
-def song_profile(request):
-    id_ = request.GET.get('q')
-    page = request.GET.get('page')
-
-    context = Context({
-        'q': id_
-    })
-
-    if cfg.REDIS_DEBUG:
-        RC.delete(id_)
-
-    resource = RC.hgetall(id_)
-
-    if 'similar_songs' in resource:
-        songs = ast.literal_eval(resource['similar_songs'])
-        context['similar_songs'] = util.page_resource(page, songs)
-    else:
-        tasks.call.delay(services.SimilarSongs(id_))
-
-    if cfg.VIEW_DEBUG:
-        util.inspect_context(context)
-
-    return render(request, "song-profile.html", context)
+    return render(request, "similar.html", context)
 
 
 # HTTP 500
@@ -215,6 +100,26 @@ def server_error(request):
     response.status_code = 500
     return response
 
+
+def debug(request):
+    id_ = request.GET.get('q')
+    url = "/music/" + id_
+
+    print dir(request)
+    print
+    print request.get_full_path()
+    print request.path
+    print request.path_info
+
+    if id_ in cache:
+        pass
+        # util.print_cache(cache[id_])
+        # print type(cache[id_]['context']['similar_artists']['data'][0])
+        # print cache[id_]['context']['similar_artists']['data'][0]['name']
+    else:
+        print "not cached"
+
+    return redirect(url)
 
 """
 -------------------------------------
@@ -254,3 +159,18 @@ def retrieve_resource(request):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 
+
+def clear_resource(request):
+    resource_id = request.GET.get('id')
+    hit = RC.delete(resource_id)
+
+    if hit: print "Removed from Redis: %s" %(resource_id)
+    else: print "Resource not in Redis: %s" %(resource_id)
+
+    return HttpResponse(json.dumps({}), content_type="application/json")
+
+
+def debug_template(request):
+    util.print_cache(cache)
+
+    return HttpResponse(json.dumps({}), content_type="application/json")
