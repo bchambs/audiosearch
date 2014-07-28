@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -54,13 +56,15 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "{% url 'src.views.index' %}">audiosearch</a> / similar 
+        <a href = "/">audiosearch</a> / similar 
 
-        <span id="profile.name">
+        / <a href = "/music/{{ dir_name }}">{{ name }}</a>
+
+        <!-- <span id="profile.name">
             {% if profile.name %}
-                / <a href = "{% url 'src.views.artist' name %}">{{ profile.name }}</a>
+                / <a href = "/music/{{ profile.name }}">{{ profile.name }}</a>
             {% endif %}
-        </span>
+        </span> -->
     </div>
 
     <div id="profile.location">
@@ -99,13 +103,15 @@
 
             <ol>
             {% for artist in similar_artists.data %}
-                <li>{{ artist.name }} </li>
+                <li>
+                    <a href = "/music/{{ artist.name }}/" >{{ artist.name }}</a>
+                </li>
             {% endfor %}
             </ol>
 
             {% if similar_artists.next %}
                 <div class="title">
-                    <a href = "/music/{{name}}/similar" >view more</a>
+                    <a href = "/music/{{ name }}/similar" >view more</a>
                 </div>
             {% endif %}
 
@@ -120,7 +126,9 @@
 
             <ul>
             {% for song in similar_songs.data %}
-                <li>{{ song.title }} </li>
+                <li>
+                    <a href = "/music/{{ song.artist_name }}/{{ song.title }}" >{{ song.title }}</a>
+                </li>
             {% endfor %}
             </ul>
 

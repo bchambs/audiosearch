@@ -15,32 +15,86 @@
 
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/index.css" rel="stylesheet">
-
+    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+   
     <title>audiosearch</title>
 </head>
 <body>
 
-<div class="index-container">
-    <div class="top-offset"></div>
+<!-- nav -->
+<div id="nav" class="aaa">
+   <span class="zone glyphicon glyphicon-th-large"></span>
 
-    <div id="title-bar" class="container row">
-        <span id="title-text" class="col-lg-2">
-            audiosearch :: 
-        </span>
-
-        <span id="title-search" class="col-lg-3">
-            <form action="/search/" method="GET">
-                <input id="title-search-bar" type="text" name="q">
-            </form>
-        </span>
+    <div class="zone search">
+        <form action="/search/" method="GET">
+            <input class="search-bar" type="text" name="q">
+        </form>
     </div>
-</div><!--END container-->
+
+    <div class="debug">
+        <div class="zone normal ddd">
+            <a href="" id="debug">
+                <span class="link"></span>debug
+            </a>
+        </div>
+    </div>
+
+    <div class="debug">
+        <div class="zone normal ddd">
+            <a href="" id="clear">
+                <span class="link"></span>clear
+            </a>
+        </div>
+    </div>
+    
+</div><!--END nav -->
+
+
+<!-- content -->
+<div class="content">
+
+  it's the index
+</div><!--END content -->
+
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
-<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
+
+{% if debug %}
+    <script type="text/javascript">
+        $('a#debug').click( function() { 
+            debug_template(); 
+            return false; 
+        });
+
+        $('a#clear').click( function() { 
+            remove_resource("{{name}}"); 
+            return false; 
+        });
+    </script>
+{% endif %}
+
+<!-- 
+{% if not profile %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'profile', false, 0);
+    </script>
+{% endif %}
+
+{% if not songs %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'songs', true, 0);
+    </script>
+{% endif %}
+
+{% if not similar %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'similar', true, 0);
+    </script>
+{% endif %} -->
 
 </body>
 </html>

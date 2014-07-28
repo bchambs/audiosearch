@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -54,7 +56,7 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "{% url 'src.views.index' %}" >audiosearch</a> / music 
+        <a href = "/" >audiosearch</a> / music 
 
         <span id="profile.name">
             {% if profile.name %}
@@ -99,13 +101,15 @@
 
         <ol>
         {% for artist in similar_artists.data %}
-            <li>{{ artist.name }} </li>
+            <li>
+                <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
+            </li>
         {% endfor %}
         </ol>
 
         {% if similar_artists.next %}
             <div class="title header">
-                <a href = "/music/{{name}}/similar/?type=artists&page=1" >view more</a>
+                <a href = "similar/?type=artists&page=1" >view more</a>
             </div>
         {% endif %}
 
@@ -120,13 +124,15 @@
 
         <ol>
         {% for song in songs.data %}
-            <li>{{ song.title }} </li>
+            <li>
+                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+            </li>
         {% endfor %}
         </ol>
 
         {% if songs.next %}
             <div class="title header">
-                <a href = "/music/{{name}}/similar/?type=artists&page=1" >view more</a>
+                <a href = "songs/" >view more</a>
             </div>
         {% endif %}
 
@@ -141,13 +147,15 @@
 
         <ol>
         {% for song in similar_songs.data %}
-            <li>{{ song.title }} </li>
+            <li>
+                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+            </li>
         {% endfor %}
         </ol>
 
         {% if similar_songs.next %}
             <div class="title header">
-                <a href = "/music/{{name}}/similar/?type=songs&page=1" >view more</a>
+                <a href = "similar/?type=songs&page=1" >view more</a>
             </div>
         {% endif %}
 

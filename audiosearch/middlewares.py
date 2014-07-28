@@ -1,5 +1,4 @@
 from audiosearch.settings import DEBUG as DJANGO_DEBUG
-from src import views
 
 
 class AudiosearchDebug(object):

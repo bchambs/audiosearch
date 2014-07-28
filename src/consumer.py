@@ -1,13 +1,13 @@
 import json
-import logging
 import urllib
 from time import sleep
 
 import requests
 
 import audiosearch.config as cfg
-import src.util as util
-from src.services import ENCallFailure
+import utils
+import services
+# from services import ENCallFailure
 
 
 class ENConsumer(object):
@@ -34,7 +34,7 @@ class ENConsumer(object):
 
                 # success, return echo nest resource
                 if code == ENConsumer.SUCCESS:
-                    return json_response['response'][package.CALL_KEY]
+                    return json_response['response'][package.ECHO_NEST_KEY]
 
                 # exceeded api_key limit, snooze until timeout
                 elif code == ENConsumer.LIMIT_EXCEEDED:
@@ -44,7 +44,7 @@ class ENConsumer(object):
                 # call rejected by echo nest
                 else:
                     print "call rejected by echo nest"
-                    raise ENCallFailure(json_response['response']['status']['message'])
+                    raise services.ENCallFailure(json_response['response']['status']['message'])
 
             # invalid request or unable to parse json
             # except (requests.RequestException, ValueError, KeyError) as e:
@@ -52,15 +52,15 @@ class ENConsumer(object):
             #     raise ENCallFailure(e)
             except requests.RequestException as e:
                 print "1::%s" % str(package)
-                raise ENCallFailure(e)
+                raise services.ENCallFailure(e)
             except ValueError as e:
                 print "2::%s" % str(package)
-                raise ENCallFailure(e)
+                raise services.ENCallFailure(e)
             except KeyError as e:
                 print "3::%s" % str(package)
-                raise ENCallFailure(e)
+                raise services.ENCallFailure(e)
 
         # timeout
         print "====================timeout"
-        raise ENCallFailure("Audiosearch is receiving too many requests.  Try again soon!")
+        raise services.ENCallFailure("Audiosearch is receiving too many requests.  Try again soon!")
         

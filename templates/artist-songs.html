@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -15,104 +17,158 @@
 
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/similar.css" rel="stylesheet">
-
+    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+   
     <title>audiosearch</title>
 </head>
 <body>
 
-<!--nav-->
-<div class="container">
-   <div class="nav row">
-        <span id="nav-home-icon" class="glyphicon glyphicon-music col-lg-1"></span>
+<!-- nav -->
+<div id="nav" class="aaa">
+   <span class="zone glyphicon glyphicon-th-large"></span>
 
-        <div id="nav-title" class="col-lg-3">
-            <a href = "{% url 'src.views.index' %}" >audiosearch</a>
-            ::
-        </div>
+    <div class="zone search">
+        <form action="/search/" method="GET">
+            <input class="search-bar" type="text" name="q">
+        </form>
+    </div>
 
-        <div id="nav-search"  class="col-lg-3">
-            <form action="/search/" method="GET">
-                <input class="search-bar" type="text" name="q">
-            </form>
-        </div>
-
-        <div id="nav-about" class="col-lg-2">
-            about
-        </div>
-        <div id="nav-contact" class="col-lg-2">
-            contact
+    <div class="debug">
+        <div class="zone normal ddd">
+            <a href="" id="debug">
+                <span class="link"></span>debug
+            </a>
         </div>
     </div>
-</div><!--END nav container-->
 
-<!--results-->
-<div class="container content-wrap">
-
-    <!--headers-->
-    <div class="secondc">
-        <div class="content-title">
-            songs
+    <div class="debug">
+        <div class="zone normal ddd">
+            <a href="" id="clear">
+                <span class="link"></span>clear
+            </a>
         </div>
-    </div><!--END headers-->
+    </div>
+    
+</div><!--END nav -->
 
-    <!--single results-->
-    <div class="result-tables">
-        <div id="type-results" class="secondc">
-            <table id="song-result-table" class="table">
-            <tbody>
-            {% for song in songs %}
-                {% if forloop.counter|divisibleby:2 %}
-                <tr class="row-even">
-                {% else %}
-                <tr class="row-odd">
-                {% endif %}
-                    <td>{{ forloop.counter0|add:songs.start_index }}</td>
-                    <td>
-                        <a href="{% url 'src.views.song_profile' %}?q={{ song.id }}" > 
-                            {{ song.title }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-            </table>
+<!-- dir -->
+<div class="dir">
+    <div class="title">
+        <a href = "/">audiosearch</a> / songs 
 
-            <div class="show-more">
-                <div id="previous">
-                {% if songs.has_previous %}
-                    <a href="?q={{ q }}&page={{ songs.previous_page_number }}">previous</a>
-                {% endif %}
-                </div>
+        <span id="profile.name">
+            {% if profile.name %}
+                / <a href = "/music/{{ profile.name }}">{{ profile.name }}</a>
+            {% endif %}
+        </span>
+    </div>
 
-                <div id="current">
-                {% if songs.number %}
-                    Page {{ songs.number }} of {{ songs.paginator.num_pages }}.
-                {% endif %}
-                </div>
-
-                <div id="next">
-                {% if songs.has_next %}
-                    <a href="?q={{ q }}&page={{ songs.next_page_number }}">next</a>
-                {% endif %}
-                </div>
+    <div id="profile.location">
+        {% if profile.location %}
+            <div class="subtitle">
+                {{ profile.location }}
             </div>
+        {% endif %}
+    </div>
+    
+    <div id="profile.genre">
+        {% if profile.genres %}
+            <span class="subtitle">
+                {% for genre in profile.genres %}
+                    {% if forloop.first %}  
+                        {{ genre.name }}
+                    {% else %}
+                        , {{ genre.name }}
+                    {% endif %}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    <hr>
+</div><!--END dir -->
+
+<!-- content -->
+<div class="content">
+
+    {% if songs %}
+        <div id="songs" class="bbb">
+            <div class="title header">
+                Songs
+            </div>
+
+            <ul>
+            {% for song in songs.data %}
+                <li>
+                    <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}/" >{{ song.title }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+
+            <div class="title header">
+                {% if songs.previous %}
+                    <div id="previous">
+                        <a href = "/music/{{ name }}/similar/?type=songs&page={{ songs.previous }}" >previous</a>
+                    </div>
+                {% endif %}
+
+                {% if songs.current %}
+                    <div id="current">
+                        {{ songs.current }} of {{ songs.total }}
+                    </div>
+                {% endif %}
+
+                {% if songs.next %}
+                    <div id="next">
+                        <a href = "/music/{{ name }}/similar/?type=songs&page={{ songs.next }}" >next</a>
+                    </div>
+                {% endif %}
+            </div>
+
         </div>
-    </div><!--END single results table-->
-</div>
+    {% endif %}
+
+</div><!--END content -->
+
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
-<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
-<script src="{{ STATIC_URL }}js/artist.songs.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
+
+{% if debug %}
+    <script type="text/javascript">
+        $('a#debug').click( function() { 
+            debug_template(); 
+            return false; 
+        });
+
+        $('a#clear').click( function() { 
+            remove_resource("{{name}}"); 
+            return false; 
+        });
+    </script>
+{% endif %}
+
+<!-- 
+{% if not profile %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'profile', false, 0);
+    </script>
+{% endif %}
 
 {% if not songs %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', "{{ page }}", 0);
+        dispatch("{{ q|escapejs }}", 'songs', true, 0);
     </script>
 {% endif %}
+
+{% if not similar %}
+    <script type="text/javascript">
+        dispatch("{{ q|escapejs }}", 'similar', true, 0);
+    </script>
+{% endif %} -->
 
 </body>
 </html>

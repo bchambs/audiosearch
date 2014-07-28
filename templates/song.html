@@ -56,15 +56,32 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "/" >audiosearch</a> / search 
+        <a href = "/" >audiosearch</a> / music 
 
-        <span id="profile.name">
-            {% if name %}
-                / {{ name }}
+        / <a href = "/music/{{ dir_artist|space_to_plus }}">{{ dir_artist }}</a>
+
+        / {{ dir_song }}
+        <!-- <span id="profile.name">
+            {% if profile.name %}
+                / {{ profile.name }}
             {% endif %}
         </span>
+
+        <span id="name">
+            {% if profile.name %}
+                / {{ profile.name }}
+            {% endif %}
+        </span> -->
     </div>
 
+    <div id="profile.location">
+        {% if profile.location %}
+            <div class="subtitle">
+                {{ profile.location }}
+            </div>
+        {% endif %}
+    </div>
+    
     <div id="profile.genre">
         {% if profile.genres %}
             <span class="subtitle">
@@ -85,30 +102,30 @@
 <!-- content -->
 <div class="content">
 
-    {% if type == "artists" or not type %}
-    <div id="artists" class="column bbb">
+    {% if similar_artists %}
+    <div id="similar_artists" class="column bbb">
         <div class="title header">
-            Artists
+            Similar Artists
         </div>
 
         <ol>
-        {% for artist in artists.data %}
+        {% for artist in similar_artists.data %}
             <li>
                 <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
             </li>
         {% endfor %}
         </ol>
 
-        {% if artists.next %}
+        {% if similar_artists.next %}
             <div class="title header">
-                <a href = "/search/?q={{ dir_name|iriencode }}&type=artists&page=1" >view more</a>
+                <a href = "/music/{{ name|space_to_plus }}/similar/?type=artists&page=1" >view more</a>
             </div>
         {% endif %}
 
     </div>
     {% endif %}
 
-    {% if type == "songs" or not type %}
+    {% if songs %}
     <div id="songs" class="column bbb">
         <div class="title header">
             Songs
@@ -117,14 +134,37 @@
         <ol>
         {% for song in songs.data %}
             <li>
-                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}/" >{{ song.title }}</a>
+                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
             </li>
         {% endfor %}
         </ol>
 
         {% if songs.next %}
             <div class="title header">
-                <a href = "/search/?q={{ dir_name|space_to_plus }}&type=songs&page=1" >view more</a>
+                <a href = "/music/{{ name }}/songs/" >view more</a>
+            </div>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    {% if similar_songs %}
+    <div id="similar_songs" class="column bbb">
+        <div class="title header">
+            Similar Songs
+        </div>
+
+        <ol>
+        {% for song in similar_songs.data %}
+            <li>
+                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+            </li>
+        {% endfor %}
+        </ol>
+
+        {% if similar_songs.next %}
+            <div class="title header">
+                <a href = "/music/{{ name }}/similar/?type=songs&page=1" >view more</a>
             </div>
         {% endif %}
 
@@ -146,7 +186,7 @@
         });
 
         $('a#clear').click( function() { 
-            remove_resource("search:{{name}}"); 
+            remove_resource("{{name}}"); 
             return false; 
         });
     </script>

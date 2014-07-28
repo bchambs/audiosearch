@@ -1,30 +1,31 @@
-from __future__ import absolute_import
-import logging
-import sys
-
 from celery import shared_task
 
-from audiosearch.redis import client as RC
-from src.consumer import ENConsumer
-from src.services import ENCallFailure
+from audiosearch.redis import client as cache
+from consumer import ENConsumer
+import services
 
 
 @shared_task
-def call(package):
+def call(resource, service):
 
     try:
-        echo_nest_resource = ENConsumer.consume(package)
-        resource = package.trim(echo_nest_resource)
-        pipe = RC.pipeline()
+        if service.dependency:
+            intermediate = ENConsumer.consume(service.dependency)
+            service.build(intermediate)
 
-        # pipe.hset(package.id_, "status", {package.REDIS_KEY: "ready"})
-        # pipe.hset(package.id_, "type", package.TYPE_) # REDO
-        pipe.hset(package.call_id, package.REDIS_KEY, resource)
-        pipe.expire(package.call_id, package.ttl)
+        echo_nest_response = ENConsumer.consume(service)
+        content = service.trim(echo_nest_response)
+        pipe = cache.pipeline()
+
+        pipe.hset(resource, service.CONTENT_KEY, content)
+        pipe.expire(resource, service.ttl)
         pipe.execute()
 
-    except ENCallFailure as err_msg:
-        RC.hset(package.call_id, "error_msg", err_msg)  # this overwrites
-        print "%s failed: %s" % (str(package), err_msg)
+        print 'stored key: %s' % resource
+        print 'stored content: %s' % service.CONTENT_KEY
+
+    except services.ENCallFailure as err_msg:
+        cache.hset(resource, "error_msg", err_msg)  # this overwrites
+        print "%s failed: %s" % (str(service), err_msg)
 
 

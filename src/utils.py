@@ -1,12 +1,29 @@
-# from __future__ import absolute_import
-from random import choice, sample
-import logging
 import sys
 import ast
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import audiosearch.config as cfg
+import tasks
+from audiosearch.redis import client as cache
+
+
+def generate_content(resource, service_map, **kwargs):
+    data = cache.hgetall(resource)
+    page = kwargs.get('page')
+    result = {}
+
+    for content_key, service in service_map.items():
+        if content_key in data:
+            content = ast.literal_eval(data[content_key])
+            try:
+                result[content_key] = page_resource(page, content)
+            except TypeError:
+                result[content_key] = content
+        else:
+            tasks.call.delay(resource, service)
+
+    return result
 
 
 def page_resource(page, resource):
@@ -30,12 +47,3 @@ def page_resource(page, resource):
 
     return result
 
-
-def print_cache(c, indent=0):
-   for key, value in c.iteritems():
-      print '   ' * indent + str(key)
-      if isinstance(value, dict):
-         print_cache(value, indent+1)
-      else:
-         # print '    ' * (indent+1) + str(value)
-         pass

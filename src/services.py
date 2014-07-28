@@ -1,29 +1,41 @@
-from __future__ import absolute_import
-
 from random import choice, sample
 import datetime
 
 import audiosearch.config as cfg
-import src.util as util
+from src import utils
 
 
+"""
+resource = prefix + resource_id
+resource_id = name of artist or song
+content = resource's profile, similar_songs, etc
+content_key = profile, similar_songs, etc
+echo_key : key used to access resource from echo nest api
+"""
 class ENCall(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
 
-    def __init__(self, type_, method, call_id, buckets=None):
+
+    def __init__(self, type_, method, resource_id, buckets=None):
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
-        self.call_id = call_id
         self.ttl = cfg.REDIS_TTL
         self.payload = {
             'api_key': cfg.API_KEY,
             'format': "json",
         }
+        self.resource_id = resource_id
+        self.dependency = None
         if buckets:
             self.payload['bucket'] = buckets
 
+
     def trim(self, data):
         return data
+
+
+    def build(self, intermediate):
+        return 
 
 
     def __str__(self):
@@ -34,32 +46,34 @@ class ArtistProfile(ENCall):
     TYPE_ = 'artist'
     METHOD = 'profile'
     BUCKETS = [
-        # 'images',
         'terms',
         'artist_location',
         'years_active',
     ]
-    CALL_KEY = 'artist'
-    REDIS_KEY = 'profile'
+    ECHO_NEST_KEY = 'artist'
+    CONTENT_KEY = 'profile'
 
 
-    def __init__(self, name):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, name, self.BUCKETS)
-        self.payload['name'] = name
+    def __init__(self, resource_id):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        self.payload['name'] = resource_id
+
 
     def trim(self, data):
         result = {}
 
         result['name'] = data.get('name')
         result['genres'] = data.get('terms')[:cfg.GENRE_COUNT]
+        location = data.get('artist_location')
 
-        city = data.get('artist_location').get('city')
-        country = data.get('artist_location').get('country')
+        if location:
+            city = location.get('city')
+            country = location.get('country') 
 
-        if city and country:
-            result['location'] = city + ", " + country
-        elif country:
-            result['location'] = country
+            if city and country:
+                result['location'] = city + ", " + country
+            elif country:
+                result['location'] = country
 
         return result
 
@@ -71,12 +85,13 @@ class ArtistProfile(ENCall):
 class ArtistSongs(ENCall):
     TYPE_ = 'playlist'
     METHOD = 'static'
-    CALL_KEY = 'songs'
-    REDIS_KEY = 'songs'
+    ECHO_NEST_KEY = 'songs'
+    CONTENT_KEY = 'songs'
 
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
-        self.payload['artist'] = id_
+
+    def __init__(self, resource_id):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
+        self.payload['artist'] = resource_id
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
 
@@ -88,12 +103,13 @@ class ArtistSongs(ENCall):
 class SearchArtists(ENCall):
     TYPE_ = 'artist'
     METHOD = 'suggest'
-    CALL_KEY = 'artists'
-    REDIS_KEY = 'artists'
+    ECHO_NEST_KEY = 'artists'
+    CONTENT_KEY = 'artists'
 
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
-        self.payload['name'] = id_
+
+    def __init__(self, resource_id):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
+        self.payload['name'] = resource_id
         self.payload['results'] = cfg.RESULTS
 
 
@@ -102,15 +118,18 @@ class SearchArtists(ENCall):
 
 
 class SearchSongs(ENCall):
-    TYPE_ = "song"
-    METHOD = "search"
-    CALL_KEY = 'songs'
-    REDIS_KEY = 'songs'
+    TYPE_ = 'song'
+    METHOD = 'search'
+    ECHO_NEST_KEY = 'songs'
+    CONTENT_KEY = 'songs'
 
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, None)
-        self.payload['title'] = id_
-        self.payload['results'] = cfg.RESULTS
+
+    def __init__(self, artist_id, resource_id, for_id=False):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
+        self.for_id = for_id
+        self.payload['title'] = resource_id
+        self.payload['artist'] = artist_id
+        self.payload['results'] = 1 if for_id else cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
 
@@ -127,12 +146,13 @@ class SimilarArtists(ENCall):
         'terms',
         'songs',
     ]
-    CALL_KEY = 'artists'
-    REDIS_KEY = 'similar_artists'
+    ECHO_NEST_KEY = 'artists'
+    CONTENT_KEY = 'similar_artists'
 
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
-        self.payload['name'] = id_
+
+    def __init__(self, resource_id):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        self.payload['name'] = resource_id
         self.payload['results'] = cfg.RESULTS
 
 
@@ -143,74 +163,53 @@ class SimilarArtists(ENCall):
 class SimilarSongs(ENCall):
     TYPE_ = 'playlist'
     METHOD = 'static'
-    CALL_KEY = 'songs'
-    REDIS_KEY = 'similar_songs' 
+    ECHO_NEST_KEY = 'songs'
+    CONTENT_KEY = 'similar_songs' 
 
 
-    def __init__(self, id_, page_type):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_)
+    def __init__(self, resource_id, resource_type, artist_id=None, song_id=None):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
         self.payload['results'] = cfg.RESULTS
-        if page_type == "artist":
-            self.payload['artist'] = id_
+        
+        if resource_type == "artist":
+            self.payload['artist'] = resource_id
         else:
-            self.payload['song_id'] = id_
+            self.dependency = SearchSongs(artist_id, resource_id, for_id=True)
+
+
+    def build(self, intermediate):
+        if not intermediate: return None
+
+        self.payload['song_id'] = intermediate[0].get('id')
+        return 
 
 
     def __str__(self):
         return "service.artist similar songs"
 
 
-class SongProfile(ENCall):
-    TYPE_ = "song"
-    METHOD = "profile"
+class SongProfile(SearchSongs):
+    TYPE_ = 'song'
+    METHOD = 'profile'
     BUCKETS = [
         'audio_summary',
         'song_hotttnesss', 
         'song_hotttnesss_rank', 
-        # 'tracks'
     ]
-    CALL_KEY = 'songs'
-    REDIS_KEY = 'profile'
-
-    def __init__(self, id_):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, id_, self.BUCKETS)
-        self.payload['id'] = id_
+    ECHO_NEST_KEY = 'songs'
+    CONTENT_KEY = 'profile'
 
 
-    def trim(self, data):
-        # song search returns a list. we're using an id so we'll always use the first item
-        if len(data) == 0:
-            return data
-        else:
-            data = data[0]
+    def __init__(self, artist_id, resource_id):
+        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        self.dependency = SearchSongs(artist_id, resource_id, for_id=True)
 
-        result = {}
 
-        if 'title' in data:
-            result['title'] = data['title']
+    def build(self, intermediate):
+        if not intermediate: return None
 
-        if 'artist_name' in data:
-            result['artist_name'] = data['artist_name']
-
-        if 'artist_id' in data:
-            result['artist_id'] = data['artist_id']
-            
-        if 'audio_summary' in data:
-            result['audio_summary'] = data['audio_summary']
-
-            song_duration = data['audio_summary']['duration'] / 60
-            song_duration = str(round(song_duration,2))
-            song_duration = song_duration.replace('.', ':')
-
-            result['duration'] = song_duration
-
-        if 'song_hotttnesss_rank' in data:
-            result['rank'] = data['song_hotttnesss_rank']
-
-        if 'song_hotttnesss' in data:
-            result['hotttnesss'] = int(round(data['song_hotttnesss'] * 100))
-
-        return result
+        self.payload['id'] = intermediate[0].get('id')
+        return 
 
 
     def __str__(self):

@@ -32,7 +32,7 @@ ADMINS = (
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    '127.0.0.1:8888'
+    '127.0.0.1:8888',
     'http://wwww.audiosearch.net',
 ]
 
@@ -57,8 +57,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'src',
-    'src.templatetags.audiosearch_extras',
-    'django.contrib.humanize',
+    'src.templatetags.audiosearch_tags',
+    # 'django.contrib.humanize',
 )
 
 MIDDLEWARE_CLASSES = (

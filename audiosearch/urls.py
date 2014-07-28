@@ -9,8 +9,20 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'src.views.index'), 
 
+    url(r'^search/$', views.search),
+
+    url(r'^music/(?P<artist>[\w|\W]+)$', views.artist),
     url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar),
-    url(r'^music/(?P<artist>[\w|\W]+)/$', views.artist),
+    url(r'^music/(?P<artist>[\w|\W]+)/songs/$', views.artist_songs),
+    url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/$', views.song),
+    url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/similar/$', views.similar),
+
+
+    # url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/similar/$', views.similar),
+    # url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/$', views.song),
+    # url(r'^music/(?P<artist>[\w|\W]+)/songs/$', views.artist_songs),
+    # url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar),
+    # url(r'^music/(?P<artist>[\w|\W]+)/$', views.artist),
 
     url(r'^ajax/clear/$', 'src.views.clear_resource'),
     url(r'^ajax/debug_template/$', 'src.views.debug_template'),
@@ -18,4 +30,4 @@ urlpatterns = patterns('',
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )
 
-handler500 = 'src.views.server_error'
+handler500 = 'views.server_error'
