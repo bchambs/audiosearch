@@ -35,7 +35,7 @@ def search(request, **kwargs):
         'songs': services.SearchSongs(None, resource_id),
     }
 
-    content = utils.generate_content(resource, service_map)
+    content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
 
     return render(request, "search.html", context)
@@ -104,9 +104,6 @@ def song(request, **kwargs):
 
     content = utils.generate_content(resource, data_map)
     context.update(content)
-
-    if 'profile' in content:
-        print content['profile'].keys()
 
     return render(request, "song.html", context)
 

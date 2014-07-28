@@ -58,10 +58,10 @@
     <div class="title">
         <a href = "/">audiosearch</a> / similar 
 
-        / <a href = "/music/{{ dir_artist }}">{{ dir_artist }}</a>
+        / <a href = "/music/{{ dir_artist|space_to_plus }}">{{ dir_artist }}</a>
 
         {% if dir_song %}
-        / <a href = "/music/{{ dir_song }}">{{ dir_song }}</a>
+        / <a href = "/music/{{ dir_artist|space_to_plus }}/{{ dir_song|space_to_plus }}">{{ dir_song }}</a>
         {% endif %}
         <!-- <span id="profile.name">
             {% if profile.name %}
@@ -107,14 +107,14 @@
             <ol>
             {% for artist in similar_artists.data %}
                 <li>
-                    <a href = "/music/{{ artist.name }}/" >{{ artist.name }}</a>
+                    <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
                 </li>
             {% endfor %}
             </ol>
 
             {% if similar_artists.next %}
                 <div class="title">
-                    <a href = "/music/{{ name }}/similar" >view more</a>
+                    <a href = "/music/{{ artist.name|space_to_plus }}/similar" >view more</a>
                 </div>
             {% endif %}
 
@@ -130,7 +130,7 @@
             <ul>
             {% for song in similar_songs.data %}
                 <li>
-                    <a href = "/music/{{ song.artist_name }}/{{ song.title }}" >{{ song.title }}</a>
+                    <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
                 </li>
             {% endfor %}
             </ul>

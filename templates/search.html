@@ -97,7 +97,7 @@
         <div class="title header">
             {% if artists.previous %}
                 <div id="previous">
-                    <a href = "?type=artists&page={{ artists.previous }}" >previous</a>
+                    <a href = "?q={{ resource_id|iriencode }}&type=artists&page={{ artists.previous }}" >previous</a>
                 </div>
             {% endif %}
 
@@ -141,7 +141,7 @@
         <div class="title header">
             {% if songs.previous %}
                 <div id="previous">
-                    <a href = "?type=songs&page={{ songs.previous }}" >previous</a>
+                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs&page={{ songs.previous }}" >previous</a>
                 </div>
             {% endif %}
 
@@ -153,7 +153,7 @@
 
             {% if songs.next %}
                 <div id="next">
-                    <a href = "?q={{ resource_id }}&type=songs&page={{ songs.next }}" >next</a>
+                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs&page={{ songs.next }}" >next</a>
                 </div>
             {% endif %}
         </div>

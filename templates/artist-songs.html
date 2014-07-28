@@ -60,7 +60,7 @@
 
         <span id="profile.name">
             {% if profile.name %}
-                / <a href = "/music/{{ profile.name }}">{{ profile.name }}</a>
+                / <a href = "/music/{{ profile.name|space_to_plus }}">{{ profile.name }}</a>
             {% endif %}
         </span>
     </div>
