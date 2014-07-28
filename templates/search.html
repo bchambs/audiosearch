@@ -56,13 +56,7 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "/" >audiosearch</a> / search 
-
-        <span id="profile.name">
-            {% if name %}
-                / {{ name }}
-            {% endif %}
-        </span>
+        <a href = "/" >audiosearch</a> / search / {{ resource_id }}
     </div>
 
     <div id="profile.genre">
@@ -99,9 +93,30 @@
         {% endfor %}
         </ol>
 
-        {% if artists.next %}
+        {% if type %}
+        <div class="title header">
+            {% if artists.previous %}
+                <div id="previous">
+                    <a href = "?type=artists&page={{ artists.previous }}" >previous</a>
+                </div>
+            {% endif %}
+
+            {% if artists.current %}
+                <div id="current">
+                    {{ artists.current }} of {{ artists.total }}
+                </div>
+            {% endif %}
+
+            {% if artists.next %}
+                <div id="next">
+                    <a href = "?type=artists&page={{ artists.next }}" >next</a>
+                </div>
+            {% endif %}
+        </div>
+
+        {% elif artists.next %}
             <div class="title header">
-                <a href = "/search/?q={{ dir_name|iriencode }}&type=artists&page=1" >view more</a>
+                <a href = "/search/?q={{ resource_id|iriencode }}&type=artists" >view more</a>
             </div>
         {% endif %}
 
@@ -122,9 +137,30 @@
         {% endfor %}
         </ol>
 
-        {% if songs.next %}
+        {% if type %}
+        <div class="title header">
+            {% if songs.previous %}
+                <div id="previous">
+                    <a href = "?type=songs&page={{ songs.previous }}" >previous</a>
+                </div>
+            {% endif %}
+
+            {% if songs.current %}
+                <div id="current">
+                    {{ songs.current }} of {{ songs.total }}
+                </div>
+            {% endif %}
+
+            {% if songs.next %}
+                <div id="next">
+                    <a href = "?q={{ resource_id }}&type=songs&page={{ songs.next }}" >next</a>
+                </div>
+            {% endif %}
+        </div>
+
+        {% elif songs.next %}
             <div class="title header">
-                <a href = "/search/?q={{ dir_name|space_to_plus }}&type=songs&page=1" >view more</a>
+                <a href = "/search/?q={{ resource_id|space_to_plus }}&type=songs" >view more</a>
             </div>
         {% endif %}
 

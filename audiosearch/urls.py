@@ -7,25 +7,24 @@ from src import views
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'src.views.index'), 
-
-    url(r'^search/$', views.search),
-
-    url(r'^music/(?P<artist>[\w|\W]+)$', views.artist),
-    url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar),
-    url(r'^music/(?P<artist>[\w|\W]+)/songs/$', views.artist_songs),
-    url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/$', views.song),
-    url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/similar/$', views.similar),
+    url(ur'^$', 'src.views.index'), 
 
 
-    # url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/similar/$', views.similar),
-    # url(r'^music/(?P<artist>[\w|\W]+)/(?P<song>[\w|\W]+)/$', views.song),
-    # url(r'^music/(?P<artist>[\w|\W]+)/songs/$', views.artist_songs),
-    # url(r'^music/(?P<artist>[\w|\W]+)/similar/$', views.similar),
-    # url(r'^music/(?P<artist>[\w|\W]+)/$', views.artist),
+    url(ur'^search/$', views.search),
+
+
+    url(ur'^music/(?P<artist>[^/]*)/$', views.artist),
+    url(ur'^music/(?P<artist>[^/]*)/similar/$', views.similar),
+    url(ur'^music/(?P<artist>[^/]*)/songs/$', views.artist_songs),
+
+
+    url(ur'^music/(?P<artist>[^/]*)/(?P<song>[^/]*)/$', views.song),
+    url(ur'^music/(?P<artist>[^/]*)/(?P<song>[^/]*)/similar/$', views.similar),
+
 
     url(r'^ajax/clear/$', 'src.views.clear_resource'),
     url(r'^ajax/debug_template/$', 'src.views.debug_template'),
+
 
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 )

@@ -1,13 +1,10 @@
 import ast
 import json
-import logging
 import urllib
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, redirect
-from django.template import RequestContext, loader, Context
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import Context
 
 from src import services, utils, tasks
 from audiosearch.redis import client as RC
@@ -18,6 +15,30 @@ def index(request, **kwargs):
     context = Context({})
 
     return render(request, 'index.html', context)
+
+
+def search(request, **kwargs):
+    prefix = "search:"
+    resource_id = urllib.unquote_plus(request.GET.get('q'))
+    resource = prefix + resource_id
+    page = request.GET.get('page')
+    page_type = request.GET.get('type')
+
+    context = Context({
+        'resource_id': resource_id,
+        'type': page_type,
+        'debug': kwargs.get('debug'),
+    })
+
+    service_map = {
+        'artists': services.SearchArtists(resource_id),
+        'songs': services.SearchSongs(None, resource_id),
+    }
+
+    content = utils.generate_content(resource, service_map)
+    context.update(content)
+
+    return render(request, "search.html", context)
 
 
 def artist(request, **kwargs):
@@ -41,6 +62,53 @@ def artist(request, **kwargs):
     context.update(content)
 
     return render(request, "artist.html", context)
+
+
+def artist_songs(request, **kwargs):
+    artist = kwargs['artist']
+    page = request.GET.get('page')
+    context = Context({
+        'dir_name': urllib.unquote_plus(artist),
+        'debug': kwargs.get('debug'),
+    })
+
+    data_map = {
+        'profile': services.ArtistProfile(artist),
+        'songs': services.ArtistSongs(artist),
+    }
+
+    content = utils.generate_content(artist, data_map, page=page)
+    context.update(content)
+
+    return render(request, "artist-songs.html", context)
+
+
+def song(request, **kwargs):
+    prefix = "song:"
+    artist_id = urllib.unquote_plus(kwargs['artist'])
+    resource_id = urllib.unquote_plus(kwargs['song'])
+    resource = prefix + resource_id
+
+    context = Context({
+        'dir_artist': artist_id,
+        'dir_song': resource_id,
+        'debug': kwargs.get('debug'),
+    })
+
+    data_map = {
+        'songs': services.SearchSongs(artist_id, resource_id, for_id=True),
+        'similar_artists': services.SimilarArtists(artist),
+        'similar_songs': services.SimilarSongs(resource_id, "song", artist_id, song_id=resource_id),
+        'profile': services.SongProfile(artist_id, resource_id),
+    }
+
+    content = utils.generate_content(resource, data_map)
+    context.update(content)
+
+    if 'profile' in content:
+        print content['profile'].keys()
+
+    return render(request, "song.html", context)
 
 
 def similar(request, **kwargs):
@@ -75,87 +143,16 @@ def similar(request, **kwargs):
     resource = prefix + resource_id
 
     context = Context({
-        'resource_id': resource_id,
+        'dir_artist': artist,
+        'dir_song': song,
+        'resource_type': resource_type,
         'debug': kwargs.get('debug'),
     })
 
     content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
 
-    # add all content items to context['content']. in templates, iterate over this so i dont have to type everything 3 times hehehhehehehehehheheheh
-
     return render(request, "similar.html", context)
-
-
-def artist_songs(request, **kwargs):
-    artist = kwargs['artist']
-    page = request.GET.get('page')
-    context = Context({
-        'dir_name': urllib.unquote_plus(artist),
-        'debug': kwargs.get('debug'),
-    })
-
-    data_map = {
-        'profile': services.ArtistProfile(artist),
-        'songs': services.ArtistSongs(artist),
-    }
-
-    content = utils.generate_content(artist, data_map, page=page)
-    context.update(content)
-
-    return render(request, "artist-songs.html", context)
-
-
-def search(request, **kwargs):
-    q = request.GET.get('q')
-    qstr = "search:" + q
-    page = request.GET.get('page')
-    page_type = request.GET.get('type')
-
-    context = Context({
-        'dir_name': urllib.unquote_plus(q),
-        'type': page_type,
-        'debug': kwargs.get('debug'),
-    })
-
-    data_map = {
-        'artists': services.SearchArtists(q),
-        'songs': services.SearchSongs(q),
-    }
-
-    content = utils.generate_content(qstr, data_map, page=page)
-    context.update(content)
-
-    return render(request, "search.html", context)
-
-
-def song(request, **kwargs):
-    print "in song view"
-    prefix = "song:"
-    artist_id = urllib.unquote_plus(kwargs['artist'])
-    resource_id = urllib.unquote_plus(kwargs['song'])
-    resource = prefix + resource_id
-
-    context = Context({
-        'dir_artist': artist_id,
-        'dir_song': resource_id,
-        'debug': kwargs.get('debug'),
-    })
-
-    data_map = {
-        'songs': services.SearchSongs(artist_id, resource_id, for_id=True),
-        'similar_artists': services.SimilarArtists(artist),
-        'similar_songs': services.SimilarSongs(resource_id, "song", artist_id, song_id=resource_id),
-        'profile': services.SongProfile(artist_id, resource_id),
-    }
-
-    content = utils.generate_content(resource, data_map)
-    context.update(content)
-
-    if 'profile' in content:
-        print content['profile'].keys()
-
-    return render(request, "song.html", context)
 
 
 # HTTP 500

@@ -58,8 +58,11 @@
     <div class="title">
         <a href = "/">audiosearch</a> / similar 
 
-        / <a href = "/music/{{ dir_name }}">{{ name }}</a>
+        / <a href = "/music/{{ dir_artist }}">{{ dir_artist }}</a>
 
+        {% if dir_song %}
+        / <a href = "/music/{{ dir_song }}">{{ dir_song }}</a>
+        {% endif %}
         <!-- <span id="profile.name">
             {% if profile.name %}
                 / <a href = "/music/{{ profile.name }}">{{ profile.name }}</a>
@@ -135,7 +138,7 @@
             <div class="title header">
                 {% if similar_songs.previous %}
                     <div id="previous">
-                        <a href = "/music/{{name}}/similar/?type=songs&page={{ similar_songs.previous }}" >previous</a>
+                        <a href = "?type=songs&page={{ similar_songs.previous }}" >previous</a>
                     </div>
                 {% endif %}
 
@@ -147,7 +150,7 @@
 
                 {% if similar_songs.next %}
                     <div id="next">
-                        <a href = "/music/{{name}}/similar/?type=songs&page={{ similar_songs.next }}" >next</a>
+                        <a href = "?type=songs&page={{ similar_songs.next }}" >next</a>
                     </div>
                 {% endif %}
             </div>

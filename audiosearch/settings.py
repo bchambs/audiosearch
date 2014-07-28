@@ -109,3 +109,4 @@ CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
 
+# APPEND_SLASH = True

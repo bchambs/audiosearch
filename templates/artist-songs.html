@@ -110,7 +110,7 @@
             <div class="title header">
                 {% if songs.previous %}
                     <div id="previous">
-                        <a href = "/music/{{ name }}/similar/?type=songs&page={{ songs.previous }}" >previous</a>
+                        <a href = "?type=songs&page={{ songs.previous }}" >previous</a>
                     </div>
                 {% endif %}
 
@@ -122,7 +122,7 @@
 
                 {% if songs.next %}
                     <div id="next">
-                        <a href = "/music/{{ name }}/similar/?type=songs&page={{ songs.next }}" >next</a>
+                        <a href = "?type=songs&page={{ songs.next }}" >next</a>
                     </div>
                 {% endif %}
             </div>

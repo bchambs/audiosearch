@@ -118,35 +118,13 @@
 
         {% if similar_artists.next %}
             <div class="title header">
-                <a href = "/music/{{ name|space_to_plus }}/similar/?type=artists&page=1" >view more</a>
+                <a href = "similar/?type=artists" >view more</a>
             </div>
         {% endif %}
 
     </div>
     {% endif %}
 
-    {% if songs %}
-    <div id="songs" class="column bbb">
-        <div class="title header">
-            Songs
-        </div>
-
-        <ol>
-        {% for song in songs.data %}
-            <li>
-                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-            </li>
-        {% endfor %}
-        </ol>
-
-        {% if songs.next %}
-            <div class="title header">
-                <a href = "/music/{{ name }}/songs/" >view more</a>
-            </div>
-        {% endif %}
-
-    </div>
-    {% endif %}
 
     {% if similar_songs %}
     <div id="similar_songs" class="column bbb">
@@ -164,7 +142,7 @@
 
         {% if similar_songs.next %}
             <div class="title header">
-                <a href = "/music/{{ name }}/similar/?type=songs&page=1" >view more</a>
+                <a href = "similar/?type=songs" >view more</a>
             </div>
         {% endif %}
 
