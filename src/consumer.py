@@ -7,7 +7,6 @@ import requests
 import audiosearch.config as cfg
 import utils
 import services
-# from services import EchoNestServiceFailure
 
 
 class ENConsumer(object):
@@ -28,8 +27,6 @@ class ENConsumer(object):
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
 
-                print response.url
-
                 code = json_response['response']['status']['code']
 
                 # success, return echo nest resource
@@ -43,24 +40,21 @@ class ENConsumer(object):
 
                 # call rejected by echo nest
                 else:
-                    print "call rejected by echo nest"
                     raise services.EchoNestServiceFailure(json_response['response']['status']['message'])
 
             # invalid request or unable to parse json
-            # except (requests.RequestException, ValueError, KeyError) as e:
-            #     print "=====================invalid request or unable to parse json"
-            #     raise EchoNestServiceFailure(e)
-            except requests.RequestException as e:
-                print "1::%s" % str(package)
-                raise services.EchoNestServiceFailure(e)
-            except ValueError as e:
-                print "2::%s" % str(package)
-                raise services.EchoNestServiceFailure(e)
-            except KeyError as e:
-                print "3::%s" % str(package)
-                raise services.EchoNestServiceFailure(e)
+            except (requests.RequestException, ValueError, KeyError) as e:
+                raise EchoNestServiceFailure(e)
+            # except requests.RequestException as e:
+            #     print "1::%s" % str(package)
+            #     raise services.EchoNestServiceFailure(e)
+            # except ValueError as e:
+            #     print "2::%s" % str(package)
+            #     raise services.EchoNestServiceFailure(e)
+            # except KeyError as e:
+            #     print "3::%s" % str(package)
+            #     raise services.EchoNestServiceFailure(e)
 
         # timeout
-        print "====================timeout"
         raise services.EchoNestServiceFailure("Audiosearch is receiving too many requests.  Try again soon!")
         

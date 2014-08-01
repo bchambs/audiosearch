@@ -30,16 +30,16 @@ class EchoNestService(object):
             self.payload['bucket'] = buckets
 
 
+    def __str__(self):
+        return "EchoNestService(base)"
+
+
     def trim(self, data):
         return data
 
 
     def build(self, intermediate):
         return 
-
-
-    def __str__(self):
-        return "service.EchoNestService"
 
 
 class ArtistProfile(EchoNestService):
@@ -59,27 +59,45 @@ class ArtistProfile(EchoNestService):
         self.payload['name'] = resource_id
 
 
-    def trim(self, data):
-        result = {}
+    def __str__(self):
+        return "ArtistProfile"
 
-        result['name'] = data.get('name')
-        result['genres'] = data.get('terms')[:cfg.GENRE_COUNT]
+
+    def trim(self, data):
+        result = {
+            'content_type': {},
+            'content': {}
+        }
+        ct = result['content_type']
+        content = result['content']
+
+        content['name'] = data.get('name')
+        ct['name'] = "string" if result['name'] else None
+
         location = data.get('artist_location')
+        ct['location'] = "string" if location else None
 
         if location:
             city = location.get('city')
             country = location.get('country') 
 
             if city and country:
-                result['location'] = city + ", " + country
+                content['location'] = city + ", " + country
             elif country:
-                result['location'] = country
+                content['location'] = country
+
+        genres = data.get('terms')[:cfg.GENRE_COUNT]
+        ct['genres'] = "list" if genres else None
+
+        if genres:
+            content['genres'] = []
+
+            for genre in genres[:-1]:
+                content['genres'].append(genre['name'] + ", ")
+
+            content['genres'].append(genres[-1]['name'])
 
         return result
-
-
-    def __str__(self):
-        return "service.artist profile"
 
 
 class ArtistSongs(EchoNestService):
@@ -97,7 +115,21 @@ class ArtistSongs(EchoNestService):
 
 
     def __str__(self):
-        return "service.artist songs"
+        return "ArtistSongs"
+
+
+    def trim(self, data):
+        result = {
+
+            'content_type': {
+
+            },
+        }
+        ct = result['content_type']
+
+
+
+        return result
 
 
 class SimilarArtists(EchoNestService):

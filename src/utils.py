@@ -50,3 +50,10 @@ def page_resource(page, resource):
 
     return result
 
+
+def unescape_html(s):
+    s = s.replace("&lt;", "<")
+    s = s.replace("&gt;", ">")
+    s = s.replace("&amp;", "&")
+    
+    return s

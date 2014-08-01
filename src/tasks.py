@@ -13,7 +13,6 @@ def call(resource, service):
             intermediate = ENConsumer.consume(service.dependency)
             service.build(intermediate)
 
-
         echo_nest_response = ENConsumer.consume(service)
         content = service.trim(echo_nest_response)
         pipe = cache.pipeline()

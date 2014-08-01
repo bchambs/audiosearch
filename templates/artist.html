@@ -56,44 +56,37 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "/" >audiosearch</a> / music 
+        <a href = "/" >audiosearch</a> / music / 
 
-        <span id="profile.name">
-            {% if profile.name %}
-                / {{ profile.name }}
-            {% endif %}
+        <span id="profile-name">
+            {{ profile.name }}
         </span>
     </div>
 
-    <div id="profile.location">
-        {% if profile.location %}
-            <div class="subtitle">
-                {{ profile.location }}
-            </div>
-        {% endif %}
+    <div class="subtitle">
+        <div id="profile-location">
+            {{ profile.location }}
+        </div>
+        <div id="profile-genres">
+            {% for genre in profile.genres %}
+                {{ genre }}
+            {% endfor %}
+        </div>
     </div>
     
-    <div id="profile.genre">
-        {% if profile.genres %}
-            <span class="subtitle">
-                {% for genre in profile.genres %}
-                    {% if forloop.first %}  
-                        {{ genre.name }}
-                    {% else %}
-                        , {{ genre.name }}
-                    {% endif %}
-                {% endfor %}
-            </span>
-        {% endif %}
+    <div class="subtitle">
+        <div id="profile-genres" >
+
+        </div>
     </div>
 
     <hr>
+
 </div><!--END dir -->
 
 <!-- content -->
 <div class="content">
 
-    {% if similar_artists %}
     <div id="similar_artists" class="column bbb">
         <div class="title header">
             Similar Artists
@@ -114,7 +107,6 @@
         {% endif %}
 
     </div>
-    {% endif %}
 
     {% if songs %}
     <div id="songs" class="column bbb">
@@ -183,11 +175,11 @@
     </script>
 {% endif %}
 
-{% if pending_content %}
+{% for content_key in pending_content %}
     <script type="text/javascript">
-        dispatch("{{ resource }}", "{{ pending_content }}", "{{ page }}");
+        setTimeout(dispatch("{{ resource }}", "{{ content_key }}", 0, "{{ page }}"), 1500);
     </script>
-{% endif %}
+{% endfor %}
 
 </body>
 </html>

@@ -7,7 +7,7 @@ from src import views
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(ur'^$', 'src.views.index'), 
+    url(ur'^$', views.index), 
 
 
     url(ur'^search/$', views.search),
@@ -22,8 +22,8 @@ urlpatterns = patterns('',
     url(ur'^music/(?P<artist>[^/]*)/(?P<song>[^/]*)/similar/$', views.similar),
 
 
-    url(r'^ajax/retrieval/$', 'src.views.retrieve_content'),
-    url(r'^ajax/clear/$', 'src.views.clear_resource'),
+    url(r'^ajax/retrieval/$', views.retrieve_content),
+    url(r'^ajax/clear/$', views.clear_resource),
     url(r'^ajax/debug_template/$', 'src.views.debug_template'),
 
 

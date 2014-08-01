@@ -27,6 +27,7 @@ def search(request, **kwargs):
     context = Context({
         'resource_id': resource_id,
         'type': page_type,
+        'page': page,
         'debug': kwargs.get('debug'),
     })
 
@@ -70,6 +71,7 @@ def artist_songs(request, **kwargs):
     page = request.GET.get('page')
     context = Context({
         'dir_name': urllib.unquote_plus(artist),
+        'page': page,
         'debug': kwargs.get('debug'),
     })
 
@@ -144,6 +146,7 @@ def similar(request, **kwargs):
         'dir_artist': artist,
         'dir_song': song,
         'resource_type': resource_type,
+        'page': page,
         'debug': kwargs.get('debug'),
     })
 
@@ -166,15 +169,21 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
-def retrieve_resource(request, **kwargs):
-    resource = request.GET.get('resource')
+def retrieve_content(request, **kwargs):
+    resource = utils.unescape_html(request.GET.get('resource'))
     content_key = request.GET.get('content_key')
     page = request.GET.get('page')
     context = {}
 
-    content = cache.hget(resource, content_key)
+    content_string = cache.hget(resource, content_key)
 
-    if not content: return HttpResponse(json.dumps(context), content_type="application/json")
+    if not content_string: 
+        context['status'] = 'pending'
+
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+    content = ast.literal_eval(content_string)
+    context['status'] = 'success'
 
     try:
         context[content_key] = utils.page_resource(page, content)
@@ -222,7 +231,7 @@ def retrieve_resource(request):
 
 
 def clear_resource(request):
-    resource = request.GET.get('resource')
+    resource = utils.unescape_html(request.GET.get('resource'))
     hit = cache.delete(resource)
 
     if hit: print "Removed from Redis: %s" %(resource)
