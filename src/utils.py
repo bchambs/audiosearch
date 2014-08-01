@@ -9,22 +9,23 @@ from audiosearch.redis import client as cache
 
 
 def generate_content(resource, service_map, **kwargs):
-    data = cache.hgetall(resource)
+    cache_data = cache.hgetall(resource)
     page = kwargs.get('page')
     result = {
         'pending_content': []
     }
 
-    for content_key, service in service_map.items():
-        if content_key in data:
-            content = ast.literal_eval(data[content_key])
+    for key, service in service_map.items():
+        if key in cache_data:
+            content = ast.literal_eval(cache_data[key])
+            
             try:
-                result[content_key] = page_resource(page, content)
+                result[key] = page_resource(page, content)
             except TypeError:
-                result[content_key] = content
+                result[key] = content
         else:
             tasks.call.delay(resource, service)
-            result['pending_content'].append(content_key)
+            result['pending_content'].append(key)
 
     return result
 
@@ -55,5 +56,5 @@ def unescape_html(s):
     s = s.replace("&lt;", "<")
     s = s.replace("&gt;", ">")
     s = s.replace("&amp;", "&")
-    
+
     return s

@@ -64,38 +64,30 @@ class ArtistProfile(EchoNestService):
 
 
     def trim(self, data):
-        result = {
-            'content_type': {},
-            'content': {}
-        }
-        ct = result['content_type']
-        content = result['content']
+        result = {}
 
-        content['name'] = data.get('name')
-        ct['name'] = "string" if result['name'] else None
+        result['name'] = data.get('name')
 
         location = data.get('artist_location')
-        ct['location'] = "string" if location else None
 
         if location:
             city = location.get('city')
             country = location.get('country') 
 
             if city and country:
-                content['location'] = city + ", " + country
+                result['location'] = city + ", " + country
             elif country:
-                content['location'] = country
+                result['location'] = country
 
         genres = data.get('terms')[:cfg.GENRE_COUNT]
-        ct['genres'] = "list" if genres else None
 
         if genres:
-            content['genres'] = []
+            result['genres'] = []
 
             for genre in genres[:-1]:
-                content['genres'].append(genre['name'] + ", ")
+                result['genres'].append(genre['name'] + ", ")
 
-            content['genres'].append(genres[-1]['name'])
+            result['genres'].append(genres[-1]['name'])
 
         return result
 
@@ -118,20 +110,6 @@ class ArtistSongs(EchoNestService):
         return "ArtistSongs"
 
 
-    def trim(self, data):
-        result = {
-
-            'content_type': {
-
-            },
-        }
-        ct = result['content_type']
-
-
-
-        return result
-
-
 class SimilarArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'similar'
@@ -151,7 +129,7 @@ class SimilarArtists(EchoNestService):
 
 
     def __str__(self):
-        return "service.artist similar artists"
+        return "SimilarArtists"
 
 
 class SearchArtists(EchoNestService):
@@ -263,3 +241,6 @@ class SongProfile(EchoNestService):
 
 class EchoNestServiceFailure(Exception):
     pass
+
+
+

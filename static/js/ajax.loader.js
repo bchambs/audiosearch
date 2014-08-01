@@ -2,6 +2,9 @@
 /* jslint browser: true */
 /* global $, jQuery */
 
+
+TODO, add map for content.sub_key to type (string, table, etc) add to config.js
+
 var AJAX_SNOOZE = 2000,
     ATTEMPT_LIMIT = 4,
     FADE_DELAY = 1000;
@@ -9,22 +12,31 @@ var AJAX_SNOOZE = 2000,
 
 function load_content(content_key, data) {
     'use strict';
-    var key;
 
-    for (key in data) {
+    var key, 
+        content = data['content'], 
+        content_type = data['content_type'];
+
+    for (key in content) {
         var key_string = "#" + content_key + "-" + key;
         // console.log("   " + key_string);
+        // console.log(key);
 
-        if (typeof (data[key]) == 'string' || (data[key]) instanceof String) {
-            $(key_string).append(data[key]).fadeIn(FADE_DELAY);
-        }
-        else if (data[key] !== null) {
-            for (var i = 0; i < data[key].length; i++) {
-                $(key_string).append(data[key][i]).fadeIn(FADE_DELAY);
-            }
-        }
-        else {
-            console.log(key + " is null.");
+        switch (content_type[key]) {
+            case 'string':
+                $(key_string).append(content[key]).fadeIn(FADE_DELAY);
+                break;
+
+            case 'list':
+                for (var i = 0; i < content[key].length; i++) {
+                    $(key_string).append(content[key][i]).fadeIn(FADE_DELAY);
+                }
+                break;
+
+            case 'table':
+
+                break;
+
         }
     }
 }
@@ -76,6 +88,7 @@ function dispatch(resource, content_key, attempt, page) {
                     break;
             }
         }
+        // ,
         // error: function(o, stat, er) {},
         // complete: function(o, stat) {}
     });
