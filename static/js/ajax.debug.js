@@ -3,12 +3,12 @@
 /* global $, jQuery */
 
 
-function remove_resource(id) {
+function remove_resource(resource) {
     'use strict';
     
     $.ajax({
         url: "/ajax/clear/",
-        data: {id: id},
+        data: {resource: resource},
         dataType: 'json',
         type: 'GET'
     });
@@ -21,6 +21,11 @@ function debug_template() {
     $.ajax({
         url: "/ajax/debug_template/",
         dataType: 'json',
-        type: 'GET'
+        type: 'GET',
+        success: function(o, stat, er) {
+
+        },
+        error: function(o, stat, er) {
+        }
     });
 }

@@ -177,30 +177,17 @@
         });
 
         $('a#clear').click( function() { 
-            remove_resource("{{name}}"); 
+            remove_resource("{{ resource }}"); 
             return false; 
         });
     </script>
 {% endif %}
 
-<!-- 
-{% if not profile %}
+{% if pending_content %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'profile', false, 0);
+        dispatch("{{ resource }}", "{{ pending_content }}", "{{ page }}");
     </script>
 {% endif %}
-
-{% if not songs %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', true, 0);
-    </script>
-{% endif %}
-
-{% if not similar %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'similar', true, 0);
-    </script>
-{% endif %} -->
 
 </body>
 </html>

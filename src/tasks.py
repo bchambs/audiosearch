@@ -13,6 +13,7 @@ def call(resource, service):
             intermediate = ENConsumer.consume(service.dependency)
             service.build(intermediate)
 
+
         echo_nest_response = ENConsumer.consume(service)
         content = service.trim(echo_nest_response)
         pipe = cache.pipeline()
@@ -24,7 +25,7 @@ def call(resource, service):
         print 'stored key: %s' % resource
         print 'stored content: %s' % service.CONTENT_KEY
 
-    except services.ENCallFailure as err_msg:
+    except services.EchoNestServiceFailure as err_msg:
         cache.hset(resource, "error_msg", err_msg)  # this overwrites
         print "%s failed: %s" % (str(service), err_msg)
 

@@ -11,7 +11,9 @@ from audiosearch.redis import client as cache
 def generate_content(resource, service_map, **kwargs):
     data = cache.hgetall(resource)
     page = kwargs.get('page')
-    result = {}
+    result = {
+        'pending_content': []
+    }
 
     for content_key, service in service_map.items():
         if content_key in data:
@@ -22,6 +24,7 @@ def generate_content(resource, service_map, **kwargs):
                 result[content_key] = content
         else:
             tasks.call.delay(resource, service)
+            result['pending_content'].append(content_key)
 
     return result
 

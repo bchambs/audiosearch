@@ -12,7 +12,7 @@ content = resource's profile, similar_songs, etc
 content_key = profile, similar_songs, etc
 echo_key : key used to access resource from echo nest api
 """
-class ENCall(object):
+class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
 
@@ -39,10 +39,10 @@ class ENCall(object):
 
 
     def __str__(self):
-        return "service.encall"
+        return "service.EchoNestService"
 
 
-class ArtistProfile(ENCall):
+class ArtistProfile(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'profile'
     BUCKETS = [
@@ -55,7 +55,7 @@ class ArtistProfile(ENCall):
 
 
     def __init__(self, resource_id):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.payload['name'] = resource_id
 
 
@@ -82,7 +82,7 @@ class ArtistProfile(ENCall):
         return "service.artist profile"
 
 
-class ArtistSongs(ENCall):
+class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     ECHO_NEST_KEY = 'songs'
@@ -90,7 +90,7 @@ class ArtistSongs(ENCall):
 
 
     def __init__(self, resource_id):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
+        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
         self.payload['artist'] = resource_id
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
@@ -100,45 +100,7 @@ class ArtistSongs(ENCall):
         return "service.artist songs"
 
 
-class SearchArtists(ENCall):
-    TYPE_ = 'artist'
-    METHOD = 'suggest'
-    ECHO_NEST_KEY = 'artists'
-    CONTENT_KEY = 'artists'
-
-
-    def __init__(self, resource_id):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
-        self.payload['name'] = resource_id
-        self.payload['results'] = cfg.RESULTS
-
-
-    def __str__(self):
-        return "service.search artists"
-
-
-class SearchSongs(ENCall):
-    TYPE_ = 'song'
-    METHOD = 'search'
-    ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'songs'
-
-
-    def __init__(self, artist_id, resource_id, for_id=False):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
-        self.for_id = for_id
-        self.payload['title'] = resource_id
-        self.payload['artist'] = artist_id
-        self.payload['results'] = 1 if for_id else cfg.RESULTS
-        self.payload['sort'] = "song_hotttnesss-desc"
-        self.payload['song_type'] = "studio"
-
-
-    def __str__(self):
-        return "service.search songs"
-
-
-class SimilarArtists(ENCall):
+class SimilarArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'similar'
     BUCKETS = [
@@ -151,7 +113,7 @@ class SimilarArtists(ENCall):
 
 
     def __init__(self, resource_id):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        super(SimilarArtists, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.payload['name'] = resource_id
         self.payload['results'] = cfg.RESULTS
 
@@ -160,7 +122,58 @@ class SimilarArtists(ENCall):
         return "service.artist similar artists"
 
 
-class SimilarSongs(ENCall):
+class SearchArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'suggest'
+    ECHO_NEST_KEY = 'artists'
+    CONTENT_KEY = 'artists'
+
+
+    def __init__(self, resource_id):
+        super(SearchArtists, self).__init__(self.TYPE_, self.METHOD, resource_id)
+        self.payload['name'] = resource_id
+        self.payload['results'] = cfg.RESULTS
+
+
+    def __str__(self):
+        return "service.search artists"
+
+
+class SearchSongs(EchoNestService):
+    TYPE_ = 'song'
+    METHOD = 'search'
+    ECHO_NEST_KEY = 'songs'
+    CONTENT_KEY = 'songs'
+
+
+    def __init__(self, artist_id, resource_id):
+        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
+        self.payload['title'] = resource_id
+        self.payload['artist'] = artist_id
+        self.payload['results'] = cfg.RESULTS
+        self.payload['sort'] = "song_hotttnesss-desc"
+        self.payload['song_type'] = "studio"
+
+
+    def __str__(self):
+        return "service.search songs"
+
+
+# this service exists to get the echo nest hash associated with a song given the title and artist name
+# used for song profiles
+class SongID(SearchSongs):
+
+    def __init__(self, artist_id, resource_id):
+        super(SongID, self).__init__(artist_id, resource_id)
+        self.payload['results'] = 1
+        self.payload['song_type'] = None
+
+
+    def __str__(self):
+        return "service.song id"
+
+
+class SimilarSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     ECHO_NEST_KEY = 'songs'
@@ -168,13 +181,13 @@ class SimilarSongs(ENCall):
 
 
     def __init__(self, resource_id, resource_type, artist_id=None, song_id=None):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id)
+        super(SimilarSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
         self.payload['results'] = cfg.RESULTS
         
         if resource_type == "artist":
             self.payload['artist'] = resource_id
         else:
-            self.dependency = SearchSongs(artist_id, resource_id, for_id=True)
+            self.dependency = SongID(artist_id, resource_id)
 
 
     def build(self, intermediate):
@@ -185,10 +198,10 @@ class SimilarSongs(ENCall):
 
 
     def __str__(self):
-        return "service.artist similar songs"
+        return "service.similar songs"
 
 
-class SongProfile(SearchSongs):
+class SongProfile(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'profile'
     BUCKETS = [
@@ -201,8 +214,8 @@ class SongProfile(SearchSongs):
 
 
     def __init__(self, artist_id, resource_id):
-        ENCall.__init__(self, self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
-        self.dependency = SearchSongs(artist_id, resource_id, for_id=True)
+        super(SongProfile, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
+        self.dependency = SongID(artist_id, resource_id)
 
 
     def build(self, intermediate):
@@ -216,5 +229,5 @@ class SongProfile(SearchSongs):
         return "service.song profile"
 
 
-class ENCallFailure(Exception):
+class EchoNestServiceFailure(Exception):
     pass

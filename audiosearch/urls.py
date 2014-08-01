@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(ur'^music/(?P<artist>[^/]*)/(?P<song>[^/]*)/similar/$', views.similar),
 
 
+    url(r'^ajax/retrieval/$', 'src.views.retrieve_content'),
     url(r'^ajax/clear/$', 'src.views.clear_resource'),
     url(r'^ajax/debug_template/$', 'src.views.debug_template'),
 

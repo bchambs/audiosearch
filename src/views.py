@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.template import Context
 
 from src import services, utils, tasks
-from audiosearch.redis import client as RC
+from audiosearch.redis import client as cache
 from audiosearch.config import DEBUG_TOOLBAR
 
 
@@ -47,6 +47,7 @@ def artist(request, **kwargs):
     resource = prefix + resource_id
 
     context = Context({
+        'resource': resource,
         'resource_id': resource_id,
         'debug': kwargs.get('debug'),
     })
@@ -72,12 +73,12 @@ def artist_songs(request, **kwargs):
         'debug': kwargs.get('debug'),
     })
 
-    data_map = {
+    service_map = {
         'profile': services.ArtistProfile(artist),
         'songs': services.ArtistSongs(artist),
     }
 
-    content = utils.generate_content(artist, data_map, page=page)
+    content = utils.generate_content(artist, service_map, page=page)
     context.update(content)
 
     return render(request, "artist-songs.html", context)
@@ -95,14 +96,14 @@ def song(request, **kwargs):
         'debug': kwargs.get('debug'),
     })
 
-    data_map = {
-        'songs': services.SearchSongs(artist_id, resource_id, for_id=True),
+    service_map = {
+        'profile': services.SongProfile(artist_id, resource_id),
         'similar_artists': services.SimilarArtists(artist),
         'similar_songs': services.SimilarSongs(resource_id, "song", artist_id, song_id=resource_id),
         'profile': services.SongProfile(artist_id, resource_id),
     }
 
-    content = utils.generate_content(resource, data_map)
+    content = utils.generate_content(resource, service_map)
     context.update(content)
 
     return render(request, "song.html", context)
@@ -165,16 +166,40 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
+def retrieve_resource(request, **kwargs):
+    resource = request.GET.get('resource')
+    content_key = request.GET.get('content_key')
+    page = request.GET.get('page')
+    context = {}
+
+    content = cache.hget(resource, content_key)
+
+    if not content: return HttpResponse(json.dumps(context), content_type="application/json")
+
+    try:
+        context[content_key] = utils.page_resource(page, content)
+    except TypeError:
+        context[content_key] = content
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+
+
+
+
+
+
 def retrieve_resource(request):
     id_ = request.GET.get('q')
     rtype = request.GET.get('rtype')
     page = request.GET.get('page')
 
     if cfg.REDIS_DEBUG:
-        RC.delete(id_)
+        cache.delete(id_)
 
     context = {}
-    resource_string = RC.hget(id_, rtype)
+    resource_string = cache.hget(id_, rtype)
 
     if resource_string:
         resource = ast.literal_eval(resource_string)
@@ -197,11 +222,11 @@ def retrieve_resource(request):
 
 
 def clear_resource(request):
-    resource_id = request.GET.get('id')
-    hit = RC.delete(resource_id)
+    resource = request.GET.get('resource')
+    hit = cache.delete(resource)
 
-    if hit: print "Removed from Redis: %s" %(resource_id)
-    else: print "Resource not in Redis: %s" %(resource_id)
+    if hit: print "Removed from Redis: %s" %(resource)
+    else: print "Resource not in Redis: %s" %(resource)
 
     return HttpResponse(json.dumps({}), content_type="application/json")
 

@@ -7,7 +7,7 @@ import requests
 import audiosearch.config as cfg
 import utils
 import services
-# from services import ENCallFailure
+# from services import EchoNestServiceFailure
 
 
 class ENConsumer(object):
@@ -44,23 +44,23 @@ class ENConsumer(object):
                 # call rejected by echo nest
                 else:
                     print "call rejected by echo nest"
-                    raise services.ENCallFailure(json_response['response']['status']['message'])
+                    raise services.EchoNestServiceFailure(json_response['response']['status']['message'])
 
             # invalid request or unable to parse json
             # except (requests.RequestException, ValueError, KeyError) as e:
             #     print "=====================invalid request or unable to parse json"
-            #     raise ENCallFailure(e)
+            #     raise EchoNestServiceFailure(e)
             except requests.RequestException as e:
                 print "1::%s" % str(package)
-                raise services.ENCallFailure(e)
+                raise services.EchoNestServiceFailure(e)
             except ValueError as e:
                 print "2::%s" % str(package)
-                raise services.ENCallFailure(e)
+                raise services.EchoNestServiceFailure(e)
             except KeyError as e:
                 print "3::%s" % str(package)
-                raise services.ENCallFailure(e)
+                raise services.EchoNestServiceFailure(e)
 
         # timeout
         print "====================timeout"
-        raise services.ENCallFailure("Audiosearch is receiving too many requests.  Try again soon!")
+        raise services.EchoNestServiceFailure("Audiosearch is receiving too many requests.  Try again soon!")
         
