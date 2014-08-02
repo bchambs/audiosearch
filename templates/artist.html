@@ -101,7 +101,7 @@
                 {% endif %}
             </tfoot>
 
-            <tbody>
+            <tbody id="similar_artists-tbody">
                 {% for artist in similar_artists.data %}
                     <tr>
                         <td>
@@ -137,7 +137,7 @@
                 {% endif %}
             </tfoot>
 
-            <tbody>
+            <tbody id="songs-tbody">
                 {% for song in songs.data %}
                     <tr>
                         <td>
@@ -153,28 +153,41 @@
 
     </div>
 
-    {% if similar_songs %}
-    <div id="similar_songs" class="column bbb">
-        <div class="title header">
-            Recommended Songs
-        </div>
+    <div class="column bbb">
+        <table id="similar_songs-table">
+            <thead class="title header">
+                <tr>
+                    <th colspan="2">
+                        Recommended Songs
+                    </th>
+                </tr>
+            </thead>
 
-        <ol>
-        {% for song in similar_songs.data %}
-            <li>
-                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-            </li>
-        {% endfor %}
-        </ol>
+            <tfoot id="similar_songs-tfoot" class="title header">
+                {% if similar_songs.next %}
+                <tr>
+                    <td colspan="2">
+                        <a href = "similar/?type=songs" >view more</a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tfoot>
 
-        {% if similar_songs.next %}
-            <div class="title header">
-                <a href = "similar/?type=songs" >view more</a>
-            </div>
-        {% endif %}
+            <tbody id="similar_songs-tbody">
+                {% for song in similar_songs.data %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter0|add:similar_songs.offset }}
+                        </td>
+                        <td>
+                            <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
     </div>
-    {% endif %}
 
 </div><!--END content -->
 

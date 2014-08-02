@@ -25,6 +25,7 @@ def search(request, **kwargs):
     page_type = request.GET.get('type')
 
     context = Context({
+        'resource': resource,
         'resource_id': resource_id,
         'type': page_type,
         'page': page,
@@ -38,6 +39,15 @@ def search(request, **kwargs):
 
     content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
+
+    try:
+        print
+        # print type(content['similar_songs']['data'])
+        print "search_artists: %s" % content['search_artists']['data'][0].keys()
+        print "search_songs: %s" % content['search_songs']['data'][0].keys()
+        print
+    except KeyError:
+        pass
 
     return render(request, "search.html", context)
 
@@ -62,6 +72,16 @@ def artist(request, **kwargs):
 
     content = utils.generate_content(resource, service_map)
     context.update(content)
+
+    try:
+        print
+        # print type(content['similar_songs']['data'])
+        print "songs: %s" % content['songs']['data'][0].keys()
+        print "similar_artists: %s" % content['similar_artists']['data'][0].keys()
+        print "similar_songs: %s" % content['similar_songs']['data'][0].keys()
+        print
+    except KeyError:
+        pass
 
     return render(request, "artist.html", context)
 
@@ -153,7 +173,10 @@ def similar(request, **kwargs):
     content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
 
-    print content.keys()
+    print
+    print type(content['similar_songs']['data'])
+    print content['similar_songs']['data'][0]
+    print
 
     return render(request, "similar.html", context)
 

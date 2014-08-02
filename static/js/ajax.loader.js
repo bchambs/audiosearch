@@ -2,14 +2,6 @@
 /* jslint browser: true */
 /* global $, jQuery */
 
-$(function() {
-    if (typeof display_more !== 'undefined' && display_more) {
-    
-    }
-    else {
-    
-    }
-});
 
 var AJAX_SNOOZE = 2000,
     ATTEMPT_LIMIT = 4,
@@ -37,51 +29,81 @@ function load_content(resource_id, content_key, data) {
             break;
 
         case "search_artists":
-            var urls = {
-                view_more: "?q=" + resource_id + "&type=artists",
-                previous: "",
-                next: ""
-            };
-            load_paged_table(resource_id, content_key, data, urls);
+            // var urls = {
+            //     view_more: "?q=" + resource_id + "&type=artists",
+            //     previous: "",
+            //     next: ""
+            // };
+            // load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "search_songs":
-            var urls = {
-                view_more: "?q=" + resource_id + "&type=songs",
-                previous: "",
-                next: ""
-            };
-            load_paged_table(resource_id, content_key, data, urls);
+            // var urls = {
+            //     view_more: "?q=" + resource_id + "&type=songs",
+            //     previous: "",
+            //     next: ""
+            // };
+            // load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "songs":
-            var view_more_url = "songs/";
-            load_paged_table(resource_id, content_key, data, urls);
+            // var view_more_url = "songs/";
+            // load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "similar_artists":
-            var view_more_url = "similar/?type=artists";
+            var urls = {
+                    view_more: "similar/?type=artists",
+                    previous: "?type=artists&page=" + data['previous'],
+                    next: "?type=artists&page=" + data['next'],
+                    item: function(element) {
+                        var artist = element['name'],
+                            url = "/music/" + artist + "/",
+
+                            $a = $("<a />",{
+                                text: artist,
+                                href: url
+                            });
+
+                        return $a;
+                    }
+            };
+
             load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "similar_songs":
             var urls = {
-                view_more: "similar/?type=songs",
-                previous: "?type=songs&page=" + data['previous'],
-                next: "?type=songs&page=" + data['next'],
-                row: ""
+                    view_more: "similar/?type=songs",
+                    previous: "?type=songs&page=" + data['previous'],
+                    next: "?type=songs&page=" + data['next'],
+                    item: function(element) {
+                        var artist = element['artist_name'],
+                            title = element['title'],
+                            url = "/music/" + artist + "/" + title + "/",
+
+                            $a = $("<a />",{
+                                text: title,
+                                href: url
+                            });
+
+                        return $a;
+                    }
             };
+
             load_paged_table(resource_id, content_key, data, urls);
             break;
 
         default:
-            console.log("what is this: " + data);
-
+            console.log("what is this: ");
+            console.log("\t" + content_key);
+            console.log("\t" + data);
     }
 }
 
 
 function load_paged_table(resource_id, content_key, data, urls) {
+    console.log("load_paged_table::" + content_key);
     var $table_id_key = "#" + content_key + "-table";
 
     //tfoot
@@ -135,41 +157,20 @@ function load_paged_table(resource_id, content_key, data, urls) {
     var $tbody_key = "#" + content_key + "-tbody",
         index = 0;
 
-    for (var row in data['data']) {
-
+    for (var item in data['data']) {
         var $tr = $("<tr />"),
-            $td1 = $("<td />"),
-            $td2 = $("<td />"),
-            $next_a = $("<a />",{
-                text: "next",
-                href: urls['row']
-            });
+            $td_index = $("<td />"),
+            $td_data = $("<td />"),
+            $item_a = urls['item'](data['data'][item]);
+
+        $td_index.append(index + data['offset']);
+        $td_data.append($item_a);
+        $tr.append($td_index);
+        $tr.append($td_data);
+        $($tbody_key).append($tr);
 
         index++;
     }
-
-
-
-
-    <tbody>
-        {% for song in similar_songs.data %}
-            <tr>
-                <td>
-                    {{ forloop.counter0|add:similar_songs.offset }}
-                </td>
-                <td>
-                    <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-
-
-
-
-
-
-
 }
 
 

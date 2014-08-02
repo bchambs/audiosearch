@@ -195,8 +195,15 @@ class SimilarSongs(EchoNestService):
         
         if resource_type == "artist":
             self.payload['artist'] = resource_id
+            self.payload['variety'] = 1
+            self.payload['type'] = "artist-radio"
         else:
+            self.payload['type'] = "song-radio"
             self.dependency = SongID(artist_id, resource_id)
+
+
+    def __str__(self):
+        return "SimilarSongs"
 
 
     def build(self, intermediate):
@@ -204,10 +211,6 @@ class SimilarSongs(EchoNestService):
 
         self.payload['song_id'] = intermediate[0].get('id')
         return 
-
-
-    def __str__(self):
-        return "service.similar songs"
 
 
 class SongProfile(EchoNestService):
