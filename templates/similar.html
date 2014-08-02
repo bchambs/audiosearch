@@ -56,43 +56,30 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "/">audiosearch</a> / similar 
+        <a href = "/" >audiosearch</a> / similar / 
 
-        / <a href = "/music/{{ dir_artist|space_to_plus }}">{{ dir_artist }}</a>
+        <span id="profile-name">
+            <a href = "/music/{{ dir_artist|space_to_plus }}">{{ dir_artist }}</a>
+        </span>
 
         {% if dir_song %}
         / <a href = "/music/{{ dir_artist|space_to_plus }}/{{ dir_song|space_to_plus }}">{{ dir_song }}</a>
         {% endif %}
-        <!-- <span id="profile.name">
-            {% if profile.name %}
-                / <a href = "/music/{{ profile.name }}">{{ profile.name }}</a>
-            {% endif %}
-        </span> -->
     </div>
 
-    <div id="profile.location">
-        {% if profile.location %}
-            <div class="subtitle">
-                {{ profile.location }}
-            </div>
-        {% endif %}
-    </div>
-    
-    <div id="profile.genre">
-        {% if profile.genres %}
-            <span class="subtitle">
-                {% for genre in profile.genres %}
-                    {% if forloop.first %}  
-                        {{ genre.name }}
-                    {% else %}
-                        , {{ genre.name }}
-                    {% endif %}
-                {% endfor %}
-            </span>
-        {% endif %}
+    <div class="subtitle">
+        <div id="profile-location">
+            {{ profile.location }}
+        </div>
+        <div id="profile-genres">
+            {% for genre in profile.genres %}
+                {{ genre }}
+            {% endfor %}
+        </div>
     </div>
 
     <hr>
+
 </div><!--END dir -->
 
 <!-- content -->
@@ -121,7 +108,61 @@
         </div>
     {% endif %}
 
-    {% if similar_songs %}
+    <div class="bbb">
+        <table id="similar_songs-table">
+            <thead class="title header">
+                <tr>
+                    <th colspan="2">
+                        Similar Songs
+                    </th>
+                </tr>
+            </thead>
+
+            <tfoot id="similar_songs-tfoot" class="title header">
+                <tr>
+                    <div class="title header">
+                        <td>
+                            <div id="similar_songs-previous">
+                                {% if similar_songs.previous %}
+                                    <a href = "?type=songs&page={{ similar_songs.previous }}" >previous</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div id="similar_songs-current">
+                                {% if similar_songs.current %}
+                                    {{ similar_songs.current }} of {{ similar_songs.total }}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div id="similar_songs-next">
+                                {% if similar_songs.next %}
+                                    <a href = "?type=songs&page={{ similar_songs.next }}" >next</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </div>
+                </tr>
+            </tfoot>
+
+            <tbody id="similar_songs-tbody">
+                {% for song in similar_songs.data %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter0|add:similar_songs.offset }}
+                        </td>
+                        <td>
+                            <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if similar_songss %}
+
         <div id="similar_songs" class="bbb">
             <div class="title header">
                 Similar Songs
@@ -136,30 +177,29 @@
             </ul>
 
             <div class="title header">
-                {% if similar_songs.previous %}
-                    <div id="previous">
+                <div id="similar_songs-previous">
+                    {% if similar_songs.previous %}
                         <a href = "?type=songs&page={{ similar_songs.previous }}" >previous</a>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
 
-                {% if similar_songs.current %}
-                    <div id="current">
+                <div id="similar_songs-current">
+                    {% if similar_songs.current %}
                         {{ similar_songs.current }} of {{ similar_songs.total }}
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
 
-                {% if similar_songs.next %}
-                    <div id="next">
+                <div id="similar_songs-next">
+                    {% if similar_songs.next %}
                         <a href = "?type=songs&page={{ similar_songs.next }}" >next</a>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
 
         </div>
     {% endif %}
 
 </div><!--END content -->
-
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
@@ -173,30 +213,17 @@
         });
 
         $('a#clear').click( function() { 
-            remove_resource("{{name}}"); 
+            remove_resource("{{ resource }}"); 
             return false; 
         });
     </script>
 {% endif %}
 
-<!-- 
-{% if not profile %}
+{% for content_key in pending_content %}
     <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'profile', false, 0);
+        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ content_key }}", 0, "{{ page }}"), 1500);
     </script>
-{% endif %}
-
-{% if not songs %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', true, 0);
-    </script>
-{% endif %}
-
-{% if not similar %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'similar', true, 0);
-    </script>
-{% endif %} -->
+{% endfor %}
 
 </body>
 </html>

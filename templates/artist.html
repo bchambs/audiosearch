@@ -81,45 +81,75 @@
 <!-- content -->
 <div class="content">
 
-    <div id="similar_artists" class="column bbb">
-        <div class="title header">
-            Similar Artists
-        </div>
+    <div class="column bbb">
+        <table id="similar_artists-table">
+            <thead class="title header">
+                <tr>
+                    <th colspan="2">
+                        Similar Artists
+                    </th>
+                </tr>
+            </thead>
 
-        <ol>
-        {% for artist in similar_artists.data %}
-            <li>
-                <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
-            </li>
-        {% endfor %}
-        </ol>
+            <tfoot id="similar_artists-tfoot" class="title header">
+                {% if similar_artists.next %}
+                <tr>
+                    <td colspan="2">
+                        <a href = "similar/?type=artists" >view more</a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tfoot>
 
-        {% if similar_artists.next %}
-            <div class="title header">
-                <a href = "similar/?type=artists&page=1" >view more</a>
-            </div>
-        {% endif %}
+            <tbody>
+                {% for artist in similar_artists.data %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter0|add:similar_artists.offset }}
+                        </td>
+                        <td>
+                            <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
     </div>
 
     <div class="column bbb">
-        <div class="title header">
-            Songs
-        </div>
+        <table id="songs-table">
+            <thead class="title header">
+                <tr>
+                    <th colspan="2">
+                        Songs
+                    </th>
+                </tr>
+            </thead>
 
-        <ol>
-        {% for song in songs.data %}
-            <li>
-                <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-            </li>
-        {% endfor %}
-        </ol>
+            <tfoot id="songs-tfoot" class="title header">
+                {% if songs.next %}
+                <tr>
+                    <td colspan="2">
+                        <a href = "songs/" >view more</a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tfoot>
 
-        {% if songs.next %}
-            <div class="title header">
-                <a href = "songs/" >view more</a>
-            </div>
-        {% endif %}
+            <tbody>
+                {% for song in songs.data %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter0|add:songs.offset }}
+                        </td>
+                        <td>
+                            <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
     </div>
 
@@ -152,6 +182,9 @@
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
+<script type="text/javascript">
+    var display_more = true;
+</script>
 
 {% if debug %}
     <script type="text/javascript">
@@ -169,7 +202,7 @@
 
 {% for content_key in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource }}", "{{ content_key }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ content_key }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

@@ -136,7 +136,7 @@ class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
     ECHO_NEST_KEY = 'artists'
-    CONTENT_KEY = 'artists'
+    CONTENT_KEY = 'search_artists'
 
 
     def __init__(self, resource_id):
@@ -153,7 +153,7 @@ class SearchSongs(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'search'
     ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'songs'
+    CONTENT_KEY = 'search_songs'
 
 
     def __init__(self, artist_id, resource_id):
@@ -170,7 +170,6 @@ class SearchSongs(EchoNestService):
 
 
 # this service exists to get the echo nest hash associated with a song given the title and artist name
-# used for song profiles
 class SongID(SearchSongs):
 
     def __init__(self, artist_id, resource_id):

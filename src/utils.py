@@ -12,11 +12,16 @@ def generate_content(resource, service_map, **kwargs):
     cache_data = cache.hgetall(resource)
     page = kwargs.get('page')
     result = {
-        'pending_content': []
+        'pending_content': [],
     }
+
+    print "generating for: %s" %(resource)
 
     for key, service in service_map.items():
         if key in cache_data:
+
+            print "HIT: %s" %(key)
+
             content = ast.literal_eval(cache_data[key])
             
             try:
@@ -26,6 +31,8 @@ def generate_content(resource, service_map, **kwargs):
         else:
             tasks.call.delay(resource, service)
             result['pending_content'].append(key)
+
+            print "MISS: %s" %(key)
 
     return result
 

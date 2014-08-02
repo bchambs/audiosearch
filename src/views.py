@@ -32,8 +32,8 @@ def search(request, **kwargs):
     })
 
     service_map = {
-        'artists': services.SearchArtists(resource_id),
-        'songs': services.SearchSongs(None, resource_id),
+        'search_artists': services.SearchArtists(resource_id),
+        'search_songs': services.SearchSongs(None, resource_id),
     }
 
     content = utils.generate_content(resource, service_map, page=page)
@@ -90,7 +90,7 @@ def song(request, **kwargs):
     prefix = "song:"
     artist_id = urllib.unquote_plus(kwargs['artist'])
     resource_id = urllib.unquote_plus(kwargs['song'])
-    resource = prefix + resource_id
+    resource = prefix + artist_id + ":" + resource_id
 
     context = Context({
         'dir_artist': artist_id,
@@ -102,7 +102,6 @@ def song(request, **kwargs):
         'profile': services.SongProfile(artist_id, resource_id),
         'similar_artists': services.SimilarArtists(artist),
         'similar_songs': services.SimilarSongs(resource_id, "song", artist_id, song_id=resource_id),
-        'profile': services.SongProfile(artist_id, resource_id),
     }
 
     content = utils.generate_content(resource, service_map)
@@ -122,14 +121,15 @@ def similar(request, **kwargs):
         song = urllib.unquote_plus(song)
         prefix = "song:"
         resource_id = song
-
+        resource = prefix + artist + ":" + song
         service_map = {
             'profile': services.SongProfile(artist, resource_id),
         }
+
     else:
         prefix = "artist:"
         resource_id = artist
-
+        resource = prefix + resource_id
         service_map = {
             'profile': services.ArtistProfile(resource_id),
         }
@@ -140,11 +140,11 @@ def similar(request, **kwargs):
     if not display_type or display_type == "artists":
         service_map['similar_artists'] = services.SimilarArtists(artist)
 
-    resource = prefix + resource_id
-
     context = Context({
         'dir_artist': artist,
         'dir_song': song,
+        'resource': resource,
+        'resource_id': resource_id,
         'resource_type': resource_type,
         'page': page,
         'debug': kwargs.get('debug'),
@@ -152,6 +152,8 @@ def similar(request, **kwargs):
 
     content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
+
+    print content.keys()
 
     return render(request, "similar.html", context)
 
@@ -234,8 +236,14 @@ def clear_resource(request):
     resource = utils.unescape_html(request.GET.get('resource'))
     hit = cache.delete(resource)
 
-    if hit: print "Removed from Redis: %s" %(resource)
-    else: print "Resource not in Redis: %s" %(resource)
+    pre = "REMOVED," if hit else "NOT FOUND,"
+    banner = '\'' * len(pre)
+
+    print
+    print banner
+    print "%s %s" %(pre, resource)
+    print banner
+    print
 
     return HttpResponse(json.dumps({}), content_type="application/json")
 

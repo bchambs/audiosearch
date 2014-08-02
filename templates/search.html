@@ -86,7 +86,7 @@
         </div>
 
         <ol>
-        {% for artist in artists.data %}
+        {% for artist in search_artists.data %}
             <li>
                 <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
             </li>
@@ -95,28 +95,28 @@
 
         {% if type %}
         <div class="title header">
-            {% if artists.previous %}
+            {% if search_artists.previous %}
                 <div id="previous">
-                    <a href = "?q={{ resource_id|iriencode }}&type=artists&page={{ artists.previous }}" >previous</a>
+                    <a href = "?q={{ resource_id|space_to_plus }}&type=artists&page={{ artists.previous }}" >previous</a>
                 </div>
             {% endif %}
 
-            {% if artists.current %}
+            {% if search_artists.current %}
                 <div id="current">
-                    {{ artists.current }} of {{ artists.total }}
+                    {{ search_artists.current }} of {{ search_artists.total }}
                 </div>
             {% endif %}
 
-            {% if artists.next %}
+            {% if search_artists.next %}
                 <div id="next">
                     <a href = "?type=artists&page={{ artists.next }}" >next</a>
                 </div>
             {% endif %}
         </div>
 
-        {% elif artists.next %}
+        {% elif search_artists.next %}
             <div class="title header">
-                <a href = "/search/?q={{ resource_id|iriencode }}&type=artists" >view more</a>
+                <a href = "?q={{ resource_id|space_to_plus }}&type=artists" >view more</a>
             </div>
         {% endif %}
 
@@ -130,7 +130,7 @@
         </div>
 
         <ol>
-        {% for song in songs.data %}
+        {% for song in search_songs.data %}
             <li>
                 <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}/" >{{ song.title }}</a>
             </li>
@@ -139,28 +139,28 @@
 
         {% if type %}
         <div class="title header">
-            {% if songs.previous %}
+            {% if search_songs.previous %}
                 <div id="previous">
                     <a href = "?q={{ resource_id|space_to_plus }}&type=songs&page={{ songs.previous }}" >previous</a>
                 </div>
             {% endif %}
 
-            {% if songs.current %}
+            {% if search_songs.current %}
                 <div id="current">
-                    {{ songs.current }} of {{ songs.total }}
+                    {{ search_songs.current }} of {{ search_songs.total }}
                 </div>
             {% endif %}
 
-            {% if songs.next %}
+            {% if search_songs.next %}
                 <div id="next">
-                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs&page={{ songs.next }}" >next</a>
+                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs" >next</a>
                 </div>
             {% endif %}
         </div>
 
-        {% elif songs.next %}
+        {% elif search_songs.next %}
             <div class="title header">
-                <a href = "/search/?q={{ resource_id|space_to_plus }}&type=songs" >view more</a>
+                <a href = "?q={{ resource_id|space_to_plus }}&type=songs" >view more</a>
             </div>
         {% endif %}
 
