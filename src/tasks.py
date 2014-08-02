@@ -17,12 +17,24 @@ def call(resource, service):
         content = service.trim(echo_nest_response)
         pipe = cache.pipeline()
 
+        if ':' not in resource:
+            print
+            print
+            print "STORED AN INVALID RESOURCE"
+            print "STORED AN INVALID RESOURCE"
+            print "STORED AN INVALID RESOURCE"
+            print "STORED AN INVALID RESOURCE"
+            print "STORED AN INVALID RESOURCE"
+            print "STORED AN INVALID RESOURCE"
+            print
+            print
+
         pipe.hset(resource, service.CONTENT_KEY, content)
         pipe.expire(resource, service.ttl)
         pipe.execute()
 
-        print 'stored key: %s' % resource
-        print 'stored content: %s' % service.CONTENT_KEY
+        # print 'stored key: %s' % resource
+        # print 'stored content: %s' % service.CONTENT_KEY
 
     except services.EchoNestServiceFailure as err_msg:
         cache.hset(resource, "error_msg", err_msg)  # this overwrites

@@ -47,8 +47,25 @@ function load_content(resource_id, content_key, data) {
             break;
 
         case "songs":
-            // var view_more_url = "songs/";
-            // load_paged_table(resource_id, content_key, data, urls);
+            var urls = {
+                    view_more: "songs/",
+                    previous: "?type=songs&page=" + data['previous'],
+                    next: "?type=songs&page=" + data['next'],
+                    item: function(element) {
+                        var artist = element['artist_name'],
+                            title = element['title'],
+                            url = "/music/" + artist + "/" + title + "/",
+
+                            $a = $("<a />",{
+                                text: title,
+                                href: url
+                            });
+
+                        return $a;
+                    }
+            };
+
+            load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "similar_artists":

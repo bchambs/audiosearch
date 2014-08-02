@@ -10,6 +10,14 @@ from src import services, utils, tasks
 from audiosearch.redis import client as cache
 from audiosearch.config import DEBUG_TOOLBAR
 
+"""
+switch to this eventually
+    resource = type of object (artist, song, results, etc)
+    resource_name = artist name or song title
+    resource_id = prefix + resource_name
+"""
+
+
 
 def index(request, **kwargs):
     context = Context({})
@@ -87,20 +95,25 @@ def artist(request, **kwargs):
 
 
 def artist_songs(request, **kwargs):
-    artist = kwargs['artist']
+    prefix = "artist:"
+    resource_id = urllib.unquote_plus(kwargs['artist'])
+    resource = prefix + resource_id
     page = request.GET.get('page')
+
     context = Context({
-        'dir_name': urllib.unquote_plus(artist),
+        'dir_name': urllib.unquote_plus(resource_id),
+        'resource': resource,
+        'resource_id': resource_id,
         'page': page,
         'debug': kwargs.get('debug'),
     })
 
     service_map = {
-        'profile': services.ArtistProfile(artist),
-        'songs': services.ArtistSongs(artist),
+        'profile': services.ArtistProfile(resource_id),
+        'songs': services.ArtistSongs(resource_id),
     }
 
-    content = utils.generate_content(artist, service_map, page=page)
+    content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
 
     return render(request, "artist-songs.html", context)
