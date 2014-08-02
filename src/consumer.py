@@ -35,6 +35,15 @@ class ENConsumer(object):
 
                 # exceeded api_key limit, snooze until timeout
                 elif code == ENConsumer.LIMIT_EXCEEDED:
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
+                    print "LIMIT EXCEEDED"
                     attempt += 1
                     sleep(CALL_SNOOZE)
 

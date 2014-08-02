@@ -109,7 +109,7 @@
 
             {% if search_artists.next %}
                 <div id="next">
-                    <a href = "?type=artists&page={{ artists.next }}" >next</a>
+                    <a href = "?type=artists&page={{ search_artists.next }}" >next</a>
                 </div>
             {% endif %}
         </div>
@@ -153,7 +153,7 @@
 
             {% if search_songs.next %}
                 <div id="next">
-                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs" >next</a>
+                    <a href = "?q={{ resource_id|space_to_plus }}&type=songs&page={{ search_songs.next }}" >next</a>
                 </div>
             {% endif %}
         </div>

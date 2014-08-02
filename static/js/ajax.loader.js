@@ -29,28 +29,53 @@ function load_content(resource_id, content_key, data) {
             break;
 
         case "search_artists":
-            // var urls = {
-            //     view_more: "?q=" + resource_id + "&type=artists",
-            //     previous: "",
-            //     next: ""
-            // };
-            // load_paged_table(resource_id, content_key, data, urls);
+            var urls = {
+                    view_more: "?q=" + resource_id + "&type=artists",
+                    previous: "?q=" + resource_id + "&type=artists&page=" + data['previous'],
+                    next: "?q=" + resource_id + "&type=artists&page=" + data['next'],
+                    item: function(element) {
+                        var artist = element['name'],
+                            url = "/music/" + artist + "/",
+
+                            $a = $("<a />",{
+                                text: artist,
+                                href: url
+                            });
+
+                        return $a;
+                    }
+            };
+
+            load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "search_songs":
-            // var urls = {
-            //     view_more: "?q=" + resource_id + "&type=songs",
-            //     previous: "",
-            //     next: ""
-            // };
-            // load_paged_table(resource_id, content_key, data, urls);
+            var urls = {
+                    view_more: "?q=" + resource_id + "&type=songs",
+                    previous: "?q=" + resource_id + "&type=songs&page=" + data['previous'],
+                    next: "?q=" + resource_id + "&type=songs&page=" + data['next'],
+                    item: function(element) {
+                        var artist = element['artist_name'],
+                            title = element['title'],
+                            url = "/music/" + artist + "/" + title + "/",
+
+                            $a = $("<a />",{
+                                text: title,
+                                href: url
+                            });
+
+                        return $a;
+                    }
+            };
+
+            load_paged_table(resource_id, content_key, data, urls);
             break;
 
         case "songs":
             var urls = {
                     view_more: "songs/",
-                    previous: "?type=songs&page=" + data['previous'],
-                    next: "?type=songs&page=" + data['next'],
+                    previous: "?page=" + data['previous'],
+                    next: "?page=" + data['next'],
                     item: function(element) {
                         var artist = element['artist_name'],
                             title = element['title'],

@@ -85,29 +85,6 @@
 <!-- content -->
 <div class="content">
 
-    {% if similar_artists %}
-        <div id="similar_artists" class="bbb">
-            <div class="title">
-                Similar Artists
-            </div>
-
-            <ol>
-            {% for artist in similar_artists.data %}
-                <li>
-                    <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
-                </li>
-            {% endfor %}
-            </ol>
-
-            {% if similar_artists.next %}
-                <div class="title">
-                    <a href = "/music/{{ artist.name|space_to_plus }}/similar" >view more</a>
-                </div>
-            {% endif %}
-
-        </div>
-    {% endif %}
-
     <div class="bbb">
         <table id="similar_songs-table">
             <thead class="title header">
@@ -161,7 +138,7 @@
         </table>
     </div>
 
-    {% if similar_songss %}
+    {% if similar_songs %}
 
         <div id="similar_songs" class="bbb">
             <div class="title header">
