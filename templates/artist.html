@@ -20,6 +20,7 @@
     <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
    
     <title>audiosearch</title>
 </head>
@@ -56,7 +57,7 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        <a href = "/" >audiosearch</a> / music / 
+        artist / 
 
         <span id="profile-name">
             {{ profile.name }}
@@ -74,129 +75,176 @@
         </div>
     </div>
 
-    <hr>
 
 </div><!--END dir -->
 
+
+
+
+
+
+
+<!-- content buttons -->
+<div class="content-buttons">
+
+    <div class="button bbb">
+        <a href="" id="similar-artists-button" class="button-text ">
+            <span class="click-div"></span>Similar Artists
+        </a>
+    </div>
+
+    <div class="button bbb">
+        <a href="" id="songs-button" class="button-text ">
+            <span class="click-div"></span>Songs
+        </a>
+    </div>
+
+    <div class="button bbb">
+        <a href="" id="similar-songs-button" class="button-text ">
+            <span class="click-div"></span>Recommended Songs
+        </a>
+    </div>
+
+</div><!--END content-buttons -->
+
+
+
+<hr>
+
+
+
+
 <!-- content -->
-<div class="content">
+<div id="similar_artists-content" class="content bbb">
+    <table id="similar_artists-table">
+        <thead class="title header">
+            <tr>
+                <th colspan="2">
+                    Similar Artists
+                </th>
+            </tr>
+        </thead>
 
-    <div class="column bbb">
-        <table id="similar_artists-table">
-            <thead class="title header">
-                <tr>
-                    <th colspan="2">
-                        Similar Artists
-                    </th>
-                </tr>
-            </thead>
+        <tfoot id="similar_artists-tfoot" class="title header">
+            {% if similar_artists.next %}
+            <tr>
+                <td colspan="2">
+                    <a href = "similar/?type=artists" >view more</a>
+                </td>
+            </tr>
+            {% endif %}
+        </tfoot>
 
-            <tfoot id="similar_artists-tfoot" class="title header">
-                {% if similar_artists.next %}
+        <tbody id="similar_artists-tbody">
+            {% for artist in similar_artists.data %}
                 <tr>
-                    <td colspan="2">
-                        <a href = "similar/?type=artists" >view more</a>
+                    <td>
+                        {{ forloop.counter0|add:similar_artists.offset }}
+                    </td>
+                    <td>
+                        <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
                     </td>
                 </tr>
-                {% endif %}
-            </tfoot>
+            {% endfor %}
+        </tbody>
+    </table>
 
-            <tbody id="similar_artists-tbody">
-                {% for artist in similar_artists.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:similar_artists.offset }}
-                        </td>
-                        <td>
-                            <a href = "/music/{{ artist.name|space_to_plus }}/" >{{ artist.name }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+</div>
 
-    </div>
+<div id="songs-content" class="content bbb">
+    <table id="songs-table">
+        <thead class="title header">
+            <tr>
+                <th colspan="2">
+                    Songs
+                </th>
+            </tr>
+        </thead>
 
-    <div class="column bbb">
-        <table id="songs-table">
-            <thead class="title header">
+        <tfoot id="songs-tfoot" class="title header">
+            {% if songs.next %}
+            <tr>
+                <td colspan="2">
+                    <a href = "songs/" >view more</a>
+                </td>
+            </tr>
+            {% endif %}
+        </tfoot>
+
+        <tbody id="songs-tbody">
+            {% for song in songs.data %}
                 <tr>
-                    <th colspan="2">
-                        Songs
-                    </th>
-                </tr>
-            </thead>
-
-            <tfoot id="songs-tfoot" class="title header">
-                {% if songs.next %}
-                <tr>
-                    <td colspan="2">
-                        <a href = "songs/" >view more</a>
+                    <td>
+                        {{ forloop.counter0|add:songs.offset }}
+                    </td>
+                    <td>
+                        <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
                     </td>
                 </tr>
-                {% endif %}
-            </tfoot>
+            {% endfor %}
+        </tbody>
+    </table>
 
-            <tbody id="songs-tbody">
-                {% for song in songs.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:songs.offset }}
-                        </td>
-                        <td>
-                            <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+</div>
 
-    </div>
+<div id="similar_songs-content" class="content bbb">
+    <table id="similar_songs-table">
+        <thead class="title header">
+            <tr>
+                <th colspan="2">
+                    Recommended Songs
+                </th>
+            </tr>
+        </thead>
 
-    <div class="column bbb">
-        <table id="similar_songs-table">
-            <thead class="title header">
+        <tfoot id="similar_songs-tfoot" class="title header">
+            {% if similar_songs.next %}
+            <tr>
+                <td colspan="2">
+                    <a href = "similar/?type=songs" >view more</a>
+                </td>
+            </tr>
+            {% endif %}
+        </tfoot>
+
+        <tbody id="similar_songs-tbody">
+            {% for song in similar_songs.data %}
                 <tr>
-                    <th colspan="2">
-                        Recommended Songs
-                    </th>
-                </tr>
-            </thead>
-
-            <tfoot id="similar_songs-tfoot" class="title header">
-                {% if similar_songs.next %}
-                <tr>
-                    <td colspan="2">
-                        <a href = "similar/?type=songs" >view more</a>
+                    <td>
+                        {{ forloop.counter0|add:similar_songs.offset }}
+                    </td>
+                    <td>
+                        <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
                     </td>
                 </tr>
-                {% endif %}
-            </tfoot>
-
-            <tbody id="similar_songs-tbody">
-                {% for song in similar_songs.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:similar_songs.offset }}
-                        </td>
-                        <td>
-                            <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ song.title }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
 
 </div><!--END content -->
 
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+<script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
 <script type="text/javascript">
     var display_more = true;
+
+    $('a#similar-artists-button').click( function() { 
+        show_content("similar_artists");
+        return false; 
+    });
+
+    $('a#songs-button').click( function() { 
+        show_content("songs");
+        return false; 
+    });
+
+    $('a#similar-songs-button').click( function() { 
+        show_content("similar_songs");
+        return false; 
+    });
 </script>
 
 {% if debug %}

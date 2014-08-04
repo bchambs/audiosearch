@@ -29,6 +29,15 @@
     dir bar
 */
 .dir {
+    width: 980px;
+    margin: 20px auto;
+}
+.dir .title{
+}
+.dir .subtitle{
+    margin-left: 50px;
+}
+/*.dir {
     line-height: 250%;
     margin-top: 30px;
 }
@@ -45,9 +54,45 @@
     height: 2px;
     margin-left: 50px;
     margin-right: 50px;
+}*/
+
+
+/*
+    content buttons
+*/
+.content-buttons {
+    display: block;
+    width: 975px;
+    margin: 20px auto;
+    overflow: hidden;
+    height: 50px;
+}
+.content-buttons .button {
+    border-right: 3px solid gray;
+    border-bottom: 5px solid gray;
+    float: left;
+    height: 45px;
+    width: 322px;
+    text-align: center;
+    position: relative;
+
+}
+.content-buttons .button .button-text {
+    font-size: 20px;
+    line-height: 45px;
 }
 
 
+hr {
+    border: none;
+    background-color: black;
+    color: gray;
+    height: 1px;
+
+    width: 975px;
+    margin: 20px auto;
+    overflow: hidden;
+ }
 
 /*
     debug
@@ -78,5 +123,7 @@
     width: 100%;
     z-index: 1;
 }
+
+
 
 

@@ -11,8 +11,11 @@ html, body {
 */
 
 .content {
-    display: inline-block;
-    margin-left: 125px;
+    display: block;
+    width: 975px;
+    margin: 20px auto;
+    overflow: hidden;
+    /*height: 50px;*/
 }
 
 .content .column {
