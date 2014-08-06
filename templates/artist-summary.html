@@ -20,6 +20,16 @@
     <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+
+    <style>
+        #songs-content, #similar_songs-content {
+            display: none;
+        }
+
+        #similar_artists-content {
+            display: visible;
+        }
+    </style>
    
     <title>audiosearch</title>
 </head>
@@ -73,7 +83,6 @@
             {% endfor %}
         </div>
     </div>
-
 </div><!--END dir -->
 
 
@@ -101,7 +110,10 @@
 </div><!--END content-buttons -->
 
 
+
 <hr>
+
+
 
 
 <!-- content -->

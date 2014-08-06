@@ -224,13 +224,13 @@ function handle_timeout(content_key, message) {
 }
 
 
-function dispatch(resource, resource_id, content_key, attempt, page) {
+function dispatch(resource_id, resource_name, content_key, attempt, page) {
     'use strict';
 
     var params = {
-        'resource': resource,
+        'resource_id': resource_id,
         'content_key': content_key
-    }
+    };
 
     if (page) {
         params['page'] = page;
@@ -243,23 +243,23 @@ function dispatch(resource, resource_id, content_key, attempt, page) {
         type: 'GET',
         success: function(data, stat, o) {
             switch (data['status']) {
-                case 'success':
-                    load_content(resource_id, content_key, data[content_key]);
+            case 'success':
+                load_content(resource_name, content_key, data[content_key]);
 
-                    break;
+                break;
 
-                case 'pending':
-                    if (attempt > ATTEMPT_LIMIT) {
-                        handle_timeout(content_key, o);
-                    }
-                    else {
-                        setTimeout(function() {
-                                dispatch(resource, resource_id, content_key, ++attempt, page);
-                            }
-                        , AJAX_SNOOZE);
-                    }
+            case 'pending':
+                if (attempt > ATTEMPT_LIMIT) {
+                    handle_timeout(content_key, o);
+                }
+                else {
+                    setTimeout(function() {
+                            dispatch(resource_id, resource_name, content_key, ++attempt, page);
+                        }
+                    , AJAX_SNOOZE);
+                }
 
-                    break;
+                break;
             }
         }
         // ,

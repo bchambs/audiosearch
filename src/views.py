@@ -10,13 +10,18 @@ from src import services, utils, tasks
 from audiosearch.redis import client as cache
 from audiosearch.config import DEBUG_TOOLBAR
 
-"""
-switch to this eventually
-    resource = type of object (artist, song, results, etc)
-    resource_name = artist name or song title
-    resource_id = prefix + resource_name
-"""
 
+artist_service_map = {
+    'profile': services.ArtistProfile(resource_name),
+    'songs': services.ArtistSongs(resource_name),
+    'similar_artists': services.SimilarArtists(resource_name),
+    'similar_songs': services.SimilarSongs(resource_name, "artist"),
+}
+
+
+song_service_map = {
+    
+}
 
 
 def index(request, **kwargs):
@@ -25,12 +30,14 @@ def index(request, **kwargs):
     return render(request, 'index.html', context)
 
 
+
+
 def search(request, **kwargs):
     prefix = "search:"
     resource_id = urllib.unquote_plus(request.GET.get('q'))
     resource = prefix + resource_id
     page = request.GET.get('page')
-    page_type = request.GET.get('type')
+    page_type = request.GET.get('type')   
 
     context = Context({
         'resource': resource,
@@ -48,133 +55,62 @@ def search(request, **kwargs):
     content = utils.generate_content(resource, service_map, page=page)
     context.update(content)
 
+    # if page_type == "artists":
+    #     context['type_content'] = mydict.pop(old_key)
+    #     context['type_content'] = context['search_songs']
+    # elif page_type == "songs":
+    #     context['type_content'] = context['search_artists']
+    # else
+    #     context['type_content'] = None
+
     return render(request, "search.html", context)
 
 
-def artist(request, **kwargs):
+
+
+def artist_summary(request, **kwargs):
     prefix = "artist:"
-    resource_id = urllib.unquote_plus(kwargs['artist'])
-    resource = prefix + resource_id
+    resource_name = urllib.unquote_plus(kwargs['artist'])
+    resource_id = prefix + resource_name
 
     context = Context({
-        'resource': resource,
         'resource_id': resource_id,
+        'resource_name': resource_name,
         'debug': kwargs.get('debug'),
     })
 
-    service_map = {
-        'profile': services.ArtistProfile(resource_id),
-        'songs': services.ArtistSongs(resource_id),
-        'similar_artists': services.SimilarArtists(resource_id),
-        'similar_songs': services.SimilarSongs(resource_id, "artist"),
-    }
 
-    content = utils.generate_content(resource, service_map)
+
+    content = utils.generate_content(resource_id, artist_service_map)
     context.update(content)
 
-    return render(request, "artist.html", context)
+    return render(request, "artist-summary.html", context)
 
 
-def artist_songs(request, **kwargs):
+
+
+def artist_content(request, **kwargs):
     prefix = "artist:"
-    resource_id = urllib.unquote_plus(kwargs['artist'])
-    resource = prefix + resource_id
+    resource_name = urllib.unquote_plus(kwargs['artist'])
+    resource_id = prefix + resource_name
+    content_key = urllib.unquote_plus(kwargs['content_key'])
+    req_services = ['profile', content_key]
     page = request.GET.get('page')
 
     context = Context({
-        'dir_name': urllib.unquote_plus(resource_id),
-        'resource': resource,
         'resource_id': resource_id,
+        'resource_name': resource_name,
+        'content_key': content_key,
         'page': page,
         'debug': kwargs.get('debug'),
     })
 
-    service_map = {
-        'profile': services.ArtistProfile(resource_id),
-        'songs': services.ArtistSongs(resource_id),
-    }
 
-    content = utils.generate_content(resource, service_map, page=page)
+    content = utils.generate_content(resource_id, service_map, page=page)
     context.update(content)
 
-    return render(request, "artist-songs.html", context)
+    return render(request, "artist-content.html", context)
 
-
-def song(request, **kwargs):
-    prefix = "song:"
-    artist_id = urllib.unquote_plus(kwargs['artist'])
-    resource_id = urllib.unquote_plus(kwargs['song'])
-    resource = prefix + artist_id + ":" + resource_id
-
-    context = Context({
-        'dir_artist': artist_id,
-        'dir_song': resource_id,
-        'debug': kwargs.get('debug'),
-    })
-
-    service_map = {
-        'profile': services.SongProfile(artist_id, resource_id),
-        'similar_artists': services.SimilarArtists(artist),
-        'similar_songs': services.SimilarSongs(resource_id, "song", artist_id, song_id=resource_id),
-    }
-
-    content = utils.generate_content(resource, service_map)
-    context.update(content)
-
-    return render(request, "song.html", context)
-
-
-def similar(request, **kwargs):
-    artist = urllib.unquote_plus(kwargs['artist'])
-    song = kwargs.get('song')
-    page = request.GET.get('page')
-    display_type = request.GET.get('type')
-    resource_type = "song" if song else "artist"
-
-    if song:
-        song = urllib.unquote_plus(song)
-        prefix = "song:"
-        resource_id = song
-        resource = prefix + artist + ":" + song
-        service_map = {
-            'profile': services.SongProfile(artist, resource_id),
-        }
-
-    else:
-        prefix = "artist:"
-        resource_id = artist
-        resource = prefix + resource_id
-        service_map = {
-            'profile': services.ArtistProfile(resource_id),
-        }
-
-    if not display_type or display_type == "songs":
-        service_map['similar_songs'] = services.SimilarSongs(resource_id, resource_type, artist_id=artist, song_id=song)
-    
-    if not display_type or display_type == "artists":
-        service_map['similar_artists'] = services.SimilarArtists(artist)
-
-    context = Context({
-        'dir_artist': artist,
-        'dir_song': song,
-        'resource': resource,
-        'resource_id': resource_id,
-        'resource_type': resource_type,
-        'page': page,
-        'debug': kwargs.get('debug'),
-    })
-
-    content = utils.generate_content(resource, service_map, page=page)
-    context.update(content)
-
-    return render(request, "similar.html", context)
-
-
-# HTTP 500
-def server_error(request):
-    response = render(request, "500.html")
-    response.status_code = 500
-    return response
 
 
 """
@@ -183,65 +119,37 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
+
 def retrieve_content(request, **kwargs):
-    resource = utils.unescape_html(request.GET.get('resource'))
+    resource_id = utils.unescape_html(request.GET.get('resource_id'))
     content_key = request.GET.get('content_key')
     page = request.GET.get('page')
     context = {}
 
-    content_string = cache.hget(resource, content_key)
+    intermediate_data = cache.hget(resource_id, content_key)
 
-    if not content_string: 
-        context['status'] = 'pending'
+    if intermediate_data:
+        content = ast.literal_eval(intermediate_data)
+        context['status'] = 'success'
 
-        return HttpResponse(json.dumps(context), content_type="application/json")
-
-    content = ast.literal_eval(content_string)
-    context['status'] = 'success'
-
-    try:
-        context[content_key] = utils.page_resource(page, content)
-    except TypeError:
-        context[content_key] = content
-
-    return HttpResponse(json.dumps(context), content_type="application/json")
-
-
-
-
-
-
-
-
-def retrieve_resource(request):
-    id_ = request.GET.get('q')
-    rtype = request.GET.get('rtype')
-    page = request.GET.get('page')
-
-    if cfg.REDIS_DEBUG:
-        cache.delete(id_)
-
-    context = {}
-    resource_string = cache.hget(id_, rtype)
-
-    if resource_string:
-        resource = ast.literal_eval(resource_string)
-
-        if rtype == "profile":
-            context[rtype] = resource
-        else:
-            context = util.page_resource_async(page, resource, rtype)
-
-        context['q'] = id_
-        context['status'] = "ready"
+        try:
+            context[content_key] = utils.page_resource(page, content)
+        except TypeError:
+            context[content_key] = content
 
     else:
-        context['status'] = "pending"
-
-    if cfg.VIEW_DEBUG and context['status'] == "ready":
-        util.inspect_context(context)
+        context['status'] = 'pending'
 
     return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+
+
+# HTTP 500
+def server_error(request):
+    response = render(request, "500.html")
+    response.status_code = 500
+    return response
 
 
 def clear_resource(request):
