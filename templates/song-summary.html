@@ -66,7 +66,7 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        artist / 
+        song / 
 
         <span id="profile-name">
             {{ resource_name }}
@@ -74,15 +74,9 @@
     </div>
 
     <div class="subtitle">
-        <div id="profile-location">
-            {{ profile.location }}
-        </div>
-        <div id="profile-genres">
-            {% for genre in profile.genres %}
-                {{ genre }}
-            {% endfor %}
-        </div>
+        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
     </div>
+
 </div><!--END dir -->
 
 
@@ -90,20 +84,14 @@
 <div class="content-buttons">
 
     <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
-            <span class="click-div"></span>Similar Artists
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
+            <span class="click-div"></span>Similar Songs
         </a>
     </div>
 
     <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/songs/" id="songs-button" class="button-text ">
-            <span class="click-div"></span>Songs
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
-            <span class="click-div"></span>Recommended Songs
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
+            <span class="click-div"></span>Recommended Artists
         </a>
     </div>
 

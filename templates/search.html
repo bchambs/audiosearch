@@ -56,7 +56,7 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        artist / 
+        search / 
 
         <span id="profile-name">
             {{ profile.name }}
@@ -218,24 +218,6 @@
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
-<script type="text/javascript">
-    var display_more = true;
-
-    $('a#similar-artists-button').click( function() { 
-        show_content("similar_artists");
-        return false; 
-    });
-
-    $('a#songs-button').click( function() { 
-        show_content("songs");
-        return false; 
-    });
-
-    $('a#similar-songs-button').click( function() { 
-        show_content("similar_songs");
-        return false; 
-    });
-</script>
 
 {% if debug %}
     <script type="text/javascript">
@@ -251,9 +233,9 @@
     </script>
 {% endif %}
 
-{% for content_key in pending_content %}
+{% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ content_key }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ pending }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

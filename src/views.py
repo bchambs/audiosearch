@@ -11,17 +11,6 @@ from audiosearch.redis import client as cache
 from audiosearch.config import DEBUG_TOOLBAR
 
 
-artist_service_map = {
-    'profile': services.ArtistProfile(resource_name),
-    'songs': services.ArtistSongs(resource_name),
-    'similar_artists': services.SimilarArtists(resource_name),
-    'similar_songs': services.SimilarSongs(resource_name, "artist"),
-}
-
-
-song_service_map = {
-    
-}
 
 
 def index(request, **kwargs):
@@ -68,6 +57,16 @@ def search(request, **kwargs):
 
 
 
+# artist_service_map = {
+#     'profile': lambda resource_name: services.ArtistProfile(resource_name),
+#     'songs': lambda resource_name: services.ArtistSongs(resource_name),
+#     'similar': lambda resource_name: services.SimilarArtists(resource_name),
+#     'recommended': lambda resource_name: services.SongPlaylist(resource_name),
+# }
+
+
+
+
 def artist_summary(request, **kwargs):
     prefix = "artist:"
     resource_name = urllib.unquote_plus(kwargs['artist'])
@@ -79,9 +78,21 @@ def artist_summary(request, **kwargs):
         'debug': kwargs.get('debug'),
     })
 
+    service_map = {
+        'profile': services.ArtistProfile(resource_id),
+        'songs': services.ArtistSongs(resource_id),
+        'similar_artists': services.SimilarArtists(resource_id),
+        'playlist': services.Playlist(resource_id),
+    }
 
+    # service_map = {
+    #     'profile': artist_service_map['profile'],
+    #     'songs': artist_service_map['songs'],
+    #     'similar': artist_service_map['similar'],
+    #     'recommended': artist_service_map['recommended'],
+    # }
 
-    content = utils.generate_content(resource_id, artist_service_map)
+    content = utils.generate_content(resource_id, service_map)
     context.update(content)
 
     return render(request, "artist-summary.html", context)
@@ -94,22 +105,102 @@ def artist_content(request, **kwargs):
     resource_name = urllib.unquote_plus(kwargs['artist'])
     resource_id = prefix + resource_name
     content_key = urllib.unquote_plus(kwargs['content_key'])
-    req_services = ['profile', content_key]
     page = request.GET.get('page')
 
     context = Context({
         'resource_id': resource_id,
         'resource_name': resource_name,
-        'content_key': content_key,
         'page': page,
+        'description': kwargs.get('description'),
         'debug': kwargs.get('debug'),
     })
 
+    service_map = {
+        'profile': services.ArtistProfile(resource_name),
+    }
+
+    if content_key == "song_playlist":
+        service_map[content_key] = services.Playlist(resource_name)
+    elif content_key == "similar_artists": 
+        service_map[content_key] = services.SimilarArtists(resource_name)
+    elif content_key == "songs":
+        service_map[content_key] = services.ArtistSongs(resource_name)
+
+    # service_map = {
+    #     'profile': artist_service_map['profile'](resource_name),
+    #     content_key: artist_service_map[content_key](resource_name),
+    # }
 
     content = utils.generate_content(resource_id, service_map, page=page)
+    if content_key in content:
+        content['content'] = content.pop(content_key)
     context.update(content)
 
     return render(request, "artist-content.html", context)
+
+
+
+
+def song_summary(request, **kwargs):
+    prefix = "song:"
+    artist = urllib.unquote_plus(kwargs['artist'])
+    resource_name = urllib.unquote_plus(kwargs['song'])
+    resource_id = prefix + resource_name
+
+    context = Context({
+        'resource_id': resource_id,
+        'resource_name': resource_name,
+        'artist_name': artist,
+        'debug': kwargs.get('debug'),
+    })
+
+    service_map = {
+        'profile': services.ArtistProfile(resource_name),
+        'similar_artists': services.SimilarArtists(resource_name),
+        'playlist': services.Playlist(resource_name, artist_id=artist),
+    }
+
+    content = utils.generate_content(resource_id, service_map)
+    context.update(content)
+
+    return render(request, "song-summary.html", context)
+
+
+
+
+def song_content(request, **kwargs):
+    prefix = "song:"
+    artist = urllib.unquote_plus(kwargs['artist'])
+    resource_name = urllib.unquote_plus(kwargs['song'])
+    resource_id = prefix + resource_name
+    content_key = urllib.unquote_plus(kwargs['content_key'])
+    page = request.GET.get('page')
+
+    context = Context({
+        'resource_id': resource_id,
+        'resource_name': resource_name,
+        'artist_name': artist,
+        'page': page,
+        'description': kwargs.get('description'),
+        'debug': kwargs.get('debug'),
+    })
+
+    service_map = {
+        'profile': services.ArtistProfile(resource_name),
+    }
+
+    if content_key == "song_playlist":
+        service_map[content_key] = services.Playlist(resource_name, artist_id=artist)
+    elif content_key == "similar_artists": 
+        service_map[content_key] = services.SimilarArtists(artist)
+
+    content = utils.generate_content(resource_id, service_map, page=page)
+    if content_key in content:
+        content['content'] = content.pop(content_key)
+    context.update(content)
+
+    return render(request, "song-content.html", context)
+
 
 
 

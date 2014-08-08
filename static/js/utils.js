@@ -5,7 +5,7 @@
 function space_to_plus(url) {
     'use strict';
 
-    return url.replace(' ', '+');
+    return url.replace(/ /g,'+');
 }
 
 

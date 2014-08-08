@@ -11,10 +11,12 @@ var AJAX_SNOOZE = 2000,
 function load_content(resource_id, content_key, data) {
     'use strict';
 
+    console.log("loading: " + content_key);
+
     switch (content_key) {
     case "profile":
         for (var key in data) {
-            var key_string = "#" + content_key + "-" + key;
+            var key_string = "#profile-" + key;
 
             if (Object.prototype.toString.call(key) === '[object Array]') {
                 for (var i = 0; i < data[key].length; i++) {
@@ -114,7 +116,7 @@ function load_content(resource_id, content_key, data) {
         load_paged_table(resource_id, content_key, data, urls);
         break;
 
-    case "similar_songs":
+    case "song_playlist":
         var urls = {
                 view_more: "similar/?type=songs",
                 previous: "?type=songs&page=" + data['previous'],
@@ -128,6 +130,10 @@ function load_content(resource_id, content_key, data) {
                             text: title,
                             href: space_to_plus(url)
                         });
+
+                        
+                        console.log(url);
+                        console.log(space_to_plus(url));
 
                     return $a;
                 }
@@ -146,13 +152,11 @@ function load_content(resource_id, content_key, data) {
 
 function load_paged_table(resource_id, content_key, data, urls) {
     console.log("load_paged_table::" + content_key);
-    var $table_id_key = "#" + content_key + "-table";
 
     //tfoot
     //display 'view more results' 
     if (typeof display_more !== 'undefined' && display_more && data['next']) {
-        var $tfoot_key = "#" + content_key + "-tfoot", 
-            $tr = $("<tr />"),
+        var $tr = $("<tr />"),
             $td = $("<td />").attr('colspan', 2),
             $more_a = $("<a />",{
                 text: "view more",
@@ -160,7 +164,7 @@ function load_paged_table(resource_id, content_key, data, urls) {
             });
             $td.append($more_a);
             $tr.append($td);
-            $($tfoot_key).append($tr);
+            $('#content-tfoot').append($tr);
     }
 
     //display page nav
@@ -168,36 +172,32 @@ function load_paged_table(resource_id, content_key, data, urls) {
 
         //previous
         if (data['previous']) {
-            var $previous_key = "#" + content_key + "-previous", 
-            $prev_a = $("<a />",{
+            var $prev_a = $("<a />",{
                 text: "previous",
                 href: space_to_plus(urls['previous'])
             });
 
-            $($previous_key).append($prev_a);
+            $('#content-previous').append($prev_a);
         }
 
         //current
         if (data['current']) {
-            var $current_key = "#" + content_key + "-current"; 
-            $($current_key).text(data['current'] + " of " + data['total']);
+            $('#content-current').text(data['current'] + " of " + data['total']);
         }
 
         //next
         if (data['next']) {
-            var $next_key = "#" + content_key + "-next", 
-            $next_a = $("<a />",{
+            var $next_a = $("<a />",{
                 text: "next",
                 href: space_to_plus(urls['next'])
             });
 
-            $($next_key).append($next_a);
+            $('#content-next').append($next_a);
         }
     }
 
     //tbody
-    var $tbody_key = "#" + content_key + "-tbody",
-        index = 0;
+    var index = 0;
 
     for (var item in data['data']) {
         var $tr = $("<tr />"),
@@ -209,7 +209,7 @@ function load_paged_table(resource_id, content_key, data, urls) {
         $td_data.append($item_a);
         $tr.append($td_index);
         $tr.append($td_data);
-        $($tbody_key).append($tr);
+        $('#content-tbody').append($tr);
 
         index++;
     }

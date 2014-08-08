@@ -56,24 +56,16 @@
 <!-- dir -->
 <div class="dir">
     <div class="title">
-        artist / 
+        song / 
 
-        <span id="profile-namef">
+        <span id="profile-name">
             {{ resource_name }}
         </span>
     </div>
 
     <div class="subtitle">
-        <div id="profile-location">
-            {{ profile.location }}
-        </div>
-        <div id="profile-genres">
-            {% for genre in profile.genres %}
-                {{ genre }}
-            {% endfor %}
-        </div>
+        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
     </div>
-
 
 </div><!--END dir -->
 
@@ -82,20 +74,14 @@
 <div class="content-buttons">
 
     <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
-            <span class="click-div"></span>Similar Artists
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
+            <span class="click-div"></span>Similar Songs
         </a>
     </div>
 
     <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/songs/" id="songs-button" class="button-text ">
-            <span class="click-div"></span>Songs
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
-            <span class="click-div"></span>Recommended Songs
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
+            <span class="click-div"></span>Recommended Artists
         </a>
     </div>
 
@@ -153,6 +139,7 @@
                         {{ forloop.counter0|add:content.offset }}
                     </td>
                     <td>
+                        <!-- <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ item.title }}</a> -->
                         {% if item.name %}
                             <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                         {% else %}
@@ -170,25 +157,6 @@
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
-
-<script type="text/javascript">
-//     var display_more = true;
-
-//     $('a#similar-artists-button').click( function() { 
-//         show_content("similar_artists");
-//         return false; 
-//     });
-
-//     $('a#songs-button').click( function() { 
-//         show_content("songs");
-//         return false; 
-//     });
-
-//     $('a#similar-songs-button').click( function() { 
-//         show_content("similar_songs");
-//         return false; 
-//     });
-</script>
 
 {% if debug %}
     <script type="text/javascript">

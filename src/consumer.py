@@ -28,6 +28,7 @@ class ENConsumer(object):
                 json_response = response.json()
 
                 code = json_response['response']['status']['code']
+                print response.url
 
                 # success, return echo nest resource
                 if code == ENConsumer.SUCCESS:

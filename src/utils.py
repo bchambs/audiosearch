@@ -8,25 +8,9 @@ import tasks
 from audiosearch.redis import client as cache
 
 
-def generate_content(resource_id, service_map, **kwargs):
-    intermediate_data = cache.hgetall(resource_id)
-    page = kwargs.get('page')
-    result = {
-        'pending_content': [],
-    }
-
-    if intermediate_data:
-
-    else:
-        for key, service in service_map.items():
-            tasks.call.delay(resource_id, service)
-            result['pending_content'].append(required)
-
-    return result
 
 
-
-def generate_content_old(resource, service_map, **kwargs):
+def generate_content(resource, service_map, **kwargs):
     cache_data = cache.hgetall(resource)
     page = kwargs.get('page')
     result = {
@@ -47,7 +31,7 @@ def generate_content_old(resource, service_map, **kwargs):
             except TypeError:
                 result[key] = content
         else:
-            tasks.call.delay(resource, service)
+            tasks.call.delay(resource, service, key)
             result['pending_content'].append(key)
 
             print "MISS: %s" %(key)
@@ -78,6 +62,8 @@ def page_resource(page, resource):
     result['offset'] = paged.start_index()
 
     return result
+
+
 
 
 def unescape_html(s):

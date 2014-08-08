@@ -51,7 +51,6 @@ class ArtistProfile(EchoNestService):
         'years_active',
     ]
     ECHO_NEST_KEY = 'artist'
-    CONTENT_KEY = 'profile'
 
 
     def __init__(self, resource_id):
@@ -96,7 +95,6 @@ class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'songs'
 
 
     def __init__(self, resource_id):
@@ -119,7 +117,6 @@ class SimilarArtists(EchoNestService):
         'songs',
     ]
     ECHO_NEST_KEY = 'artists'
-    CONTENT_KEY = 'similar_artists'
 
 
     def __init__(self, resource_id):
@@ -136,7 +133,6 @@ class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
     ECHO_NEST_KEY = 'artists'
-    CONTENT_KEY = 'search_artists'
 
 
     def __init__(self, resource_id):
@@ -153,7 +149,6 @@ class SearchSongs(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'search'
     ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'search_songs'
 
 
     def __init__(self, artist_id, resource_id):
@@ -182,35 +177,33 @@ class SongID(SearchSongs):
         return "service.song id"
 
 
-class SimilarSongs(EchoNestService):
+class Playlist(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'similar_songs' 
+    
 
-
-    def __init__(self, resource_id, resource_type, artist_id=None, song_id=None):
-        super(SimilarSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
+    # if artist_id is present, generate playlist with a song_id as the seed
+    def __init__(self, resource_id, artist_id=None):
+        super(Playlist, self).__init__(self.TYPE_, self.METHOD, resource_id)
         self.payload['results'] = cfg.RESULTS
-        
-        if resource_type == "artist":
+
+        if artist_id:
+            self.payload['type'] = "song-radio"
+            self.dependency = SongID(artist_id, resource_id)
+        else:
             self.payload['artist'] = resource_id
             self.payload['variety'] = 1
             self.payload['type'] = "artist-radio"
-        else:
-            self.payload['type'] = "song-radio"
-            self.dependency = SongID(artist_id, resource_id)
-
+        
 
     def __str__(self):
-        return "SimilarSongs"
+        return "Playlist"
 
 
     def build(self, intermediate):
-        if not intermediate: return None
-
-        self.payload['song_id'] = intermediate[0].get('id')
-        return 
+        if intermediate:
+            self.payload['song_id'] = intermediate[0].get('id')
 
 
 class SongProfile(EchoNestService):
@@ -222,7 +215,6 @@ class SongProfile(EchoNestService):
         'song_hotttnesss_rank', 
     ]
     ECHO_NEST_KEY = 'songs'
-    CONTENT_KEY = 'profile'
 
 
     def __init__(self, artist_id, resource_id):
