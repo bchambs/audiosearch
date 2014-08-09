@@ -8,7 +8,7 @@ var AJAX_SNOOZE = 2000,
     FADE_DELAY = 8000;
 
 
-function load_content(resource_id, content_key, data) {
+function load_content(resource_id, content_key, use_generic_key, data) {
     'use strict';
 
     console.log("loading: " + content_key);
@@ -48,7 +48,7 @@ function load_content(resource_id, content_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, data, urls);
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
     case "search_songs":
@@ -70,7 +70,7 @@ function load_content(resource_id, content_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, data, urls);
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
     case "songs":
@@ -92,7 +92,7 @@ function load_content(resource_id, content_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, data, urls);
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
     case "similar_artists":
@@ -113,7 +113,7 @@ function load_content(resource_id, content_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, data, urls);
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
     case "song_playlist":
@@ -131,15 +131,11 @@ function load_content(resource_id, content_key, data) {
                             href: space_to_plus(url)
                         });
 
-                        
-                        console.log(url);
-                        console.log(space_to_plus(url));
-
                     return $a;
                 }
         };
 
-        load_paged_table(resource_id, content_key, data, urls);
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
         default:
@@ -150,13 +146,15 @@ function load_content(resource_id, content_key, data) {
 }
 
 
-function load_paged_table(resource_id, content_key, data, urls) {
+function load_paged_table(resource_id, content_key, use_generic_key, data, urls) {
     console.log("load_paged_table::" + content_key);
+    var $table_id_key = "#" + content_key + "-table";
 
     //tfoot
     //display 'view more results' 
     if (typeof display_more !== 'undefined' && display_more && data['next']) {
-        var $tr = $("<tr />"),
+        var $tfoot_key = "#" + content_key + "-tfoot",
+            $tr = $("<tr />"),
             $td = $("<td />").attr('colspan', 2),
             $more_a = $("<a />",{
                 text: "view more",
@@ -164,7 +162,13 @@ function load_paged_table(resource_id, content_key, data, urls) {
             });
             $td.append($more_a);
             $tr.append($td);
-            $('#content-tfoot').append($tr);
+
+            if (Boolean(use_generic_key)) {
+                $('#content-tfoot').append($tr);
+            }
+            else {
+                $($tfoot_key).append($tr);
+            }
     }
 
     //display page nav
@@ -172,32 +176,53 @@ function load_paged_table(resource_id, content_key, data, urls) {
 
         //previous
         if (data['previous']) {
-            var $prev_a = $("<a />",{
+            var $previous_key = "#" + content_key + "-previous", 
+                $prev_a = $("<a />",{
                 text: "previous",
                 href: space_to_plus(urls['previous'])
             });
 
-            $('#content-previous').append($prev_a);
+            if (Boolean(use_generic_key)) {
+                $('#content-previous').append($prev_a);
+
+            }
+            else {
+                $($previous_key).append($prev_a);
+            }
         }
 
         //current
         if (data['current']) {
-            $('#content-current').text(data['current'] + " of " + data['total']);
+            var $current_key = "#" + content_key + "-current"; 
+
+            if (Boolean(use_generic_key)) {
+                $('#content-current').text(data['current'] + " of " + data['total']);
+            }
+            else {
+                $($current_key).text(data['current'] + " of " + data['total']);
+            }
         }
 
         //next
         if (data['next']) {
-            var $next_a = $("<a />",{
+             var $next_key = "#" + content_key + "-next", 
+                $next_a = $("<a />",{
                 text: "next",
                 href: space_to_plus(urls['next'])
             });
 
-            $('#content-next').append($next_a);
+            if (Boolean(use_generic_key)) {
+                $('#content-next').append($next_a);
+            }
+            else {
+                $($next_key).append($next_a);
+            }
         }
     }
 
     //tbody
-    var index = 0;
+    var $tbody_key = "#" + content_key + "-tbody",
+        index = 0;
 
     for (var item in data['data']) {
         var $tr = $("<tr />"),
@@ -209,7 +234,13 @@ function load_paged_table(resource_id, content_key, data, urls) {
         $td_data.append($item_a);
         $tr.append($td_index);
         $tr.append($td_data);
-        $('#content-tbody').append($tr);
+
+        if (Boolean(use_generic_key)) {
+            $('#content-tbody').append($tr);
+        }
+        else {
+            $($tbody_key).append($tr);
+        }
 
         index++;
     }
@@ -224,7 +255,7 @@ function handle_timeout(content_key, message) {
 }
 
 
-function dispatch(resource_id, resource_name, content_key, attempt, page) {
+function dispatch(resource_id, resource_name, content_key, use_generic_key, attempt, page) {
     'use strict';
 
     var params = {
@@ -244,7 +275,7 @@ function dispatch(resource_id, resource_name, content_key, attempt, page) {
         success: function(data, stat, o) {
             switch (data['status']) {
             case 'success':
-                load_content(resource_name, content_key, data[content_key]);
+                load_content(resource_name, content_key, use_generic_key, data[content_key]);
 
                 break;
 
@@ -254,7 +285,7 @@ function dispatch(resource_id, resource_name, content_key, attempt, page) {
                 }
                 else {
                     setTimeout(function() {
-                            dispatch(resource_id, resource_name, content_key, ++attempt, page);
+                            dispatch(resource_id, resource_name, content_key, use_generic_key, ++attempt, page);
                         }
                     , AJAX_SNOOZE);
                 }

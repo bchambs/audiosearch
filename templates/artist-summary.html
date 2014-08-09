@@ -138,7 +138,7 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ pending }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

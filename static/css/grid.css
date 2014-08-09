@@ -9,22 +9,13 @@ html, body {
 /*
     content
 */
-
 .content {
     display: block;
     width: 975px;
     margin: 20px auto;
     overflow: hidden;
-    /*height: 50px;*/
 }
-
 .content .column {
     float: left;
-    margin-right: 100px;
-    width: 250px;
+    width: 487px;
 }
-
-/*.content .column .title {
-    font-size: 30px;
-    text-align: center;
-}*/

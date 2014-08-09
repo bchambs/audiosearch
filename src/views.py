@@ -23,46 +23,54 @@ def index(request, **kwargs):
 
 def search(request, **kwargs):
     prefix = "search:"
-    resource_id = urllib.unquote_plus(request.GET.get('q'))
-    resource = prefix + resource_id
+    resource_name = urllib.unquote_plus(request.GET.get('q'))
+    resource_id = prefix + resource_name
     page = request.GET.get('page')
-    page_type = request.GET.get('type')   
+    page_type = request.GET.get('type')
+
+    try:
+        page_type = page_type.lower()
+    except AttributeError:
+        page_type = None
 
     context = Context({
-        'resource': resource,
         'resource_id': resource_id,
-        'type': page_type,
+        'resource_name': resource_name,
+        'page_type': page_type,
         'page': page,
+        'use_generic_key': True if page_type else False,
         'debug': kwargs.get('debug'),
     })
 
-    service_map = {
-        'search_artists': services.SearchArtists(resource_id),
-        'search_songs': services.SearchSongs(None, resource_id),
-    }
+    if page_type == "artists":
+        service_map = {
+            'search_artists': services.SearchArtists(resource_name),
+        }
+    elif page_type == "songs":
+        service_map = {
+            'search_songs': services.SearchSongs(None, resource_name),
+        }
+    else:
+        service_map = {
+            'search_artists': services.SearchArtists(resource_name),
+            'search_songs': services.SearchSongs(None, resource_name),
+        }
 
-    content = utils.generate_content(resource, service_map, page=page)
+    content = utils.generate_content(resource_id, service_map, page=page)
+    if page_type == "artists" and 'search_artists' in content:
+        content['content'] = content.pop('search_artists')
+        content['use_content_keys'] = False
+
+    elif page_type == "songs" and 'search_songs' in content:
+        content['content'] = content.pop('search_songs')
+        content['use_content_keys'] = False
+
+    else:
+        content['use_content_keys'] = True
+
     context.update(content)
 
-    # if page_type == "artists":
-    #     context['type_content'] = mydict.pop(old_key)
-    #     context['type_content'] = context['search_songs']
-    # elif page_type == "songs":
-    #     context['type_content'] = context['search_artists']
-    # else
-    #     context['type_content'] = None
-
     return render(request, "search.html", context)
-
-
-
-
-# artist_service_map = {
-#     'profile': lambda resource_name: services.ArtistProfile(resource_name),
-#     'songs': lambda resource_name: services.ArtistSongs(resource_name),
-#     'similar': lambda resource_name: services.SimilarArtists(resource_name),
-#     'recommended': lambda resource_name: services.SongPlaylist(resource_name),
-# }
 
 
 
@@ -75,22 +83,16 @@ def artist_summary(request, **kwargs):
     context = Context({
         'resource_id': resource_id,
         'resource_name': resource_name,
+        'use_generic_key': False,
         'debug': kwargs.get('debug'),
     })
 
     service_map = {
-        'profile': services.ArtistProfile(resource_id),
-        'songs': services.ArtistSongs(resource_id),
-        'similar_artists': services.SimilarArtists(resource_id),
-        'playlist': services.Playlist(resource_id),
+        'profile': services.ArtistProfile(resource_name),
+        'songs': services.ArtistSongs(resource_name),
+        'similar_artists': services.SimilarArtists(resource_name),
+        'playlist': services.Playlist(resource_name),
     }
-
-    # service_map = {
-    #     'profile': artist_service_map['profile'],
-    #     'songs': artist_service_map['songs'],
-    #     'similar': artist_service_map['similar'],
-    #     'recommended': artist_service_map['recommended'],
-    # }
 
     content = utils.generate_content(resource_id, service_map)
     context.update(content)
@@ -111,6 +113,7 @@ def artist_content(request, **kwargs):
         'resource_id': resource_id,
         'resource_name': resource_name,
         'page': page,
+        'use_generic_key': True,
         'description': kwargs.get('description'),
         'debug': kwargs.get('debug'),
     })
@@ -125,11 +128,6 @@ def artist_content(request, **kwargs):
         service_map[content_key] = services.SimilarArtists(resource_name)
     elif content_key == "songs":
         service_map[content_key] = services.ArtistSongs(resource_name)
-
-    # service_map = {
-    #     'profile': artist_service_map['profile'](resource_name),
-    #     content_key: artist_service_map[content_key](resource_name),
-    # }
 
     content = utils.generate_content(resource_id, service_map, page=page)
     if content_key in content:
@@ -151,6 +149,7 @@ def song_summary(request, **kwargs):
         'resource_id': resource_id,
         'resource_name': resource_name,
         'artist_name': artist,
+        'use_generic_key': False,
         'debug': kwargs.get('debug'),
     })
 
@@ -181,6 +180,7 @@ def song_content(request, **kwargs):
         'resource_name': resource_name,
         'artist_name': artist,
         'page': page,
+        'use_generic_key': True,
         'description': kwargs.get('description'),
         'debug': kwargs.get('debug'),
     })

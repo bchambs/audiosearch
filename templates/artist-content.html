@@ -171,25 +171,6 @@
 <script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
 
-<script type="text/javascript">
-//     var display_more = true;
-
-//     $('a#similar-artists-button').click( function() { 
-//         show_content("similar_artists");
-//         return false; 
-//     });
-
-//     $('a#songs-button').click( function() { 
-//         show_content("songs");
-//         return false; 
-//     });
-
-//     $('a#similar-songs-button').click( function() { 
-//         show_content("similar_songs");
-//         return false; 
-//     });
-</script>
-
 {% if debug %}
     <script type="text/javascript">
         $('a#debug').click( function() { 
@@ -207,7 +188,7 @@
 {% for pending in pending_content %}
     <script type="text/javascript">
         setTimeout(
-            dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", 0, "{{ page }}")
+            dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
             , 1500
         );
     </script>
