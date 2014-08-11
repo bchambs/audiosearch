@@ -21,16 +21,6 @@
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
 
-    <style>
-        #songs-content, #similar_songs-content {
-            display: none;
-        }
-
-        #similar_artists-content {
-            display: visible;
-        }
-    </style>
-   
     <title>audiosearch</title>
 </head>
 <body>
@@ -63,43 +53,39 @@
     
 </div><!--END nav -->
 
+
 <!-- dir -->
-<div class="dir">
-    <div class="title">
-        song / 
+<div class="dir content">
+    <span class="title">
+        song / {{ resource_name }} {{ profile.duration }}
+    </span>
 
-        <span id="profile-name">
-            {{ resource_name }}
-        </span>
-    </div>
+    <span class="button">
+        <a href="/music/{{ artist_name|space_to_plus }}/similar/">
+            Recommended Artists
+        </a>
+    </span>
 
-    <div class="subtitle">
-        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
-    </div>
+    <span class="button">
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/">
+            Similar Songs
+        </a>
+    </span>
 
 </div><!--END dir -->
 
+<hr>
 
-<!-- content buttons -->
-<div class="content-buttons">
-
-    <div class="button bbb">
-        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
-            <span class="click-div"></span>Similar Songs
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
-            <span class="click-div"></span>Recommended Artists
-        </a>
-    </div>
-
-</div><!--END content-buttons -->
-
-
+<!-- song info -->
+<div class="song-info subtitle content">
+    by <a href="/music/{{ artist_name|space_to_plus }}/">
+        {{ artist_name }}
+    </a>
+</div><!--END song info -->
 
 <hr>
+
+
 
 
 
@@ -126,7 +112,7 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

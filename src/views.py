@@ -23,7 +23,12 @@ def index(request, **kwargs):
 
 def search(request, **kwargs):
     prefix = "search:"
-    resource_name = urllib.unquote_plus(request.GET.get('q'))
+    q = request.GET.get('q')
+
+    if not q:
+        return render(request, "search.html", Context({}))
+
+    resource_name = urllib.unquote_plus(q)
     resource_id = prefix + resource_name
     page = request.GET.get('page')
     page_type = request.GET.get('type')
@@ -119,9 +124,6 @@ def artist_summary(request, **kwargs):
     content = utils.generate_content(resource_id, service_map)
     context.update(content)
 
-    if 'artist_grid' in content:
-        print content['artist_grid']['data'][0]['images'][0].keys()
-
     return render(request, "artist-summary.html", context)
 
 
@@ -149,6 +151,7 @@ def artist_content(request, **kwargs):
 
     if content_key == "song_playlist":
         service_map[content_key] = services.Playlist(resource_name)
+        context['display_secondary_column'] = True
     elif content_key == "similar_artists": 
         service_map[content_key] = services.SimilarArtists(resource_name)
     elif content_key == "songs":
@@ -168,7 +171,7 @@ def song_summary(request, **kwargs):
     prefix = "song:"
     artist = urllib.unquote_plus(kwargs['artist'])
     resource_name = urllib.unquote_plus(kwargs['song'])
-    resource_id = prefix + resource_name
+    resource_id = prefix + artist + ":" + resource_name
 
     context = Context({
         'resource_id': resource_id,
@@ -180,8 +183,8 @@ def song_summary(request, **kwargs):
 
     service_map = {
         'profile': services.SongProfile(artist, resource_name),
-        'similar_artists': services.SimilarArtists(artist),
-        'playlist': services.Playlist(resource_name, artist_id=artist),
+        # 'similar_artists': services.SimilarArtists(artist),
+        # 'song_playlist': services.Playlist(resource_name, artist_id=artist),
     }
 
     content = utils.generate_content(resource_id, service_map)
@@ -196,7 +199,7 @@ def song_content(request, **kwargs):
     prefix = "song:"
     artist = urllib.unquote_plus(kwargs['artist'])
     resource_name = urllib.unquote_plus(kwargs['song'])
-    resource_id = prefix + resource_name
+    resource_id = prefix + artist + ":" + resource_name
     content_key = urllib.unquote_plus(kwargs['content_key'])
     page = request.GET.get('page')
 
@@ -243,7 +246,7 @@ def retrieve_content(request, **kwargs):
     context = {}
 
     try:
-        resource_id = resource_id.lower()
+        resource_id = resource_id.lower().strip()
         intermediate_data = cache.hget(resource_id, content_key)
 
         if intermediate_data:

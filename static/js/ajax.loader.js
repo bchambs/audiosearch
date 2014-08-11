@@ -31,7 +31,6 @@ function load_content(resource_id, content_key, use_generic_key, data) {
         break;
 
     case "artist_grid":
-        console.log("we're in");
         break;
 
     case "search_artists":
@@ -172,96 +171,81 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
     console.log("load_paged_table::" + content_key);
     var $table_id_key = "#" + content_key + "-table";
 
-    //tfoot
-    //display 'view more results' 
-    if (typeof display_more !== 'undefined' && display_more && data['next']) {
-        var $tfoot_key = "#" + content_key + "-tfoot",
-            $tr = $("<tr />"),
-            $td = $("<td />").attr('colspan', 2),
-            $more_a = $("<a />",{
-                text: "view more",
-                href: space_to_plus(urls['view_more'])
-            });
-            $td.append($more_a);
-            $tr.append($td);
+    //previous
+    if (data['previous']) {
+        var $previous_key = "#" + content_key + "-previous", 
+            $prev_a = $("<a />",{
+            text: "previous",
+            href: space_to_plus(urls['previous'])
+        });
 
-            if (Boolean(use_generic_key)) {
-                $('#content-tfoot').append($tr);
-            }
-            else {
-                $($tfoot_key).append($tr);
-            }
+        if (Boolean(use_generic_key)) {
+            // $('#content-previous').append($prev_a);
+            $('#previous').append($prev_a);
+
+        }
+        else {
+            $($previous_key).append($prev_a);
+        }
     }
 
-    //display page nav
-    else {
+    //current
+    if ((data['previous'] || data['next']) && data['current']) {
+        var $current_key = "#" + content_key + "-current"; 
 
-        //previous
-        if (data['previous']) {
-            var $previous_key = "#" + content_key + "-previous", 
-                $prev_a = $("<a />",{
-                text: "previous",
-                href: space_to_plus(urls['previous'])
-            });
-
-            if (Boolean(use_generic_key)) {
-                // $('#content-previous').append($prev_a);
-                $('#previous').append($prev_a);
-
-            }
-            else {
-                $($previous_key).append($prev_a);
-            }
+        if (Boolean(use_generic_key)) {
+            // $('#content-current').text(data['current'] + " of " + data['total']);
+            $('#current').text(data['current'] + " of " + data['total']);
         }
-
-        //current
-        if (data['current']) {
-            var $current_key = "#" + content_key + "-current"; 
-
-            if (Boolean(use_generic_key)) {
-                // $('#content-current').text(data['current'] + " of " + data['total']);
-                $('#current').text(data['current'] + " of " + data['total']);
-            }
-            else {
-                $($current_key).text(data['current'] + " of " + data['total']);
-            }
+        else {
+            $($current_key).text(data['current'] + " of " + data['total']);
         }
+    }
 
-        //next
-        if (data['next']) {
-             var $next_key = "#" + content_key + "-next", 
-                $next_a = $("<a />",{
-                text: "next",
-                href: space_to_plus(urls['next'])
-            });
+    //next
+    if (data['next']) {
+         var $next_key = "#" + content_key + "-next", 
+            $next_a = $("<a />",{
+            text: "next",
+            href: space_to_plus(urls['next'])
+        });
 
-            if (Boolean(use_generic_key)) {
-                // $('#content-next').append($next_a);
-                $('#next').append($next_a);
-            }
-            else {
-                $($next_key).append($next_a);
-            }
+        if (Boolean(use_generic_key)) {
+            // $('#content-next').append($next_a);
+            $('#next').append($next_a);
         }
-    }      
+        else {
+            $($next_key).append($next_a);
+        }
+    }
 
     //tbody
     var $tbody_key = "#" + content_key + "-tbody",
         index = 0;
 
     for (var item in data['data']) {
-        var $tr = $("<tr />"),
-            $td_index = $("<td />"),
+        if (index % 2 === 0) {
+            var row_class = "even";
+        }
+        else {
+            var row_class = "odd";
+        }
+
+        var $tr = $("<tr />",{
+                class: row_class
+            }),
+            $td_index = $("<td />",{
+                class: 'index'
+            }),
             $td_data = $("<td />"),
             $item_a = urls['item'](data['data'][item]);
 
-        $td_index.append(index + data['offset']);
+        $td_index.append(index + data['offset'] + ".");
         $td_data.append($item_a);
         $tr.append($td_index);
         $tr.append($td_data);
 
         if (Boolean(use_generic_key)) {
-            // $('#content-tbody').append($tr);
             $('#content-tbody').append($tr);
         }
         else {

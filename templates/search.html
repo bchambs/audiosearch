@@ -54,126 +54,101 @@
     
 </div><!--END nav -->
 
-<!-- dir -->
-<div class="dir">
-    <div class="title">
-        search / 
 
-        <span id="profile-namef">
-            {{ resource_name }}
-        </span>
-    </div>
+<!-- dir -->
+<div class="dir content">
+    <span class="title">
+        search / {{ resource_name }}
+    </span>
 
 </div><!--END dir -->
 
 <hr>
 
+
 {% if page_type %}
-    <!-- single content -->
-    <div class="content bbb">
-        <table id="content-table">
-            <thead id="content-thead" class="title header">
-                <tr>
-                    <th colspan="2">
-                        {{ page_type|title }}
-                    </th>
-                </tr>
-            </thead>
+<!-- single content -->
 
-            <tfoot id="content-tfoot" class="title header">
-                <tr>
-                    <div class="title header">
-                        <td>
-                            <div id="content-previous">
-                                {% if content.previous %}
-                                    <a href = "?q={{ resource_name }}&type={{ page_type }}&page={{ content.previous }}" >previous</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <div id="content-current">
-                                {% if content.current %}
-                                    {{ content.current }} of {{ content.total }}
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <div id="content-next">
-                                {% if content.next %}
-                                    <a href = "?q={{ resource_name }}&type={{ page_type }}&page={{ content.next }}" >next</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </div>
-                </tr>
-            </tfoot>
+<!-- table nav -->
+<div class="table-nav content">
+    <div class="title">
+        {{ page_type|title }}
+    </div>
 
-            <tbody id="content-tbody">
-                {% for item in content.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:content.offset }}
-                        </td>
-                        <td>
-                            {% if item.name %}
-                                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-                            {% else %}
-                                <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><!--END single content -->
+    <div id="next">
+        {% if content.next %}
+            <a href = "?page={{ content.next }}" >next</a>
+        {% endif %}
+    </div>
+
+    <div id="current">
+        {% if content.next or content.previous and content.current %}
+            {{ content.current }} of {{ content.total }}
+        {% endif %}
+    </div>
+
+    <div id="previous">
+        {% if content.previous %}
+            <a href = "?page={{ content.previous }}" >previous</a>
+        {% endif %}
+    </div>
+
+</div><!--END table nav -->
+
+<hr>
+
+<div class="content">
+    <table id="content-table">
+        <tbody id="content-tbody">
+            {% for item in content.data %}
+                <tr class="{% cycle 'even' 'odd' %}">
+                    <td class="index">
+                        {{ forloop.counter0|add:content.offset }}.
+                    </td>
+                    <td>
+                        {% if item.name %}
+                            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
+                        {% else %}
+                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div><!--END single content -->
 
 {% else %}
 
 <!-- dual content -->
-<div class="content bbb">
+<div class="content">
     <div class="column">
+
+        <!-- search_artists nav -->
+        <div class="table-nav">
+            <div class="title">
+                Artists
+            </div>
+
+            <div id="next" class="more">
+                {% if search_artists.next %}
+                    <a href = "?q={{ resource_name }}&type=artists" >more</a>
+                {% endif %}
+            </div>
+
+        </div><!--END table nav -->
+
+        <hr>
+
         <table id="search_artists-table">
-            <thead id="search_artists-thead" class="title header">
-                <tr>
-                    <th colspan="2">
-                        Artists
-                    </th>
-                </tr>
-            </thead>
-
-            <tfoot id="search_artists-tfoot" class="title header">
-                <tr>
-                    <div class="title header">
-                        <td>
-                            <div id="search_artists-current">
-                                {% if search_artists.current %}
-                                    {{ search_artists.current }} of {{ search_artists.total }}
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <div id="search_artists-next">
-                                {% if search_artists.next %}
-                                    <a href = "?q={{ resource_name }}&type=artists&page={{ search_artists.next }}" >more</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </div>
-                </tr>
-            </tfoot>
-
             <tbody id="search_artists-tbody">
                 {% for item in search_artists.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:search_artists.offset }}
+                    <tr class="{% cycle 'even' 'odd' %}">
+                        <td class="index">
+                            {{ forloop.counter0|add:search_artists.offset }}.
                         </td>
                         <td>
-                            {% if item.name %}
-                                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-                            {% else %}
-                                <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            {% endif %}
+                            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -183,41 +158,29 @@
 
     <!-- search songs -->
     <div class="column">
+
+        <!-- search_songs nav -->
+        <div class="table-nav">
+            <div class="title">
+                Songs
+            </div>
+
+            <div id="next" class="more">
+                {% if search_songs.next %}
+                    <a href = "?q={{ resource_name }}&type=songs" >more</a>
+                {% endif %}
+            </div>
+
+        </div><!--END table nav -->
+
+        <hr>
+
         <table id="search_songs-table">
-            <thead id="search_songs-thead" class="title header">
-                <tr>
-                    <th colspan="2">
-                        Songs
-                    </th>
-                </tr>
-            </thead>
-
-            <tfoot id="search_songs-tfoot" class="title header">
-                <tr>
-                    <div class="title header">
-                        <td>
-                            <div id="search_songs-current">
-                                {% if search_songs.current %}
-                                    {{ search_songs.current }} of {{ search_songs.total }}
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <div id="search_songs-next">
-                                {% if search_songs.next %}
-                                    <a href = "?q={{ resource_name }}&type=songs&?page={{ search_songs.next }}" >more</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </div>
-                </tr>
-            </tfoot>
-
             <tbody id="search_songs-tbody">
                 {% for item in search_songs.data %}
-                    <tr>
-                        <td>
-                            {{ forloop.counter0|add:search_songs.offset }}
+                    <tr class="{% cycle 'even' 'odd' %}">
+                        <td class="index">
+                            {{ forloop.counter0|add:search_songs.offset }}.
                         </td>
                         <td>
                             {% if item.name %}

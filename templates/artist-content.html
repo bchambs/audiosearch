@@ -113,7 +113,7 @@
     </div>
 
     <div id="current">
-        {% if content.current %}
+        {% if content.next or content.previous and content.current %}
             {{ content.current }} of {{ content.total }}
         {% endif %}
     </div>
@@ -126,17 +126,18 @@
 
 </div><!--END table nav -->
 
+<hr>
+
 <!-- content -->
-<div class="content bbb">
+<div class="content">
     <table id="content-table">
         <tbody id="content-tbody">
             {% for item in content.data %}
-                <tr>
-                    <td>
-                        <div class="index">
-                            {{ forloop.counter0|add:content.offset }}
-                        </div>
+                <tr class="{% cycle 'even' 'odd' %}">
+                    <td class="index">
+                        {{ forloop.counter0|add:content.offset }}.
                     </td>
+
                     <td>
                         {% if item.name %}
                             <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
@@ -144,6 +145,26 @@
                             <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
                         {% endif %}
                     </td>
+
+                    <!-- <td class="info">
+                        <span class="main">
+                            {% if item.name %}
+                                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
+                            {% else %}
+                                <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                            {% endif %}
+
+                            {% if display_secondary_column %}
+                                by    <a href = "/music/{{ item.artist_name|space_to_plus }}/" >{{ item.artist_name }}</a>
+                            {% endif %}
+                        </span>
+
+                        <span class="secondary">
+                            {% if display_secondary_column %}
+                                by    <a href = "/music/{{ item.artist_name|space_to_plus }}/" >{{ item.artist_name }}</a>
+                            {% endif %}
+                        </span>
+                    </td> -->
                 </tr>
             {% endfor %}
         </tbody>

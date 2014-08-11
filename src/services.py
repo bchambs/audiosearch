@@ -245,15 +245,41 @@ class SongProfile(EchoNestService):
         self.dependency = SongID(artist_id, resource_id)
 
 
+    def __str__(self):
+        return "SongProfile"
+
+
     def build(self, intermediate):
         if not intermediate: return None
 
         self.payload['id'] = intermediate[0].get('id')
-        return 
 
 
-    def __str__(self):
-        return "SongProfile"
+    def trim(self, data):
+        result = {
+            'duration': '',
+        }
+
+        if len(data) > 0:
+            data = data[0]
+
+            # convert song duration, letter = float, word = string
+            try:
+                t = data['audio_summary']['duration']
+                time = str(t)
+                minutes = time.split('.')[0]
+
+                if len(minutes) > 1:
+                    m = int(minutes) / 60
+                    s = round(t - (m * 60))
+                    seconds = str(s).split('.')[0]
+                    result['duration'] = "(%s:%s)" %(m, seconds)
+                else:
+                    result['duration'] = "(:%s)" %(minutes[0])
+            except KeyError, IndexError:
+                pass
+
+        return result
 
 
 class EchoNestServiceFailure(Exception):

@@ -45,7 +45,7 @@
 /*
     artist-info
 */
-.artist-info {
+.artist-info, .song-info {
     line-height: 200%;
     text-indent: 15px;
 }

@@ -53,90 +53,73 @@
     
 </div><!--END nav -->
 
+
 <!-- dir -->
-<div class="dir">
-    <div class="title">
-        song / 
+<div class="dir content">
+    <span class="title">
+        song / {{ resource_name }} {{ profile.duration }}
+    </span>
 
-        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/">
-            {{ resource_name }}
+    <span class="button">
+        <a href="/music/{{ artist_name|space_to_plus }}/similar/">
+            Recommended Artists
         </a>
-    </div>
+    </span>
 
-    <div class="subtitle">
-        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
-    </div>
+    <span class="button">
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/">
+            Similar Songs
+        </a>
+    </span>
 
 </div><!--END dir -->
 
+<hr>
 
-<!-- content buttons -->
-<div class="content-buttons">
-
-    <div class="button bbb">
-        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
-            <span class="click-div"></span>Similar Songs
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
-            <span class="click-div"></span>Recommended Artists
-        </a>
-    </div>
-
-</div><!--END content-buttons -->
-
-
+<!-- song info -->
+<div class="song-info subtitle content">
+    by <a href="/music/{{ artist_name|space_to_plus }}/">
+        {{ artist_name }}
+    </a>
+</div><!--END song info -->
 
 <hr>
 
+<!-- table nav -->
+<div class="table-nav content">
+    <div class="title">
+        {{ description }}
+    </div>
+
+    <div id="next">
+        {% if content.next %}
+            <a href = "?page={{ content.next }}" >next</a>
+        {% endif %}
+    </div>
+
+    <div id="current">
+        {% if content.next or content.previous and content.current %}
+            {{ content.current }} of {{ content.total }}
+        {% endif %}
+    </div>
+
+    <div id="previous">
+        {% if content.previous %}
+            <a href = "?page={{ content.previous }}" >previous</a>
+        {% endif %}
+    </div>
+
+</div><!--END table nav -->
 
 
 <!-- content -->
 <div class="content bbb">
     <table id="content-table">
-        <thead id="content-thead" class="title header">
-            <tr>
-                <th colspan="2">
-                    {{ description }}
-                </th>
-            </tr>
-        </thead>
-
-        <tfoot id="content-tfoot" class="title header">
-            <tr>
-                <div class="title header">
-                    <td>
-                        <div id="content-previous">
-                            {% if content.previous %}
-                                <a href = "?page={{ content.previous }}" >previous</a>
-                            {% endif %}
-                        </div>
-                    </td>
-                    <td>
-                        <div id="content-current">
-                            {% if content.current %}
-                                {{ content.current }} of {{ content.total }}
-                            {% endif %}
-                        </div>
-                    </td>
-                    <td>
-                        <div id="content-next">
-                            {% if content.next %}
-                                <a href = "?page={{ content.next }}" >next</a>
-                            {% endif %}
-                        </div>
-                    </td>
-                </div>
-            </tr>
-        </tfoot>
-
         <tbody id="content-tbody">
             {% for item in content.data %}
-                <tr>
-                    <td>
-                        {{ forloop.counter0|add:content.offset }}
+                <tr class="{% cycle 'even' 'odd' %}">
+                    <td class="index">
+                        {{ forloop.counter0|add:content.offset }}.
                     </td>
                     <td>
                         <!-- <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ item.title }}</a> -->
