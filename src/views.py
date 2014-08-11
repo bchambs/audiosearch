@@ -3,12 +3,12 @@ import json
 import urllib
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import Context
 
+import audiosearch.config as cfg
 from src import services, utils, tasks
 from audiosearch.redis import client as cache
-from audiosearch.config import DEBUG_TOOLBAR
 
 
 
@@ -59,18 +59,39 @@ def search(request, **kwargs):
     content = utils.generate_content(resource_id, service_map, page=page)
     if page_type == "artists" and 'search_artists' in content:
         content['content'] = content.pop('search_artists')
-        content['use_content_keys'] = False
 
     elif page_type == "songs" and 'search_songs' in content:
         content['content'] = content.pop('search_songs')
-        content['use_content_keys'] = False
-
-    else:
-        content['use_content_keys'] = True
 
     context.update(content)
 
     return render(request, "search.html", context)
+
+
+
+
+def top_artists(request, **kwargs):
+    prefix = "top:"
+    resource_name = "artists"
+    resource_id = prefix + resource_name
+    content_key = 'top_artists'
+
+    context = Context({
+        'resource_id': resource_id,
+        'use_generic_key': True,
+        'debug': kwargs.get('debug'),
+    })
+
+    service_map = {
+        'top_artists': services.TopArtists(),
+    }
+
+    content = utils.generate_content(resource_id, service_map)
+    if content_key in content:
+        content['content'] = content.pop(content_key)
+    context.update(content)
+
+    return render(request, 'top-artists.html', context)
 
 
 
@@ -89,13 +110,17 @@ def artist_summary(request, **kwargs):
 
     service_map = {
         'profile': services.ArtistProfile(resource_name),
-        'songs': services.ArtistSongs(resource_name),
+        # 'songs': services.ArtistSongs(resource_name),
+        'artist_grid': services.ArtistGrid(resource_name),
         'similar_artists': services.SimilarArtists(resource_name),
-        'playlist': services.Playlist(resource_name),
+        # 'playlist': services.Playlist(resource_name),
     }
 
     content = utils.generate_content(resource_id, service_map)
     context.update(content)
+
+    if 'artist_grid' in content:
+        print content['artist_grid']['data'][0]['images'][0].keys()
 
     return render(request, "artist-summary.html", context)
 
@@ -154,8 +179,8 @@ def song_summary(request, **kwargs):
     })
 
     service_map = {
-        'profile': services.ArtistProfile(resource_name),
-        'similar_artists': services.SimilarArtists(resource_name),
+        'profile': services.SongProfile(artist, resource_name),
+        'similar_artists': services.SimilarArtists(artist),
         'playlist': services.Playlist(resource_name, artist_id=artist),
     }
 
@@ -186,7 +211,7 @@ def song_content(request, **kwargs):
     })
 
     service_map = {
-        'profile': services.ArtistProfile(resource_name),
+        'profile': services.SongProfile(artist, resource_name),
     }
 
     if content_key == "song_playlist":
@@ -217,19 +242,23 @@ def retrieve_content(request, **kwargs):
     page = request.GET.get('page')
     context = {}
 
-    intermediate_data = cache.hget(resource_id, content_key)
+    try:
+        resource_id = resource_id.lower()
+        intermediate_data = cache.hget(resource_id, content_key)
 
-    if intermediate_data:
-        content = ast.literal_eval(intermediate_data)
-        context['status'] = 'success'
+        if intermediate_data:
+            content = ast.literal_eval(intermediate_data)
+            context['status'] = 'success'
 
-        try:
-            context[content_key] = utils.page_resource(page, content)
-        except TypeError:
-            context[content_key] = content
+            try:
+                context[content_key] = utils.page_resource(page, content)
+            except TypeError:
+                context[content_key] = content
+        else:
+            context['status'] = 'pending'
 
-    else:
-        context['status'] = 'pending'
+    except AttributeError:
+        pass
 
     return HttpResponse(json.dumps(context), content_type="application/json")
 
@@ -243,16 +272,23 @@ def server_error(request):
     return response
 
 
+
+
 def clear_resource(request):
-    resource = utils.unescape_html(request.GET.get('resource'))
-    hit = cache.delete(resource)
+    resource_id = utils.unescape_html(request.GET.get('resource'))
+
+    try:
+        resource_id = resource_id.lower()
+        hit = cache.delete(resource_id)
+    except AttributeError:
+        hit = None
 
     pre = "REMOVED," if hit else "NOT FOUND,"
     banner = '\'' * len(pre)
 
     print
     print banner
-    print "%s %s" %(pre, resource)
+    print "%s %s" %(pre, resource_id)
     print banner
     print
 

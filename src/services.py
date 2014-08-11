@@ -42,6 +42,26 @@ class EchoNestService(object):
         return 
 
 
+class TopArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'top_hottt'
+    BUCKETS = [
+        'hotttnesss',
+        'terms',
+        'images',
+    ]
+    ECHO_NEST_KEY = 'artists'
+
+
+    def __init__(self):
+        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, None, self.BUCKETS)
+        self.payload['results'] = 10
+
+
+    def __str__(self):
+        return "TopArtists"
+
+
 class ArtistProfile(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'profile'
@@ -67,16 +87,8 @@ class ArtistProfile(EchoNestService):
 
         result['name'] = data.get('name')
 
-        location = data.get('artist_location')
-
-        if location:
-            city = location.get('city')
-            country = location.get('country') 
-
-            if city and country:
-                result['location'] = city + ", " + country
-            elif country:
-                result['location'] = country
+        location_dict = data.get('artist_location')
+        result['location'] = location_dict.get('location')
 
         genres = data.get('terms')[:cfg.GENRE_COUNT]
 
@@ -129,6 +141,17 @@ class SimilarArtists(EchoNestService):
         return "SimilarArtists"
 
 
+class ArtistGrid(SimilarArtists):
+    def __init__(self, resource_id):
+        super(ArtistGrid, self).__init__(resource_id)
+        self.payload['name'] = resource_id
+        self.payload['results'] = cfg.ARTISTS_IN_GRID
+
+
+    def __str__(self):
+        return "ArtistGrid"
+
+
 class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
@@ -142,7 +165,7 @@ class SearchArtists(EchoNestService):
 
 
     def __str__(self):
-        return "service.search artists"
+        return "SearchArtists"
 
 
 class SearchSongs(EchoNestService):
@@ -161,7 +184,7 @@ class SearchSongs(EchoNestService):
 
 
     def __str__(self):
-        return "service.search songs"
+        return "SearchSongs"
 
 
 # this service exists to get the echo nest hash associated with a song given the title and artist name
@@ -174,7 +197,7 @@ class SongID(SearchSongs):
 
 
     def __str__(self):
-        return "service.song id"
+        return "SongID"
 
 
 class Playlist(EchoNestService):
@@ -230,7 +253,7 @@ class SongProfile(EchoNestService):
 
 
     def __str__(self):
-        return "service.song profile"
+        return "SongProfile"
 
 
 class EchoNestServiceFailure(Exception):

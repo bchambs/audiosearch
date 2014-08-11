@@ -29,59 +29,26 @@
     dir bar
 */
 .dir {
-    width: 980px;
-    margin: 20px auto;
+    margin-top: 25px;
+    width: 975px;
+    display: block;
 }
-.dir .title{
+.dir .title {
+    float: left;
 }
-.dir .subtitle{
-    margin-left: 50px;
+.dir .button {
+    margin-left: 30px;
+    margin-top: 9px;
+    float: right;
 }
-/*.dir {
-    line-height: 250%;
-    margin-top: 30px;
-}
-.dir .title{
-    margin-left: 50px;
-}
-.dir .subtitle{
-    margin-left: 100px;
-}
-.dir hr {
-    border: none;
-    background-color: black;
-    color: black;
-    height: 2px;
-    margin-left: 50px;
-    margin-right: 50px;
-}*/
-
 
 /*
-    content buttons
+    artist-info
 */
-.content-buttons {
-    display: block;
-    width: 975px;
-    margin: 20px auto;
-    overflow: hidden;
-    height: 50px;
+.artist-info {
+    line-height: 200%;
+    text-indent: 15px;
 }
-.content-buttons .button {
-    border-right: 3px solid gray;
-    border-bottom: 5px solid gray;
-    float: left;
-    height: 45px;
-    width: 322px;
-    text-align: center;
-    position: relative;
-
-}
-.content-buttons .button .button-text {
-    font-size: 20px;
-    line-height: 45px;
-}
-
 
 hr {
     border: none;
@@ -90,7 +57,7 @@ hr {
     height: 1px;
 
     width: 975px;
-    margin: 20px auto;
+    margin: 10px auto;
     overflow: hidden;
  }
 

@@ -30,6 +30,10 @@ function load_content(resource_id, content_key, use_generic_key, data) {
 
         break;
 
+    case "artist_grid":
+        console.log("we're in");
+        break;
+
     case "search_artists":
         var urls = {
                 view_more: "?q=" + resource_id + "&type=artists",
@@ -138,10 +142,28 @@ function load_content(resource_id, content_key, use_generic_key, data) {
         load_paged_table(resource_id, content_key, use_generic_key, data, urls);
         break;
 
-        default:
-            console.log("what is this: ");
-            console.log("\t" + content_key);
-            console.log("\t" + data);
+    case "top_artists":
+        var urls = {
+                item: function(element) {
+                    var artist = element['name'],
+                        url = "/music/" + artist + "/",
+
+                        $a = $("<a />",{
+                            text: artist,
+                            href: space_to_plus(url)
+                        });
+
+                    return $a;
+                }
+        };
+
+        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+    break;
+
+    default:
+        console.log("what is this: ");
+        console.log("\t" + content_key);
+        console.log("\t" + data);
     }
 }
 
@@ -183,7 +205,8 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
             });
 
             if (Boolean(use_generic_key)) {
-                $('#content-previous').append($prev_a);
+                // $('#content-previous').append($prev_a);
+                $('#previous').append($prev_a);
 
             }
             else {
@@ -196,7 +219,8 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
             var $current_key = "#" + content_key + "-current"; 
 
             if (Boolean(use_generic_key)) {
-                $('#content-current').text(data['current'] + " of " + data['total']);
+                // $('#content-current').text(data['current'] + " of " + data['total']);
+                $('#current').text(data['current'] + " of " + data['total']);
             }
             else {
                 $($current_key).text(data['current'] + " of " + data['total']);
@@ -212,13 +236,14 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
             });
 
             if (Boolean(use_generic_key)) {
-                $('#content-next').append($next_a);
+                // $('#content-next').append($next_a);
+                $('#next').append($next_a);
             }
             else {
                 $($next_key).append($next_a);
             }
         }
-    }
+    }      
 
     //tbody
     var $tbody_key = "#" + content_key + "-tbody",
@@ -236,6 +261,7 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
         $tr.append($td_data);
 
         if (Boolean(use_generic_key)) {
+            // $('#content-tbody').append($tr);
             $('#content-tbody').append($tr);
         }
         else {
@@ -265,6 +291,11 @@ function dispatch(resource_id, resource_name, content_key, use_generic_key, atte
 
     if (page) {
         params['page'] = page;
+    }
+
+    // python booleans do not map to js booleans (?)
+    if (use_generic_key === "false" || use_generic_key === "False") {
+        use_generic_key = false;
     }
 
     $.ajax({

@@ -23,6 +23,7 @@
    
     <title>audiosearch</title>
 </head>
+
 <body>
 
 <!-- nav -->
@@ -74,7 +75,7 @@
             <thead id="content-thead" class="title header">
                 <tr>
                     <th colspan="2">
-                        {{ page_type }}
+                        {{ page_type|title }}
                     </th>
                 </tr>
             </thead>
@@ -85,7 +86,7 @@
                         <td>
                             <div id="content-previous">
                                 {% if content.previous %}
-                                    <a href = "?page={{ content.previous }}/" >previous</a>
+                                    <a href = "?q={{ resource_name }}&type={{ page_type }}&page={{ content.previous }}" >previous</a>
                                 {% endif %}
                             </div>
                         </td>
@@ -99,7 +100,7 @@
                         <td>
                             <div id="content-next">
                                 {% if content.next %}
-                                    <a href = "?page={{ content.next }}/" >next</a>
+                                    <a href = "?q={{ resource_name }}&type={{ page_type }}&page={{ content.next }}" >next</a>
                                 {% endif %}
                             </div>
                         </td>
@@ -144,13 +145,6 @@
                 <tr>
                     <div class="title header">
                         <td>
-                            <div id="search_artists-previous">
-                                {% if search_artists.previous %}
-                                    <a href = "?page={{ search_artists.previous }}/" >previous</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
                             <div id="search_artists-current">
                                 {% if search_artists.current %}
                                     {{ search_artists.current }} of {{ search_artists.total }}
@@ -160,7 +154,7 @@
                         <td>
                             <div id="search_artists-next">
                                 {% if search_artists.next %}
-                                    <a href = "?page={{ search_artists.next }}/" >next</a>
+                                    <a href = "?q={{ resource_name }}&type=artists&page={{ search_artists.next }}" >more</a>
                                 {% endif %}
                             </div>
                         </td>
@@ -202,13 +196,6 @@
                 <tr>
                     <div class="title header">
                         <td>
-                            <div id="search_songs-previous">
-                                {% if search_songs.previous %}
-                                    <a href = "?page={{ search_songs.previous }}/" >previous</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
                             <div id="search_songs-current">
                                 {% if search_songs.current %}
                                     {{ search_songs.current }} of {{ search_songs.total }}
@@ -218,7 +205,7 @@
                         <td>
                             <div id="search_songs-next">
                                 {% if search_songs.next %}
-                                    <a href = "?page={{ search_songs.next }}/" >next</a>
+                                    <a href = "?q={{ resource_name }}&type=songs&?page={{ search_songs.next }}" >more</a>
                                 {% endif %}
                             </div>
                         </td>
@@ -246,6 +233,7 @@
     </div><!--END search songs -->
 </div><!--END dual content -->
 {% endif %}
+
 
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>

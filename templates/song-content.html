@@ -58,9 +58,9 @@
     <div class="title">
         song / 
 
-        <span id="profile-name">
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/">
             {{ resource_name }}
-        </span>
+        </a>
     </div>
 
     <div class="subtitle">
@@ -110,7 +110,7 @@
                     <td>
                         <div id="content-previous">
                             {% if content.previous %}
-                                <a href = "?page={{ content.previous }}/" >previous</a>
+                                <a href = "?page={{ content.previous }}" >previous</a>
                             {% endif %}
                         </div>
                     </td>
@@ -124,7 +124,7 @@
                     <td>
                         <div id="content-next">
                             {% if content.next %}
-                                <a href = "?page={{ content.next }}/" >next</a>
+                                <a href = "?page={{ content.next }}" >next</a>
                             {% endif %}
                         </div>
                     </td>

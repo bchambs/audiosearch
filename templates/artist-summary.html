@@ -21,16 +21,6 @@
     <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
 
-    <style>
-        #songs-content, #similar_songs-content {
-            display: none;
-        }
-
-        #similar_artists-content {
-            display: visible;
-        }
-    </style>
-   
     <title>audiosearch</title>
 </head>
 <body>
@@ -64,56 +54,60 @@
 </div><!--END nav -->
 
 <!-- dir -->
-<div class="dir">
-    <div class="title">
-        artist / 
+<div class="dir content">
+    <span class="title">
+        artist / {{ resource_name }}
+    </span>
 
-        <span id="profile-name">
-            {{ resource_name }}
-        </span>
-    </div>
+    <span class="button">
+        <a href="/music/{{ resource_name|space_to_plus }}/recommended/">
+            Recommended Songs
+        </a>
+    </span>
 
-    <div class="subtitle">
-        <div id="profile-location">
-            {{ profile.location }}
-        </div>
-        <div id="profile-genres">
-            {% for genre in profile.genres %}
-                {{ genre }}
-            {% endfor %}
-        </div>
-    </div>
+    <span class="button">
+        <a href="/music/{{ resource_name|space_to_plus }}/similar/">
+            Similar Artists
+        </a>
+    </span>
+
+    <span class="button">
+        <a href="/music/{{ resource_name|space_to_plus }}/songs/">
+            Songs
+        </a>
+    </span>
+    
 </div><!--END dir -->
-
-
-<!-- content buttons -->
-<div class="content-buttons">
-
-    <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/similar/" id="similar-artists-button" class="button-text ">
-            <span class="click-div"></span>Similar Artists
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/songs/" id="songs-button" class="button-text ">
-            <span class="click-div"></span>Songs
-        </a>
-    </div>
-
-    <div class="button bbb">
-        <a href="/music/{{ resource_name|space_to_plus }}/recommended/" id="similar-songs-button" class="button-text ">
-            <span class="click-div"></span>Recommended Songs
-        </a>
-    </div>
-
-</div><!--END content-buttons -->
-
-
 
 <hr>
 
+<!-- artist info -->
+<div class="artist-info content">
+    <div id="profile-location">
+        {{ profile.location }}
+    </div>
 
+    <div id="profile-genres">
+        {% for genre in profile.genres %}
+            {{ genre }}
+        {% endfor %}
+    </div>
+</div><!--END artist info -->
+
+<hr>
+
+<!-- artist grid -->
+<div id="artist_grid" class="artist-grid content">
+    {% for artist in artist_grid.data %}
+        <div class="tile">
+            <a href="/music/{{ artist.name|space_to_plus }}/">
+                <img src="{{ artist.images.0.url }}" />
+                <span class="click-div"></span>
+            </a>
+            <div class="tile-text">{{ artist.name }}</div>
+        </div>
+    {% endfor %}
+</div><!--END artist grid-->
 
 
 
@@ -138,7 +132,7 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource }}", "{{ resource_id }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

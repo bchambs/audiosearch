@@ -35,15 +35,6 @@ class ENConsumer(object):
 
                 # exceeded api_key limit, snooze until timeout
                 elif code == ENConsumer.LIMIT_EXCEEDED:
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
-                    print "LIMIT EXCEEDED"
                     attempt += 1
                     sleep(CALL_SNOOZE)
 
@@ -54,15 +45,6 @@ class ENConsumer(object):
             # invalid request or unable to parse json
             except (requests.RequestException, ValueError, KeyError) as e:
                 raise EchoNestServiceFailure(e)
-            # except requests.RequestException as e:
-            #     print "1::%s" % str(package)
-            #     raise services.EchoNestServiceFailure(e)
-            # except ValueError as e:
-            #     print "2::%s" % str(package)
-            #     raise services.EchoNestServiceFailure(e)
-            # except KeyError as e:
-            #     print "3::%s" % str(package)
-            #     raise services.EchoNestServiceFailure(e)
 
         # timeout
         raise services.EchoNestServiceFailure("Audiosearch is receiving too many requests.  Try again soon!")
