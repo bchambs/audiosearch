@@ -26,7 +26,7 @@
 <body>
 
 <!-- nav -->
-<div id="nav" class="aaa">
+<div id="nav">
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -35,8 +35,10 @@
         </form>
     </div>
 
+    {% if debug %}
+
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="debug">
                 <span class="link"></span>debug
             </a>
@@ -44,12 +46,14 @@
     </div>
 
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="clear">
                 <span class="link"></span>clear
             </a>
         </div>
     </div>
+
+    {% endif %}
     
 </div><!--END nav -->
 
@@ -58,7 +62,7 @@
     <span class="title">
         artist / 
 
-        <a href="/music/{{ resource_name }}/">
+        <a href="/music/{{ resource_name|space_to_plus }}/">
             {{ resource_name }}
         </a>
     </span>
@@ -143,28 +147,11 @@
                             <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                         {% else %}
                             <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                            {% if show_by_artist %}
+                                by {{ item.artist_name }}
+                            {% endif %}
                         {% endif %}
                     </td>
-
-                    <!-- <td class="info">
-                        <span class="main">
-                            {% if item.name %}
-                                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-                            {% else %}
-                                <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            {% endif %}
-
-                            {% if display_secondary_column %}
-                                by    <a href = "/music/{{ item.artist_name|space_to_plus }}/" >{{ item.artist_name }}</a>
-                            {% endif %}
-                        </span>
-
-                        <span class="secondary">
-                            {% if display_secondary_column %}
-                                by    <a href = "/music/{{ item.artist_name|space_to_plus }}/" >{{ item.artist_name }}</a>
-                            {% endif %}
-                        </span>
-                    </td> -->
                 </tr>
             {% endfor %}
         </tbody>
@@ -194,7 +181,7 @@
 {% for pending in pending_content %}
     <script type="text/javascript">
         setTimeout(
-            dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
+            dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
             , 1500
         );
     </script>

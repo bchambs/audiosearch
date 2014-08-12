@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--Google analytics-->
@@ -23,78 +25,13 @@
 </head>
 <body>
 
-<!-- nav -->
-<div id="nav" class="aaa">
-   <span class="zone glyphicon glyphicon-th-large"></span>
 
-    <div class="zone search">
-        <form action="/search/" method="GET">
-            <input class="search-bar" type="text" name="q">
-        </form>
-    </div>
-
-    <div class="debug">
-        <div class="zone normal ddd">
-            <a href="" id="debug">
-                <span class="link"></span>debug
-            </a>
-        </div>
-    </div>
-
-    <div class="debug">
-        <div class="zone normal ddd">
-            <a href="" id="clear">
-                <span class="link"></span>clear
-            </a>
-        </div>
-    </div>
-    
-</div><!--END nav -->
-
-
-<!-- content -->
-<div class="content">
-
-  it's the index
-</div><!--END content -->
-
+hello index
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+<script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
-
-{% if debug %}
-    <script type="text/javascript">
-        $('a#debug').click( function() { 
-            debug_template(); 
-            return false; 
-        });
-
-        $('a#clear').click( function() { 
-            remove_resource("{{name}}"); 
-            return false; 
-        });
-    </script>
-{% endif %}
-
-<!-- 
-{% if not profile %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'profile', false, 0);
-    </script>
-{% endif %}
-
-{% if not songs %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'songs', true, 0);
-    </script>
-{% endif %}
-
-{% if not similar %}
-    <script type="text/javascript">
-        dispatch("{{ q|escapejs }}", 'similar', true, 0);
-    </script>
-{% endif %} -->
 
 </body>
 </html>

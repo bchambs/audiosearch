@@ -28,6 +28,8 @@ def search(request, **kwargs):
     if not q:
         return render(request, "search.html", Context({}))
 
+    q = q.strip()
+
     resource_name = urllib.unquote_plus(q)
     resource_id = prefix + resource_name
     page = request.GET.get('page')
@@ -151,7 +153,7 @@ def artist_content(request, **kwargs):
 
     if content_key == "song_playlist":
         service_map[content_key] = services.Playlist(resource_name)
-        context['display_secondary_column'] = True
+        context['show_by_artist'] = True
     elif content_key == "similar_artists": 
         service_map[content_key] = services.SimilarArtists(resource_name)
     elif content_key == "songs":
@@ -232,6 +234,15 @@ def song_content(request, **kwargs):
 
 
 
+# HTTP 500
+def server_error(request):
+    response = render(request, "500.html")
+    response.status_code = 500
+    return response
+
+
+
+
 """
 -------------------------------------
 Functions for handling ASYNC requests
@@ -268,20 +279,21 @@ def retrieve_content(request, **kwargs):
 
 
 
-# HTTP 500
-def server_error(request):
-    response = render(request, "500.html")
-    response.status_code = 500
-    return response
-
-
-
-
 def clear_resource(request):
     resource_id = utils.unescape_html(request.GET.get('resource'))
 
+    a = urllib.unquote_plus(resource_id)
+    # a = urllib.urlencode(resource_id)
+    print type(resource_id)
+
+    print resource_id
+    print a
+
     try:
+        print resource_id
         resource_id = resource_id.lower()
+        print resource_id
+
         hit = cache.delete(resource_id)
     except AttributeError:
         hit = None
@@ -296,6 +308,8 @@ def clear_resource(request):
     print
 
     return HttpResponse(json.dumps({}), content_type="application/json")
+
+
 
 
 def debug_template(request):

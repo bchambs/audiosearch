@@ -27,7 +27,7 @@
 <body>
 
 <!-- nav -->
-<div id="nav" class="aaa">
+<div id="nav">
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -36,8 +36,10 @@
         </form>
     </div>
 
+    {% if debug %}
+
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="debug">
                 <span class="link"></span>debug
             </a>
@@ -45,20 +47,26 @@
     </div>
 
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="clear">
                 <span class="link"></span>clear
             </a>
         </div>
     </div>
-    
+
+    {% endif %}
+
 </div><!--END nav -->
 
 
 <!-- dir -->
 <div class="dir content">
     <span class="title">
-        search / {{ resource_name }}
+        search / 
+
+        <a href="/search/?q={{ resource_name|space_to_plus }}">
+            {{ resource_name }}
+        </a>
     </span>
 
 </div><!--END dir -->
@@ -77,7 +85,7 @@
 
     <div id="next">
         {% if content.next %}
-            <a href = "?page={{ content.next }}" >next</a>
+            <a href = "?q={{ resource_name|space_to_plus }}&type={{ page_type }}&page={{ content.next }}" >next</a>
         {% endif %}
     </div>
 
@@ -89,7 +97,7 @@
 
     <div id="previous">
         {% if content.previous %}
-            <a href = "?page={{ content.previous }}" >previous</a>
+            <a href = "?q={{ resource_name|space_to_plus }}&type={{ page_type }}&page={{ content.previous }}" >previous</a>
         {% endif %}
     </div>
 
@@ -110,6 +118,7 @@
                             <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                         {% else %}
                             <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                            by {{ item.artist_name }}
                         {% endif %}
                     </td>
                 </tr>
@@ -130,9 +139,9 @@
                 Artists
             </div>
 
-            <div id="next" class="more">
+            <div id="search_artists-next" class="more">
                 {% if search_artists.next %}
-                    <a href = "?q={{ resource_name }}&type=artists" >more</a>
+                    <a href = "?q={{ resource_name|space_to_plus }}&type=artists" >more</a>
                 {% endif %}
             </div>
 
@@ -165,9 +174,9 @@
                 Songs
             </div>
 
-            <div id="next" class="more">
+            <div id="search_songs-next" class="more">
                 {% if search_songs.next %}
-                    <a href = "?q={{ resource_name }}&type=songs" >more</a>
+                    <a href = "?q={{ resource_name|space_to_plus }}&type=songs" >more</a>
                 {% endif %}
             </div>
 
@@ -183,11 +192,8 @@
                             {{ forloop.counter0|add:search_songs.offset }}.
                         </td>
                         <td>
-                            {% if item.name %}
-                                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-                            {% else %}
-                                <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            {% endif %}
+                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                            by {{ item.artist_name }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -221,7 +227,7 @@
 {% for pending in pending_content %}
     <script type="text/javascript">
         setTimeout(
-            dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
+            dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
             , 1500
         );
     </script>

@@ -26,7 +26,7 @@
 <body>
 
 <!-- nav -->
-<div id="nav" class="aaa">
+<div id="nav">
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -35,8 +35,10 @@
         </form>
     </div>
 
+    {% if debug %}
+
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="debug">
                 <span class="link"></span>debug
             </a>
@@ -44,12 +46,14 @@
     </div>
 
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="clear">
                 <span class="link"></span>clear
             </a>
         </div>
     </div>
+
+    {% endif %}
     
 </div><!--END nav -->
 
@@ -57,7 +61,11 @@
 <!-- dir -->
 <div class="dir content">
     <span class="title">
-        song / {{ resource_name }} {{ profile.duration }}
+        song / {{ resource_name }} 
+
+        <span id="profile-duration">
+            {{ profile.duration }}
+        </span>
     </span>
 
     <span class="button">
@@ -74,17 +82,42 @@
 
 </div><!--END dir -->
 
-<hr>
-
 <!-- song info -->
-<div class="song-info subtitle content">
+<div class="song-info content">
     by <a href="/music/{{ artist_name|space_to_plus }}/">
         {{ artist_name }}
     </a>
+
+    <hr>
+
+    <div id="profile-danceability">
+        danceability : 
+
+        {% if profile.danceability %}
+            {{ profile.danceability|to_percent }}
+        {% endif %}
+    </div>
+
+    <div id="profile-liveness">
+        liveness : 
+
+        {% if profile.liveness %}
+            {{ profile.liveness|to_percent }}
+        {% endif %}
+    </div>
+
+    <div id="profile-tempo">
+        tempo : 
+        
+        {% if profile.tempo %}
+            {{ profile.tempo }} bpm
+        {% endif %}
+    </div>
+    
 </div><!--END song info -->
 
-<hr>
 
+<hr>
 
 
 
@@ -112,7 +145,7 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
+        setTimeout(dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
     </script>
 {% endfor %}
 

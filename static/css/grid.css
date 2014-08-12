@@ -22,9 +22,16 @@ html, body {
 }
 .content .column .table-nav{
     width: 100%;
+    display: block;
+
+}
+.content .column .table-nav .title{
+    float: left:;
 }
 .content .column .more{
+    float: right;
     padding-right: 50px;
+    padding-top: 8px;
 }
 .content .column table{
     width: 477px;

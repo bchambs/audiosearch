@@ -67,9 +67,13 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                         $a = $("<a />",{
                             text: title,
                             href: space_to_plus(url)
-                        });
+                        }),
+                        $song_by_artist = $("<span />");
 
-                    return $a;
+                    $song_by_artist.append($a);
+                    $song_by_artist.append(" by " + artist);
+
+                    return $song_by_artist;
                 }
         };
 
@@ -132,9 +136,13 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                         $a = $("<a />",{
                             text: title,
                             href: space_to_plus(url)
-                        });
+                        }),
+                        $song_by_artist = $("<span />");
 
-                    return $a;
+                    $song_by_artist.append($a);
+                    $song_by_artist.append(" by " + artist);
+
+                    return $song_by_artist;
                 }
         };
 
@@ -204,11 +212,35 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
 
     //next
     if (data['next']) {
-         var $next_key = "#" + content_key + "-next", 
+        var next_text, next_url, use_more = false;
+
+        // special case to display "more" for search results 
+        if (data['current'] === 1 && (content_key === "search_songs" || content_key === "search_artists")) {
+            next_text = "more";
+
+            if (content_key === "search_songs") {
+                next_url = "?q=" + resource_id + "&type=songs";
+            }
+            else {
+                next_url = "?q=" + resource_id + "&type=artists";
+            }
+
+            use_more = true;
+        }
+        else {
+            next_text = "next";
+            next_url = urls['next'];
+        }
+
+        var $next_key = "#" + content_key + "-next", 
             $next_a = $("<a />",{
-            text: "next",
-            href: space_to_plus(urls['next'])
+            text: next_text,
+            href: space_to_plus(next_url)
         });
+
+        if (use_more) {
+            $next_a.addClass("more");
+        }
 
         if (Boolean(use_generic_key)) {
             // $('#content-next').append($next_a);

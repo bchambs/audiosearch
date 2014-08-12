@@ -88,7 +88,8 @@ class ArtistProfile(EchoNestService):
         result['name'] = data.get('name')
 
         location_dict = data.get('artist_location')
-        result['location'] = location_dict.get('location')
+        if location_dict:
+            result['location'] = location_dict.get('location')
 
         genres = data.get('terms')[:cfg.GENRE_COUNT]
 
@@ -256,16 +257,17 @@ class SongProfile(EchoNestService):
 
 
     def trim(self, data):
-        result = {
-            'duration': '',
-        }
+        result = {}
 
         if len(data) > 0:
             data = data[0]
+            audio = data.get('audio_summary')
+
+            if not audio: return result
 
             # convert song duration, letter = float, word = string
             try:
-                t = data['audio_summary']['duration']
+                t = audio['duration']
                 time = str(t)
                 minutes = time.split('.')[0]
 
@@ -273,11 +275,19 @@ class SongProfile(EchoNestService):
                     m = int(minutes) / 60
                     s = round(t - (m * 60))
                     seconds = str(s).split('.')[0]
+
+                    if len(seconds) < 2:
+                        seconds = seconds + "0"
+
                     result['duration'] = "(%s:%s)" %(m, seconds)
                 else:
                     result['duration'] = "(:%s)" %(minutes[0])
             except KeyError, IndexError:
                 pass
+
+            result['liveness'] = audio.get('liveness')
+            result['tempo'] = audio.get('tempo')
+            result['danceability'] = audio.get('danceability')
 
         return result
 

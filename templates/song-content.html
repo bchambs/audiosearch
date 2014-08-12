@@ -26,7 +26,7 @@
 <body>
 
 <!-- nav -->
-<div id="nav" class="aaa">
+<div id="nav">
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
@@ -35,8 +35,10 @@
         </form>
     </div>
 
+    {% if debug %}
+
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="debug">
                 <span class="link"></span>debug
             </a>
@@ -44,12 +46,14 @@
     </div>
 
     <div class="debug">
-        <div class="zone normal ddd">
+        <div class="zone normal">
             <a href="" id="clear">
                 <span class="link"></span>clear
             </a>
         </div>
     </div>
+
+    {% endif %}
     
 </div><!--END nav -->
 
@@ -57,11 +61,19 @@
 <!-- dir -->
 <div class="dir content">
     <span class="title">
-        song / {{ resource_name }} {{ profile.duration }}
+        song / 
+
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}">
+            {{ resource_name }} 
+        </a>
+
+        <span id="profile-duration">
+            {{ profile.duration }}
+        </span>
     </span>
 
     <span class="button">
-        <a href="/music/{{ artist_name|space_to_plus }}/similar/">
+        <a href="/music/{{ artist_name|space_to_plus }}/{{ resource_name|space_to_plus }}/recommended/">
             Recommended Artists
         </a>
     </span>
@@ -74,13 +86,38 @@
 
 </div><!--END dir -->
 
-<hr>
-
 <!-- song info -->
-<div class="song-info subtitle content">
+<div class="song-info content">
     by <a href="/music/{{ artist_name|space_to_plus }}/">
         {{ artist_name }}
     </a>
+
+    <hr>
+
+    <div id="profile-danceability">
+        danceability : 
+
+        {% if profile.danceability %}
+            {{ profile.danceability|to_percent }}
+        {% endif %}
+    </div>
+
+    <div id="profile-liveness">
+        liveness : 
+
+        {% if profile.liveness %}
+            {{ profile.liveness|to_percent }}
+        {% endif %}
+    </div>
+
+    <div id="profile-tempo">
+        tempo : 
+        
+        {% if profile.tempo %}
+            {{ profile.tempo }} bpm
+        {% endif %}
+    </div>
+    
 </div><!--END song info -->
 
 <hr>
@@ -112,6 +149,9 @@
 </div><!--END table nav -->
 
 
+<hr>
+
+
 <!-- content -->
 <div class="content bbb">
     <table id="content-table">
@@ -122,11 +162,11 @@
                         {{ forloop.counter0|add:content.offset }}.
                     </td>
                     <td>
-                        <!-- <a href = "/music/{{ song.artist_name|space_to_plus }}/{{ song.title|space_to_plus }}" >{{ item.title }}</a> -->
                         {% if item.name %}
                             <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                         {% else %}
                             <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                            by {{ item.artist_name }}
                         {% endif %}
                     </td>
                 </tr>
@@ -158,7 +198,7 @@
 {% for pending in pending_content %}
     <script type="text/javascript">
         setTimeout(
-            dispatch("{{ resource_id }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
+            dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
             , 1500
         );
     </script>
