@@ -112,18 +112,18 @@ def artist_summary(request, **kwargs):
         'resource_id': resource_id,
         'resource_name': resource_name,
         'use_generic_key': False,
+        'item_count': 15,
         'debug': kwargs.get('debug'),
     })
 
     service_map = {
         'profile': services.ArtistProfile(resource_name),
-        # 'songs': services.ArtistSongs(resource_name),
-        'artist_grid': services.ArtistGrid(resource_name),
-        'similar_artists': services.SimilarArtists(resource_name),
+        'songs': services.ArtistSongs(resource_name),
+        # 'similar_artists': services.SimilarArtists(resource_name),
         # 'playlist': services.Playlist(resource_name),
     }
 
-    content = utils.generate_content(resource_id, service_map)
+    content = utils.generate_content(resource_id, service_map, item_count=15)
     context.update(content)
 
     return render(request, "artist-summary.html", context)
@@ -254,6 +254,7 @@ def retrieve_content(request, **kwargs):
     resource_id = utils.unescape_html(request.GET.get('resource_id'))
     content_key = request.GET.get('content_key')
     page = request.GET.get('page')
+    item_count = request.GET.get('item_count')
     context = {}
 
     try:
@@ -265,7 +266,7 @@ def retrieve_content(request, **kwargs):
             context['status'] = 'success'
 
             try:
-                context[content_key] = utils.page_resource(page, content)
+                context[content_key] = utils.page_resource(page, content, item_count)
             except TypeError:
                 context[content_key] = content
         else:
@@ -281,13 +282,6 @@ def retrieve_content(request, **kwargs):
 
 def clear_resource(request):
     resource_id = utils.unescape_html(request.GET.get('resource'))
-
-    a = urllib.unquote_plus(resource_id)
-    # a = urllib.urlencode(resource_id)
-    print type(resource_id)
-
-    print resource_id
-    print a
 
     try:
         print resource_id

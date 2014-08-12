@@ -4,6 +4,7 @@
 
 
 var AJAX_SNOOZE = 2000,
+    AJAX_INITIAL_SNOOZE = 1500,
     ATTEMPT_LIMIT = 4,
     FADE_DELAY = 8000;
 
@@ -289,6 +290,18 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
 }
 
 
+function hide_spinner(content_key, use_generic_key) {
+    if (Boolean(use_generic_key)) {
+        var $spinner = "#content-spinner";
+    }
+    else {
+        var $spinner = "#" + content_key + "-spinner";
+    }
+
+    $($spinner).hide();
+}
+
+
 // remove loader image, display sad face, display error notification
 function handle_timeout(content_key, message) {
     'use strict';
@@ -297,42 +310,33 @@ function handle_timeout(content_key, message) {
 }
 
 
-function dispatch(resource_id, resource_name, content_key, use_generic_key, attempt, page) {
+// function dispatch(resource_id, resource_name, content_key, use_generic_key, attempt, page) {
+function dispatch(opts) {
     'use strict';
-
-    var params = {
-        'resource_id': resource_id,
-        'content_key': content_key
-    };
-
-    if (page) {
-        params['page'] = page;
-    }
-
-    // python booleans do not map to js booleans (?)
-    if (use_generic_key === "false" || use_generic_key === "False") {
-        use_generic_key = false;
-    }
 
     $.ajax({
         url: "/ajax/retrieval/",
-        data: params,
+        data: opts,
         dataType: 'json',
         type: 'GET',
         success: function(data, stat, o) {
             switch (data['status']) {
             case 'success':
-                load_content(resource_name, content_key, use_generic_key, data[content_key]);
+                hide_spinner(opts.content_key, opts.use_generic_key);
+
+                load_content(opts.resource_name, opts.content_key, opts.use_generic_key, data[opts.content_key]);
 
                 break;
 
             case 'pending':
-                if (attempt > ATTEMPT_LIMIT) {
-                    handle_timeout(content_key, o);
+                if (opts.attempt > ATTEMPT_LIMIT) {
+                    handle_timeout(opts.content_key, o);
                 }
                 else {
+                    opts.attempt++;
+
                     setTimeout(function() {
-                            dispatch(resource_id, resource_name, content_key, use_generic_key, ++attempt, page);
+                            dispatch(opts);
                         }
                     , AJAX_SNOOZE);
                 }

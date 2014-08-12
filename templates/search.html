@@ -31,7 +31,7 @@
    <span class="zone glyphicon glyphicon-th-large"></span>
 
     <div class="zone search">
-        <form action="/search/" method="GET">
+        <form name="search-form" action="/search/" method="GET" class="as-form">
             <input class="search-bar" type="text" name="q">
         </form>
     </div>
@@ -226,10 +226,16 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(
-            dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}")
-            , 1500
-        );
+        var opts = {
+            'resource_id': "{{ resource_id|safe }}",
+            'resource_name': "{{ resource_name }}",
+            'content_key': "{{ pending }}",
+            'use_generic_key': {{ use_generic_key|yesno:"true,false" }},
+            'page': "{{ page }}",
+            'item_count': "{{ item_count }}"
+        };
+
+        setTimeout(dispatch(opts), AJAX_INITIAL_SNOOZE);
     </script>
 {% endfor %}
 

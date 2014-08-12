@@ -12,6 +12,7 @@ content = resource's profile, similar_songs, etc
 content_key = profile, similar_songs, etc
 echo_key : key used to access resource from echo nest api
 """
+
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
@@ -107,11 +108,14 @@ class ArtistProfile(EchoNestService):
 class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
+    BUCKETS = [
+        'audio_summary',
+    ]
     ECHO_NEST_KEY = 'songs'
 
 
     def __init__(self, resource_id):
-        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
+        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.payload['artist'] = resource_id
         self.payload['results'] = cfg.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
@@ -140,17 +144,6 @@ class SimilarArtists(EchoNestService):
 
     def __str__(self):
         return "SimilarArtists"
-
-
-class ArtistGrid(SimilarArtists):
-    def __init__(self, resource_id):
-        super(ArtistGrid, self).__init__(resource_id)
-        self.payload['name'] = resource_id
-        self.payload['results'] = cfg.ARTISTS_IN_GRID
-
-
-    def __str__(self):
-        return "ArtistGrid"
 
 
 class SearchArtists(EchoNestService):
@@ -285,9 +278,9 @@ class SongProfile(EchoNestService):
             except KeyError, IndexError:
                 pass
 
-            result['liveness'] = audio.get('liveness')
-            result['tempo'] = audio.get('tempo')
-            result['danceability'] = audio.get('danceability')
+            result['liveness'] = utils.to_percent(audio.get('liveness'))
+            result['danceability'] = utils.to_percent(audio.get('danceability'))
+            result['tempo'] = "%s bpm" %audio.get('tempo')
 
         return result
 

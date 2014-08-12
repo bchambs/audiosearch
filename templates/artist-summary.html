@@ -88,6 +88,7 @@
 
 <!-- artist info -->
 <div class="artist-info content">
+{% if profile %}
     <div id="profile-location">
         {{ profile.location }}
     </div>
@@ -97,23 +98,63 @@
             {{ genre }}
         {% endfor %}
     </div>
+{% else %}
+    <div id="profile-location">
+    </div>
+
+    <div id="profile-spinner" class="spinner-container">
+        <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+    </div>
+
+    <div id="profile-genres">
+    </div>
+{% endif %}
 </div><!--END artist info -->
+
 
 <hr>
 
-<!-- artist grid -->
-<div id="artist_grid" class="artist-grid content">
-    {% for artist in artist_grid.data %}
-        <div class="tile">
-            <a href="/music/{{ artist.name|space_to_plus }}/">
-                <img src="{{ artist.images.0.url }}" />
-                <span class="click-div"></span>
-            </a>
-            <div class="tile-text">{{ artist.name }}</div>
-        </div>
-    {% endfor %}
-</div><!--END artist grid-->
 
+<!-- table nav -->
+<div class="table-nav content">
+    <div class="title">
+        music
+    </div>
+
+    <div id="next">
+        <a href = "/music/{{ resource_name|space_to_plus }}/songs/" >more</a>
+    </div>
+
+</div><!--END table nav -->
+
+
+<hr>
+
+
+<!-- content -->
+<div class="content">
+    <table id="songs-table">
+
+        <tbody id="songs-tbody">
+            {% if songs.data %}
+                {% for item in songs.data %}
+                    <tr class="{% cycle 'even' 'odd' %}">
+                        <td class="index">
+                            {{ forloop.counter0|add:songs.offset }}.
+                        </td>
+                        <td>
+                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <div id="songs-spinner" class="spinner-container">
+                    <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                </div>
+            {% endif %}
+        </tbody>
+    </table>
+</div><!--END content -->
 
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
@@ -137,7 +178,16 @@
 
 {% for pending in pending_content %}
     <script type="text/javascript">
-        setTimeout(dispatch("{{ resource_id|safe }}", "{{ resource_name }}", "{{ pending }}", "{{ use_generic_key }}", 0, "{{ page }}"), 1500);
+        var opts = {
+            'resource_id': "{{ resource_id|safe }}",
+            'resource_name': "{{ resource_name }}",
+            'content_key': "{{ pending }}",
+            'use_generic_key': {{ use_generic_key|yesno:"true,false" }},
+            'page': "{{ page }}",
+            'item_count': "{{ item_count }}"
+        };
+
+        setTimeout(dispatch(opts), AJAX_INITIAL_SNOOZE);
     </script>
 {% endfor %}
 

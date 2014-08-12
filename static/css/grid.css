@@ -38,41 +38,6 @@ html, body {
     margin: 0 5px;
 }
 
-/*
-    artist grid
-*/
-.artist-grid {
-    display: block;
-}
-.artist-grid .tile {
-    width: 312px;
-    height: 200px;
-    float: left;
-    margin: 5px;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #1C2A3B;
-}
-/*.artist-grid img {
-    position: absolute;
-    margin: auto;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}*/
-.artist-grid img {
-    left: 50%;
-    margin-left: -200px;
-    position: absolute;
-}
-.artist-grid .tile .tile-text {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    background-color: gray;
-    padding: 4px 7px;
-}
 
 /*
     tables
@@ -96,10 +61,10 @@ td.index {
     width: 40px;
 }
 tr.even {
-    background-color: white;
+    background-color: #E0E0E0;
 }
 tr.odd {
-    background-color: #E0E0E0;
+    background-color: white;
 }
 .table-nav .title {
     float: left;
