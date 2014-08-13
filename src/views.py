@@ -284,10 +284,7 @@ def clear_resource(request):
     resource_id = utils.unescape_html(request.GET.get('resource'))
 
     try:
-        print resource_id
         resource_id = resource_id.lower()
-        print resource_id
-
         hit = cache.delete(resource_id)
     except AttributeError:
         hit = None

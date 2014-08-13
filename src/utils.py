@@ -11,112 +11,86 @@ from audiosearch.redis import client as cache
 
 
 def generate_content(resource_id, service_map, **kwargs):
+    if not resource_id: return {}
+
+    new_content = []
+    pending_content = []
+    result = {}
+
     page = kwargs.get('page')
     item_count = kwargs.get('item_count')
-    result = {
-        'pending_content': [],
-    }
+    resource_id = resource_id.lower()
 
-    if resource_id:
-        resource_id = resource_id.lower()
-        ####
-        pipe = cache.pipeline()
+    cache_data = cache.hgetall(resource_id)
+    pipe = cache.pipeline()
 
-        pipe.hget(resource_id, 'status')
-        pipe.hget(resource_id, 'pending')
-        status, pending = pipe.execute()
-
-        # resource has been requested
-        if status:
-            # all content is ready
-            if status == "complete":
-
-            else:
-            LOOP THROUGH SERVICE_MAP HERE:
-                # if content_key is in pending, add to pending dict
-                if key in pending:
-
-                # queue content
-                else:
-
-        # resource has not been requested yet, queue entire service_map
-        else:
-
-
-
-
-
-
-
-        old
-        # resource has been requested
-        if status:
-            # all content is ready
-            if status == "complete":
-
-            # some content is pending
-            elif pending:
-                # if content_key is in pending, add to pending dict
-                if key in pending:
-
-                # queue content
-                else:
-
-            # else queue entire service_map
-            else
-
-        # resource has not been requested yet, queue entire service_map
-        else:
-
-
-        add status / pending message to task
-
-        ####
-        cache_data = cache.hgetall(resource_id)
-
+    if cache_data:
         for key, service in service_map.items():
             if key in cache_data:
-                cache.expire(resource_id, service.ttl) # refresh TTL
-
                 content = ast.literal_eval(cache_data[key])
-                
-                try:
-                    result[key] = page_resource(page, content, item_count)
-                except TypeError:
-                    result[key] = content
-            else:
-                tasks.call.delay(resource_id, service, key)
-                result['pending_content'].append(key)
 
+                if content['status'] == "complete":
+                    result[key] = page_resource(page, content['data'], item_count)
+
+                elif content['status'] == "pending":
+                    pending_content.append(key)
+
+                elif content['status'] == "failed":
+                    result[key] = {'error_message': content['error_message']}
+
+            # new content request
+            else:   
+                new_content.append(key)
+                pending_content.append(key)
+
+    else:   
+        new_content = service_map.keys()
+        pending_content = new_content
+
+    for item in new_content:
+        content_struct = {
+            'status': "pending",
+        }
+
+        tasks.acquire_resource.delay(resource_id, item, service_map[item])
+        pipe.hset(resource_id, item, content_struct)
+
+    pipe.expire(resource_id, cfg.REDIS_TTL)
+    pipe.execute()
+
+    result['pending_content'] = pending_content
 
     return result
-
 
 
 
 
 def page_resource(page, resource, item_count=None):
-    count = item_count or cfg.ITEMS_PER_PAGE
-    paginator = Paginator(resource, count)
-
     try:
-        paged = paginator.page(page)
-    except PageNotAnInteger:
-        paged = paginator.page(1)
-    except EmptyPage:
-        paged = paginator.page(paginator.num_pages)
+        count = item_count or cfg.ITEMS_PER_PAGE
+        paginator = Paginator(resource, count)
 
-    # need to do this because we can't serialize paginator objects in async call
-    result = {
-        'data': paged.object_list,
-        'next': paged.next_page_number() if paged.has_next() else None,
-        'previous': paged.previous_page_number() if paged.has_previous() else None,
-        'current': paged.number,
-        'total': paged.paginator.num_pages,
-        'offset': paged.start_index(),
-    }
+        try:
+            paged = paginator.page(page)
+        except PageNotAnInteger:
+            paged = paginator.page(1)
+        except EmptyPage:
+            paged = paginator.page(paginator.num_pages)
+    
+        # need to do this because we can't serialize paginator objects in async call
+        result = {
+            'data': paged.object_list,
+            'next': paged.next_page_number() if paged.has_next() else None,
+            'previous': paged.previous_page_number() if paged.has_previous() else None,
+            'current': paged.number,
+            'total': paged.paginator.num_pages,
+            'offset': paged.start_index(),
+        }
 
-    return result
+        return result
+
+    except TypeError:
+        return resource
 
 
 

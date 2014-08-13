@@ -6,7 +6,10 @@ import services
 
 
 @shared_task
-def call(resource_id, service, content_key):
+def acquire_resource(resource_id, content_key, service):
+    if ':' not in resource_id:print "\nSTORED AN INVALID resource_id" * 3
+
+    pipe = cache.pipeline()
 
     try:
         if service.dependency:
@@ -15,32 +18,27 @@ def call(resource_id, service, content_key):
 
         echo_nest_response = ENConsumer.consume(service)
         content = service.trim(echo_nest_response)
-        pipe = cache.pipeline()
 
-        pipe.hset(resource_id, content_key, content)
-        pipe.expire(resource_id, service.ttl)
-        pipe.execute()
+        content_struct = {
+            'status': "complete",
+            'data': content,
+        }
 
-        #################################
-        print
-        print "STORING, %s:%s" %(resource_id, content_key)
-        print
+        pipe.hset(resource_id, content_key, content_struct)
 
-        if ':' not in resource_id:
-            print
-            print
-            print "STORED AN INVALID resource_id"
-            print "STORED AN INVALID resource_id"
-            print "STORED AN INVALID resource_id"
-            print "STORED AN INVALID resource_id"
-            print "STORED AN INVALID resource_id"
-            print "STORED AN INVALID resource_id"
-            print
-            print
-        #################################
+        print "\nSTORING, %s:%s\n" %(resource_id, content_key)
 
     except services.EchoNestServiceFailure as err_msg:
-        cache.hset(resource_id, "error_msg", err_msg)  # this overwrites
+        content_struct = {
+            'status': "failed",
+            'error_message': err_msg,
+        }
+        pipe.hset(resource_id, content_key, content_struct)
+
         print "%s failed: %s" % (str(service), err_msg)
+
+    pipe.expire(resource_id, service.ttl)
+    pipe.execute()
+
 
 
