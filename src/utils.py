@@ -11,15 +11,13 @@ from audiosearch.redis import client as cache
 
 
 def generate_content(resource_id, service_map, **kwargs):
-    if not resource_id: return {}
-
     new_content = []
     pending_content = []
     result = {}
 
     page = kwargs.get('page')
     item_count = kwargs.get('item_count')
-    resource_id = resource_id.lower()
+    resource_id = resource_id.lower().strip()
 
     cache_data = cache.hgetall(resource_id)
     pipe = cache.pipeline()
@@ -27,6 +25,7 @@ def generate_content(resource_id, service_map, **kwargs):
     if cache_data:
         for key, service in service_map.items():
             if key in cache_data:
+
                 content = ast.literal_eval(cache_data[key])
 
                 if content['status'] == "complete":
@@ -96,9 +95,10 @@ def page_resource(page, resource, item_count=None):
 
 
 def unescape_html(s):
-    s = s.replace("&lt;", "<")
-    s = s.replace("&gt;", ">")
-    s = s.replace("&amp;", "&")
+    if s:
+        s = s.replace("&lt;", "<")
+        s = s.replace("&gt;", ">")
+        s = s.replace("&amp;", "&")
 
     return s
 
@@ -113,6 +113,7 @@ def to_percent(float):
         return percent[0] + " %"
     else:
         return ''
+
 
 
 
@@ -131,3 +132,26 @@ def convert_seconds(t):
         result['duration'] = "(%s:%s)" %(m, seconds)
     else:
         result['duration'] = "(:%s)" %(minutes[0])
+
+
+
+
+def remove_slash(s):
+    if s:
+        return s.replace('/', '%2F')
+
+
+
+
+# d = dict
+def normalize(d):
+    result = {}
+
+    for key, value in d.items():
+        try:
+            normalized = value.strip().lower()
+            result[key] = ' '.join(normalized.split())
+        except AttributeError:
+            result[key] = value
+
+    return result

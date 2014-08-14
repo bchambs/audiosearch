@@ -168,7 +168,7 @@ class SearchSongs(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, artist_id, resource_id):
+    def __init__(self, resource_id, artist_id=None):
         super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
         self.payload['title'] = resource_id
         self.payload['artist'] = artist_id
@@ -184,8 +184,8 @@ class SearchSongs(EchoNestService):
 # this service exists to get the echo nest hash associated with a song given the title and artist name
 class SongID(SearchSongs):
 
-    def __init__(self, artist_id, resource_id):
-        super(SongID, self).__init__(artist_id, resource_id)
+    def __init__(self, resource_id, artist_id):
+        super(SongID, self).__init__(resource_id, artist_id=artist_id)
         self.payload['results'] = 1
         self.payload['song_type'] = None
 
@@ -236,7 +236,7 @@ class SongProfile(EchoNestService):
 
     def __init__(self, artist_id, resource_id):
         super(SongProfile, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
-        self.dependency = SongID(artist_id, resource_id)
+        self.dependency = SongID(resource_id, artist_id)
 
 
     def __str__(self):

@@ -35,6 +35,5 @@ GENRE_COUNT = 5
 #############
 # DEBUGGING #
 #############
-
 DEBUG_TOOLBAR = True
 

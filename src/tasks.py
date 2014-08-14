@@ -35,7 +35,7 @@ def acquire_resource(resource_id, content_key, service):
         }
         pipe.hset(resource_id, content_key, content_struct)
 
-        print "%s failed: %s" % (str(service), err_msg)
+        print "%s:%s__%s__ failed: %s" % (resource_id, content_key, str(service), err_msg)
 
     pipe.expire(resource_id, service.ttl)
     pipe.execute()

@@ -157,7 +157,7 @@
                             {{ forloop.counter0|add:search_artists.offset }}.
                         </td>
                         <td>
-                            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
+                            <a href = "/music/{{ item.name|space_to_plus|safe }}/" >{{ item.name }} </a>
                         </td>
                     </tr>
                 {% endfor %}

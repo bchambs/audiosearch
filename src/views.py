@@ -22,23 +22,19 @@ def index(request, **kwargs):
 
 
 def search(request, **kwargs):
-    prefix = "search:"
-    q = request.GET.get('q')
+    normal_GET = utils.normalize(request.GET)
+    normal_kwargs = utils.normalize(kwargs)
+
+    q = normal_GET.get('q')
 
     if not q:
         return render(request, "search.html", Context({}))
 
-    q = q.strip()
-
+    prefix = "search:"
     resource_name = urllib.unquote_plus(q)
     resource_id = prefix + resource_name
-    page = request.GET.get('page')
-    page_type = request.GET.get('type')
-
-    try:
-        page_type = page_type.lower()
-    except AttributeError:
-        page_type = None
+    page = normal_GET.get('page')
+    page_type = normal_GET.get('type')
 
     context = Context({
         'resource_id': resource_id,
@@ -46,7 +42,8 @@ def search(request, **kwargs):
         'page_type': page_type,
         'page': page,
         'use_generic_key': True if page_type else False,
-        'debug': kwargs.get('debug'),
+        'debug': normal_kwargs.get('debug'),
+        'slash': resource_name.replace('/', '%2F')
     })
 
     if page_type == "artists":
@@ -55,12 +52,12 @@ def search(request, **kwargs):
         }
     elif page_type == "songs":
         service_map = {
-            'search_songs': services.SearchSongs(None, resource_name),
+            'search_songs': services.SearchSongs(resource_name),
         }
     else:
         service_map = {
             'search_artists': services.SearchArtists(resource_name),
-            'search_songs': services.SearchSongs(None, resource_name),
+            'search_songs': services.SearchSongs(resource_name),
         }
 
     content = utils.generate_content(resource_id, service_map, page=page)
@@ -251,37 +248,32 @@ Functions for handling ASYNC requests
 
 
 def retrieve_content(request, **kwargs):
-    resource_id = utils.unescape_html(request.GET.get('resource_id'))
+    resource_id = request.GET.get('resource_id').lower().strip()
+    resource_id = utils.unescape_html(resource_id)
     content_key = request.GET.get('content_key')
     page = request.GET.get('page')
     item_count = request.GET.get('item_count')
-    context = {}
+    json_context = {}
 
-    try:
-        resource_id = resource_id.lower().strip()
-        intermediate_data = cache.hget(resource_id, content_key)
+    cache_data = cache.hget(resource_id, content_key)
 
-        if intermediate_data:
-            content = ast.literal_eval(intermediate_data)
-            context['status'] = 'success'
+    if cache_data:
+        content = ast.literal_eval(cache_data)
+        json_context['status'] = content.get('status')
 
-            try:
-                context[content_key] = utils.page_resource(page, content, item_count)
-            except TypeError:
-                context[content_key] = content
-        else:
-            context['status'] = 'pending'
+        if json_context['status'] == "complete":
+            json_context['data'] = utils.page_resource(page, content.get('data'), item_count)
 
-    except AttributeError:
-        pass
+    else:
+        print "\nthis should never happen" * 3
 
-    return HttpResponse(json.dumps(context), content_type="application/json")
+    return HttpResponse(json.dumps(json_context), content_type="application/json")
 
 
 
 
 def clear_resource(request):
-    resource_id = utils.unescape_html(request.GET.get('resource'))
+    resource_id = utils.unescape_html(request.GET.get('resource_id'))
 
     try:
         resource_id = resource_id.lower()

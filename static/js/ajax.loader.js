@@ -13,6 +13,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
     'use strict';
 
     console.log("loading: " + content_key);
+    console.log(data);
 
     switch (content_key) {
     case "profile":
@@ -21,17 +22,14 @@ function load_content(resource_id, content_key, use_generic_key, data) {
 
             if (Object.prototype.toString.call(key) === '[object Array]') {
                 for (var i = 0; i < data[key].length; i++) {
-                    $(key_string).append(data[key][i]).fadeIn(FADE_DELAY);
+                    $(key_string).append(data[key][i]);
                 }
             }
             else {
-                $(key_string).append(data[key]).fadeIn(FADE_DELAY);
+                $(key_string).append(data[key]);
             }
         }
 
-        break;
-
-    case "artist_grid":
         break;
 
     case "search_artists":
@@ -177,7 +175,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
 
 
 function load_paged_table(resource_id, content_key, use_generic_key, data, urls) {
-    console.log("load_paged_table::" + content_key);
+    console.log("load_paged_table: " + content_key);
     var $table_id_key = "#" + content_key + "-table";
 
     //previous
@@ -252,6 +250,7 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
         }
     }
 
+    console.log(data);
     //tbody
     var $tbody_key = "#" + content_key + "-tbody",
         index = 0;
@@ -310,8 +309,7 @@ function handle_timeout(content_key, message) {
 }
 
 
-// function dispatch(resource_id, resource_name, content_key, use_generic_key, attempt, page) {
-function dispatch(opts) {
+function dispatch(opts, use_generic_key) {
     'use strict';
 
     $.ajax({
@@ -319,12 +317,12 @@ function dispatch(opts) {
         data: opts,
         dataType: 'json',
         type: 'GET',
-        success: function(data, stat, o) {
-            switch (data['status']) {
-            case 'success':
-                hide_spinner(opts.content_key, opts.use_generic_key);
+        success: function(json_context, stat, o) {
+            switch (json_context['status']) {
+            case 'complete':
+                hide_spinner(opts.content_key, use_generic_key);
 
-                load_content(opts.resource_name, opts.content_key, opts.use_generic_key, data[opts.content_key]);
+                load_content(opts.resource_name, opts.content_key, use_generic_key, json_context['data']);
 
                 break;
 
