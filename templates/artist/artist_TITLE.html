@@ -1,0 +1,38 @@
+{% load audiosearch_tags %}
+
+<!-- resource title -->
+<div id="resource-title" class="center">
+    <div id="title-container">
+        <h1>
+            {{ resource_name|title }}
+        </h1>
+
+        <ul>
+            <li>
+                <a href="/music/{{ resource_name|space_to_plus }}/recommended/">
+                    Recommended Songs
+                </a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/music/{{ resource_name|space_to_plus }}/similar/">
+                    Similar Artists
+                </a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/music/{{ resource_name|space_to_plus }}/songs/">
+                    Songs
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

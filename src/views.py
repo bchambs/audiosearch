@@ -101,14 +101,21 @@ def top_artists(request, **kwargs):
 
 
 def artist_summary(request, **kwargs):
+    normal_GET = utils.normalize(request.GET)
+    normal_kwargs = utils.normalize(kwargs)
+    resource_name = urllib.unquote_plus(normal_kwargs.get('artist'))
+    
+    if not resource_name:
+        return redirect(top_artists)
+
     prefix = "artist:"
-    resource_name = urllib.unquote_plus(kwargs['artist'])
     resource_id = prefix + resource_name
 
     context = Context({
         'resource_id': resource_id,
         'resource_name': resource_name,
-        'use_generic_key': False,
+        'content_description': "popular tracks",
+        'use_generic_key': True,
         'item_count': 15,
         'debug': kwargs.get('debug'),
     })
@@ -116,8 +123,6 @@ def artist_summary(request, **kwargs):
     service_map = {
         'profile': services.ArtistProfile(resource_name),
         'songs': services.ArtistSongs(resource_name),
-        # 'similar_artists': services.SimilarArtists(resource_name),
-        # 'playlist': services.Playlist(resource_name),
     }
 
     content = utils.generate_content(resource_id, service_map, item_count=15)

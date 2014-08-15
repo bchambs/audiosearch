@@ -1,0 +1,35 @@
+/*
+    HEADER
+*/
+#container-header {
+    background: none repeat scroll 0 0 #272727;
+    border: 0 none;
+    color: #fff;
+    font: inherit;
+    margin: 0;
+    min-height: 50px;
+}
+
+#page-nav {
+    min-height: 30px;
+    font-size: 25px;
+    padding: 10px 0;
+}
+#page-nav li {
+    float: left;
+}
+
+#search-bar {
+    background: white repeat scroll 0 0 transparent;
+    border: 0 none;
+    display: inline-block;
+    font-size: 16px;
+    height: 22px;
+    margin: 2px 0 0 0;
+    outline: medium none;
+    padding: 2px 6px;
+    width: 100%;
+}
+
+
+

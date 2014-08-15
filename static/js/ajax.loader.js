@@ -19,6 +19,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
     case "profile":
         for (var key in data) {
             var key_string = "#profile-" + key;
+            console.log(key_string);
 
             if (Object.prototype.toString.call(key) === '[object Array]') {
                 for (var i = 0; i < data[key].length; i++) {
@@ -87,7 +88,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 item: function(element) {
                     var artist = element['artist_name'],
                         title = element['title'],
-                        url = "/music/" + artist + "/" + title + "/",
+                        url = "/music/" + artist + "/_/" + title + "/",
 
                         $a = $("<a />",{
                             text: title,
@@ -130,7 +131,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 item: function(element) {
                     var artist = element['artist_name'],
                         title = element['title'],
-                        url = "/music/" + artist + "/" + title + "/",
+                        url = "/music/" + artist + "/_/" + title + "/",
 
                         $a = $("<a />",{
                             text: title,
@@ -290,14 +291,10 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
 
 
 function hide_spinner(content_key, use_generic_key) {
-    if (Boolean(use_generic_key)) {
-        var $spinner = "#content-spinner";
-    }
-    else {
-        var $spinner = "#" + content_key + "-spinner";
-    }
+    var $spinner = "#" + content_key + "-spinner";
 
     $($spinner).hide();
+    $("#content-spinner").hide();
 }
 
 
@@ -321,7 +318,6 @@ function dispatch(opts, use_generic_key) {
             switch (json_context['status']) {
             case 'complete':
                 hide_spinner(opts.content_key, use_generic_key);
-
                 load_content(opts.resource_name, opts.content_key, use_generic_key, json_context['data']);
 
                 break;

@@ -25,37 +25,52 @@
 </head>
 <body>
 
-<!-- nav -->
-<div id="nav">
-   <span class="zone glyphicon glyphicon-th-large"></span>
+<!-- header -->
+<div id="container-header">
+    <div id="page-nav" class="center">
+        <ul>
+            <!-- LEFT -->
+            <li>
+                <a href="/">audiosearch</a>
+            </li>
 
-    <div class="zone search">
-        <form action="/search/" method="GET">
-            <input class="search-bar" type="text" name="q">
-        </form>
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/music">music</a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/about">about</a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <form action="/search/" method="GET">
+                    <input id="search-bar" type="text" name="q">
+                </form>
+            </li>
+
+            {% if debug %}
+                <li float="right">
+                    <a href="" id="clear">clear</a>
+                </li>
+            {% endif %}
+        </ul>
     </div>
+</div><!--END header -->
 
-    {% if debug %}
 
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="debug">
-                <span class="link"></span>debug
-            </a>
-        </div>
-    </div>
 
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="clear">
-                <span class="link"></span>clear
-            </a>
-        </div>
-    </div>
-
-    {% endif %}
-    
-</div><!--END nav -->
 
 <!-- dir -->
 <div class="dir content">

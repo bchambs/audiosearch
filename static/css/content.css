@@ -1,0 +1,44 @@
+/*
+    CONTENT 
+*/
+#container-content {
+    background: none repeat scroll 0 0 #5A5A5A;
+    border: 0 none;
+    color: #fff;
+    font: inherit;
+    margin: 0;
+}
+
+#resource-title {
+    min-height: 63px;
+    clear: both;
+}
+#resource-title h1 {
+    max-width: 970px;
+    float: left;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+#resource-title li {
+    float: right;
+    font-size: 20px;
+    /*padding: 0 0 0 15px;*/
+    padding: 39px 0 0 15px;
+}
+#title-container {
+    display: inline-block;
+    width: 970px;
+}
+
+#profile {
+    text-indent: 30px;
+    line-height: 180%;
+}
+
+#content-tables {
+    margin-top: 20px;
+}
+
+#content-spinner {
+    min-height: 30px;
+}

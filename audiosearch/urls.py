@@ -12,15 +12,15 @@ urlpatterns = patterns('',
     url(ur'^music/$', views.top_artists),
 
 
-    url(ur'^music/(?P<artist>(?!/_/).+)/_/(?P<song>.+)/similar/$', views.song_content, {'content_key': 'song_playlist', 'description': "Similar Songs"}),
-    url(ur'^music/(?P<artist>(?!/_/).+)/_/(?P<song>.+)/recommended/$', views.song_content, {'content_key': 'similar_artists', 'description': "Recommended Artists"}),
-    url(ur'^music/(?P<artist>(?!/_/).+)/_/(?P<song>.+)/$', views.song_summary),
+    url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/similar/$', views.song_content, {'content_key': 'song_playlist', 'description': "Similar Songs"}),
+    url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/recommended/$', views.song_content, {'content_key': 'similar_artists', 'description': "Recommended Artists"}),
+    url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/$', views.song_summary),
 
 
-    url(ur'^music/(?P<artist>(?!/_/).+)/similar/$', views.artist_content, {'content_key': 'similar_artists', 'description': "Similar Artists"}),
-    url(ur'^music/(?P<artist>(?!/_/).+)/songs/$', views.artist_content, {'content_key': 'songs', 'description': "Songs"}),
-    url(ur'^music/(?P<artist>(?!/_/).+)/recommended/$', views.artist_content, {'content_key': 'song_playlist', 'description': "Recommended Songs"}),
-    url(ur'^music/(?P<artist>(?!/_/).+)/$', views.artist_summary),
+    url(ur'^music/(?P<artist>(?!/_/).*)/similar/$', views.artist_content, {'content_key': 'similar_artists', 'description': "Similar Artists"}),
+    url(ur'^music/(?P<artist>(?!/_/).*)/songs/$', views.artist_content, {'content_key': 'songs', 'description': "Songs"}),
+    url(ur'^music/(?P<artist>(?!/_/).*)/recommended/$', views.artist_content, {'content_key': 'song_playlist', 'description': "Recommended Songs"}),
+    url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_summary),
     
 
     # url(ur'^music/(?P<artist>[^/]+)/$', views.artist_summary),

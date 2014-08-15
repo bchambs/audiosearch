@@ -1,0 +1,47 @@
+{% load audiosearch_tags %}
+
+<!-- header -->
+<div id="container-header">
+    <div id="page-nav" class="center">
+        <ul>
+            <!-- LEFT -->
+            <li>
+                <a href="/">audiosearch</a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/music">music</a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <a href="/about">about</a>
+            </li>
+
+            <li>
+                /
+            </li>
+
+            <li>
+                <form action="/search/" method="GET">
+                    <input id="search-bar" type="text" name="q">
+                </form>
+            </li>
+
+            {% if debug %}
+                <li float="right">
+                    <a href="" id="clear">clear</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div><!--END header -->
+
+

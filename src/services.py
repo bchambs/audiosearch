@@ -1,5 +1,4 @@
 from random import choice, sample
-import datetime
 
 import audiosearch.config as cfg
 from src import utils

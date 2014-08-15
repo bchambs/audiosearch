@@ -18,180 +18,36 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
    
     <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/header.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/content.css" rel="stylesheet">
 
     <title>audiosearch</title>
 </head>
+
 <body>
 
-<!-- nav -->
-<div id="nav">
-   <span class="zone glyphicon glyphicon-th-large"></span>
-
-    <div class="zone search">
-        <form action="/search/" method="GET">
-            <input class="search-bar" type="text" name="q">
-        </form>
-    </div>
-
-    {% if debug %}
-
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="debug">
-                <span class="link"></span>debug
-            </a>
-        </div>
-    </div>
-
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="clear">
-                <span class="link"></span>clear
-            </a>
-        </div>
-    </div>
-
-    {% endif %}
-    
-</div><!--END nav -->
-
-
-<!-- dir -->
-<div class="dir content">
-    <span class="title">
-        artist / {{ resource_name }}
-    </span>
-
-    <span class="button">
-        <a href="/music/{{ resource_name|space_to_plus }}/recommended/">
-            Recommended Songs
-        </a>
-    </span>
-
-    <span class="button">
-        <a href="/music/{{ resource_name|space_to_plus }}/similar/">
-            Similar Artists
-        </a>
-    </span>
-
-    <span class="button">
-        <a href="/music/{{ resource_name|space_to_plus }}/songs/">
-            Songs
-        </a>
-    </span>
-    
-</div><!--END dir -->
-
-<hr>
-
-<!-- artist info -->
-<div class="artist-info content">
-{% if profile %}
-    <div id="profile-location">
-        {{ profile.location }}
-    </div>
-
-    <div id="profile-genres">
-        {% for genre in profile.genres %}
-            {{ genre }}
-        {% endfor %}
-    </div>
-{% else %}
-    <div id="profile-location">
-    </div>
-
-    <div id="profile-spinner" class="spinner-container">
-        <img src="{{ STATIC_URL }}img/spinner.gif"></img>
-    </div>
-
-    <div id="profile-genres">
-    </div>
-{% endif %}
-</div><!--END artist info -->
-
-
-<hr>
-
-
-<!-- table nav -->
-<div class="table-nav content">
-    <div class="title">
-        music
-    </div>
-
-    <div id="next">
-        <a href = "/music/{{ resource_name|space_to_plus }}/songs/" >more</a>
-    </div>
-
-</div><!--END table nav -->
-
-
-<hr>
-
+{% include "general_HEADER.html" %}
 
 <!-- content -->
-<div class="content">
-    <table id="songs-table">
+<div id="container-content">
+    
+    {% include "artist_TITLE.html" %}
 
-        <tbody id="songs-tbody">
-            {% if songs.data %}
-                {% for item in songs.data %}
-                    <tr class="{% cycle 'even' 'odd' %}">
-                        <td class="index">
-                            {{ forloop.counter0|add:songs.offset }}.
-                        </td>
-                        <td>
-                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <div id="songs-spinner" class="spinner-container">
-                    <img src="{{ STATIC_URL }}img/spinner.gif"></img>
-                </div>
-            {% endif %}
-        </tbody>
-    </table>
+    <hr>
+    
+    {% include "artist_PROFILE.html" %}
+
+    {% include "content_TABLE.html" %}
+    
 </div><!--END content -->
-
 
 <script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
 <script src="{{ STATIC_URL }}js/utils.js"></script>
 <script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
 
-{% if debug %}
-    <script type="text/javascript">
-        $('a#debug').click( function() { 
-            debug_template(); 
-            return false; 
-        });
-
-        $('a#clear').click( function() { 
-            remove_resource("{{ resource_id }}"); 
-            return false; 
-        });
-    </script>
-{% endif %}
-
-{% for pending in pending_content %}
-    <script type="text/javascript">
-        var opts = {
-                'resource_id': "{{ resource_id|safe }}",
-                'resource_name': "{{ resource_name|safe }}",
-                'content_key': "{{ pending }}",
-                'page': "{{ page }}",
-                'item_count': "{{ item_count }}",
-                'attempt': 0
-            },
-            use_generic_key = {{ use_generic_key|yesno:"true,false" }};
-
-
-        setTimeout(dispatch(opts, use_generic_key), AJAX_INITIAL_SNOOZE);
-    </script>
-{% endfor %}
+{% include "ajax_loader.html" %}
+{% include "js_debug.html" %}
 
 </body>
 </html>

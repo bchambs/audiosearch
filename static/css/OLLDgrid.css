@@ -1,0 +1,86 @@
+html, body {
+    /*height: 100%;*/
+    font-family: Helvetica, sans-serif;
+    margin: 0;
+    width: 100%;
+    
+}
+
+/*
+    content
+*/
+.content {
+    display: block;
+    width: 978px;
+    /*margin: 20px auto;*/
+    margin: 0 auto;
+    overflow: hidden;
+}
+.content .column {
+    float: left;
+    width: 487px;
+}
+.content .column .table-nav{
+    width: 100%;
+    display: block;
+
+}
+.content .column .table-nav .title{
+    float: left:;
+}
+.content .column .more{
+    float: right;
+    padding-right: 50px;
+    padding-top: 8px;
+}
+.content .column table{
+    width: 477px;
+    margin: 0 5px;
+}
+
+
+/*
+    tables
+*/
+table {
+    border: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+td {
+    padding: 0;
+}
+tr {
+    height: 30px;
+}
+.table-nav {
+    display: block;
+    clear: both;
+}
+td.index {
+    width: 40px;
+}
+tr.even {
+    background-color: #E0E0E0;
+}
+tr.odd {
+    background-color: white;
+}
+.table-nav .title {
+    float: left;
+    clear: both;
+}
+.table-nav #previous, #current, #next {
+    float: right;
+    padding-left: 30px;
+    margin-top: 9px;
+}
+.info {
+    display: block;
+}
+.main {
+    float: left;
+}
+.secondary {
+    float: right;
+}
