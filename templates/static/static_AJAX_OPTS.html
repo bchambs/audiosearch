@@ -8,10 +8,11 @@
                 'content_key': "{{ pending }}",
                 'page': "{{ page }}",
                 'item_count': "{{ item_count }}",
+                'data_is_paged': {{ data_is_paged|yesno:"true,false" }},
+                'use_generic_key': {{ use_generic_key|yesno:"true,false" }},
                 'attempt': 0
-            },
-            use_generic_key = {{ use_generic_key|yesno:"true,false" }};
+            };
 
-        setTimeout(dispatch(opts, use_generic_key), AJAX_INITIAL_SNOOZE);
+        setTimeout(dispatch(opts), AJAX_INITIAL_SNOOZE);
     </script>
 {% endfor %}

@@ -3,241 +3,114 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!--Google analytics-->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-51583732-1', 'audiosearch.net');
-      ga('send', 'pageview');
-
-    </script><!--END analytics-->
-
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-   
-    <link href="{{ STATIC_URL }}css/general.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/grid.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/nav.css" rel="stylesheet">
-   
-    <title>audiosearch</title>
+    {% include "general_HTML_HEAD.html" %}
 </head>
 
 <body>
 
-<!-- nav -->
-<div id="nav">
-   <span class="zone glyphicon glyphicon-th-large"></span>
+{% include "general_HEADER.html" %}
 
-    <div class="zone search">
-        <form name="search-form" action="/search/" method="GET" class="as-form">
-            <input class="search-bar" type="text" name="q">
-        </form>
-    </div>
+<!-- content -->
+<div id="container-content">
+    
+    <!-- resource title -->
+    <div id="resource-title" class="center">
+        <div id="title-container">
+            <h1>
+                Results for "{{ resource_name|title }}"
+            </h1>
 
-    {% if debug %}
+            <ul>
+                <li>
+                    <a href="/search/?q={{ resource_name|space_to_plus }}&type=songs">
+                        Songs
+                    </a>
+                </li>
 
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="debug">
-                <span class="link"></span>debug
-            </a>
+                <li>
+                    /
+                </li>
+
+                <li>
+                    <a href="/search/?q={{ resource_name|space_to_plus }}&type=artists">
+                        Artists
+                    </a>
+                </li>
+
+                <li>
+                    /
+                </li>
+
+                <li>
+                    <a href="/search/?q={{ resource_name|space_to_plus }}">
+                        Everything
+                    </a>
+                </li>
+
+            </ul>
         </div>
     </div>
 
-    <div class="debug">
-        <div class="zone normal">
-            <a href="" id="clear">
-                <span class="link"></span>clear
-            </a>
-        </div>
-    </div>
+    <hr>
 
+    {% if page_type %}
+
+    {% else %}
+        <!-- content tables -->
+        <div id="content-tables" class="content center">
+            <div class="container-table">
+                <div class="header">
+
+                    <div class="left">
+                        Artists
+                    </div>
+
+                    <div id="next" class="right">
+                        <a href = "/search/?q={{ resource_name|space_to_plus }}&type=artists" >more</a>
+                    </div>
+
+                </div>
+
+                <table id="search_artists-table">
+                    {% with content=search_artists spinner_id="search_artists-spinner" %}
+                        {% include "content_TBODY.html" %}
+                    {% endwith %}
+                </table>
+                
+            </div>
+        </div><!--END content tables -->
+
+        <!-- content tables -->
+        <div id="content-tables" class="content center">
+            <div class="container-table">
+                <div class="header">
+
+                    <div class="left">
+                        Songs
+                    </div>
+
+                    <div id="next" class="right">
+                        <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
+                    </div>
+
+                </div>
+
+                <table id="songs-table">
+                    {% with content=songs spinner_id="songs-spinner" %}
+                        {% include "content_TBODY.html" %}
+                    {% endwith %}
+                </table>
+                
+            </div>
+        </div><!--END content tables -->
     {% endif %}
 
-</div><!--END nav -->
+</div><!--END content -->
 
+{% include "general_JS_LINKS.html" %}
 
-<!-- dir -->
-<div class="dir content">
-    <span class="title">
-        search / 
-
-        <a href="/search/?q={{ resource_name|space_to_plus }}">
-            {{ resource_name }}
-        </a>
-    </span>
-
-</div><!--END dir -->
-
-<hr>
-
-
-{% if page_type %}
-<!-- single content -->
-
-<!-- table nav -->
-<div class="table-nav content">
-    <div class="title">
-        {{ page_type|title }}
-    </div>
-
-    <div id="next">
-        {% if content.next %}
-            <a href = "?q={{ resource_name|space_to_plus }}&type={{ page_type }}&page={{ content.next }}" >next</a>
-        {% endif %}
-    </div>
-
-    <div id="current">
-        {% if content.next or content.previous and content.current %}
-            {{ content.current }} of {{ content.total }}
-        {% endif %}
-    </div>
-
-    <div id="previous">
-        {% if content.previous %}
-            <a href = "?q={{ resource_name|space_to_plus }}&type={{ page_type }}&page={{ content.previous }}" >previous</a>
-        {% endif %}
-    </div>
-
-</div><!--END table nav -->
-
-<hr>
-
-<div class="content">
-    <table id="content-table">
-        <tbody id="content-tbody">
-            {% for item in content.data %}
-                <tr class="{% cycle 'even' 'odd' %}">
-                    <td class="index">
-                        {{ forloop.counter0|add:content.offset }}.
-                    </td>
-                    <td>
-                        {% if item.name %}
-                            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-                        {% else %}
-                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            by {{ item.artist_name }}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div><!--END single content -->
-
-{% else %}
-
-<!-- dual content -->
-<div class="content">
-    <div class="column">
-
-        <!-- search_artists nav -->
-        <div class="table-nav">
-            <div class="title">
-                Artists
-            </div>
-
-            <div id="search_artists-next" class="more">
-                {% if search_artists.next %}
-                    <a href = "?q={{ resource_name|space_to_plus }}&type=artists" >more</a>
-                {% endif %}
-            </div>
-
-        </div><!--END table nav -->
-
-        <hr>
-
-        <table id="search_artists-table">
-            <tbody id="search_artists-tbody">
-                {% for item in search_artists.data %}
-                    <tr class="{% cycle 'even' 'odd' %}">
-                        <td class="index">
-                            {{ forloop.counter0|add:search_artists.offset }}.
-                        </td>
-                        <td>
-                            <a href = "/music/{{ item.name|space_to_plus|safe }}/" >{{ item.name }} </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><!--END search artists -->
-
-    <!-- search songs -->
-    <div class="column">
-
-        <!-- search_songs nav -->
-        <div class="table-nav">
-            <div class="title">
-                Songs
-            </div>
-
-            <div id="search_songs-next" class="more">
-                {% if search_songs.next %}
-                    <a href = "?q={{ resource_name|space_to_plus }}&type=songs" >more</a>
-                {% endif %}
-            </div>
-
-        </div><!--END table nav -->
-
-        <hr>
-
-        <table id="search_songs-table">
-            <tbody id="search_songs-tbody">
-                {% for item in search_songs.data %}
-                    <tr class="{% cycle 'even' 'odd' %}">
-                        <td class="index">
-                            {{ forloop.counter0|add:search_songs.offset }}.
-                        </td>
-                        <td>
-                            <a href = "/music/{{ item.artist_name|space_to_plus }}/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                            by {{ item.artist_name }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><!--END search songs -->
-</div><!--END dual content -->
-{% endif %}
-
-
-
-<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
-<script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
-<script src="{{ STATIC_URL }}js/utils.js"></script>
-<script src="{{ STATIC_URL }}js/ajax.debug.js"></script>
-
-{% if debug %}
-    <script type="text/javascript">
-        $('a#debug').click( function() { 
-            debug_template(); 
-            return false; 
-        });
-
-        $('a#clear').click( function() { 
-            remove_resource("{{ resource_id }}"); 
-            return false; 
-        });
-    </script>
-{% endif %}
-
-{% for pending in pending_content %}
-    <script type="text/javascript">
-        var opts = {
-            'resource_id': "{{ resource_id|safe }}",
-            'resource_name': "{{ resource_name }}",
-            'content_key': "{{ pending }}",
-            'use_generic_key': {{ use_generic_key|yesno:"true,false" }},
-            'page': "{{ page }}",
-            'item_count': "{{ item_count }}"
-        };
-
-        setTimeout(dispatch(opts), AJAX_INITIAL_SNOOZE);
-    </script>
-{% endfor %}
+{% include "static_AJAX_OPTS.html" %}
+{% include "static_AJAX_DEBUG.html" %}
 
 </body>
 </html>

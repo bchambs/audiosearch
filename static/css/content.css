@@ -25,6 +25,11 @@
     /*padding: 0 0 0 15px;*/
     padding: 39px 0 0 15px;
 }
+
+h4 {
+    margin: 5px;
+}
+
 #title-container {
     display: inline-block;
     width: 970px;
@@ -42,3 +47,4 @@
 #content-spinner {
     min-height: 30px;
 }
+

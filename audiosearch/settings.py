@@ -45,10 +45,11 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = (
     'templates',
-    'templates/general',
-    'templates/static',
     'templates/artist',
+    'templates/content',
+    'templates/general',
     'templates/song',
+    'templates/static',
 )
 
 # Application definition

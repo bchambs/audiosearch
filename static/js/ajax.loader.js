@@ -1,6 +1,7 @@
 /* JSLint */
 /* jslint browser: true */
 /* global $, jQuery */
+'use strict';
 
 
 var AJAX_SNOOZE = 2000,
@@ -9,17 +10,16 @@ var AJAX_SNOOZE = 2000,
     FADE_DELAY = 8000;
 
 
-function load_content(resource_id, content_key, use_generic_key, data) {
-    'use strict';
-
-    console.log("loading: " + content_key);
-    console.log(data);
+function load_content(opts, data) {
+    var resource_id = opts.resource_id,
+        content_key = opts.content_key,
+        data_is_paged = opts.data_is_paged,
+        use_generic_key = opts.use_generic_key;
 
     switch (content_key) {
     case "profile":
         for (var key in data) {
             var key_string = "#profile-" + key;
-            console.log(key_string);
 
             if (Object.prototype.toString.call(key) === '[object Array]') {
                 for (var i = 0; i < data[key].length; i++) {
@@ -51,7 +51,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "search_songs":
@@ -77,7 +77,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "songs":
@@ -99,7 +99,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "similar_artists":
@@ -120,7 +120,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "song_playlist":
@@ -146,7 +146,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "top_artists":
@@ -164,7 +164,7 @@ function load_content(resource_id, content_key, use_generic_key, data) {
                 }
         };
 
-        load_paged_table(resource_id, content_key, use_generic_key, data, urls);
+        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
     break;
 
     default:
@@ -175,87 +175,17 @@ function load_content(resource_id, content_key, use_generic_key, data) {
 }
 
 
-function load_paged_table(resource_id, content_key, use_generic_key, data, urls) {
-    console.log("load_paged_table: " + content_key);
-    var $table_id_key = "#" + content_key + "-table";
-
-    //previous
-    if (data['previous']) {
-        var $previous_key = "#" + content_key + "-previous", 
-            $prev_a = $("<a />",{
-            text: "previous",
-            href: space_to_plus(urls['previous'])
-        });
-
-        if (Boolean(use_generic_key)) {
-            // $('#content-previous').append($prev_a);
-            $('#previous').append($prev_a);
-
-        }
-        else {
-            $($previous_key).append($prev_a);
-        }
+function load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls) {
+    if (data_is_paged) {
+        build_paged_table_nav(content_key, data, urls);
     }
 
-    //current
-    if ((data['previous'] || data['next']) && data['current']) {
-        var $current_key = "#" + content_key + "-current"; 
-
-        if (Boolean(use_generic_key)) {
-            // $('#content-current').text(data['current'] + " of " + data['total']);
-            $('#current').text(data['current'] + " of " + data['total']);
-        }
-        else {
-            $($current_key).text(data['current'] + " of " + data['total']);
-        }
-    }
-
-    //next
-    if (data['next']) {
-        var next_text, next_url, use_more = false;
-
-        // special case to display "more" for search results 
-        if (data['current'] === 1 && (content_key === "search_songs" || content_key === "search_artists")) {
-            next_text = "more";
-
-            if (content_key === "search_songs") {
-                next_url = "?q=" + resource_id + "&type=songs";
-            }
-            else {
-                next_url = "?q=" + resource_id + "&type=artists";
-            }
-
-            use_more = true;
-        }
-        else {
-            next_text = "next";
-            next_url = urls['next'];
-        }
-
-        var $next_key = "#" + content_key + "-next", 
-            $next_a = $("<a />",{
-            text: next_text,
-            href: space_to_plus(next_url)
-        });
-
-        if (use_more) {
-            $next_a.addClass("more");
-        }
-
-        if (Boolean(use_generic_key)) {
-            // $('#content-next').append($next_a);
-            $('#next').append($next_a);
-        }
-        else {
-            $($next_key).append($next_a);
-        }
-    }
-
-    console.log(data);
-    //tbody
-    var $tbody_key = "#" + content_key + "-tbody",
+    //table
+    var $table_key = "#" + content_key + "-table",
+        $tbody = $("<tbody />"),
         index = 0;
 
+    //build rows / columns
     for (var item in data['data']) {
         if (index % 2 === 0) {
             var row_class = "even";
@@ -277,38 +207,73 @@ function load_paged_table(resource_id, content_key, use_generic_key, data, urls)
         $td_data.append($item_a);
         $tr.append($td_index);
         $tr.append($td_data);
-
-        if (Boolean(use_generic_key)) {
-            $('#content-tbody').append($tr);
-        }
-        else {
-            $($tbody_key).append($tr);
-        }
+        
+        $($tbody).append($tr);
 
         index++;
+    }
+
+    //attach to table
+    // if (Boolean(use_generic_key)) {
+    if (use_generic_key) {
+        $('#content-table').append($tbody);
+    }
+    else {
+        $($table_key).append($tbody);
+    }
+}
+
+
+function build_paged_table_nav(content_key, data, urls) {
+    //previous
+    if (data['previous']) {
+        var $previous_key = "#" + content_key + "-previous", 
+            $prev_a = $("<a />",{
+            text: "previous",
+            href: space_to_plus(urls['previous'])
+        });
+
+        $('#previous').append($prev_a);
+    }
+
+    //current
+    if ((data['previous'] || data['next']) && data['current']) {
+        var $current_key = "#" + content_key + "-current"; 
+
+        $('#current').text(data['current'] + " of " + data['total']);
+    }
+
+    //next
+    if (data['next']) {
+        var $next_key = "#" + content_key + "-next", 
+            $next_a = $("<a />",{
+            text: "next",
+            href: space_to_plus(urls['next'])
+        });
+
+        $('#next').append($next_a);
     }
 }
 
 
 function hide_spinner(content_key, use_generic_key) {
-    var $spinner = "#" + content_key + "-spinner";
-
-    $($spinner).hide();
-    $("#content-spinner").hide();
+    if (use_generic_key) {
+        $("#content-spinner").hide();
+    }
+    else {
+        var $spinner = "#" + content_key + "-spinner";
+        $($spinner).hide();
+    }
 }
 
 
-// remove loader image, display sad face, display error notification
 function handle_timeout(content_key, message) {
-    'use strict';
     console.log("in handle_timeout: " + content_key);
     console.log(message);
 }
 
 
-function dispatch(opts, use_generic_key) {
-    'use strict';
-
+function dispatch(opts) {
     $.ajax({
         url: "/ajax/retrieval/",
         data: opts,
@@ -317,8 +282,8 @@ function dispatch(opts, use_generic_key) {
         success: function(json_context, stat, o) {
             switch (json_context['status']) {
             case 'complete':
-                hide_spinner(opts.content_key, use_generic_key);
-                load_content(opts.resource_name, opts.content_key, use_generic_key, json_context['data']);
+                hide_spinner(opts.content_key, opts.use_generic_key);
+                load_content(opts, json_context['data']);
 
                 break;
 

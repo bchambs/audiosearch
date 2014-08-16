@@ -31,7 +31,7 @@ def acquire_resource(resource_id, content_key, service):
     except services.EchoNestServiceFailure as err_msg:
         content_struct = {
             'status': "failed",
-            'error_message': err_msg,
+            'error_message': str(err_msg),
         }
         pipe.hset(resource_id, content_key, content_struct)
 

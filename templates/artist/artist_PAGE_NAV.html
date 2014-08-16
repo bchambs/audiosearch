@@ -4,12 +4,16 @@
 <div id="resource-title" class="center">
     <div id="title-container">
         <h1>
-            {{ resource_name|title }}
+            {% if home_page %}
+                {{ resource_name|title }}
+            {% else %}
+                <a href="/music/{{ resource_name|title|space_to_plus }}" >{{ resource_name|title }}</a>
+            {% endif %}
         </h1>
 
         <ul>
             <li>
-                <a href="/music/{{ resource_name|space_to_plus }}/recommended/">
+                <a href="/music/{{ resource_name|space_to_plus }}/+recommended/">
                     Recommended Songs
                 </a>
             </li>
@@ -19,7 +23,7 @@
             </li>
 
             <li>
-                <a href="/music/{{ resource_name|space_to_plus }}/similar/">
+                <a href="/music/{{ resource_name|space_to_plus }}/+similar/">
                     Similar Artists
                 </a>
             </li>
@@ -29,7 +33,7 @@
             </li>
 
             <li>
-                <a href="/music/{{ resource_name|space_to_plus }}/songs/">
+                <a href="/music/{{ resource_name|space_to_plus }}/+songs/">
                     Songs
                 </a>
             </li>

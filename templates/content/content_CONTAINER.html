@@ -1,0 +1,40 @@
+{% load audiosearch_tags %}
+
+<!-- content tables -->
+<div id="content-tables" class="content center">
+    <div class="container-table">
+        <div class="header">
+
+            <div class="left">
+                {{ content_description }}
+            </div>
+
+            <!-- display page nav -->
+            <div id="next" class="right">
+                {% if content.next %}
+                    <a href = "?page={{ content.next }}" >next</a>
+                {% endif %}
+            </div>
+
+            <div id="current" class="right">
+                {% if content.next or content.previous and content.current %}
+                    {{ content.current }} of {{ content.total }}
+                {% endif %}
+            </div>
+
+            <div id="previous" class="right">
+                {% if content.previous %}
+                    <a href = "?page={{ content.previous }}" >previous</a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <table id="content-table">
+            {% with spinner_id="content-spinner" %}
+                {% include "content_TBODY.html" %}
+            {% endwith %}
+        </table>
+        
+    </div>
+</div><!--END content tables -->

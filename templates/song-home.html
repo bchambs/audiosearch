@@ -1,0 +1,69 @@
+﻿{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    {% include "general_HTML_HEAD.html" %}
+</head>
+
+<body>
+
+{% include "general_HEADER.html" %}
+
+<!-- content -->
+<div id="container-content">
+    
+    {% include "song_PAGE_NAV.html" %}
+
+    <hr>
+
+    <h4 class="center">
+        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
+    </h4>
+
+    <!-- resource profile -->
+    <div id="resource-profile" class="center">
+
+        {% if not profile %}
+            <div id="profile-spinner" class="spinner-container">
+                <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+            </div>
+        {% endif %}
+
+        <div id="profile">
+            <div id="profile-danceability">
+                danceability : 
+
+                {% if profile.danceability %}
+                    {{ profile.danceability }}
+                {% endif %}
+            </div>
+
+            <div id="profile-liveness">
+                liveness : 
+
+                {% if profile.liveness %}
+                    {{ profile.liveness }}
+                {% endif %}
+            </div>
+
+            <div id="profile-tempo">
+                tempo : 
+                
+                {% if profile.tempo %}
+                    {{ profile.tempo }}
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+
+</div><!--END content -->
+
+{% include "general_JS_LINKS.html" %}
+
+{% include "static_AJAX_OPTS.html" %}
+{% include "static_AJAX_DEBUG.html" %}
+
+</body>
+</html>

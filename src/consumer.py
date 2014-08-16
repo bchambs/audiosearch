@@ -27,6 +27,8 @@ class ENConsumer(object):
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
 
+                print response.url
+
                 code = json_response['response']['status']['code']
 
                 # success, return echo nest resource

@@ -39,28 +39,28 @@ def search(request, **kwargs):
     context = Context({
         'resource_id': resource_id,
         'resource_name': resource_name,
-        'page_type': page_type,
         'page': page,
+        'page_type': page_type,
+        'data_is_paged': True if page_type else False,
         'use_generic_key': True if page_type else False,
+
         'debug': normal_kwargs.get('debug'),
-        'slash': resource_name.replace('/', '%2F')
     })
 
+    service_map = {}
+
     if page_type == "artists":
-        service_map = {
-            'search_artists': services.SearchArtists(resource_name),
-        }
+        service_map['search_artists'] = services.SearchArtists(resource_name)
+    
     elif page_type == "songs":
-        service_map = {
-            'search_songs': services.SearchSongs(resource_name),
-        }
+        service_map['search_songs'] = services.SearchSongs(resource_name)
+    
     else:
-        service_map = {
-            'search_artists': services.SearchArtists(resource_name),
-            'search_songs': services.SearchSongs(resource_name),
-        }
+        service_map['search_artists'] = services.SearchArtists(resource_name)
+        service_map['search_songs'] = services.SearchSongs(resource_name)
 
     content = utils.generate_content(resource_id, service_map, page=page)
+    
     if page_type == "artists" and 'search_artists' in content:
         content['content'] = content.pop('search_artists')
 
@@ -82,7 +82,9 @@ def top_artists(request, **kwargs):
 
     context = Context({
         'resource_id': resource_id,
-        'use_generic_key': True,
+        'data_is_paged': False,
+        'use_generic_key': False,
+
         'debug': kwargs.get('debug'),
     })
 
@@ -91,8 +93,6 @@ def top_artists(request, **kwargs):
     }
 
     content = utils.generate_content(resource_id, service_map)
-    if content_key in content:
-        content['content'] = content.pop(content_key)
     context.update(content)
 
     return render(request, 'top-artists.html', context)
@@ -100,7 +100,7 @@ def top_artists(request, **kwargs):
 
 
 
-def artist_summary(request, **kwargs):
+def artist_home(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
     resource_name = urllib.unquote_plus(normal_kwargs.get('artist'))
@@ -110,13 +110,17 @@ def artist_summary(request, **kwargs):
 
     prefix = "artist:"
     resource_id = prefix + resource_name
+    track_count = 15
 
     context = Context({
         'resource_id': resource_id,
         'resource_name': resource_name,
         'content_description': "popular tracks",
-        'use_generic_key': True,
-        'item_count': 15,
+        'home_page': True,
+        'data_is_paged': False,
+        'use_generic_key': False,
+        'item_count': track_count,
+
         'debug': kwargs.get('debug'),
     })
 
@@ -125,10 +129,11 @@ def artist_summary(request, **kwargs):
         'songs': services.ArtistSongs(resource_name),
     }
 
-    content = utils.generate_content(resource_id, service_map, item_count=15)
+    content = utils.generate_content(resource_id, service_map, item_count=track_count)
     context.update(content)
 
-    return render(request, "artist-summary.html", context)
+
+    return render(request, "artist-home.html", context)
 
 
 
@@ -144,20 +149,21 @@ def artist_content(request, **kwargs):
         'resource_id': resource_id,
         'resource_name': resource_name,
         'page': page,
+        'data_is_paged': True,
         'use_generic_key': True,
-        'description': kwargs.get('description'),
+        'content_description': kwargs.get('description'),
+
         'debug': kwargs.get('debug'),
     })
 
-    service_map = {
-        'profile': services.ArtistProfile(resource_name),
-    }
+    service_map = {}
 
     if content_key == "song_playlist":
         service_map[content_key] = services.Playlist(resource_name)
-        context['show_by_artist'] = True
+    
     elif content_key == "similar_artists": 
         service_map[content_key] = services.SimilarArtists(resource_name)
+    
     elif content_key == "songs":
         service_map[content_key] = services.ArtistSongs(resource_name)
 
@@ -171,7 +177,7 @@ def artist_content(request, **kwargs):
 
 
 
-def song_summary(request, **kwargs):
+def song_home(request, **kwargs):
     prefix = "song:"
     artist = urllib.unquote_plus(kwargs['artist'])
     resource_name = urllib.unquote_plus(kwargs['song'])
@@ -181,20 +187,21 @@ def song_summary(request, **kwargs):
         'resource_id': resource_id,
         'resource_name': resource_name,
         'artist_name': artist,
+        'home_page': True,
+        'data_is_paged': False,
         'use_generic_key': False,
+
         'debug': kwargs.get('debug'),
     })
 
     service_map = {
-        'profile': services.SongProfile(artist, resource_name),
-        # 'similar_artists': services.SimilarArtists(artist),
-        # 'song_playlist': services.Playlist(resource_name, artist_id=artist),
+        'profile': services.SongProfile(resource_name, artist),
     }
 
     content = utils.generate_content(resource_id, service_map)
     context.update(content)
 
-    return render(request, "song-summary.html", context)
+    return render(request, "song-home.html", context)
 
 
 
@@ -212,17 +219,18 @@ def song_content(request, **kwargs):
         'resource_name': resource_name,
         'artist_name': artist,
         'page': page,
+        'data_is_paged': True,
         'use_generic_key': True,
-        'description': kwargs.get('description'),
+        'content_description': kwargs.get('description'),
+
         'debug': kwargs.get('debug'),
     })
 
-    service_map = {
-        'profile': services.SongProfile(artist, resource_name),
-    }
+    service_map = {}
 
     if content_key == "song_playlist":
         service_map[content_key] = services.Playlist(resource_name, artist_id=artist)
+    
     elif content_key == "similar_artists": 
         service_map[content_key] = services.SimilarArtists(artist)
 
@@ -299,7 +307,3 @@ def clear_resource(request):
 
 
 
-
-def debug_template(request):
-
-    return HttpResponse(json.dumps({}), content_type="application/json")

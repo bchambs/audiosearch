@@ -206,7 +206,7 @@ class Playlist(EchoNestService):
 
         if artist_id:
             self.payload['type'] = "song-radio"
-            self.dependency = SongID(artist_id, resource_id)
+            self.dependency = SongID(resource_id, artist_id)
         else:
             self.payload['artist'] = resource_id
             self.payload['variety'] = 1
@@ -233,7 +233,7 @@ class SongProfile(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, artist_id, resource_id):
+    def __init__(self, resource_id, artist_id):
         super(SongProfile, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.dependency = SongID(resource_id, artist_id)
 

@@ -52,12 +52,11 @@ li {
     LINKS
 */
 a {
-    color: inherit;
+    /*color: inherit;*/
+    color: #FFCC99;
     text-decoration: none;
     font-style: bold;
 }
-
-
 a:hover {
     color: gray;
 }
@@ -93,7 +92,7 @@ table {
     border-spacing: 0;
     line-height: 220%;
 }
-tbody:first-child td:first-child { 
+td:first-child { 
     padding: 0 15px;
     width: 20px;
 }

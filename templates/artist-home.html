@@ -1,0 +1,74 @@
+{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    {% include "general_HTML_HEAD.html" %}
+</head>
+
+<body>
+
+{% include "general_HEADER.html" %}
+
+<!-- content -->
+<div id="container-content">
+    
+    {% include "artist_PAGE_NAV.html" %}
+
+    <hr>
+    
+    <!-- resource profile -->
+    <div id="resource-profile" class="center">
+        <div id="profile">
+
+            {% if not profile %}
+                <div id="profile-spinner" class="spinner-container">
+                    <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                </div>
+            {% endif %}
+
+            <div id="profile-location">
+                {{ profile.location }}
+            </div>
+
+            <div id="profile-genres">
+                {% for genre in profile.genres %}
+                    {{ genre }}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- content tables -->
+    <div id="content-tables" class="content center">
+        <div class="container-table">
+            <div class="header">
+
+                <div class="left">
+                    popular tracks
+                </div>
+
+                <div id="next" class="right">
+                    <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
+                </div>
+
+            </div>
+
+            <table id="songs-table">
+                {% with content=songs spinner_id="songs-spinner" %}
+                    {% include "content_TBODY.html" %}
+                {% endwith %}
+            </table>
+            
+        </div>
+    </div><!--END content tables -->
+</div><!--END content -->
+
+{% include "general_JS_LINKS.html" %}
+
+{% include "static_AJAX_OPTS.html" %}
+{% include "static_AJAX_DEBUG.html" %}
+
+</body>
+</html>
