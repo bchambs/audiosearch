@@ -6,17 +6,21 @@
             <td>
                 {{ forloop.counter0|add:content.offset }}.
             </td>
+
             <td>
                 {% if item.title %}
-                    <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+
+                    {% if display_by_artist %}
+                        <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                         by {{ item.artist_name }}
+                    {% else %}
+                        <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                    {% endif %}
+
                 {% else %}
                     <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
                 {% endif %}
             </td>
         </tr>
-    {% empty %}
-        <div id={{ spinner_id }} class="spinner-container">
-            <img src="{{ STATIC_URL }}img/spinner.gif"></img>
-        </div>
     {% endfor %}
 </tbody>

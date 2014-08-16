@@ -33,7 +33,12 @@ class ENConsumer(object):
 
                 # success, return echo nest resource
                 if code == ENConsumer.SUCCESS:
-                    return json_response['response'][package.ECHO_NEST_KEY]
+                    data = json_response['response'][package.ECHO_NEST_KEY]
+
+                    if len(data) < 1:
+                        raise services.EchoNestServiceFailure("Service returned no results.")
+
+                    return data
 
                 # exceeded api_key limit, snooze until timeout
                 elif code == ENConsumer.LIMIT_EXCEEDED:

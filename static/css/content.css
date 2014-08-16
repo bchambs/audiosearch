@@ -1,12 +1,15 @@
 /*
     CONTENT 
 */
+.content {
+    margin-top: 20px;
+}
 #container-content {
     background: none repeat scroll 0 0 #5A5A5A;
     border: 0 none;
     color: #fff;
     font: inherit;
-    margin: 0;
+    margin: 0 0 150px 0;
 }
 
 #resource-title {
@@ -26,25 +29,29 @@
     padding: 39px 0 0 15px;
 }
 
-h4 {
-    margin: 5px;
-}
-
 #title-container {
     display: inline-block;
     width: 970px;
 }
 
-#profile {
-    text-indent: 30px;
-    line-height: 180%;
+#profile-years_active {
+    margin-left: 20px;
 }
 
-#content-tables {
+#profile-genres {
+    min-height: 30px;
     margin-top: 20px;
 }
-
-#content-spinner {
-    min-height: 30px;
+#profile-genres li {
+    margin-right: 8px;
 }
 
+.genre-tag {
+    color: #FFCC99;
+    background-color: #3F3F3F;
+    padding: 5px 8px;
+}
+
+.subtitle {
+    font-size: 20px;
+}

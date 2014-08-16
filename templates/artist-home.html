@@ -4,6 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     {% include "general_HTML_HEAD.html" %}
+
+    {% if not profile %}
+        <style>
+            #profile-box {
+                display: none;
+            }
+        </style>
+    {% endif %}
 </head>
 
 <body>
@@ -17,28 +25,42 @@
 
     <hr>
     
-    <!-- resource profile -->
-    <div id="resource-profile" class="center">
-        <div id="profile">
+    <!-- profile box -->
+    <div id="profile" class="content center">
+        <div class="container-table">
+            <div class="header">
 
-            {% if not profile %}
-                <div id="profile-spinner" class="spinner-container">
-                    <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                <div class="left">
+                    Profile
                 </div>
-            {% endif %}
 
-            <div id="profile-location">
-                {{ profile.location }}
+                <!-- spinner -->
+                {% if not profile %}
+                    <div id="profile-spinner" class="spinner left">
+                        <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                    </div>
+                {% endif %}
+                
             </div>
 
-            <div id="profile-genres">
-                {% for genre in profile.genres %}
-                    {{ genre }}
-                {% endfor %}
-            </div>
+            <div id="profile-box">
+                <span id="profile-location">
+                    {{ profile.location }}
+                </span>
 
+                <span id="profile-years_active">
+                    {{ profile.years_active }}
+                </span>
+
+                <ul id="profile-genres">
+                    {% for genre in profile.genres %}
+                        <li class="genre-tag left">{{ genre }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-    </div>
+    </div><!--END profile box -->
+
 
     <!-- content tables -->
     <div id="content-tables" class="content center">
@@ -46,17 +68,26 @@
             <div class="header">
 
                 <div class="left">
-                    popular tracks
+                    Popular Tracks
                 </div>
 
                 <div id="next" class="right">
-                    <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
+                    {% if songs.next %}
+                        <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
+                    {% endif %}
                 </div>
+
+                <!-- spinner -->
+                {% if not songs %}
+                    <div id="songs-spinner" class="spinner left">
+                        <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                    </div>
+                {% endif %}
 
             </div>
 
             <table id="songs-table">
-                {% with content=songs spinner_id="songs-spinner" %}
+                {% with content=songs %}
                     {% include "content_TBODY.html" %}
                 {% endwith %}
             </table>

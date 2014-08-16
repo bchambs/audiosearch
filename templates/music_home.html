@@ -13,16 +13,21 @@
 <!-- content -->
 <div id="container-content">
     
-    {% include "song_PAGE_NAV.html" %}
+    <!-- resource title -->
+    <div id="resource-title" class="center">
+        <div id="title-container">
+            <h1>
+                {{ resource_name|title }}
+            </h1>
+        </div>
+    </div>
 
     <hr>
-
-    <h4 class="center">
-        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name|title }}</a>
-    </h4>
-
-    {% include "content_CONTAINER.html" %}
-
+    
+    {% with content=top_artists spinner_id="top_artists-spinner" %}
+        {% include "content_CONTAINER.html" %}
+    {% endwith %}
+    
 </div><!--END content -->
 
 {% include "general_JS_LINKS.html" %}

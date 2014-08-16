@@ -6,13 +6,24 @@
         <div class="header">
 
             <div class="left">
-                {{ content_description }}
+                {{ content_description|title }}
             </div>
+
+            <!-- spinner -->
+            {% if not content %}
+                <div id="content-spinner" class="spinner left">
+                    <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                </div>
+            {% endif %}
 
             <!-- display page nav -->
             <div id="next" class="right">
                 {% if content.next %}
-                    <a href = "?page={{ content.next }}" >next</a>
+                    {% if q_params %}
+                        <a href = "?{{ q_params|build_query_string }}&page={{ content.next }}" >next</a>
+                    {% else %}
+                        <a href = "?page={{ content.next }}" >next</a>
+                    {% endif %}
                 {% endif %}
             </div>
 
@@ -24,17 +35,20 @@
 
             <div id="previous" class="right">
                 {% if content.previous %}
-                    <a href = "?page={{ content.previous }}" >previous</a>
+                    {% if q_params %}
+                        <a href = "?{{ q_params|build_query_string }}&page={{ content.previous }}" >previous</a>
+                    {% else %}
+                        <a href = "?page={{ content.previous }}" >previous</a>
+                    {% endif %}
                 {% endif %}
-            </div>
+            </div> <!--END display page nav -->
 
         </div>
 
+        <!-- content table -->
         <table id="content-table">
-            {% with spinner_id="content-spinner" %}
-                {% include "content_TBODY.html" %}
-            {% endwith %}
+            {% include "content_TBODY.html" %}
         </table>
-        
+
     </div>
 </div><!--END content tables -->

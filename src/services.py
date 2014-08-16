@@ -12,6 +12,7 @@ content_key = profile, similar_songs, etc
 echo_key : key used to access resource from echo nest api
 """
 
+
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
@@ -42,32 +43,15 @@ class EchoNestService(object):
         return 
 
 
-class TopArtists(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'top_hottt'
-    BUCKETS = [
-        'hotttnesss',
-        'terms',
-        'images',
-    ]
-    ECHO_NEST_KEY = 'artists'
-
-
-    def __init__(self):
-        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, None, self.BUCKETS)
-        self.payload['results'] = 10
-
-
-    def __str__(self):
-        return "TopArtists"
-
-
 class ArtistProfile(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'profile'
     BUCKETS = [
-        'terms',
         'artist_location',
+        'biographies',
+        'images',
+        'hotttnesss',
+        'genre',
         'years_active',
     ]
     ECHO_NEST_KEY = 'artist'
@@ -83,23 +67,28 @@ class ArtistProfile(EchoNestService):
 
 
     def trim(self, data):
+        print self.url
         result = {}
-
-        result['name'] = data.get('name')
 
         location_dict = data.get('artist_location')
         if location_dict:
             result['location'] = location_dict.get('location')
 
-        genres = data.get('terms')[:cfg.GENRE_COUNT]
-
+        genres = data.get('genres')
         if genres:
+            genres = genres[:cfg.GENRE_COUNT]
             result['genres'] = []
 
-            for genre in genres[:-1]:
-                result['genres'].append(genre['name'] + ", ")
+            for genre in genres:
+                result['genres'].append(genre['name'])
 
-            result['genres'].append(genres[-1]['name'])
+        years_active = data.get('years_active')
+        if years_active:
+            years_active = years_active[0]
+            start = years_active.get('start', "Unknown")
+            end = years_active.get('end', "Present")
+
+            result['years_active'] = "(%s - %s)" %(start, end)
 
         return result
 
@@ -164,11 +153,15 @@ class SearchArtists(EchoNestService):
 class SearchSongs(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'search'
+    BUCKETS = [
+        'song_hotttnesss', 
+        'song_hotttnesss_rank', 
+    ]
     ECHO_NEST_KEY = 'songs'
 
 
     def __init__(self, resource_id, artist_id=None):
-        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, resource_id)
+        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.payload['title'] = resource_id
         self.payload['artist'] = artist_id
         self.payload['results'] = cfg.RESULTS
@@ -196,12 +189,15 @@ class SongID(SearchSongs):
 class Playlist(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
+    BUCKETS = [
+        'song_hotttnesss',
+    ]
     ECHO_NEST_KEY = 'songs'
     
 
     # if artist_id is present, generate playlist with a song_id as the seed
     def __init__(self, resource_id, artist_id=None):
-        super(Playlist, self).__init__(self.TYPE_, self.METHOD, resource_id)
+        super(Playlist, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.payload['results'] = cfg.RESULTS
 
         if artist_id:
@@ -229,6 +225,9 @@ class SongProfile(EchoNestService):
         'audio_summary',
         'song_hotttnesss', 
         'song_hotttnesss_rank', 
+        'song_type',
+        # 'tracks',
+        # 'id:7digital-US',
     ]
     ECHO_NEST_KEY = 'songs'
 
@@ -236,6 +235,7 @@ class SongProfile(EchoNestService):
     def __init__(self, resource_id, artist_id):
         super(SongProfile, self).__init__(self.TYPE_, self.METHOD, resource_id, self.BUCKETS)
         self.dependency = SongID(resource_id, artist_id)
+        # self.payload['limit'] = True
 
 
     def __str__(self):
@@ -243,49 +243,85 @@ class SongProfile(EchoNestService):
 
 
     def build(self, intermediate):
-        if not intermediate: return None
+        if not intermediate: 
+            artist = intermediate.get('artist_name')
+            song = intermediate.get('title')
+            raise DependencyFailure("Unable to find information for artist:%s , song:%s") %(artist, song)
 
         self.payload['id'] = intermediate[0].get('id')
 
 
     def trim(self, data):
+        data = data[0]
         result = {}
 
-        if len(data) > 0:
-            data = data[0]
-            audio = data.get('audio_summary')
+        audio = data.get('audio_summary')
 
-            if not audio: return result
+        if not audio: return result
 
-            # convert song duration, letter = float, word = string
-            try:
-                t = audio['duration']
-                time = str(t)
-                minutes = time.split('.')[0]
+        # convert song duration, letter = float, word = string
+        try:
+            t = audio['duration']
+            time = str(t)
+            minutes = time.split('.')[0]
 
-                if len(minutes) > 1:
-                    m = int(minutes) / 60
-                    s = round(t - (m * 60))
-                    seconds = str(s).split('.')[0]
+            if len(minutes) > 1:
+                m = int(minutes) / 60
+                s = round(t - (m * 60))
+                seconds = str(s).split('.')[0]
 
-                    if len(seconds) < 2:
-                        seconds = seconds + "0"
+                if len(seconds) < 2:
+                    seconds = seconds + "0"
 
-                    result['duration'] = "(%s:%s)" %(m, seconds)
-                else:
-                    result['duration'] = "(:%s)" %(minutes[0])
-            except KeyError, IndexError:
-                pass
+                result['duration'] = "(%s:%s)" %(m, seconds)
+            else:
+                result['duration'] = "(:%s)" %(minutes[0])
+        except KeyError, IndexError:
+            pass
 
-            result['liveness'] = utils.to_percent(audio.get('liveness'))
-            result['danceability'] = utils.to_percent(audio.get('danceability'))
-            result['tempo'] = "%s bpm" %audio.get('tempo')
+        result['liveness'] = utils.to_percent(audio.get('liveness'))
+        result['danceability'] = utils.to_percent(audio.get('danceability'))
+        result['tempo'] = "%s bpm" %audio.get('tempo')
+
+        result['tracks'] = data.get('tracks')
+        result['song_hotttnesss'] = data.get('song_hotttnesss')
+        result['song_hotttnesss_rank'] = data.get('song_hotttnesss_rank')
+        result['artist_foreign_ids'] = data.get('artist_foreign_ids')
 
         return result
+
+
+class TopArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'top_hottt'
+
+    ECHO_NEST_KEY = 'artists'
+
+
+    def __init__(self):
+        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, None)
+        self.payload['results'] = cfg.RESULTS
+
+
+    def __str__(self):
+        return "TopArtists"
+
+
+class TopSongs(SearchSongs):
+
+    def __init__(self):
+        super(TopSongs, self).__init__(self.TYPE_, None)
+        self.payload['song_type'] = None
+
+
+    def __str__(self):
+        return "TopSongs"
 
 
 class EchoNestServiceFailure(Exception):
     pass
 
+class DependencyFailure(Exception):
+    pass
 
 

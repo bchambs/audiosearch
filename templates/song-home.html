@@ -4,6 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     {% include "general_HTML_HEAD.html" %}
+
+    {% if not profile %}
+        <style>
+            #profile-box {
+                display: none;
+            }
+        </style>
+    {% endif %}
 </head>
 
 <body>
@@ -17,46 +25,55 @@
 
     <hr>
 
-    <h4 class="center">
-        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name }}</a>
-    </h4>
-
-    <!-- resource profile -->
-    <div id="resource-profile" class="center">
-
-        {% if not profile %}
-            <div id="profile-spinner" class="spinner-container">
-                <img src="{{ STATIC_URL }}img/spinner.gif"></img>
-            </div>
-        {% endif %}
-
-        <div id="profile">
-            <div id="profile-danceability">
-                danceability : 
-
-                {% if profile.danceability %}
-                    {{ profile.danceability }}
-                {% endif %}
-            </div>
-
-            <div id="profile-liveness">
-                liveness : 
-
-                {% if profile.liveness %}
-                    {{ profile.liveness }}
-                {% endif %}
-            </div>
-
-            <div id="profile-tempo">
-                tempo : 
-                
-                {% if profile.tempo %}
-                    {{ profile.tempo }}
-                {% endif %}
-            </div>
-            
-        </div>
+    <div class="subtitle center">
+        by <a href="/music/{{ artist_name|space_to_plus }}/">{{ artist_name|title }}</a>
     </div>
+
+    <!-- profile box -->
+    <div id="profile" class="content center">
+        <div class="container-table">
+            <div class="header">
+
+                <div class="left">
+                    Profile
+                </div>
+
+                <!-- spinner -->
+                {% if not profile %}
+                    <div id="profile-spinner" class="spinner left">
+                        <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                    </div>
+                {% endif %}
+                
+            </div>
+
+            <div id="profile-box">
+                <div id="profile-danceability">
+                    danceability : 
+
+                    {% if profile.danceability %}
+                        {{ profile.danceability }}
+                    {% endif %}
+                </div>
+
+                <div id="profile-liveness">
+                    liveness : 
+
+                    {% if profile.liveness %}
+                        {{ profile.liveness }}
+                    {% endif %}
+                </div>
+
+                <div id="profile-tempo">
+                    tempo : 
+                    
+                    {% if profile.tempo %}
+                        {{ profile.tempo }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div><!--END profile box -->
 
 </div><!--END content -->
 

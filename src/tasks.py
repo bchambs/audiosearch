@@ -13,8 +13,11 @@ def acquire_resource(resource_id, content_key, service):
 
     try:
         if service.dependency:
-            intermediate = ENConsumer.consume(service.dependency)
-            service.build(intermediate)
+            try:
+                intermediate = ENConsumer.consume(service.dependency)
+                service.build(intermediate)
+            except services.DependencyFailure as err_msg:
+                raise services.EchoNestServiceFailure(err_msg)
 
         echo_nest_response = ENConsumer.consume(service)
         content = service.trim(echo_nest_response)

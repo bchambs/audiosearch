@@ -10,12 +10,9 @@ def space_to_plus(url):
         return ''
 
 
-# @register.filter
-# def to_percent(float):
-#     p = round(float * 100)
-#     percent = str(p).split('.')
-
-#     if len(percent) > 0:
-#         return percent[0] + " %"
-#     else:
-#         return ''
+@register.filter
+def build_query_string(q_params):
+    if q_params:
+        return '&'.join("%s=%s" % (key,value) for (key,value) in q_params.iteritems())
+    else:
+        return ''

@@ -11,33 +11,45 @@ var AJAX_SNOOZE = 2000,
 
 
 function load_content(opts, data) {
-    var resource_id = opts.resource_id,
+    var resource_name_spaces = space_to_plus(opts.resource_name),
         content_key = opts.content_key,
         data_is_paged = opts.data_is_paged,
         use_generic_key = opts.use_generic_key;
 
     switch (content_key) {
     case "profile":
+        var offset = 0;
+        $("#profile-box").show();
+
         for (var key in data) {
             var key_string = "#profile-" + key;
 
-            if (Object.prototype.toString.call(key) === '[object Array]') {
+            // if (Object.prototype.toString.call(key) === '[object Array]') {
+            if (key === "genres") {
                 for (var i = 0; i < data[key].length; i++) {
-                    $(key_string).append(data[key][i]);
+                    var $tag = $("<li />",{
+                        class: "genre-tag left",
+                        text: data[key][i]
+                    });
+
+                    $(key_string).append($tag).fadeIn(150 + (offset * 180) + (100 * i));
+                    $(key_string).append(" ").fadeIn(150 + (offset * 180) + (100 * i));
                 }
             }
             else {
-                $(key_string).append(data[key]);
+                $(key_string).append(data[key]).fadeIn(150 + (offset * 180));
             }
+
+            offset++;
         }
 
         break;
 
     case "search_artists":
         var urls = {
-                view_more: "?q=" + resource_id + "&type=artists",
-                previous: "?q=" + resource_id + "&type=artists&page=" + data['previous'],
-                next: "?q=" + resource_id + "&type=artists&page=" + data['next'],
+                more: "?q=" + resource_name_spaces + "&type=artists",
+                previous: "?q=" + resource_name_spaces + "&type=artists&page=" + data['previous'],
+                next: "?q=" + resource_name_spaces + "&type=artists&page=" + data['next'],
                 item: function(element) {
                     var artist = element['name'],
                         url = "/music/" + artist + "/",
@@ -51,18 +63,18 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "search_songs":
         var urls = {
-                view_more: "?q=" + resource_id + "&type=songs",
-                previous: "?q=" + resource_id + "&type=songs&page=" + data['previous'],
-                next: "?q=" + resource_id + "&type=songs&page=" + data['next'],
+                more: "?q=" + resource_name_spaces + "&type=songs",
+                previous: "?q=" + resource_name_spaces + "&type=songs&page=" + data['previous'],
+                next: "?q=" + resource_name_spaces + "&type=songs&page=" + data['next'],
                 item: function(element) {
                     var artist = element['artist_name'],
                         title = element['title'],
-                        url = "/music/" + artist + "/" + title + "/",
+                        url = "/music/" + artist + "/_/" + title + "/",
 
                         $a = $("<a />",{
                             text: title,
@@ -77,12 +89,11 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "songs":
         var urls = {
-                view_more: "songs/",
                 previous: "?page=" + data['previous'],
                 next: "?page=" + data['next'],
                 item: function(element) {
@@ -99,14 +110,13 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "similar_artists":
         var urls = {
-                view_more: "similar/?type=artists",
-                previous: "?type=artists&page=" + data['previous'],
-                next: "?type=artists&page=" + data['next'],
+                previous: "?page=" + data['previous'],
+                next: "?page=" + data['next'],
                 item: function(element) {
                     var artist = element['name'],
                         url = "/music/" + artist + "/",
@@ -120,14 +130,13 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "song_playlist":
         var urls = {
-                view_more: "similar/?type=songs",
-                previous: "?type=songs&page=" + data['previous'],
-                next: "?type=songs&page=" + data['next'],
+                previous: "?page=" + data['previous'],
+                next: "?page=" + data['next'],
                 item: function(element) {
                     var artist = element['artist_name'],
                         title = element['title'],
@@ -146,11 +155,13 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
         break;
 
     case "top_artists":
         var urls = {
+                previous: "?page=" + data['previous'],
+                next: "?page=" + data['next'],
                 item: function(element) {
                     var artist = element['name'],
                         url = "/music/" + artist + "/",
@@ -164,8 +175,33 @@ function load_content(opts, data) {
                 }
         };
 
-        load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls);
+        load_table(content_key, data_is_paged, use_generic_key, data, urls);
     break;
+
+    // case "top_songs":
+    //     var urls = {
+    //             previous: "?type=songs&page=" + data['previous'],
+    //             next: "?type=songs&page=" + data['next'],
+    //             item: function(element) {
+    //                 var artist = element['artist_name'],
+    //                     title = element['title'],
+    //                     url = "/music/" + artist + "/_/" + title + "/",
+
+    //                     $a = $("<a />",{
+    //                         text: title,
+    //                         href: space_to_plus(url)
+    //                     }),
+    //                     $song_by_artist = $("<span />");
+
+    //                 $song_by_artist.append($a);
+    //                 $song_by_artist.append(" by " + artist);
+
+    //                 return $song_by_artist;
+    //             }
+    //     };
+
+    //     load_table(content_key, data_is_paged, use_generic_key, data, urls);
+    // break;
 
     default:
         console.log("what is this: ");
@@ -175,15 +211,33 @@ function load_content(opts, data) {
 }
 
 
-function load_table(resource_id, content_key, data_is_paged, use_generic_key, data, urls) {
+function load_table(content_key, data_is_paged, use_generic_key, data, urls) {
+    //build paged table nav
     if (data_is_paged) {
-        build_paged_table_nav(content_key, data, urls);
+        build_paged_table_nav(content_key, use_generic_key, data, urls);
+    }
+    //add 'more' results link
+    else if (data['next'] && 'more' in urls){
+        var $more_id = "#" + content_key + "-more",
+            $more_a = $("<a />",{
+            text: "more",
+            href: space_to_plus(urls['more'])
+        });
+        $($more_id).append($more_a);
     }
 
     //table
-    var $table_key = "#" + content_key + "-table",
+    var $table_id = "#" + content_key + "-table",
         $tbody = $("<tbody />"),
         index = 0;
+
+    //attach tbody
+    if (use_generic_key) {
+        $('#content-table').append($tbody);
+    }
+    else {
+        $($table_id).append($tbody);
+    }
 
     //build rows / columns
     for (var item in data['data']) {
@@ -206,52 +260,57 @@ function load_table(resource_id, content_key, data_is_paged, use_generic_key, da
         $td_index.append(index + data['offset'] + ".");
         $td_data.append($item_a);
         $tr.append($td_index);
-        $tr.append($td_data);
+        $tr.append($td_data).hide().fadeIn(150 + (index * 180));
         
         $($tbody).append($tr);
 
         index++;
     }
-
-    //attach to table
-    // if (Boolean(use_generic_key)) {
-    if (use_generic_key) {
-        $('#content-table').append($tbody);
-    }
-    else {
-        $($table_key).append($tbody);
-    }
 }
 
 
-function build_paged_table_nav(content_key, data, urls) {
-    //previous
+function build_paged_table_nav(content_key, use_generic_key, data, urls) {
     if (data['previous']) {
-        var $previous_key = "#" + content_key + "-previous", 
-            $prev_a = $("<a />",{
+        var $prev_a = $("<a />",{
             text: "previous",
             href: space_to_plus(urls['previous'])
         });
 
-        $('#previous').append($prev_a);
+        if (use_generic_key) {
+            $('#previous').append($prev_a);
+        }
+        else {
+            var $prev_id = "#" + content_key + "-previous";
+            $($prev_id).append($prev_a);
+        }
     }
 
     //current
     if ((data['previous'] || data['next']) && data['current']) {
-        var $current_key = "#" + content_key + "-current"; 
-
-        $('#current').text(data['current'] + " of " + data['total']);
+        if (use_generic_key) {
+            $('#current').text(data['current'] + " of " + data['total']);
+        }
+        else {
+            var $current_key = "#" + content_key + "-current"; 
+            $($current_key).text(data['current'] + " of " + data['total']);
+        }
     }
 
     //next
     if (data['next']) {
-        var $next_key = "#" + content_key + "-next", 
-            $next_a = $("<a />",{
+        var $next_a = $("<a />",{
             text: "next",
             href: space_to_plus(urls['next'])
         });
 
-        $('#next').append($next_a);
+        if (use_generic_key) {
+            $('#next').append($next_a);
+        }
+        else {
+            var $next_id = "#" + content_key + "-next";
+            $($next_id).append($next_a);
+            console.log($next_id);
+        }
     }
 }
 
@@ -263,6 +322,7 @@ function hide_spinner(content_key, use_generic_key) {
     else {
         var $spinner = "#" + content_key + "-spinner";
         $($spinner).hide();
+        console.log($spinner);
     }
 }
 

@@ -17,10 +17,20 @@
     <div id="resource-title" class="center">
         <div id="title-container">
             <h1>
-                Results for "{{ resource_name|title }}"
+                "{{ resource_name }}"
             </h1>
 
             <ul>
+                <li>
+                    <a href="/search/?q={{ resource_name|space_to_plus }}">
+                        Everything
+                    </a>
+                </li>
+
+                <li>
+                    /
+                </li>
+                
                 <li>
                     <a href="/search/?q={{ resource_name|space_to_plus }}&type=songs">
                         Songs
@@ -36,17 +46,6 @@
                         Artists
                     </a>
                 </li>
-
-                <li>
-                    /
-                </li>
-
-                <li>
-                    <a href="/search/?q={{ resource_name|space_to_plus }}">
-                        Everything
-                    </a>
-                </li>
-
             </ul>
         </div>
     </div>
@@ -55,6 +54,8 @@
 
     {% if page_type %}
 
+        {% include "content_CONTAINER.html" %}
+
     {% else %}
         <!-- content tables -->
         <div id="content-tables" class="content center">
@@ -62,11 +63,13 @@
                 <div class="header">
 
                     <div class="left">
-                        Artists
+                        Artist results
                     </div>
 
-                    <div id="next" class="right">
-                        <a href = "/search/?q={{ resource_name|space_to_plus }}&type=artists" >more</a>
+                    <div id="search_artists-more" class="right">
+                        {% if search_artists.next %}
+                            <a href = "/search/?q={{ resource_name|space_to_plus }}&type=artists" >more</a>
+                        {% endif %}
                     </div>
 
                 </div>
@@ -86,17 +89,19 @@
                 <div class="header">
 
                     <div class="left">
-                        Songs
+                        Song results
                     </div>
 
-                    <div id="next" class="right">
-                        <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
+                    <div id="search_songs-more" class="right">
+                        {% if search_songs.next %}
+                            <a href = "/search/?q={{ resource_name|space_to_plus }}&type=songs" >more</a>
+                        {% endif %}
                     </div>
 
                 </div>
 
-                <table id="songs-table">
-                    {% with content=songs spinner_id="songs-spinner" %}
+                <table id="search_songs-table">
+                    {% with content=search_songs spinner_id="search_songs-spinner" %}
                         {% include "content_TBODY.html" %}
                     {% endwith %}
                 </table>

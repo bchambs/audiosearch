@@ -99,6 +99,7 @@ def unescape_html(s):
         s = s.replace("&lt;", "<")
         s = s.replace("&gt;", ">")
         s = s.replace("&amp;", "&")
+        s = s.replace("&#39;", "'")
 
     return s
 
@@ -132,13 +133,6 @@ def convert_seconds(t):
         result['duration'] = "(%s:%s)" %(m, seconds)
     else:
         result['duration'] = "(:%s)" %(minutes[0])
-
-
-
-
-def remove_slash(s):
-    if s:
-        return s.replace('/', '%2F')
 
 
 

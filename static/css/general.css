@@ -63,8 +63,13 @@ a:hover {
 
 
 /*
-    TABLES
+    BOXES and TABLES
 */
+#profile-box {
+    background-color: #5A5A5A;
+    padding: 15px;
+}
+
 .container-table {
     background: none repeat scroll 0 0 #272727;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.6) inset;
@@ -74,15 +79,19 @@ a:hover {
 .container-table .header {
     width: 100%;
     display: inline-block;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
-    padding: 10px 0 15px 0;
+    padding: 10px 0;
+    /*padding: 10px 0 15px 0;*/
 }
 .container-table .header .left {
     padding-left: 15px;
 }
 .container-table .header .right {
     padding-right: 15px;
+}
+.container-table .header .spinner {
+    padding-top: 4px;
 }
 table {
     background: none repeat scroll 0 0 #272727;

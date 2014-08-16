@@ -9,7 +9,8 @@ urlpatterns = patterns('',
 
 
     url(ur'^search/$', views.search),
-    url(ur'^music/$', views.top_artists),
+    url(ur'^music/$', views.music_home),
+    url(ur'^about/$', views.about),
 
 
     url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/\+similar/$', views.song_content, {'content_key': 'song_playlist', 'description': "Similar Songs"}),
