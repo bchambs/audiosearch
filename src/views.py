@@ -13,6 +13,8 @@ from audiosearch.redis import client as cache
 
 
 
+
+
 def index(request, **kwargs):
     context = Context({})
 
@@ -256,16 +258,6 @@ def song_home(request, **kwargs):
     content = utils.generate_content(resource_id, service_map)
     context.update(content)
 
-
-
-    if 'profile' in content:
-        print content['profile'].keys()
-        if 'views' in content['profile']:
-            print len(content['profile']['tracks'])
-            for key in content['profile']['tracks'][0].keys():
-                print "%s:[%s]   %s" %(key, type(content['profile']['tracks'][0][key]), content['profile']['tracks'][0][key])
-                print
-
     return render(request, "song-home.html", context)
 
 
@@ -306,7 +298,6 @@ def song_content(request, **kwargs):
     content = utils.generate_content(resource_id, service_map, page=page)
     if content_key in content:
         content['content'] = content.pop(content_key)
-        print content['content']['data'][0]
     context.update(content)
 
     return render(request, "song-content.html", context)

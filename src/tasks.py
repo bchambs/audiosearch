@@ -1,3 +1,5 @@
+import logging
+
 from celery import shared_task
 
 from audiosearch.redis import client as cache
@@ -5,19 +7,36 @@ from consumer import ENConsumer
 import services
 
 
+redis_logger = logging.getLogger("redis_logger")
+
+
+@shared_task
+def log_dbsize():
+    key_count = cache.dbsize()
+    redis_logger.info("KEY_COUNT: %s" %(key_count))
+
+
+
+
+@shared_task
+def examine_cache():
+    pass
+
+
+
+
 @shared_task
 def acquire_resource(resource_id, content_key, service):
-    if ':' not in resource_id:print "\nSTORED AN INVALID resource_id" * 3
+    if ':' not in resource_id:
+        error = "Malformed resource_id received in acquire_resource."
+        redis_logger.error(clm(error, resource_id, content_key, service))
 
     pipe = cache.pipeline()
 
     try:
         if service.dependency:
-            try:
-                intermediate = ENConsumer.consume(service.dependency)
-                service.build(intermediate)
-            except services.DependencyFailure as err_msg:
-                raise services.EchoNestServiceFailure(err_msg)
+            intermediate = ENConsumer.consume(service.dependency)
+            service.build(intermediate)
 
         echo_nest_response = ENConsumer.consume(service)
         content = service.trim(echo_nest_response)
@@ -29,8 +48,6 @@ def acquire_resource(resource_id, content_key, service):
 
         pipe.hset(resource_id, content_key, content_struct)
 
-        print "\nSTORING, %s:%s\n" %(resource_id, content_key)
-
     except services.EchoNestServiceFailure as err_msg:
         content_struct = {
             'status': "failed",
@@ -38,10 +55,12 @@ def acquire_resource(resource_id, content_key, service):
         }
         pipe.hset(resource_id, content_key, content_struct)
 
-        print "%s:%s__%s__ failed: %s" % (resource_id, content_key, str(service), err_msg)
+        redis_logger.error(clm(err_msg, resource_id, content_key, service))
 
     pipe.expire(resource_id, service.ttl)
     pipe.execute()
 
+
+    
 
 

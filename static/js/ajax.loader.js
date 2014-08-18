@@ -6,12 +6,13 @@
 
 var AJAX_SNOOZE = 2000,
     AJAX_INITIAL_SNOOZE = 1500,
-    ATTEMPT_LIMIT = 4,
-    FADE_DELAY = 8000;
+    AJAX_SLOW_THRESHOLD = 6,          // number of failed attempts before displaying 'slow results' message
+    FADE_DELAY = 8000,
+    NOTIF_DELAY = 1000;
 
 
 function load_content(opts, data) {
-    var resource_name_spaces = space_to_plus(opts.resource_name),
+    var resource_name_plus = space_to_plus(opts.resource_name),
         content_key = opts.content_key,
         data_is_paged = opts.data_is_paged,
         use_generic_key = opts.use_generic_key;
@@ -47,9 +48,9 @@ function load_content(opts, data) {
 
     case "search_artists":
         var urls = {
-                more: "?q=" + resource_name_spaces + "&type=artists",
-                previous: "?q=" + resource_name_spaces + "&type=artists&page=" + data['previous'],
-                next: "?q=" + resource_name_spaces + "&type=artists&page=" + data['next'],
+                more: "?q=" + resource_name_plus + "&type=artists",
+                previous: "?q=" + resource_name_plus + "&type=artists&page=" + data['previous'],
+                next: "?q=" + resource_name_plus + "&type=artists&page=" + data['next'],
                 item: function(element) {
                     var artist = element['name'],
                         url = "/music/" + artist + "/",
@@ -68,9 +69,9 @@ function load_content(opts, data) {
 
     case "search_songs":
         var urls = {
-                more: "?q=" + resource_name_spaces + "&type=songs",
-                previous: "?q=" + resource_name_spaces + "&type=songs&page=" + data['previous'],
-                next: "?q=" + resource_name_spaces + "&type=songs&page=" + data['next'],
+                more: "?q=" + resource_name_plus + "&type=songs",
+                previous: "?q=" + resource_name_plus + "&type=songs&page=" + data['previous'],
+                next: "?q=" + resource_name_plus + "&type=songs&page=" + data['next'],
                 item: function(element) {
                     var artist = element['artist_name'],
                         title = element['title'],
@@ -94,6 +95,7 @@ function load_content(opts, data) {
 
     case "songs":
         var urls = {
+                more: "/music/" + resource_name_plus + "/+songs/",
                 previous: "?page=" + data['previous'],
                 next: "?page=" + data['next'],
                 item: function(element) {
@@ -214,6 +216,7 @@ function load_content(opts, data) {
 function load_table(content_key, data_is_paged, use_generic_key, data, urls) {
     //build paged table nav
     if (data_is_paged) {
+        console.log("?");
         build_paged_table_nav(content_key, use_generic_key, data, urls);
     }
     //add 'more' results link
@@ -224,6 +227,7 @@ function load_table(content_key, data_is_paged, use_generic_key, data, urls) {
             href: space_to_plus(urls['more'])
         });
         $($more_id).append($more_a);
+        console.log($more_id);
     }
 
     //table
@@ -318,50 +322,106 @@ function build_paged_table_nav(content_key, use_generic_key, data, urls) {
 function hide_spinner(content_key, use_generic_key) {
     if (use_generic_key) {
         $("#content-spinner").hide();
+        $("#content-slow").hide();
     }
     else {
-        var $spinner = "#" + content_key + "-spinner";
+        var $spinner = "#" + content_key + "-spinner",
+            $slow_id = "#" + content_key + "-slow";
+
         $($spinner).hide();
-        console.log($spinner);
+        $($slow_id).hide();
     }
 }
 
 
-function handle_timeout(content_key, message) {
-    console.log("in handle_timeout: " + content_key);
-    console.log(message);
+function handle_failed(content_key, use_generic_key) {
+    console.log("in handle_failed: " + content_key);
+
+    if (use_generic_key) {
+        var $div_id = "#content-notification";
+    }
+    else {
+        var $div_id = "#" + content_key + "-notification";
+    }
+
+    if ($($div_id).is(":visible")) {
+        $($div_id).fadeOut(NOTIF_DELAY);
+        
+        setTimeout(function() {
+            $($div_id).html(' ');
+            $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
+        }
+        , NOTIF_DELAY + 200);
+    }
+    else {
+        $($div_id).html('');
+        $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
+    }
+}
+
+
+function handle_slow_results(content_key, use_generic_key) {
+    if (use_generic_key) {
+        var $div_id = "#content-slow";
+    }
+    else {
+        var $div_id = "#" + content_key + "-slow";
+    }
+
+    $($div_id).text("This request appears to be taking longer than expected.").fadeIn(NOTIF_DELAY);
 }
 
 
 function dispatch(opts) {
+    if (opts.content_key === "profile") { return false }
+    opts.attempt++;
+
+    if (opts.attempt == 3) {
+        handle_slow_results(opts.content_key, opts.use_generic_key);
+    }
+
+    if (opts.attempt == 6) {
+        handle_failed(opts.content_key, opts.use_generic_key);
+    }
+
+    setTimeout(function() {
+            dispatch(opts);
+        }
+    , AJAX_SNOOZE);
+
+    
+
     $.ajax({
         url: "/ajax/retrieval/",
         data: opts,
         dataType: 'json',
         type: 'GET',
         success: function(json_context, stat, o) {
-            switch (json_context['status']) {
-            case 'complete':
-                hide_spinner(opts.content_key, opts.use_generic_key);
-                load_content(opts, json_context['data']);
+        //     switch (json_context['status']) {
+        //     case 'complete':
+        //         hide_spinner(opts.content_key, opts.use_generic_key);
+        //         load_content(opts, json_context['data']);
 
-                break;
+        //         break;
 
-            case 'pending':
-                if (opts.attempt > ATTEMPT_LIMIT) {
-                    handle_timeout(opts.content_key, o);
-                }
-                else {
-                    opts.attempt++;
+        //     case 'pending':
+        //         if (opts.attempt > AJAX_SLOW_THRESHOLD) {
+        //             handle_slow_results(opts.content_key, opts.use_generic_key);
+        //         }
+        //         opts.attempt++;
 
-                    setTimeout(function() {
-                            dispatch(opts);
-                        }
-                    , AJAX_SNOOZE);
-                }
+        //         setTimeout(function() {
+        //                 dispatch(opts);
+        //             }
+        //         , AJAX_SNOOZE);
 
-                break;
-            }
+        //         break;
+
+        //     case 'failed':
+        //         handle_failed(opts.content_key, opts.use_generic_key);
+
+        //         break;
+        //     }  
         }
         // ,
         // error: function(o, stat, er) {},

@@ -80,12 +80,12 @@ ROOT_URLCONF = 'audiosearch.urls'
 
 WSGI_APPLICATION = 'audiosearch.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '/data/db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, '/data/db.sqlite3'),
+#     }
+# }
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -106,12 +106,76 @@ STATIC_URL = '/static/'
 
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-# celery config
+APPEND_SLASH = True
+
+
+
+
+######################################################
+################### CELERY CONFIG ####################
+######################################################
+
 BROKER_URL = 'redis://localhost:6379/0'
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
-CELERY_TASK_SERIALIZER = 'pickle'
-CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_IMPORTS = ("src.tasks", )
+CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_TIMEZONE = 'EST'
 
-# APPEND_SLASH = True
+
+from datetime import timedelta
+
+CELERYBEAT_SCHEDULE = {
+    'flood-prevention': {
+        'task': 'src.tasks.examine_cache',
+        'schedule': timedelta(hours=1),
+    },
+    'dbsize-tracker': {
+        'task': 'src.tasks.log_dbsize',
+        'schedule': timedelta(hours=1),
+    },
+}
+
+
+
+
+
+######################################################
+################### LOGGER CONFIG ####################
+######################################################
+import logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'redis_': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/redis.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        # 'django': {
+        #     'handlers':['file'],
+        #     'propagate': True,
+        #     'level':'DEBUG',
+        # },
+        'redis_logger': {
+            'handlers': ['redis_'],
+            'level': 'DEBUG',
+        },
+    }
+}
+

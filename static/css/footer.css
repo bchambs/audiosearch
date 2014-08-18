@@ -1,0 +1,22 @@
+#container-footer  {
+    margin-top: 50px;
+}
+
+#footer {
+    padding: 0 20px 20px 20px;
+    width: 970px;
+    text-align: center;
+}
+#footer a {
+    color: #3F3F3F;
+}
+
+#container-footer ul {
+    width: 100%;
+    min-height: 40px;
+}
+
+#container-footer li {
+    font-size: 20px;
+    float: right;
+}

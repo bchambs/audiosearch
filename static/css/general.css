@@ -1,6 +1,7 @@
 html, body {
     /*font-family: Helvetica, sans-serif;*/
-    background: none repeat scroll 0 0 #5A5A5A;
+    /*background: none repeat scroll 0 0 #5A5A5A;*/
+    background: none repeat scroll 0 0 #929292;
     font-family: Liberation Sans;
     font-size: 18px;
     height: 100%;
@@ -13,8 +14,16 @@ hr {
     width: 970px;
 }
 
+.separator {
+    border-top: 1px solid #272727;
+    padding: 10px 0;
+    min-height: 1px;
+    width: 100%;
+}
 
-
+.page-wrapper {
+    width: 100%;
+}
 /*
     POSITIONING
 */
@@ -58,12 +67,13 @@ a {
     font-style: bold;
 }
 a:hover {
-    color: gray;
+    color: #fff;
+    text-decoration: underline;
 }
 
 
 /*
-    BOXES and TABLES
+    BOXES
 */
 #profile-box {
     background-color: #5A5A5A;
@@ -72,8 +82,8 @@ a:hover {
 
 .container-table {
     background: none repeat scroll 0 0 #272727;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.6) inset;
-    padding: 5px;
+    /*box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.35);*/
+    padding: 3px 3px 2px 2px;
     margin: 0;
 }
 .container-table .header {
@@ -81,7 +91,7 @@ a:hover {
     display: inline-block;
     font-size: 22px;
     font-weight: bold;
-    padding: 10px 0;
+    padding: 6px 0;
     /*padding: 10px 0 15px 0;*/
 }
 .container-table .header .left {
@@ -93,9 +103,15 @@ a:hover {
 .container-table .header .spinner {
     padding-top: 4px;
 }
+
+
+/*
+    TABLES
+*/
 table {
-    background: none repeat scroll 0 0 #272727;
-    border: 2px solid #272727;
+    /*background: none repeat scroll 0 0 #272727;*/
+    /*border-right: 2px solid #272727;
+    border-bottom: 2px solid #272727;*/
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
@@ -104,6 +120,9 @@ table {
 td:first-child { 
     padding: 0 15px;
     width: 20px;
+}
+tr:hover {
+    background-color: #4D6994;
 }
 .even {
     background-color: #5A5A5A;

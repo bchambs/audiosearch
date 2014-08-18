@@ -1,0 +1,18 @@
+# Absolute or relative path to the 'celery' command:
+CELERY_BIN="/usr/local/bin/celery"
+
+# App instance to use
+CELERY_APP="audiosearch"
+
+# Where to chdir at start.
+CELERYD_CHDIR="/home/brad/Projects/audiosearch"
+
+# Extra arguments to celerybeat
+# CELERYBEAT_OPTS="--schedule=/var/run/celery/celerybeat-schedule"
+
+CELERYBEAT_LOG_FILE="/home/brad/Projects/audiosearch/logs/beat_worker.log"
+
+CELERYBEAT_USER="celery"
+CELERYBEAT_GROUP="celery"
+
+CELERYBEAT_OPTS="--schedule=/var/run/celery/celerybeat-schedule"

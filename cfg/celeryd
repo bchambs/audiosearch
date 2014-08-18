@@ -1,0 +1,28 @@
+# Names of nodes to start
+#   most will only start one node:
+CELERYD_NODES="as_worker"
+
+# Absolute or relative path to the 'celery' command:
+CELERY_BIN="/usr/local/bin/celery"
+
+# App instance to use
+CELERY_APP="audiosearch"
+
+# Where to chdir at start.
+CELERYD_CHDIR="/home/brad/Projects/audiosearch"
+
+# Extra command-line arguments to the worker
+# CELERYD_OPTS="--time-limit=300 --concurrency=8"
+# CELERYD_OPTS="--time-limit=300 --concurrency=8"
+
+# %N will be replaced with the first part of the nodename.
+# CELERYD_LOG_FILE="/var/log/celery/%N.log"
+# CELERYD_PID_FILE="/var/run/celery/%N.pid"
+CELERYD_LOG_FILE="/home/brad/Projects/audiosearch/logs/%N.log"
+
+# Workers should run as an unprivileged user.
+#   You need to create this user manually (or you can choose
+#   a user/group combination that already exists, e.g. nobody).
+ CELERYD_USER="celery"
+ CELERYD_GROUP="celery"
+

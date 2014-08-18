@@ -12,11 +12,14 @@
             }
         </style>
     {% endif %}
+
 </head>
 
 <body>
 
 {% include "general_HEADER.html" %}
+
+<div class="page-wrapper">
 
 <!-- content -->
 <div id="container-content">
@@ -30,7 +33,7 @@
         <div class="container-table">
             <div class="header">
 
-                <div class="left">
+                <div class="section-title left">
                     Profile
                 </div>
 
@@ -41,6 +44,9 @@
                     </div>
                 {% endif %}
                 
+            </div>
+
+            <div id="profile-slow" class="slow-warning">
             </div>
 
             <div id="profile-box">
@@ -71,7 +77,7 @@
                     Popular Tracks
                 </div>
 
-                <div id="next" class="right">
+                <div id="songs-more" class="right">
                     {% if songs.next %}
                         <a href = "/music/{{ resource_name|space_to_plus }}/+songs/" >more</a>
                     {% endif %}
@@ -86,6 +92,15 @@
 
             </div>
 
+            <div id="songs-notification" class="content-notification">
+                <div id="songs-slow">
+                
+                </div>
+                <div id="songs-failed">
+                    
+                </div>
+            </div>
+
             <table id="songs-table">
                 {% with content=songs %}
                     {% include "content_TBODY.html" %}
@@ -95,6 +110,10 @@
         </div>
     </div><!--END content tables -->
 </div><!--END content -->
+
+{% include "general_FOOTER.html" %}
+
+</div><!--END page wrapper -->
 
 {% include "general_JS_LINKS.html" %}
 

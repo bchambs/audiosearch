@@ -149,3 +149,17 @@ def normalize(d):
             result[key] = value
 
     return result
+
+
+
+
+# create log message
+def clm(description, resource_id=None, content_key=None, service=None):
+    line1 = 'ID: "%s"' %(resource_id)
+    line2 = 'CONTENT_KEY: "%s"' %(content_key)
+    line3 = 'SERVICE: "%s"' %(service)
+
+    msg = "%s\n%s\n%s\n%s" %(description, line1, line2, line3)
+
+    return msg
+

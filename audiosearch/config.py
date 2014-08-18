@@ -17,11 +17,12 @@ RESULTS = 100
 ##########
 
 
-
 #########
 # REDIS #
 #########
-REDIS_TTL = 3000     # in seconds
+REDIS_TTL = 3000    # in seconds
+SIZE_LIMIT = 100    # max keys allowed in cache
+
 
 
 ################
