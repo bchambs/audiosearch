@@ -44,6 +44,7 @@
     width: 970px;
 }
 
+
 #profile-years_active {
     margin-left: 20px;
 }
@@ -55,6 +56,9 @@
 #profile-genres li {
     margin-right: 8px;
 }
+
+
+
 
 .genre-tag {
     color: #FFCC99;
@@ -75,5 +79,8 @@
     color: #FFCC99;
     background-color: #3F3F3F;
     padding: 15px 8px;
+}
+
+.hide {
     display: none;
 }

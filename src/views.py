@@ -13,8 +13,6 @@ from audiosearch.redis import client as cache
 
 
 
-
-
 def index(request, **kwargs):
     context = Context({})
 
@@ -22,7 +20,7 @@ def index(request, **kwargs):
 
 
 
-
+# Content displayed is determined by 'type' query param from GET dict.
 def search(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -30,7 +28,15 @@ def search(request, **kwargs):
     q = normal_GET.get('q')
 
     if not q:
-        return render(request, "search.html", Context({}))
+        context = {
+            'search_artists': {
+                'empty': cfg.EMPTY_MSG,
+            },
+            'search_songs': {
+                'empty': cfg.EMPTY_MSG,
+            },
+        }
+        return render(request, "search.html", context)
 
     prefix = "search:"
     resource_name = urllib.unquote_plus(q)
@@ -73,7 +79,6 @@ def search(request, **kwargs):
         service_map['search_songs'] = services.SearchSongs(resource_name)
 
     content = utils.generate_content(resource_id, service_map, page=page)
-
     if page_type == "artists" and 'search_artists' in content:
         content['content'] = content.pop('search_artists')
 
@@ -86,7 +91,9 @@ def search(request, **kwargs):
 
 
 
-
+# Currently only displays the top 100 artists according to Echo Nest.
+# I have tried to include multiple 'top content' items, but the results
+# are lackluster.  Commented code is for the top 100 songs.
 def music_home(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -150,7 +157,8 @@ def music_home(request, **kwargs):
 
 
 
-
+# Display an artist's profile and top 15 songs.
+# url: /music/artist
 def artist_home(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -187,7 +195,9 @@ def artist_home(request, **kwargs):
 
 
 
-
+# Display content table for an artist.
+# Content displayed is determined by var passed from urls.py.
+# url: /music/artist/+(content_key)
 def artist_content(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -230,7 +240,10 @@ def artist_content(request, **kwargs):
 
 
 
-
+# Display a songs's profile and top 15 similar songs.
+# url: /music/artist/_/song
+# The underscore will be replaced with album data if Echo Nest implements
+# this information in the future. 
 def song_home(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -239,6 +252,7 @@ def song_home(request, **kwargs):
 
     prefix = "song:"
     resource_id = prefix + artist + ":" + resource_name
+    track_count = 15
 
     context = Context({
         'resource_id': resource_id,
@@ -247,22 +261,27 @@ def song_home(request, **kwargs):
         'home_page': True,
         'data_is_paged': False,
         'use_generic_key': False,
+        'display_by_artist': True,
+        'item_count': track_count,
 
         'debug': normal_kwargs.get('debug'),
     })
 
     service_map = {
         'profile': services.SongProfile(resource_name, artist),
+        'song_playlist': services.Playlist(resource_name, artist_id=artist),
     }
 
-    content = utils.generate_content(resource_id, service_map)
+    content = utils.generate_content(resource_id, service_map, item_count=track_count)
     context.update(content)
 
     return render(request, "song-home.html", context)
 
 
 
-
+# Display content table for a song.
+# Content displayed is determined by var passed from urls.py.
+# url: /music/artist/_/song/+(content_key)
 def song_content(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -304,7 +323,8 @@ def song_content(request, **kwargs):
 
 
 
-
+# About page.
+# url: /about/
 def about(request, **kwargs):
     context = Context({})
 
@@ -328,7 +348,8 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
-
+# Ajax target for retrieving pending content items.
+# url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
     normal_GET = utils.normalize(request.GET)
     normal_kwargs = utils.normalize(kwargs)
@@ -354,7 +375,8 @@ def retrieve_content(request, **kwargs):
 
 
 
-
+# Remove resource_id from cache.
+# For debugging only.
 def clear_resource(request):
     normal_GET = utils.normalize(request.GET)
 

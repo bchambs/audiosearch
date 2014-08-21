@@ -31,6 +31,8 @@ SIZE_LIMIT = 100    # max keys allowed in cache
 ARTISTS_IN_GRID = 9
 ITEMS_PER_PAGE = 10
 GENRE_COUNT = 5
+EMPTY_MSG = "Your search did not match any music data."
+NO_DATA_MSG = "We could not find data for this item."
 
 
 #############

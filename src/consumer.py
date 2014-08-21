@@ -28,13 +28,14 @@ class ENConsumer(object):
                 json_response = response.json()
 
                 code = json_response['response']['status']['code']
+                status_msg = json_response['response']['status']['message']
 
                 # success, return echo nest resource
                 if code == ENConsumer.SUCCESS:
                     data = json_response['response'][package.ECHO_NEST_KEY]
 
                     if len(data) < 1:
-                        raise services.EchoNestServiceFailure("Service returned no results.")
+                        raise services.EmptyServiceResponse()
 
                     return data
 
@@ -42,6 +43,9 @@ class ENConsumer(object):
                 elif code == ENConsumer.LIMIT_EXCEEDED:
                     attempt += 1
                     sleep(CALL_SNOOZE)
+
+                elif "does not exist" in status_msg:
+                    raise services.EmptyServiceResponse()
 
                 # call rejected by echo nest
                 else:

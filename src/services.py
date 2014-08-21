@@ -90,6 +90,13 @@ class ArtistProfile(EchoNestService):
 
             result['years_active'] = "(%s - %s)" %(start, end)
 
+        images = data.get('images')
+        if images:
+            try:
+                result['image'] = images[0]['url']
+            except KeyError:
+                pass
+
         return result
 
 
@@ -321,7 +328,7 @@ class TopSongs(SearchSongs):
 class EchoNestServiceFailure(Exception):
     pass
 
-class DependencyFailure(Exception):
+class EmptyServiceResponse(Exception):
     pass
 
 

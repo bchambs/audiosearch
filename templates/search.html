@@ -10,6 +10,8 @@
 
 {% include "general_HEADER.html" %}
 
+<div class="page-wrapper">
+
 <!-- content -->
 <div id="container-content">
     
@@ -72,16 +74,29 @@
                         {% endif %}
                     </div>
 
+                    <!-- spinner -->
+                    {% if not search_artists %}
+                        <div id="search_artists-spinner" class="spinner left">
+                            <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                        </div>
+                    {% endif %}
+
                 </div>
 
-                <div id="search_artists-slow" class="slow-warning">
+                <div id="search_artists-notification" class="content-notification hide">
                 </div>
 
-                <table id="search_artists-table">
-                    {% with content=search_artists spinner_id="search_artists-spinner" %}
-                        {% include "content_TBODY.html" %}
-                    {% endwith %}
-                </table>
+                {% if search_artists.empty %}
+                    <div class="content-notification">
+                        {{ search_artists.empty }}
+                    </div>
+                {% else %}
+                    <table id="search_artists-table">
+                        {% with content=search_artists spinner_id="search_artists-spinner" %}
+                            {% include "content_TBODY.html" %}
+                        {% endwith %}
+                    </table>
+                {% endif %}
                 
             </div>
         </div><!--END content tables -->
@@ -101,22 +116,39 @@
                         {% endif %}
                     </div>
 
+                    <!-- spinner -->
+                    {% if not search_songs %}
+                        <div id="search_songs-spinner" class="spinner left">
+                            <img src="{{ STATIC_URL }}img/spinner.gif"></img>
+                        </div>
+                    {% endif %}
+
                 </div>
 
-                <div id="search_songs-slow" class="slow-warning">
+                <div id="search_songs-notification" class="content-notification hide">
                 </div>
 
-                <table id="search_songs-table">
-                    {% with content=search_songs spinner_id="search_songs-spinner" %}
-                        {% include "content_TBODY.html" %}
-                    {% endwith %}
-                </table>
+                {% if search_songs.empty %}
+                    <div class="content-notification">
+                        {{ search_songs.empty }}
+                    </div>
+                {% else %}
+                    <table id="search_songs-table">
+                        {% with content=search_songs spinner_id="search_songs-spinner" %}
+                            {% include "content_TBODY.html" %}
+                        {% endwith %}
+                    </table>
+                {% endif %}
                 
             </div>
         </div><!--END content tables -->
     {% endif %}
 
 </div><!--END content -->
+
+{% include "general_FOOTER.html" %}
+
+</div><!--END page wrapper -->
 
 {% include "general_JS_LINKS.html" %}
 

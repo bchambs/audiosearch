@@ -174,6 +174,7 @@ LOGGING = {
         # },
         'redis_logger': {
             'handlers': ['redis_'],
+            'propagate': True,
             'level': 'DEBUG',
         },
     }

@@ -46,27 +46,33 @@
                 
             </div>
 
-            <div id="profile-slow" class="slow-warning">
+            <div id="profile-notification" class="content-notification hide">
             </div>
 
-            <div id="profile-box">
-                <span id="profile-location">
-                    {{ profile.location }}
-                </span>
+            {% if profile.empty %}
+                <div class="content-notification">
+                    {{ profile.empty }}
+                </div>
+            {% else %}
+                <div id="profile-box">
+                    <span id="profile-location">
+                        {{ profile.location }}
+                    </span>
 
-                <span id="profile-years_active">
-                    {{ profile.years_active }}
-                </span>
+                    <span id="profile-years_active">
+                        {{ profile.years_active }}
+                    </span>
 
-                <ul id="profile-genres">
-                    {% for genre in profile.genres %}
-                        <li class="genre-tag left">{{ genre }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
+                    <ul id="profile-genres">
+                        {% for genre in profile.genres %}
+                            <li class="genre-tag left">{{ genre }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
         </div>
     </div><!--END profile box -->
-
 
     <!-- content tables -->
     <div id="content-tables" class="content center">
@@ -91,21 +97,22 @@
                 {% endif %}
 
             </div>
-
-            <div id="songs-notification" class="content-notification">
-                <div id="songs-slow">
-                
-                </div>
-                <div id="songs-failed">
-                    
-                </div>
+            
+            <div id="songs-notification" class="content-notification hide">
             </div>
 
-            <table id="songs-table">
-                {% with content=songs %}
-                    {% include "content_TBODY.html" %}
-                {% endwith %}
-            </table>
+            <!-- content table -->
+            {% if songs.empty %}
+                <div class="content-notification">
+                    {{ songs.empty }}
+                </div>
+            {% else %}
+                <table id="songs-table">
+                    {% with content=songs spinner_id="songs-spinner" %}
+                        {% include "content_TBODY.html" %}
+                    {% endwith %}
+                </table>
+            {% endif %}
             
         </div>
     </div><!--END content tables -->

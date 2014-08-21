@@ -45,13 +45,21 @@
 
         </div>
 
-        <div id="content-slow" class="slow-warning">
+        <div id="content-notification" class="content-notification hide">
         </div>
 
         <!-- content table -->
-        <table id="content-table">
-            {% include "content_TBODY.html" %}
-        </table>
+        {% if content.empty %}
+            <div class="content-notification">
+                {{ content.empty }}
+            </div>
+        {% else %}
+            <table id="content-table">
+                {% with content=content spinner_id="content-spinner" %}
+                    {% include "content_TBODY.html" %}
+                {% endwith %}
+            </table>
+        {% endif %}
 
     </div>
 </div><!--END content tables -->
