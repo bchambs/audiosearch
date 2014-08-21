@@ -127,10 +127,6 @@ CELERY_TIMEZONE = 'EST'
 from datetime import timedelta
 
 CELERYBEAT_SCHEDULE = {
-    'flood-prevention': {
-        'task': 'src.tasks.examine_cache',
-        'schedule': timedelta(hours=1),
-    },
     'dbsize-tracker': {
         'task': 'src.tasks.log_dbsize',
         'schedule': timedelta(hours=1),
@@ -159,10 +155,10 @@ LOGGING = {
         },
     },
     'handlers': {
-        'redis_': {
+        'general_': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'logs/redis.log',
+            'filename': 'logs/general.log',
             'formatter': 'verbose'
         },
     },
@@ -172,8 +168,8 @@ LOGGING = {
         #     'propagate': True,
         #     'level':'DEBUG',
         # },
-        'redis_logger': {
-            'handlers': ['redis_'],
+        'general_logger': {
+            'handlers': ['general_'],
             'propagate': True,
             'level': 'DEBUG',
         },

@@ -13,7 +13,7 @@ from audiosearch.redis import client as cache
 # Currently resource content is stored as a giant string in cache.
 # Redo this so content is stored as native type in cache.
 # e.g. artist:similar:Led Zeppelin contains a list of similar artists
-def generate_content(resource_id, service_map, **kwargs):
+def generate_content(resource_id, service_map, trending_track=True, **kwargs):
     new_content = []
     pending_content = []
     result = {}
@@ -26,6 +26,9 @@ def generate_content(resource_id, service_map, **kwargs):
     pipe = cache.pipeline()
 
     if cache_data:
+        # Iterate over map, branch on redis hash status.
+        # Build new_content and pending_content where items do not exist or are pending.
+        # Result contains paged content or error messages.
         for key, service in service_map.items():
             if key in cache_data:
 
@@ -46,15 +49,18 @@ def generate_content(resource_id, service_map, **kwargs):
                 elif content['status'] == "failed":
                     result[key] = {'error_message': content['error_message']}
 
-            # new content request
+            # New content request.
             else:   
                 new_content.append(key)
                 pending_content.append(key)
 
+    # Resource does not exist so all keys are new.
     else:   
         new_content = service_map.keys()
         pending_content = new_content
 
+    # Create pending structs in redis to prevent duplicate requests from flooding
+    # tasks for a pending item.
     for item in new_content:
         content_struct = {
             'status': "pending",
@@ -67,6 +73,10 @@ def generate_content(resource_id, service_map, **kwargs):
     pipe.execute()
 
     result['pending_content'] = pending_content
+
+    # Queue trending task for resource_id.
+    if trending_track:
+        tasks.maintain_trending.delay(resource_id)
 
     return result
 

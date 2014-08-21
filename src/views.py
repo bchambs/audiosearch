@@ -27,6 +27,7 @@ def search(request, **kwargs):
 
     q = normal_GET.get('q')
 
+    # Return 'no results' search page.
     if not q:
         context = {
             'search_artists': {
@@ -58,6 +59,7 @@ def search(request, **kwargs):
 
     service_map = {}
 
+    # Use q_params to change default urls in content templates.
     if page_type == "artists":
         service_map['search_artists'] = services.SearchArtists(resource_name)
         context['content_description'] = "Artist results"
@@ -78,7 +80,7 @@ def search(request, **kwargs):
         service_map['search_artists'] = services.SearchArtists(resource_name)
         service_map['search_songs'] = services.SearchSongs(resource_name)
 
-    content = utils.generate_content(resource_id, service_map, page=page)
+    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
     if page_type == "artists" and 'search_artists' in content:
         content['content'] = content.pop('search_artists')
 
@@ -123,7 +125,7 @@ def music_home(request, **kwargs):
         'top_artists': services.TopArtists(),
     }
 
-    content = utils.generate_content(resource_id, service_map, page=page)
+    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
     context.update(content)
 
     # service_map = {}
@@ -348,6 +350,7 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
+# TODO: use generate_content(*)
 # Ajax target for retrieving pending content items.
 # url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
@@ -359,7 +362,6 @@ def retrieve_content(request, **kwargs):
     content_key = normal_GET.get('content_key')
     page = normal_GET.get('page')
     item_count = normal_GET.get('item_count')
-
     json_context = {}
 
     cache_data = cache.hget(resource_id, content_key)
@@ -381,12 +383,8 @@ def clear_resource(request):
     normal_GET = utils.normalize(request.GET)
 
     resource_id = normal_GET.get('resource_id')
-    print resource_id
     resource_id = utils.unescape_html(resource_id)
-    print resource_id
-
     hit = cache.delete(resource_id)
-
     pre = "REMOVED," if hit else "NOT FOUND,"
     banner = '\'' * len(pre)
 
@@ -399,4 +397,14 @@ def clear_resource(request):
     return HttpResponse(json.dumps({}), content_type="application/json")
 
 
+def print_trending(request):
+    print "yeyay"
+    normal_GET = utils.normalize(request.GET)
 
+    content = cache.hget("trending:content")
+    min_list = cache.lrange("trending:min", 0, 100)
+
+    for i in min_list:
+        print "%s : %s" %(content[i], i)
+
+    return HttpResponse(json.dumps({}), content_type="application/json")

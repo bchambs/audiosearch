@@ -21,7 +21,7 @@ RESULTS = 100
 # REDIS #
 #########
 REDIS_TTL = 3000    # in seconds
-SIZE_LIMIT = 100    # max keys allowed in cache
+# SIZE_LIMIT = 100    # max keys allowed in cache
 
 
 
@@ -40,3 +40,11 @@ NO_DATA_MSG = "We could not find data for this item."
 #############
 DEBUG_TOOLBAR = True
 
+
+############
+# TRENDING #
+############
+T_HASH = "trending:hash"
+T_CONTENT = "trending:content"
+T_MIN ="trending:min"
+T_COUNT = 15 # Number of items to track in /trending/.

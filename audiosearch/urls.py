@@ -37,7 +37,7 @@ urlpatterns = patterns('',
 
     url(r'^ajax/retrieval/$', views.retrieve_content),
     url(r'^ajax/clear/$', views.clear_resource),
-    url(r'^ajax/debug_template/$', 'src.views.debug_template'),
+    url(r'^ajax/print_trending/$', 'src.views.print_trending'),
 
 
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
