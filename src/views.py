@@ -10,9 +10,8 @@ from django.template import Context
 
 from audiosearch import config as cfg
 from audiosearch.redis import client as cache
-from . import services, utils
-# from .services import *
-# from .utils import *
+import src.services as services
+import src.utils as utils
 
 
 
@@ -58,7 +57,7 @@ def search(request, **kwargs):
         'use_generic_key': True if page_type else False,
         'display_by_artist': True,
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     service_map = {}
@@ -113,7 +112,7 @@ def trending(request, **kwargs):
         'data_is_paged': True,
         'use_generic_key': True,
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     context['content'] = cache.hgetall(resource_id)
@@ -126,63 +125,20 @@ def trending(request, **kwargs):
 # I have tried to include multiple 'top content' items, but the results
 # are lackluster.  Commented code is for the top 100 songs.
 def music_home(request, **kwargs):
-    # normal_GET = normalize(request.GET)
-    # normal_kwargs = normalize(kwargs)
-
-    prefix = "top:"
-    resource_name = "music"
-    resource_id = prefix + resource_name
-    page = normal_GET.get('page')
-    # page_type = normal_GET.get('type')
-    # content_key = normal_kwargs.get('content_key')
-    content_key = 'top_artists'
-
+    resource_id = kwargs.get('resource_id')
+    page = kwargs.get('page')
     context = Context({
         'resource_id': resource_id,
-        'resource_name': "Top 100",
-        'content_description': "Popular Artists",
         'page': page,
-        # 'page_type': page_type,
-        # 'data_is_paged': True if page_type else False,
-        'data_is_paged': True,
-        'use_generic_key': True,
-
-        'debug': normal_kwargs.get('debug'),
+        'content_title': 'Popular Artists',
     })
 
     service_map = {
-        'top_artists': TopArtists(),
+        'top_artists': services.TopArtists(),
     }
 
-    content = generate_content(resource_id, service_map, trending_track=False, page=page)
+    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
     context.update(content)
-
-    # service_map = {}
-    
-    # if page_type == "songs":
-    #     service_map['top_songs'] = TopSongs()
-    #     context['content_description'] = "Popular Songs"
-    #     context['q_params'] = {
-    #         'type': page_type,
-    #     }
-
-    # else:
-    #     service_map['top_artists'] = TopArtists()
-    #     context['content_description'] = "Popular Artists"
-    #     context['q_params'] = {
-    #         'type': page_type,
-    #     }
-
-    # content = generate_content(resource_id, service_map, page=page, item_count=result_count)
-
-    # if 'top_artists' in content:
-    #     content['content'] = content.pop('top_artists')
-
-    # elif 'top_songs' in content:
-    #     print content['top_songs']['data'][0].keys()
-    #     content['content'] = content.pop('top_songs')
-
-    # context.update(content)
 
     return render(request, 'music_home.html', context)
 
@@ -211,7 +167,7 @@ def artist_home(request, **kwargs):
         'use_generic_key': False,
         'item_count': track_count,
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     service_map = {
@@ -247,7 +203,7 @@ def artist_content(request, **kwargs):
         'use_generic_key': True,
         'content_description': kwargs.get('description'),
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     service_map = {}
@@ -295,7 +251,7 @@ def song_home(request, **kwargs):
         'display_by_artist': True,
         'item_count': track_count,
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     service_map = {
@@ -333,7 +289,7 @@ def song_content(request, **kwargs):
         'use_generic_key': True,
         'content_description': normal_kwargs.get('description'),
 
-        'debug': normal_kwargs.get('debug'),
+        
     })
 
     service_map = {}
@@ -379,18 +335,17 @@ Functions for handling ASYNC requests
 -------------------------------------
 """
 
-# TODO: use generate_content(*)
+
 # Ajax target for retrieving pending content items.
 # url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
-    # normal_GET = normalize(request.GET)
-    # normal_kwargs = normalize(kwargs)
+    print kwargs.get('hello')
 
-    resource_id = normal_GET.get('resource_id')
-    resource_id = unescape_html(resource_id)
-    content_key = normal_GET.get('content_key')
-    page = normal_GET.get('page')
-    item_count = normal_GET.get('item_count')
+    print kwargs.keys()
+    resource_id = kwargs.get('resource_id')
+    content_key = kwargs.get('content_key')
+    page = kwargs.get('page')
+    item_count = kwargs.get('item_count')
     json_context = {}
 
     cache_data = cache.hget(resource_id, content_key)
@@ -406,22 +361,37 @@ def retrieve_content(request, **kwargs):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Remove resource_id from cache.
 # For debugging only.
 def clear_resource(request, **kwargs):
-    # normal_GET = normalize(request.GET)
+    resource_id = request.GET.get('resource_id')
+    if resource_id:
+        resource_id = resource_id.replace("&lt;", "<")
+        resource_id = resource_id.replace("&gt;", ">")
+        resource_id = resource_id.replace("&amp;", "&")
+        resource_id = resource_id.replace("&#39;", "'")
 
-    resource_id = normal_GET.get('resource_id')
-    resource_id = unescape_html(resource_id)
     hit = cache.delete(resource_id)
     pre = "REMOVED," if hit else "NOT FOUND,"
-    banner = '\'' * len(pre)
-
-    print
+    banner = '\'' * 14
     print banner
     print "%s %s" %(pre, resource_id)
     print banner
-    print
 
     return HttpResponse(json.dumps({}), content_type="application/json")
 

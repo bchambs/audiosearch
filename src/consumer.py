@@ -7,6 +7,7 @@ from time import sleep
 import requests
 
 from audiosearch import config as cfg
+import src.services as services
 
 
 class ENConsumer(object):

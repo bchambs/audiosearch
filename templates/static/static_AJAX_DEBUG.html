@@ -1,10 +1,6 @@
-{% load audiosearch_tags %}
-
-{% if debug %}
 <script type="text/javascript">
     $('a#clear').click( function() { 
         remove_resource("{{ resource_id }}"); 
         return false; 
     });
 </script>
-{% endif %}

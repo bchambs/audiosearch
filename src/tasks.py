@@ -8,9 +8,8 @@ from redis import WatchError
 from audiosearch import config as cfg
 from audiosearch.config import T_HASH, T_CONTENT, T_MIN, T_COUNT
 from audiosearch.redis import client as cache
-from .consumer import ENConsumer
-from .services import EchoNestServiceFailure, EmptyServiceResponse
-from . import utils
+from src.consumer import ENConsumer
+import src.services as services
 
 
 logger = logging.getLogger("general_logger")
@@ -48,10 +47,6 @@ def log_dbsize():
 
 @shared_task
 def acquire_resource(resource_id, content_key, service):
-    if ':' not in resource_id:
-        error = "Malformed resource_id received in acquire_resource."
-        logger.error(utils.clm(error, resource_id, content_key, service))
-
     pipe = cache.pipeline()
 
     try:
@@ -69,16 +64,17 @@ def acquire_resource(resource_id, content_key, service):
 
         pipe.hset(resource_id, content_key, content_struct)
 
-    except EchoNestServiceFailure as err_msg:
+    except services.EchoNestServiceFailure as err_msg:
         content_struct = {
             'status': "failed",
             'error_message': str(err_msg),
         }
         pipe.hset(resource_id, content_key, content_struct)
 
-        logger.error(utils.clm(err_msg, resource_id, content_key, service))
+        logger.warning("Service Failure::%s, %s, %s") %(resource_id, content_key, service)
+        logger.warning("Error   Message::%s") %(err_msg)
         
-    except EmptyServiceResponse:
+    except services.EmptyServiceResponse:
         content_struct = {
             'status': "empty",
             'error_message': "None.",
@@ -167,5 +163,6 @@ def maintain_trending(resource_id):
 
             except WatchError:
                 pass
+
 
 

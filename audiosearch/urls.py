@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.conf.urls import patterns, include, url
 from django.http import HttpResponse
 
-from src import views
+import src.views as views
 
 
 urlpatterns = patterns('',
@@ -50,8 +50,8 @@ urlpatterns = patterns('',
 
 
     # Ajax.
-    url(r'^ajax/retrieval/$', views.retrieve_content),
-    url(r'^ajax/clear/$', views.clear_resource),
+    url(ur'^ajax/retrieval/$', views.retrieve_content),
+    url(ur'^ajax/clear/$', views.clear_resource),
 
 
     # Disallow web spiders.

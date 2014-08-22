@@ -1,13 +1,12 @@
 from __future__ import absolute_import
 
-import sys
 import ast
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from audiosearch import config as cfg
 from audiosearch.redis import client as cache
-# from . import tasks
+import src.tasks as tasks
 
 
 # TODO: refactor redis layout
@@ -112,30 +111,7 @@ def page_resource(page, resource, item_count=None):
 
 
 
-def unescape_html(s):
-    if s:
-        s = s.replace("&lt;", "<")
-        s = s.replace("&gt;", ">")
-        s = s.replace("&amp;", "&")
-        s = s.replace("&#39;", "'")
-
-    return s
-
-
-
-
-def to_percent(float):
-    p = round(float * 100)
-    percent = str(p).split('.')
-
-    if len(percent) > 0:
-        return percent[0] + " %"
-    else:
-        return ''
-
-
-
-
+# todo: move to services and implement
 # Used to display (M:S) duration on song profile.
 def convert_seconds(t):
     time = str(t)
@@ -155,30 +131,5 @@ def convert_seconds(t):
 
 
 
-# Attempt to convert item to lowercase, strip white space,
-# and remove consecutive spaces.
-def normalize(item):
-    try:
-        normal = item.strip().lower()
-        normal = ' '.join(normal.split())
-    except AttributeError:
-        normal = item
-
-    return normal
 
 
-
-
-# Generate structured reporting message for logging.
-# clm = create_logging_message
-def clm(description, resource_id=None, content_key=None, service=None):
-    line1 = 'ID: "%s"' %(resource_id)
-    line2 = 'CONTENT_KEY: "%s"' %(content_key)
-    line3 = 'SERVICE: "%s"' %(service)
-
-    msg = "%s\n%s\n%s\n%s" %(description, line1, line2, line3)
-
-    return msg
-
-def t():
-    print "hi"

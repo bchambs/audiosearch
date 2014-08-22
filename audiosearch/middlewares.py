@@ -5,66 +5,106 @@ import urllib
 
 from django.http import HttpResponse
 
-from audiosearch.settings import DEBUG as DJANGO_DEBUG
-from src import utils
-
 
 class AudiosearchPreprocessor(object):
 
-    def process_request(self, request):
+    # def process_request(self, request):
 
-        # Return empty object for empty requests.
-        if request.is_ajax():
-            if not request.GET.get('resource_id') and not request.GET.get('content_key'):
-                return HttpResponse(json.dumps({}), content_type="application/json")
+        # Normalize 
+
+        
+
+
+
+
+
+        # Return nothing for empty requests.
+        # if request.is_ajax():
+        #     resource_id = request.GET.get('resource_id')
+
+
+        #         return HttpResponse(json.dumps({}), content_type="application/json")
+
+
+
+
+
 
     def process_view(self, request, vfunc, vargs, vkwargs):
+        if  request.is_ajax():
+            print vargs
+            print vargs
+            print vargs
+            print vargs
+        else:
+            # sanitize artist and song in kwargs
 
-        # Normalize all query parameters.
-        if len(request.GET) > 0:
-            for param in request.GET:
-                vkwargs[param] = normalize(param)
+            # sanitize prefix and resource_id in async
 
-        # Create resource_id from 'cache_prefix' determined in urls.py
-        prefix = vkwargs.get('cache_prefix')
+            # Create resource_id from 'cache_prefix' determined in urls.py.
+            if request.is_ajax():
+                prefix = vkwargs.get('prefix')
+            else:
+                prefix = vkwargs.get('cache_prefix')
+            separator = ':#:'
 
-        # Cache key separator.
-        separator = ''
+            if not prefix:
+                pass
 
-        if not prefix:
-            pass
+            # top:#:music
+            elif prefix == "top":
+                resource_name = "music"
+                vkwargs['resource_id'] = prefix + separator + resource_name
 
-        # elif prefix == "top":
+            # elif prefix == "trending":
 
-        # elif prefix == "trending":
+            # elif prefix == "search":
 
-        # elif prefix == "search":
+            # elif prefix == "song":
 
-        # elif prefix == "song":
-
-        # elif prefix == "song":
-
-        # elif prefix == "artist":
-
-
-
-
-
-
-        # if 'artist' in vkwargs:
-        #     artist = urllib.unquote_plus(vkwargs['artist'])
-        #     vkwargs['artist'] = artist.strip()
-
-        # if 'song' in vkwargs:
-        #     song = urllib.unquote_plus(vkwargs['song'])
-        #     vkwargs['song'] = song.strip()
+            # elif prefix == "artist":
 
 
+            
+            # Normalize all query parameters.  Javascript strings must be unescaped (?).
+            if len(request.GET) > 0:
+                if request.is_ajax():
+                    for param in request.GET:
+                        un_param = unescape_html(param) 
+                        vkwargs[param] = normalize(un_param)
+                else:
+                    for param in request.GET:
+                        vkwargs[param] = normalize(param)
+
+
+            # if 'artist' in vkwargs:
+            #     artist = urllib.unquote_plus(vkwargs['artist'])
+            #     vkwargs['artist'] = artist.strip()
+
+            # if 'song' in vkwargs:
+            #     song = urllib.unquote_plus(vkwargs['song'])
+            #     vkwargs['song'] = song.strip()
 
 
 
+# Attempt to convert item to lowercase, strip white space,
+# and remove consecutive spaces.
+def normalize(item):
+    try:
+        normal = item.strip().lower()
+        normal = ' '.join(normal.split())
+    except AttributeError:
+        normal = item
+
+    return normal
 
 
-        # Enable redis clear debug button.
-        # if DJANGO_DEBUG and not request.is_ajax():
-        #     vkwargs['debug'] = True
+
+def unescape_html(s):
+    if s:
+        s = s.replace("&lt;", "<")
+        s = s.replace("&gt;", ">")
+        s = s.replace("&amp;", "&")
+        s = s.replace("&#39;", "'")
+
+    return s

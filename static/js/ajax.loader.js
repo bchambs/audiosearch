@@ -7,9 +7,11 @@
 var AJAX_SNOOZE = 2000,             // Time in ms between failed AJAX requests.
     AJAX_INITIAL_SNOOZE = 1500,     // Initial delay in ms before beginning AJAX requests.
     AJAX_SLOW_THRESHOLD = 6,        // Number of failed attempts before displaying 'slow results' message.
+    AJAX_SLOW_MSG = "This request appears to be taking longer than expected.",
     AJAX_FAIL_THRESHOLD = 15,       // Number of failed attempts before displaying 'failed' message and halting AJAX requests.
-    FADE_DELAY = 8000,
-    NOTIF_DELAY = 1000,
+    AJAX_FAIL_MSG = "There was an error retrieving this content.",
+    HIDE_DELAY = 600,
+    SHOW_DELAY = 1000,
 
 
     // Used to build table row links.
@@ -181,18 +183,6 @@ function load_content(opts, data) {
     break;
 
 
-    // Added this to allow more 'top content' on /music/.  The results are lackluster.
-    // case "top_songs":
-    //     var urls = {
-    //             previous: "?type=songs&page=" + data['previous'],
-    //             next: "?type=songs&page=" + data['next'],
-    //             item: song_table_link_generator
-    //     };
-
-    //     load_table(content_key, data_is_paged, use_generic_key, data, urls);
-    // break;
-
-
     // Catch invalid content_keys.
     default:
         console.log("what is this: ");
@@ -302,49 +292,57 @@ function build_paged_table_nav(content_key, use_generic_key, data, urls) {
         else {
             var $next_id = "#" + content_key + "-next";
             $($next_id).append($next_a);
-            console.log($next_id);
         }
     }
 }
 
 
 function hide_spinner(content_key, use_generic_key) {
-    if (use_generic_key) {
-        $("#content-spinner").hide();
-        $("#content-slow").hide();
-    }
-    else {
-        var $spinner = "#" + content_key + "-spinner",
-            $slow_id = "#" + content_key + "-slow";
+    $("#content-spinner").hide();
 
-        $($spinner).hide();
-        $($slow_id).hide();
-    }
+    //OLD
+    // if (use_generic_key) {
+    //     $("#content-spinner").hide();
+    // }
+    // else {
+    //     var $spinner = "#" + content_key + "-spinner";
+
+    //     $($spinner).hide();
+    // }
 }
 
 
-function handle_failed(content_key, use_generic_key) {
-    if (use_generic_key) {
-        var $div_id = "#content-notification";
-    }
-    else {
-        var $div_id = "#" + content_key + "-notification";
-    }
+// function handle_failed(content_key, use_generic_key) {
+function handle_failed() {
+    var $div_id = "#content-notification";
 
-    // If an existing notification is displayed, remove it, then fadein the failure message.
-    if ($($div_id).is(":visible")) {
-        $($div_id).fadeOut(NOTIF_DELAY);
+    $($div_id).fadeOut(HIDE_DELAY);
+
+    setTimeout(function() {
+            $($div_id).text(AJAX_FAIL_MSG).fadeIn(SHOW_DELAY);
+        }, HIDE_DELAY);
+    //OLD
+    // if (use_generic_key) {
+    //     var $div_id = "#content-notification";
+    // }
+    // else {
+    //     var $div_id = "#" + content_key + "-notification";
+    // }
+
+    // // If an existing notification is displayed, remove it, then fadein the failure message.
+    // if ($($div_id).is(":visible")) {
+    //     $($div_id).fadeOut(NOTIF_DELAY);
         
-        setTimeout(function() {
-            $($div_id).html(' ');
-            $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
-        }
-        , NOTIF_DELAY + 200);
-    }
-    else {
-        $($div_id).html('');
-        $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
-    }
+    //     setTimeout(function() {
+    //         $($div_id).html(' ');
+    //         $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
+    //     }
+    //     , NOTIF_DELAY + 200);
+    // }
+    // else {
+    //     $($div_id).html('');
+    //     $($div_id).text("There was an error retrieving this content.").fadeIn(NOTIF_DELAY);
+    // }
 }
 
 
@@ -378,6 +376,7 @@ function handle_no_results(content_key, use_generic_key) {
     $($div_id).text(msg).fadeIn(NOTIF_DELAY);
 }
 
+
 // Send AJAX request for content status update.  
 // @opts contain various request information and is defined in static_AJAX_OPTS.html template.
 // On status = success, load the content according to its data type (table, string, etc).
@@ -388,7 +387,11 @@ function dispatch(opts) {
         dataType: 'json',
         type: 'GET',
         success: function(json_context, stat, o) {
+            console.log(json_context['status']);
+
+
             switch (json_context['status']) {
+
             case 'complete':
                 hide_spinner(opts.content_key, opts.use_generic_key);
                 load_content(opts, json_context['data']);
@@ -413,8 +416,7 @@ function dispatch(opts) {
                     opts.attempt++;
                     setTimeout(function() {
                             dispatch(opts);
-                        }
-                    , AJAX_SNOOZE);
+                        }, AJAX_SNOOZE);
                 }
 
                 break;
@@ -431,10 +433,12 @@ function dispatch(opts) {
 
                 break;
             }  
+        },
+        error: function(o, stat, er) {
+            hide_spinner();
+            handle_failed();
         }
-        // ,
-        // error: function(o, stat, er) {},
-        // complete: function(o, stat) {}
+        // ,complete: function(o, stat) {}
     });
 }
 
