@@ -1,14 +1,16 @@
+from __future__ import absolute_import
+
 import logging
 
 from celery import shared_task
 from redis import WatchError
 
+from audiosearch import config as cfg
 from audiosearch.config import T_HASH, T_CONTENT, T_MIN, T_COUNT
 from audiosearch.redis import client as cache
-from consumer import ENConsumer
-import audiosearch.config as cfg
-import services
-import utils
+from .consumer import ENConsumer
+from .services import EchoNestServiceFailure, EmptyServiceResponse
+from . import utils
 
 
 logger = logging.getLogger("general_logger")
@@ -43,6 +45,7 @@ def log_dbsize():
 
 
 
+
 @shared_task
 def acquire_resource(resource_id, content_key, service):
     if ':' not in resource_id:
@@ -66,7 +69,7 @@ def acquire_resource(resource_id, content_key, service):
 
         pipe.hset(resource_id, content_key, content_struct)
 
-    except services.EchoNestServiceFailure as err_msg:
+    except EchoNestServiceFailure as err_msg:
         content_struct = {
             'status': "failed",
             'error_message': str(err_msg),
@@ -75,7 +78,7 @@ def acquire_resource(resource_id, content_key, service):
 
         logger.error(utils.clm(err_msg, resource_id, content_key, service))
         
-    except services.EmptyServiceResponse:
+    except EmptyServiceResponse:
         content_struct = {
             'status': "empty",
             'error_message': "None.",

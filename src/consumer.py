@@ -1,12 +1,12 @@
+from __future__ import absolute_import
+
 import json
 import urllib
 from time import sleep
 
 import requests
 
-import audiosearch.config as cfg
-import utils
-import services
+from audiosearch import config as cfg
 
 
 class ENConsumer(object):

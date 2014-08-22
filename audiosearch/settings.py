@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 """
 Django settings for audiosearch project.
 
@@ -73,7 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'audiosearch.middlewares.AudiosearchDebug',
+    'audiosearch.middlewares.AudiosearchPreprocessor',
 )
 
 ROOT_URLCONF = 'audiosearch.urls'

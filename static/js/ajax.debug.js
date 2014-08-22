@@ -18,17 +18,4 @@ function remove_resource(resource_id) {
 };
 
 
-function print_trending() {
-    'use strict';
-    
-    $.ajax({
-        url: "/ajax/print_trending/",
-        dataType: 'json',
-        type: 'GET',
-        success: function(o, stat, er) {
 
-        },
-        error: function(o, stat, er) {
-        }
-    });
-}

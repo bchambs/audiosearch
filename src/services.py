@@ -1,8 +1,7 @@
-from random import choice, sample
+from __future__ import absolute_import
 
-import audiosearch.config as cfg
-from src import utils
-
+from audiosearch import config as cfg
+from . import utils
 
 """
 resource = prefix + resource_id
@@ -286,8 +285,8 @@ class SongProfile(EchoNestService):
         except KeyError, IndexError:
             pass
 
-        result['liveness'] = utils.to_percent(audio.get('liveness'))
-        result['danceability'] = utils.to_percent(audio.get('danceability'))
+        result['liveness'] = to_percent(audio.get('liveness'))
+        result['danceability'] = to_percent(audio.get('danceability'))
         result['tempo'] = "%s bpm" %audio.get('tempo')
 
         result['tracks'] = data.get('tracks')

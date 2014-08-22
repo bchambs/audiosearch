@@ -62,7 +62,9 @@ li {
 */
 a {
     /*color: inherit;*/
-    color: #FFCC99;
+    /*color: #FFCC99;*/
+    color: #B1F6FF;         /*light blue*/
+    color: #DAC7FF;
     text-decoration: none;
     font-style: bold;
 }
@@ -130,4 +132,12 @@ tr:hover {
 }
 .odd {
     background-color: #3F3F3F;
+}
+
+
+#debug-zone {
+    position: absolute;
+    top: 100px;
+    left: 50px;
+    font-size: 50px;
 }

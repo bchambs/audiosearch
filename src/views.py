@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import ast
 import json
 import urllib
@@ -6,9 +8,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
-import audiosearch.config as cfg
-from src import services, utils, tasks
+from audiosearch import config as cfg
 from audiosearch.redis import client as cache
+from . import services, utils
+# from .services import *
+# from .utils import *
 
 
 
@@ -22,8 +26,8 @@ def index(request, **kwargs):
 
 # Content displayed is determined by 'type' query param from GET dict.
 def search(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
 
     q = normal_GET.get('q')
 
@@ -61,7 +65,7 @@ def search(request, **kwargs):
 
     # Use q_params to change default urls in content templates.
     if page_type == "artists":
-        service_map['search_artists'] = services.SearchArtists(resource_name)
+        service_map['search_artists'] = SearchArtists(resource_name)
         context['content_description'] = "Artist results"
         context['q_params'] = {
             'q': resource_name,
@@ -69,7 +73,7 @@ def search(request, **kwargs):
         }
     
     elif page_type == "songs":
-        service_map['search_songs'] = services.SearchSongs(resource_name)
+        service_map['search_songs'] = SearchSongs(resource_name)
         context['content_description'] = "Song results"
         context['q_params'] = {
             'q': resource_name,
@@ -77,10 +81,10 @@ def search(request, **kwargs):
         }
 
     else:
-        service_map['search_artists'] = services.SearchArtists(resource_name)
-        service_map['search_songs'] = services.SearchSongs(resource_name)
+        service_map['search_artists'] = SearchArtists(resource_name)
+        service_map['search_songs'] = SearchSongs(resource_name)
 
-    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
+    content = generate_content(resource_id, service_map, trending_track=False, page=page)
     if page_type == "artists" and 'search_artists' in content:
         content['content'] = content.pop('search_artists')
 
@@ -93,12 +97,37 @@ def search(request, **kwargs):
 
 
 
+# Trending items. In dev.
+def trending(request, **kwargs):
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
+
+    prefix = "trending:"
+    resource_name = "content"
+    resource_id = prefix + resource_name
+
+    context = Context({
+        'resource_id': resource_id,
+        'resource_name': "Trending Music",
+        'content_description': "Popular Artists",
+        'data_is_paged': True,
+        'use_generic_key': True,
+
+        'debug': normal_kwargs.get('debug'),
+    })
+
+    context['content'] = cache.hgetall(resource_id)
+
+    return render(request, 'trending.html', context)
+
+
+
 # Currently only displays the top 100 artists according to Echo Nest.
 # I have tried to include multiple 'top content' items, but the results
 # are lackluster.  Commented code is for the top 100 songs.
 def music_home(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
 
     prefix = "top:"
     resource_name = "music"
@@ -110,7 +139,7 @@ def music_home(request, **kwargs):
 
     context = Context({
         'resource_id': resource_id,
-        'resource_name': "Trending Music",
+        'resource_name': "Top 100",
         'content_description': "Popular Artists",
         'page': page,
         # 'page_type': page_type,
@@ -122,29 +151,29 @@ def music_home(request, **kwargs):
     })
 
     service_map = {
-        'top_artists': services.TopArtists(),
+        'top_artists': TopArtists(),
     }
 
-    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
+    content = generate_content(resource_id, service_map, trending_track=False, page=page)
     context.update(content)
 
     # service_map = {}
     
     # if page_type == "songs":
-    #     service_map['top_songs'] = services.TopSongs()
+    #     service_map['top_songs'] = TopSongs()
     #     context['content_description'] = "Popular Songs"
     #     context['q_params'] = {
     #         'type': page_type,
     #     }
 
     # else:
-    #     service_map['top_artists'] = services.TopArtists()
+    #     service_map['top_artists'] = TopArtists()
     #     context['content_description'] = "Popular Artists"
     #     context['q_params'] = {
     #         'type': page_type,
     #     }
 
-    # content = utils.generate_content(resource_id, service_map, page=page, item_count=result_count)
+    # content = generate_content(resource_id, service_map, page=page, item_count=result_count)
 
     # if 'top_artists' in content:
     #     content['content'] = content.pop('top_artists')
@@ -162,8 +191,8 @@ def music_home(request, **kwargs):
 # Display an artist's profile and top 15 songs.
 # url: /music/artist
 def artist_home(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
     resource_name = urllib.unquote_plus(normal_kwargs.get('artist'))
     
     if not resource_name:
@@ -186,11 +215,11 @@ def artist_home(request, **kwargs):
     })
 
     service_map = {
-        'profile': services.ArtistProfile(resource_name),
-        'songs': services.ArtistSongs(resource_name),
+        'profile': ArtistProfile(resource_name),
+        'songs': ArtistSongs(resource_name),
     }
 
-    content = utils.generate_content(resource_id, service_map, item_count=track_count)
+    content = generate_content(resource_id, service_map, item_count=track_count)
     context.update(content)
 
     return render(request, "artist-home.html", context)
@@ -201,8 +230,8 @@ def artist_home(request, **kwargs):
 # Content displayed is determined by var passed from urls.py.
 # url: /music/artist/+(content_key)
 def artist_content(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
     resource_name = urllib.unquote_plus(normal_kwargs.get('artist'))
 
     prefix = "artist:"
@@ -224,16 +253,16 @@ def artist_content(request, **kwargs):
     service_map = {}
 
     if content_key == "song_playlist":
-        service_map[content_key] = services.Playlist(resource_name)
+        service_map[content_key] = Playlist(resource_name)
         context['display_by_artist'] = True
     
     elif content_key == "similar_artists": 
-        service_map[content_key] = services.SimilarArtists(resource_name)
+        service_map[content_key] = SimilarArtists(resource_name)
     
     elif content_key == "songs":
-        service_map[content_key] = services.ArtistSongs(resource_name)
+        service_map[content_key] = ArtistSongs(resource_name)
 
-    content = utils.generate_content(resource_id, service_map, page=page)
+    content = generate_content(resource_id, service_map, page=page)
     if content_key in content:
         content['content'] = content.pop(content_key)
     context.update(content)
@@ -247,8 +276,8 @@ def artist_content(request, **kwargs):
 # The underscore will be replaced with album data if Echo Nest implements
 # this information in the future. 
 def song_home(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
     resource_name = urllib.unquote_plus(normal_kwargs.get('song'))
     artist = urllib.unquote_plus(normal_kwargs.get('artist'))
 
@@ -270,11 +299,11 @@ def song_home(request, **kwargs):
     })
 
     service_map = {
-        'profile': services.SongProfile(resource_name, artist),
-        'song_playlist': services.Playlist(resource_name, artist_id=artist),
+        'profile': SongProfile(resource_name, artist),
+        'song_playlist': Playlist(resource_name, artist_id=artist),
     }
 
-    content = utils.generate_content(resource_id, service_map, item_count=track_count)
+    content = generate_content(resource_id, service_map, item_count=track_count)
     context.update(content)
 
     return render(request, "song-home.html", context)
@@ -285,8 +314,8 @@ def song_home(request, **kwargs):
 # Content displayed is determined by var passed from urls.py.
 # url: /music/artist/_/song/+(content_key)
 def song_content(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
     resource_name = urllib.unquote_plus(normal_kwargs.get('song'))
     artist = urllib.unquote_plus(normal_kwargs.get('artist'))
 
@@ -310,13 +339,13 @@ def song_content(request, **kwargs):
     service_map = {}
 
     if content_key == "song_playlist":
-        service_map[content_key] = services.Playlist(resource_name, artist_id=artist)
+        service_map[content_key] = Playlist(resource_name, artist_id=artist)
         context['display_by_artist'] = True
         
     elif content_key == "similar_artists": 
-        service_map[content_key] = services.SimilarArtists(artist)
+        service_map[content_key] = SimilarArtists(artist)
 
-    content = utils.generate_content(resource_id, service_map, page=page)
+    content = generate_content(resource_id, service_map, page=page)
     if content_key in content:
         content['content'] = content.pop(content_key)
     context.update(content)
@@ -354,11 +383,11 @@ Functions for handling ASYNC requests
 # Ajax target for retrieving pending content items.
 # url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
-    normal_GET = utils.normalize(request.GET)
-    normal_kwargs = utils.normalize(kwargs)
+    # normal_GET = normalize(request.GET)
+    # normal_kwargs = normalize(kwargs)
 
     resource_id = normal_GET.get('resource_id')
-    resource_id = utils.unescape_html(resource_id)
+    resource_id = unescape_html(resource_id)
     content_key = normal_GET.get('content_key')
     page = normal_GET.get('page')
     item_count = normal_GET.get('item_count')
@@ -371,7 +400,7 @@ def retrieve_content(request, **kwargs):
         json_context['status'] = content.get('status')
 
         if json_context['status'] == "complete":
-            json_context['data'] = utils.page_resource(page, content.get('data'), item_count)
+            json_context['data'] = page_resource(page, content.get('data'), item_count)
 
     return HttpResponse(json.dumps(json_context), content_type="application/json")
 
@@ -379,11 +408,11 @@ def retrieve_content(request, **kwargs):
 
 # Remove resource_id from cache.
 # For debugging only.
-def clear_resource(request):
-    normal_GET = utils.normalize(request.GET)
+def clear_resource(request, **kwargs):
+    # normal_GET = normalize(request.GET)
 
     resource_id = normal_GET.get('resource_id')
-    resource_id = utils.unescape_html(resource_id)
+    resource_id = unescape_html(resource_id)
     hit = cache.delete(resource_id)
     pre = "REMOVED," if hit else "NOT FOUND,"
     banner = '\'' * len(pre)
@@ -397,14 +426,3 @@ def clear_resource(request):
     return HttpResponse(json.dumps({}), content_type="application/json")
 
 
-def print_trending(request):
-    print "yeyay"
-    normal_GET = utils.normalize(request.GET)
-
-    content = cache.hget("trending:content")
-    min_list = cache.lrange("trending:min", 0, 100)
-
-    for i in min_list:
-        print "%s : %s" %(content[i], i)
-
-    return HttpResponse(json.dumps({}), content_type="application/json")

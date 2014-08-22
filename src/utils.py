@@ -1,12 +1,13 @@
+from __future__ import absolute_import
+
 import sys
 import ast
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-import audiosearch.config as cfg
-import tasks
+from audiosearch import config as cfg
 from audiosearch.redis import client as cache
-
+# from . import tasks
 
 
 # TODO: refactor redis layout
@@ -73,10 +74,6 @@ def generate_content(resource_id, service_map, trending_track=True, **kwargs):
     pipe.execute()
 
     result['pending_content'] = pending_content
-
-    # Queue trending task for resource_id.
-    if trending_track:
-        tasks.maintain_trending.delay(resource_id)
 
     return result
 
@@ -158,19 +155,16 @@ def convert_seconds(t):
 
 
 
+# Attempt to convert item to lowercase, strip white space,
+# and remove consecutive spaces.
+def normalize(item):
+    try:
+        normal = item.strip().lower()
+        normal = ' '.join(normal.split())
+    except AttributeError:
+        normal = item
 
-# Convert GET and kwargs to lowercase and striped strings.
-def normalize(d):
-    result = {}
-
-    for key, value in d.items():
-        try:
-            normalized = value.strip().lower()
-            result[key] = ' '.join(normalized.split())
-        except AttributeError:
-            result[key] = value
-
-    return result
+    return normal
 
 
 
@@ -186,3 +180,5 @@ def clm(description, resource_id=None, content_key=None, service=None):
 
     return msg
 
+def t():
+    print "hi"
