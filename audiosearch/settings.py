@@ -71,7 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'audiosearch.middlewares.AudiosearchPreprocessor',
+    'audiosearch.middlewares.Normalizer',
 )
 
 ROOT_URLCONF = 'audiosearch.urls'

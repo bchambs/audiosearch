@@ -35,10 +35,10 @@ class ENConsumer(object):
                 if code == ENConsumer.SUCCESS:
                     data = json_response['response'][package.ECHO_NEST_KEY]
 
-                    if len(data) < 1:
+                    if len(data):
+                        return data
+                    else:
                         raise services.EmptyServiceResponse()
-
-                    return data
 
                 # exceeded api_key limit, snooze until timeout
                 elif code == ENConsumer.LIMIT_EXCEEDED:
@@ -50,7 +50,7 @@ class ENConsumer(object):
 
                 # call rejected by echo nest
                 else:
-                    raise services.EchoNestServiceFailure(json_response['response']['status']['message'])
+                    raise services.EchoNestServiceFailure(status_msg)
 
             # invalid request or unable to parse json
             except (requests.RequestException, ValueError, KeyError) as e:

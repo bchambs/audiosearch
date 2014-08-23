@@ -1,15 +1,14 @@
 from __future__ import absolute_import
 
-import ast
 import json
-import urllib
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
 from audiosearch import config as cfg
-from audiosearch.redis import client as cache
+from audiosearch.redis_client import query
+from src.content import CONTENT_KEYS as CK, PREFIXES as PX
 import src.services as services
 import src.utils as utils
 
@@ -122,23 +121,24 @@ def trending(request, **kwargs):
 
 
 # Currently only displays the top 100 artists according to Echo Nest.
-# I have tried to include multiple 'top content' items, but the results
-# are lackluster.  Commented code is for the top 100 songs.
 def music_home(request, **kwargs):
-    resource_id = kwargs.get('resource_id')
+    resource_id = build_id(PX.TOP, "artists", CK.TOP_ARTISTS)
     page = kwargs.get('page')
+    item_count = 15
+
+    resource_map = {
+        CK.TOP_ARTISTS: resource_id
+    }
+
+    query(resource_map, item_count=item_count, page=page)
+    # context.update(content)
+
     context = Context({
         'resource_id': resource_id,
         'page': page,
-        'content_title': 'Popular Artists',
+        'box_title': 'Popular Artists',
+        'rows': item_count,
     })
-
-    service_map = {
-        'top_artists': services.TopArtists(),
-    }
-
-    content = utils.generate_content(resource_id, service_map, trending_track=False, page=page)
-    context.update(content)
 
     return render(request, 'music_home.html', context)
 
@@ -147,36 +147,24 @@ def music_home(request, **kwargs):
 # Display an artist's profile and top 15 songs.
 # url: /music/artist
 def artist_home(request, **kwargs):
-    # normal_GET = normalize(request.GET)
-    # normal_kwargs = normalize(kwargs)
-    resource_name = urllib.unquote_plus(normal_kwargs.get('artist'))
+    artist = kwargs.get('artist')
     
-    if not resource_name:
-        return redirect(top_artists)
+    if not artist:
+        return redirect(music_home)
 
-    prefix = "artist:"
-    resource_id = prefix + resource_name
-    track_count = 15
+    
 
-    context = Context({
-        'resource_id': resource_id,
-        'resource_name': resource_name,
-        'content_description': "Popular Tracks",
-        'home_page': True,
-        'data_is_paged': False,
-        'use_generic_key': False,
-        'item_count': track_count,
-
-        
-    })
-
-    service_map = {
-        'profile': ArtistProfile(resource_name),
-        'songs': ArtistSongs(resource_name),
-    }
+    
 
     content = generate_content(resource_id, service_map, item_count=track_count)
     context.update(content)
+
+    context = Context({
+        'artist_name': artist,
+        'resource_name': resource_name,
+        'content_description': "Popular Tracks",
+        'item_count': track_count,
+    })
 
     return render(request, "artist-home.html", context)
 
@@ -339,9 +327,6 @@ Functions for handling ASYNC requests
 # Ajax target for retrieving pending content items.
 # url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
-    print kwargs.get('hello')
-
-    print kwargs.keys()
     resource_id = kwargs.get('resource_id')
     content_key = kwargs.get('content_key')
     page = kwargs.get('page')
@@ -358,22 +343,6 @@ def retrieve_content(request, **kwargs):
             json_context['data'] = page_resource(page, content.get('data'), item_count)
 
     return HttpResponse(json.dumps(json_context), content_type="application/json")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Remove resource_id from cache.
@@ -396,3 +365,14 @@ def clear_resource(request, **kwargs):
     return HttpResponse(json.dumps({}), content_type="application/json")
 
 
+# Create redis key for a resource.
+def build_id(resource_type, resource_name, content_type):
+    separator = ":::"
+
+    seq = resource_type, resource_name, content_type
+
+    # return separator.join(seq)
+    s = separator.join(seq)
+    print s
+
+    return s

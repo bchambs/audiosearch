@@ -3,6 +3,14 @@ from __future__ import absolute_import
 from audiosearch import config as cfg
 
 
+class EchoNestServiceFailure(Exception):
+    pass
+
+class EmptyServiceResponse(Exception):
+    pass
+
+
+
 
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
@@ -24,16 +32,6 @@ class EchoNestService(object):
 
     def __str__(self):
         return "EchoNestService"
-
-
-    def trim(self, data):
-        return data
-
-
-    def build(self, intermediate):
-        return 
-
-
 
 
 class ArtistProfile(EchoNestService):
@@ -93,8 +91,6 @@ class ArtistProfile(EchoNestService):
         return result
 
 
-
-
 class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
@@ -113,8 +109,6 @@ class ArtistSongs(EchoNestService):
 
     def __str__(self):
         return "ArtistSongs"
-
-
 
 
 class SimilarArtists(EchoNestService):
@@ -138,8 +132,6 @@ class SimilarArtists(EchoNestService):
         return "SimilarArtists"
 
 
-
-
 class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
@@ -154,8 +146,6 @@ class SearchArtists(EchoNestService):
 
     def __str__(self):
         return "SearchArtists"
-
-
 
 
 class SearchSongs(EchoNestService):
@@ -181,8 +171,6 @@ class SearchSongs(EchoNestService):
         return "SearchSongs"
 
 
-
-
 # Used to acquire a song's Echo Nest id.
 class SongID(SearchSongs):
 
@@ -194,8 +182,6 @@ class SongID(SearchSongs):
 
     def __str__(self):
         return "SongID"
-
-
 
 
 class Playlist(EchoNestService):
@@ -216,11 +202,9 @@ class Playlist(EchoNestService):
         return "Playlist"
 
 
-
-
 class SongPlaylist(Playlist):
     def __init__(self, song_title, artist_name):
-        super(SongPlaylist, self).__init__(self.TYPE_, self.METHOD, song_title, self.BUCKETS)
+        super(SongPlaylist, self).__init__(song_title, artist_name)
         self.payload['type'] = "song-radio"
         self.dependency = SongID(song_title, artist_name)
 
@@ -241,11 +225,9 @@ class SongPlaylist(Playlist):
             raise EmptyServiceResponse()
 
 
-
-
 class ArtistPlaylist(Playlist):
     def __init__(self, artist_name):
-        super(ArtistPlaylist, self).__init__(self.TYPE_, self.METHOD, artist_name, self.BUCKETS)
+        super(ArtistPlaylist, self).__init__(artist_name)
         self.payload['artist'] = artist_name
         self.payload['variety'] = 1
         self.payload['type'] = "artist-radio"
@@ -253,8 +235,6 @@ class ArtistPlaylist(Playlist):
 
     def __str__(self):
         return "ArtistPlaylist"
-
-
 
 
 class SongProfile(EchoNestService):
@@ -299,24 +279,10 @@ class SongProfile(EchoNestService):
         if not audio: 
             raise EmptyServiceResponse()
 
-        # convert song duration, letter = float, word = string
         try:
-            t = audio['duration']
-            time = str(t)
-            minutes = time.split('.')[0]
-
-            if len(minutes) > 1:
-                m = int(minutes) / 60
-                s = round(t - (m * 60))
-                seconds = str(s).split('.')[0]
-
-                if len(seconds) < 2:
-                    seconds = seconds + "0"
-
-                result['duration'] = "(%s:%s)" %(m, seconds)
-            else:
-                result['duration'] = "(:%s)" %(minutes[0])
-        except KeyError, IndexError:
+            t = audio.get('duration')
+            result['duration'] = convert_seconds(t)
+        except AttributeError, IndexError:
             pass
 
         result['liveness'] = to_percent(audio.get('liveness'))
@@ -331,8 +297,7 @@ class SongProfile(EchoNestService):
         return result
 
 
-
-
+# TODO: create scheduled service to update this.
 class TopArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'top_hottt'
@@ -343,6 +308,7 @@ class TopArtists(EchoNestService):
     def __init__(self):
         super(TopArtists, self).__init__(self.TYPE_, self.METHOD, "top_artists")
         self.payload['results'] = cfg.RESULTS
+        self.ttl = -1
 
 
     def __str__(self):
@@ -351,23 +317,33 @@ class TopArtists(EchoNestService):
 
 
 
-class EchoNestServiceFailure(Exception):
-    pass
-
-
-
-
-class EmptyServiceResponse(Exception):
-    pass
-
-
-
-
 def to_percent(float):
     p = round(float * 100)
     percent = str(p).split('.')
 
-    if len(percent) > 0:
-        return percent[0] + " %"
+    try:
+        s =  percent[0] + " %"
+    except IndexError:
+        s =  ''
+
+    return s
+
+
+
+
+# Used to display (M:S) duration on song profile.
+def convert_seconds(t):
+    time = str(t)
+    minutes = time.split('.')[0]
+
+    if len(minutes) > 1:
+        m = int(minutes) / 60
+        s = round(t - (m * 60))
+        seconds = str(s).split('.')[0]
+
+        if len(seconds) < 2:
+            seconds = seconds + "0"
+
+        return "(%s:%s)" %(m, seconds)
     else:
-        return ''
+        return "(:%s)" %(minutes[0])

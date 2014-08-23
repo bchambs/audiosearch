@@ -7,12 +7,59 @@ from redis import WatchError
 
 from audiosearch import config as cfg
 from audiosearch.config import T_HASH, T_CONTENT, T_MIN, T_COUNT
-from audiosearch.redis import client as cache
+from audiosearch.redis_client import store
 from src.consumer import ENConsumer
 import src.services as services
 
 
 logger = logging.getLogger("general_logger")
+
+
+# Consume RESTful service, process response data, and store in cache.
+@shared_task
+def generate_resource(resource_id, content_key, service):
+    pipe = cache.pipeline()
+
+    try:
+        if service.dependency:
+            intermediate = ENConsumer.consume(service.dependency)
+            service.build(intermediate)
+
+        echo_nest_response = ENConsumer.consume(service)
+
+        try:
+            content = service.trim(echo_nest_response)
+        except AttributeError:
+            pass
+
+        content_struct = {
+            'status': "complete",
+            'data': content,
+        }
+
+        pipe.hset(resource_id, content_key, content_struct)
+
+    # Received error message in EchoNest response.
+    except services.EchoNestServiceFailure as err_msg:
+        content_struct = {
+            'status': "failed",
+            'error_message': str(err_msg),
+        }
+        pipe.hset(resource_id, content_key, content_struct)
+
+        logger.warning("Service Failure::%s, %s, %s") %(resource_id, content_key, service)
+        logger.warning("Error   Message::%s") %(err_msg)
+        
+    # Service or dependency returned zero results.
+    except services.EmptyServiceResponse:
+        content_struct = {
+            'status': "empty",
+            'error_message': "None.",
+        }
+        pipe.hset(resource_id, content_key, content_struct)
+
+    pipe.expire(resource_id, service.ttl)
+    pipe.execute()
 
 
 @shared_task
@@ -42,50 +89,6 @@ def log_dbsize():
         logger.info("%s:%s" %(item, views))
     logger.info("%s" %(bottom_banner))
 
-
-
-
-@shared_task
-def acquire_resource(resource_id, content_key, service):
-    pipe = cache.pipeline()
-
-    try:
-        if service.dependency:
-            intermediate = ENConsumer.consume(service.dependency)
-            service.build(intermediate)
-
-        echo_nest_response = ENConsumer.consume(service)
-        content = service.trim(echo_nest_response)
-
-        content_struct = {
-            'status': "complete",
-            'data': content,
-        }
-
-        pipe.hset(resource_id, content_key, content_struct)
-
-    except services.EchoNestServiceFailure as err_msg:
-        content_struct = {
-            'status': "failed",
-            'error_message': str(err_msg),
-        }
-        pipe.hset(resource_id, content_key, content_struct)
-
-        logger.warning("Service Failure::%s, %s, %s") %(resource_id, content_key, service)
-        logger.warning("Error   Message::%s") %(err_msg)
-        
-    except services.EmptyServiceResponse:
-        content_struct = {
-            'status': "empty",
-            'error_message': "None.",
-        }
-        pipe.hset(resource_id, content_key, content_struct)
-
-    pipe.expire(resource_id, service.ttl)
-    pipe.execute()
-
-
-    
 
 # T_MIN, min_list = List tracking 
 # T_CONTENT, content = Hash of top [T_COUNT] trending items
