@@ -6,7 +6,7 @@ from time import sleep
 
 import requests
 
-from audiosearch import config as cfg
+import audiosearch.constants as constants
 import src.services as services
 
 
@@ -23,7 +23,7 @@ class ENConsumer(object):
     def consume(package):
         attempt = 0
 
-        while attempt < cfg.CALL_LIMIT:
+        while attempt < constants.CALL_LIMIT:
             try:
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()

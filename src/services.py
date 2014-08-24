@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
-from audiosearch import config as cfg
+import audiosearch.constants as constants
+
 
 
 class EchoNestServiceFailure(Exception):
@@ -17,24 +18,21 @@ class EchoNestService(object):
     _VERSION = "v4"
 
 
-    def __init__(self, type_, method, resource_name, buckets=None):
-        self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
-        self.ttl = cfg.REDIS_TTL
+    def __init__(self, type_, method, buckets=None):
+        self.dependency = None
         self.payload = {
-            'api_key': cfg.API_KEY,
+            'api_key': constants.API_KEY,
+            'bucket': buckets,
             'format': "json",
         }
-        self.resource_name = resource_name
-        self.dependency = None
-        if buckets:
-            self.payload['bucket'] = buckets
+        self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
 
 
     def __str__(self):
         return "EchoNestService"
 
 
-class ArtistProfile(EchoNestService):
+class ArtistProfileService(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'profile'
     BUCKETS = [
@@ -48,13 +46,13 @@ class ArtistProfile(EchoNestService):
     ECHO_NEST_KEY = 'artist'
 
 
-    def __init__(self, artist_name):
-        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, artist_name, self.BUCKETS)
-        self.payload['name'] = artist_name
+    def __init__(self, artist):
+        super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        self.payload['name'] = artist
 
 
     def __str__(self):
-        return "ArtistProfile"
+        return "ArtistProfileService"
 
 
     def trim(self, data):
@@ -67,7 +65,7 @@ class ArtistProfile(EchoNestService):
 
         genres = data.get('genres')
         if genres:
-            genres = genres[:cfg.GENRE_COUNT]
+            genres = genres[:constants.GENRE_COUNT]
             result['genres'] = []
 
             for genre in genres:
@@ -91,7 +89,7 @@ class ArtistProfile(EchoNestService):
         return result
 
 
-class ArtistSongs(EchoNestService):
+class ArtistSongsService(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     BUCKETS = [
@@ -101,17 +99,17 @@ class ArtistSongs(EchoNestService):
 
 
     def __init__(self, artist_name):
-        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, artist_name, self.BUCKETS)
+        super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
         self.payload['artist'] = artist_name
-        self.payload['results'] = cfg.RESULTS
+        self.payload['results'] = constants.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
 
 
     def __str__(self):
-        return "ArtistSongs"
+        return "ArtistSongsService"
 
 
-class SimilarArtists(EchoNestService):
+class SimilarArtistsService(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'similar'
     BUCKETS = [
@@ -123,32 +121,32 @@ class SimilarArtists(EchoNestService):
 
 
     def __init__(self, artist_name):
-        super(SimilarArtists, self).__init__(self.TYPE_, self.METHOD, artist_name, self.BUCKETS)
+        super(SimilarArtistsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
         self.payload['name'] = artist_name
-        self.payload['results'] = cfg.RESULTS
+        self.payload['results'] = constants.RESULTS
 
 
     def __str__(self):
-        return "SimilarArtists"
+        return "SimilarArtistsService"
 
 
-class SearchArtists(EchoNestService):
+class SearchArtistsService(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
     ECHO_NEST_KEY = 'artists'
 
 
-    def __init__(self, query):
-        super(SearchArtists, self).__init__(self.TYPE_, self.METHOD, query)
-        self.payload['name'] = query
-        self.payload['results'] = cfg.RESULTS
+    def __init__(self, artist_name):
+        super(SearchArtistsService, self).__init__(self.TYPE_, self.METHOD)
+        self.payload['name'] = artist_name
+        self.payload['results'] = constants.RESULTS
 
 
     def __str__(self):
-        return "SearchArtists"
+        return "SearchArtistsService"
 
 
-class SearchSongs(EchoNestService):
+class SearchSongsService(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'search'
     BUCKETS = [
@@ -158,23 +156,23 @@ class SearchSongs(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, query, artist_name=None):
-        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, query, self.BUCKETS)
-        self.payload['title'] = query
+    def __init__(self, song_title, artist_name=None):
+        super(SearchSongsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        self.payload['title'] = song_title
         self.payload['artist'] = artist_name
-        self.payload['results'] = cfg.RESULTS
+        self.payload['results'] = constants.RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
 
 
     def __str__(self):
-        return "SearchSongs"
+        return "SearchSongsService"
 
 
 # Used to acquire a song's Echo Nest id.
-class SongID(SearchSongs):
+class SongID(SearchSongsService):
 
-    def __init__(self, song_title, artist_name):
+    def __init__(self, artist_name, song_title):
         super(SongID, self).__init__(song_title, artist_name=artist_name)
         self.payload['results'] = 1
         self.payload['song_type'] = None
@@ -193,24 +191,24 @@ class Playlist(EchoNestService):
     ECHO_NEST_KEY = 'songs'
     
 
-    def __init__(self, artist_name, song_title=None):
-        super(Playlist, self).__init__(self.TYPE_, self.METHOD, song_title or artist_name, self.BUCKETS)
-        self.payload['results'] = cfg.RESULTS
+    def __init__(self):
+        super(Playlist, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        self.payload['results'] = constants.RESULTS
 
 
     def __str__(self):
         return "Playlist"
 
 
-class SongPlaylist(Playlist):
-    def __init__(self, song_title, artist_name):
-        super(SongPlaylist, self).__init__(song_title, artist_name)
+class SongPlaylistService(Playlist):
+    def __init__(self, artist_name, song_title):
+        super(SongPlaylistService, self).__init__()
         self.payload['type'] = "song-radio"
         self.dependency = SongID(song_title, artist_name)
 
 
     def __str__(self):
-        return "SongPlaylist"
+        return "SongPlaylistService"
 
 
     # Song playlists require an Echo Nest id to be used as a seed.
@@ -225,19 +223,19 @@ class SongPlaylist(Playlist):
             raise EmptyServiceResponse()
 
 
-class ArtistPlaylist(Playlist):
+class ArtistPlaylistService(Playlist):
     def __init__(self, artist_name):
-        super(ArtistPlaylist, self).__init__(artist_name)
+        super(ArtistPlaylistService, self).__init__()
         self.payload['artist'] = artist_name
         self.payload['variety'] = 1
         self.payload['type'] = "artist-radio"
 
 
     def __str__(self):
-        return "ArtistPlaylist"
+        return "ArtistPlaylistService"
 
 
-class SongProfile(EchoNestService):
+class SongProfileService(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'profile'
     BUCKETS = [
@@ -249,13 +247,13 @@ class SongProfile(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, song_title, artist_name):
-        super(SongProfile, self).__init__(self.TYPE_, self.METHOD, song_title, self.BUCKETS)
-        self.dependency = SongID(song_title, artist_name)
+    def __init__(self, artist_name, song_title):
+        super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        self.dependency = SongID(artist_name, song_title)
 
 
     def __str__(self):
-        return "SongProfile"
+        return "SongProfileService"
 
 
     # Song playlists require an Echo Nest id.
@@ -298,25 +296,29 @@ class SongProfile(EchoNestService):
 
 
 # TODO: create scheduled service to update this.
-class TopArtists(EchoNestService):
+class TopArtistsService(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'top_hottt'
+    BUCKETS = [
+        'hotttnesss_rank',
+    ]
 
     ECHO_NEST_KEY = 'artists'
 
 
     def __init__(self):
-        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, "top_artists")
-        self.payload['results'] = cfg.RESULTS
-        self.ttl = -1
+        super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
+        self.payload['results'] = constants.RESULTS
 
 
     def __str__(self):
-        return "TopArtists"
+        return "TopArtistsService"
 
 
 
 
+# TODO: remove index error, move try to caller for None str
 def to_percent(float):
     p = round(float * 100)
     percent = str(p).split('.')
@@ -347,3 +349,9 @@ def convert_seconds(t):
         return "(%s:%s)" %(m, seconds)
     else:
         return "(:%s)" %(minutes[0])
+
+
+
+
+
+

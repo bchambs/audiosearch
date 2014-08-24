@@ -6,11 +6,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from audiosearch import config as cfg
 from audiosearch.redis_client import query
-from src.content import CONTENT_KEYS as CK, PREFIXES as PX
-import src.services as services
-import src.utils as utils
+import src.content as content
+import src.tasks as tasks
 
 
 
@@ -122,25 +120,28 @@ def trending(request, **kwargs):
 
 # Currently only displays the top 100 artists according to Echo Nest.
 def music_home(request, **kwargs):
-    resource_id = build_id(PX.TOP, "artists", CK.TOP_ARTISTS)
+    resources = [
+        content.TopArtists(),
+    ]
     page = kwargs.get('page')
     item_count = 15
 
-    resource_map = {
-        CK.TOP_ARTISTS: resource_id
-    }
+    complete, failed, new, pending = query(resources, item_count=item_count, 
+        page=page)
 
-    query(resource_map, item_count=item_count, page=page)
-    # context.update(content)
+    if new:
+        generate_resources(new)
 
     context = Context({
-        'resource_id': resource_id,
         'page': page,
         'box_title': 'Popular Artists',
         'rows': item_count,
+        'complete': complete,
+        'failed': failed,
+        'pending': pending + new,
     })
 
-    return render(request, 'music_home.html', context)
+    return render(request, 'music-home.html', context)
 
 
 
@@ -152,21 +153,33 @@ def artist_home(request, **kwargs):
     if not artist:
         return redirect(music_home)
 
-    
+    resources = [
+        content.ArtistProfile(artist),
+        content.ArtistSongs(artist),
+    ]
+    item_count = 15
 
-    
+    complete, failed, new, pending = query(resources, item_count=item_count)
 
-    content = generate_content(resource_id, service_map, item_count=track_count)
-    context.update(content)
+    if new:
+        generate_resources(new)
 
     context = Context({
-        'artist_name': artist,
-        'resource_name': resource_name,
-        'content_description': "Popular Tracks",
-        'item_count': track_count,
+        'rows': item_count,
+        'complete': complete,
+        'failed': failed,
+        'pending': pending + new,
     })
 
-    return render(request, "artist-home.html", context)
+    try:
+        asdf = context['content']['artist_songs']
+        data = asdf['data']
+        print asdf.keys()
+        print len(data)
+    except KeyError:
+        pass
+
+    return render(request, 'artist-home.html', context)
 
 
 
@@ -327,22 +340,23 @@ Functions for handling ASYNC requests
 # Ajax target for retrieving pending content items.
 # url: /ajax/retrieval/
 def retrieve_content(request, **kwargs):
-    resource_id = kwargs.get('resource_id')
-    content_key = kwargs.get('content_key')
-    page = kwargs.get('page')
-    item_count = kwargs.get('item_count')
-    json_context = {}
+    # resource_id = kwargs.get('resource_id')
+    # content_key = kwargs.get('content_key')
+    # page = kwargs.get('page')
+    # item_count = kwargs.get('item_count')
+    # json_context = {}
 
-    cache_data = cache.hget(resource_id, content_key)
+    # cache_data = cache.hget(resource_id, content_key)
 
-    if cache_data:
-        content = ast.literal_eval(cache_data)
-        json_context['status'] = content.get('status')
+    # if cache_data:
+    #     content = ast.literal_eval(cache_data)
+    #     json_context['status'] = content.get('status')
 
-        if json_context['status'] == "complete":
-            json_context['data'] = page_resource(page, content.get('data'), item_count)
+    #     if json_context['status'] == "complete":
+    #         json_context['data'] = page_resource(page, content.get('data'), item_count)
 
-    return HttpResponse(json.dumps(json_context), content_type="application/json")
+    # return HttpResponse(json.dumps(json_context), content_type="application/json")
+    return HttpResponse(json.dumps({}), content_type="application/json")
 
 
 # Remove resource_id from cache.
@@ -365,14 +379,10 @@ def clear_resource(request, **kwargs):
     return HttpResponse(json.dumps({}), content_type="application/json")
 
 
-# Create redis key for a resource.
-def build_id(resource_type, resource_name, content_type):
-    separator = ":::"
 
-    seq = resource_type, resource_name, content_type
 
-    # return separator.join(seq)
-    s = separator.join(seq)
-    print s
 
-    return s
+def generate_resources(new):
+    for resource in new:
+        service = resource.build()
+        tasks.call_echo_nest.delay(resource.key, service, resource.TTL)
