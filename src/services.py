@@ -4,13 +4,11 @@ import audiosearch.constants as constants
 
 
 
-class EchoNestServiceFailure(Exception):
+class ServiceError(Exception):
     pass
 
-class EmptyServiceResponse(Exception):
+class EmptyResponseError(Exception):
     pass
-
-
 
 
 class EchoNestService(object):
@@ -56,7 +54,6 @@ class ArtistProfileService(EchoNestService):
 
 
     def trim(self, data):
-        print self.url
         result = {}
 
         location_dict = data.get('artist_location')
@@ -212,15 +209,15 @@ class SongPlaylistService(Playlist):
 
 
     # Song playlists require an Echo Nest id to be used as a seed.
-    def build(self, intermediate):
+    def combine_dependency(self, intermediate):
         try:
             self.payload['song_id'] = intermediate[0].get('id')
 
             if not self.payload['song_id']:
-                raise EmptyServiceResponse()
+                raise EmptyResponseError()
 
         except IndexError:
-            raise EmptyServiceResponse()
+            raise EmptyResponseError()
 
 
 class ArtistPlaylistService(Playlist):
@@ -247,9 +244,9 @@ class SongProfileService(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, artist_name, song_title):
+    def __init__(self, artist, song):
         super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.dependency = SongID(artist_name, song_title)
+        self.dependency = SongID(artist, song)
 
 
     def __str__(self):
@@ -257,15 +254,15 @@ class SongProfileService(EchoNestService):
 
 
     # Song playlists require an Echo Nest id.
-    def build(self, intermediate):
+    def combine_dependency(self, intermediate):
         try:
             self.payload['song_id'] = intermediate[0].get('id')
 
             if not self.payload['song_id']:
-                raise EmptyServiceResponse()
+                raise EmptyResponseError()
 
         except IndexError:
-            raise EmptyServiceResponse()
+            raise EmptyResponseError()
 
 
     def trim(self, data):
@@ -275,7 +272,7 @@ class SongProfileService(EchoNestService):
         audio = data.get('audio_summary')
 
         if not audio: 
-            raise EmptyServiceResponse()
+            raise EmptyResponseError()
 
         try:
             t = audio.get('duration')

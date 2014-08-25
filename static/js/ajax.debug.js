@@ -3,13 +3,13 @@
 /* global $, jQuery */
 
 
-function remove_resource(resource_id) {
+function remove_resource(resource) {
     'use strict';
 
     $.ajax({
         url: "/ajax/clear/",
         data: {
-            resource_id: resource_id,
+            resource: resource,
         },
         dataType: 'json',
         type: 'GET'

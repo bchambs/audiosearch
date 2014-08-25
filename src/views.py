@@ -2,12 +2,15 @@ from __future__ import absolute_import
 
 import json
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
 from audiosearch.redis_client import query
+from src.content import ARTIST, ARTISTS, SEARCH, SONG, SONGS, TOP, TRENDING
 import src.content as content
+import src.debug as debug
 import src.tasks as tasks
 
 
@@ -121,25 +124,31 @@ def trending(request, **kwargs):
 # Currently only displays the top 100 artists according to Echo Nest.
 def music_home(request, **kwargs):
     resources = [
-        content.TopArtists(),
+        content.Top100(ARTISTS),
     ]
     page = kwargs.get('page')
-    item_count = 15
+    n_items = 15
+    is_home_page = page < 2
 
-    complete, failed, new, pending = query(resources, item_count=item_count, 
-        page=page)
+    available, failed, new, pending = query(resources)
 
     if new:
         generate_resources(new)
 
+    complete = create_template_content(available, page, n_items, 
+        is_home_page) if available else []
+
     context = Context({
+        'resource': "top::None::artists",
+        'title': "Popular Artists",
         'page': page,
-        'box_title': 'Popular Artists',
-        'rows': item_count,
+        'n_items': n_items,
         'complete': complete,
         'failed': failed,
         'pending': pending + new,
     })
+
+    debug.query(complete, failed, new, pending)
 
     return render(request, 'music-home.html', context)
 
@@ -362,18 +371,14 @@ def retrieve_content(request, **kwargs):
 # Remove resource_id from cache.
 # For debugging only.
 def clear_resource(request, **kwargs):
-    resource_id = request.GET.get('resource_id')
-    if resource_id:
-        resource_id = resource_id.replace("&lt;", "<")
-        resource_id = resource_id.replace("&gt;", ">")
-        resource_id = resource_id.replace("&amp;", "&")
-        resource_id = resource_id.replace("&#39;", "'")
+    from audiosearch.redis_client import _cache
+    resource = kwargs.get('resource')
 
-    hit = cache.delete(resource_id)
+    hit = _cache.delete(resource)
     pre = "REMOVED," if hit else "NOT FOUND,"
     banner = '\'' * 14
     print banner
-    print "%s %s" %(pre, resource_id)
+    print "%s %s" %(pre, resource)
     print banner
 
     return HttpResponse(json.dumps({}), content_type="application/json")
@@ -381,8 +386,53 @@ def clear_resource(request, **kwargs):
 
 
 
-
 def generate_resources(new):
     for resource in new:
-        service = resource.build()
-        tasks.call_echo_nest.delay(resource.key, service, resource.TTL)
+        service = resource.build_service()
+        tasks.call_echo_nest.delay(resource.key, service, resource.ttl)
+
+
+
+
+
+def create_template_content(resource_map, page, n_items, is_home_page):
+    complete = {}
+
+    for resource, content in resource_map.items():
+        template_content = {
+            'div_id': resource.template_id,
+            'title': resource.title,
+            'display_page_nav': is_home_page,
+        }
+        paged_content = page_content(content, page, n_items)
+        template_content.update(paged_content)
+        complete[resource.template_id] = template_content
+
+    return complete
+
+
+
+# Create content dict for generate template tables. 
+def page_content(content, page, n_items):
+    paginator = Paginator(content, n_items)
+
+    try:
+        paged = paginator.page(page)
+    except AttributeError:          # Do not page dicts or strs.
+        return content
+    except PageNotAnInteger:
+        paged = paginator.page(1)
+    except EmptyPage:
+        paged = paginator.page(paginator.num_pages)
+
+    # Need to create paged dict because we cannot seralize Django's paged class.
+    paged_content = {
+        'data': paged.object_list,
+        'next': paged.next_page_number() if paged.has_next() else None,
+        'previous': paged.previous_page_number() if paged.has_previous() else None,
+        'current': paged.number,
+        'total': paged.paginator.num_pages,
+        'offset': paged.start_index(),
+    }
+
+    return paged_content

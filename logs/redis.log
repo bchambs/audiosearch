@@ -343,3 +343,32 @@
 [10412] 24 Aug 07:54:18.192 * DB saved on disk
 [10412] 24 Aug 07:54:18.192 * Removing the pid file.
 [10412] 24 Aug 07:54:18.192 # Redis is now ready to exit, bye bye...
+[1123] 25 Aug 01:50:15.894 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.11 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1123
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[1123] 25 Aug 01:50:15.926 # Server started, Redis version 2.8.11
+[1123] 25 Aug 01:50:15.926 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+[1123] 25 Aug 01:50:16.016 * DB loaded from disk: 0.090 seconds
+[1123] 25 Aug 01:50:16.016 * The server is now ready to accept connections on port 6379
+[1123 | signal handler] (1408946161) Received SIGTERM, scheduling shutdown...
+[1123] 25 Aug 01:56:01.257 # User requested shutdown...
+[1123] 25 Aug 01:56:01.257 * Saving the final RDB snapshot before exiting.
+[1123] 25 Aug 01:56:01.285 * DB saved on disk
+[1123] 25 Aug 01:56:01.285 * Removing the pid file.
+[1123] 25 Aug 01:56:01.285 # Redis is now ready to exit, bye bye...

@@ -1,11 +1,17 @@
 from __future__ import absolute_import
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import redis
 
-from audiosearch.constants import EMPTY, FAILED, PENDING
+from audiosearch.constants import HASH_, LIST_, N_CONTENT_ROWS, STRING_
 
+# Key separator.
+K_SEPARATOR = "::"
 
+# Key statusus.
+FAILED = "FAILED"
+PENDING = "PENDING"
+
+# Redis client.
 _HOST = 'localhost'
 _PORT = 6379
 _DATABASE = 0
@@ -13,45 +19,56 @@ _cache = redis.StrictRedis(host=_HOST, port=_PORT, db=_DATABASE)
 _cache.client_setname("django_redis_client")
 
 
-def query(resources, **kwargs):
+def query(resources, n_items=None):
     global _cache
 
-    complete = {}
-    failed = []
+    n_items = n_items or N_CONTENT_ROWS     # Size of resource list to return.
+
+    # Dict containing all available resources (cache hit). 
+    # Key = resource object.  Value = redis value at resource.key.
+    available = {}
+
+    # List of unavailable resources grouped by status.
+    failed = []    
     new = []
-    pending = []
+    pending = []  
 
-    page = kwargs.get('page')
-    item_count = kwargs.get('item_count')
-
+    # If resource.key is in cache, branch by value type, and determine status.
     for resource in resources:
-        if resource.TTL:
-            _cache.expire(resource.TTL)
+        key = resource.key
 
-        key_type = _cache.type(resource.key)
+        # Refresh ttl.
+        if resource.ttl:
+            pipe = _cache.pipeline()
+            pipe.expire(key, resource.TTL)
+            pipe.exists(key)
+            expire, hit = pipe.execute()
+        else:
+            hit = _cache.exists(key)
 
-        if key_type == "list":
-            value = _cache.lrange(resource.key, 0,-1)
-            complete[resource.content_id] = page_data(value, page, item_count)
+        if hit:
+            d_type = resource.d_type
+            template_id = resource.template_id
 
-        elif key_type == "string":
-            value = _cache.get(resource.key)
+            if d_type == LIST_:
+                available[resource] = _cache.lrange(key, 0,-1)
 
-            if value == PENDING:
-                pending.append(resource)
-            elif value == FAILED:
-                failed.append(resource)
-            else:
-                complete[resource.content_id] = resource
+            elif d_type == STRING_:
+                value = _cache.get(key)
 
-        elif key_type == "hash":
-            complete[resource.content_id] = _cache.hgetall(resource.key)
+                if value == PENDING:
+                    pending.append(resource)
+                elif value == FAILED:
+                    failed.append(resource)
+                else:
+                    available[resource] = value
 
-        # Resource not in cache.
+            elif d_type == HASH_:
+                available[resource] = _cache.hgetall(key)
         else:
             new.append(resource)    
 
-    return complete, failed, new, pending
+    return available, failed, new, pending
 
 
 
@@ -70,26 +87,5 @@ def store(key, value, ttl):
 
 
 
-def page_data(value, page, item_count):
-    count = item_count or constants.ITEMS_PER_PAGE
-    paginator = Paginator(value, count)
 
-    try:
-        paged = paginator.page(page)
-    except PageNotAnInteger:
-        paged = paginator.page(1)
-    except EmptyPage:
-        paged = paginator.page(paginator.num_pages)
-
-    # Need to create paged dict because we cannot seralize Django's paged class.
-    result = {
-        'data': paged.object_list,
-        'next': paged.next_page_number() if paged.has_next() else None,
-        'previous': paged.previous_page_number() if paged.has_previous() else None,
-        'current': paged.number,
-        'total': paged.paginator.num_pages,
-        'offset': paged.start_index(),
-    }
-
-    return result
 

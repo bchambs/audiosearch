@@ -1,7 +1,7 @@
 {% load audiosearch_tags %}
 
 <!-- content tables -->
-<div id="content-tables" class="content center">
+<div id="{{ div_id }}-tables" class="content center">
     <div class="container-table">
         <div class="header">
 
@@ -11,50 +11,29 @@
 
             <!-- spinner -->
             {% if not content %}
-                <div id="content-spinner" class="spinner left">
+                <div id="{{ div_id }}-spinner" class="spinner left">
                     <img src="{{ STATIC_URL }}img/spinner.gif"></img>
                 </div>
             {% endif %}
 
-            <!-- display page nav -->
-            <div id="next" class="right">
-                {% if content.next %}
-                    {% if q_params %}
-                        <a href = "?{{ q_params|build_query_string }}&page={{ content.next }}" >next</a>
-                    {% else %}
-                        <a href = "?page={{ content.next }}" >next</a>
-                    {% endif %}
-                {% endif %}
-            </div>
-
-            <div id="current" class="right">
-                {% if content.next or content.previous and content.current %}
-                    {{ content.current }} of {{ content.total }}
-                {% endif %}
-            </div>
-
-            <div id="previous" class="right">
-                {% if content.previous %}
-                    {% if q_params %}
-                        <a href = "?{{ q_params|build_query_string }}&page={{ content.previous }}" >previous</a>
-                    {% else %}
-                        <a href = "?page={{ content.previous }}" >previous</a>
-                    {% endif %}
-                {% endif %}
-            </div> <!--END display page nav -->
+            {% if content.display_page_nav %}
+                {% include "content_PAGE_NAV.html" %}
+            {% else %}
+                {% include "content_MORE_NAV.html" %}
+            {% endif %}
 
         </div>
 
-        <div id="content-notification" class="content-notification hide">
+        <div id="{{ div_id }}-notification" class="content-notification hide">
         </div>
 
         <!-- content table -->
         {% if content.empty %}
-            <div class="content-notification">
+            <div class="{{ div_id }}-notification">
                 {{ content.empty }}
             </div>
         {% else %}
-            <table id="content-table">
+            <table id="{{ div_id }}-table">
                 {% with content=content spinner_id="content-spinner" %}
                     {% include "content_TBODY.html" %}
                 {% endwith %}

@@ -5,9 +5,9 @@ import logging
 from celery import shared_task
 from redis import WatchError
 
-import audiosearch.constants as constants
 from audiosearch.redis_client import store
 from src.consumer import ENConsumer
+import audiosearch.constants as constants
 import src.services as services
 
 
@@ -20,7 +20,7 @@ def call_echo_nest(key, service, ttl):
     try:
         if service.dependency:
             intermediate = ENConsumer.consume(service.dependency)
-            service.build(intermediate)
+            service.combine_dependency(intermediate)
 
         echo_nest_response = ENConsumer.consume(service)
 
@@ -30,7 +30,7 @@ def call_echo_nest(key, service, ttl):
             data = echo_nest_response
 
     # Received error message in EchoNest response.
-    except services.EchoNestServiceFailure as err_msg:
+    except services.ServiceError as err_msg:
         logger.warning("Service Failure::%s, %s") %(key, service)
         logger.warning("Error   Message::%s") %(err_msg)
 

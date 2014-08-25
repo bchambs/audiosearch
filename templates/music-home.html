@@ -27,10 +27,10 @@
     <hr>
 
     <div class="subtitle center">
-        The top 100 most popular artists according to the Echo Nest.
+        Music ranked by popularity according to the Echo Nest.
     </div>
-    
-    {% with content=complete.top_artists spinner_id="top_artists-spinner" %}
+
+    {% with content=complete.top_artists div_id='top_artists' content_title=title %}
         {% include "content_CONTAINER.html" %}
     {% endwith %}
     

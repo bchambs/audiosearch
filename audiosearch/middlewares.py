@@ -22,13 +22,13 @@ class Normalizer(object):
 
         # Query parameters.  Javascript strings (from ajax) must be unescaped (?).
         if len(request.GET):
-            for param in request.GET:
+            for k, v in request.GET.items():
                 try:
                     # un_param = unescape_html(param) 
                     # vkwargs[param] = normalize(un_param)
-                    vkwargs[param] = normalize(param)
+                    vkwargs[k] = normalize(v)
                 except AttributeError:
-                    vkwargs[param] = param
+                    vkwargs[k] = v
 
 
 # Convert item to lowercase, strip white space, and remove consecutive spaces.
