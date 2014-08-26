@@ -56,6 +56,7 @@ def fetch(key, ttl):
     """
 
     global _cache
+    count = 0
 
     with _cache.pipeline() as pipe:
         # Refresh ttl before assessing status.
@@ -66,6 +67,7 @@ def fetch(key, ttl):
         # are modified in the body of the loop, the loop will restart to ensure
         # the block is atomic.  
         while True:
+            count += 1
             try:
                 pipe.watch(_PENDING_RESOURCES, _FAILED_RESOURCES)
 
@@ -129,6 +131,8 @@ def fetch(key, ttl):
         data = value
     except NameError:
         data = None
+
+    print "loop count: %s" %count
 
     return status, data
 

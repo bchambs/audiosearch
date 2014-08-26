@@ -8,28 +8,29 @@ from django.template import Context
 
 from audiosearch.constants import AVAIL, FAIL, NEW, PEND
 from audiosearch.redis_client import fetch
-from src.content import ARTIST, ARTISTS, SEARCH, SONG, SONGS, TOP, TRENDING
-from src.template import 
-import src.content as content
-# import src.debug as debug
+from src.resource import ARTIST, ARTISTS, SEARCH, SONG, SONGS, TOP, TRENDING
+from src.template import build_content_from_data, NAV_STYLE
+import src.resource as resource
 import src.tasks as tasks
 
 
-
 def music_home(request, **kwargs):
-    page = kwargs.get('page') or 0
+    page = kwargs.get('page', 0)
     n_items = 15
+    nav = NAV_STYLE.more
     resources = [
-        content.Top100(ARTISTS),
+        resource.Top100(ARTISTS),
     ]
 
-    available, failed, new, pending = check_cache(resources)
+    available, failed, new, pending = _check_cache(resources)
 
     if new:
         _generate_resource_data(new)
 
-    # complete = (
-    #     if available else [])
+    if available:
+        complete = build_content_from_data(available, nav, page, n_items)
+    else:
+        complete = []
 
     context = Context({
         'resource': "top::none::artists",
@@ -44,7 +45,7 @@ def music_home(request, **kwargs):
     return render(request, 'music-home.html', context)
 
 
-def check_cache(resources):
+def _check_cache(resources):
     """Build status list by resource availability."""
 
     # Resource status map. 

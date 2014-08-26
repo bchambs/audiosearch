@@ -47,9 +47,9 @@ def build_keys(prefix, suffix, root=None):
     key = K_SEPARATOR.join(key_parts)
 
     # Template content id.
-    template_id = "%s%s%s" %(prefix, T_SEPARATOR, suffix)
+    div_id = "%s%s%s" %(prefix, T_SEPARATOR, suffix)
 
-    return key, template_id
+    return key, div_id
 
 
 class Profile(object):
@@ -72,7 +72,7 @@ class Profile(object):
             root = [artist]
 
         self.title = "%s Profile" %(self.r_type.title())
-        self.key, self.template_id = build_keys(self.r_type, self.c_type, root)
+        self.key, self.div_id = build_keys(self.r_type, self.c_type, root)
 
 
     def __str__(self):
@@ -103,7 +103,7 @@ class Top100(object):
             raise InvalidContentError()
 
         self.title = "Popular %s" %(self.c_type.title())
-        self.key, self.template_id = build_keys(self.r_type, self.c_type)
+        self.key, self.div_id = build_keys(self.r_type, self.c_type)
 
 
     def __str__(self):

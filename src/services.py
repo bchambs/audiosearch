@@ -16,6 +16,7 @@ from audiosearch.constants import API_KEY, N_SRVC_RESULTS
 class ServiceError(Exception):
     pass
 
+
 class EmptyResponseError(Exception):
     pass
 
@@ -23,15 +24,16 @@ class EmptyResponseError(Exception):
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
-    payload = {
-        'api_key': API_KEY,
-        'format': "json",
-    }
+    
 
 
     def __init__(self, type_, method, buckets=None):
         self.dependency = None
-        self.payload['bucket'] = buckets
+        self.payload = {
+            'api_key': API_KEY,
+            'format': "json",
+            'bucket': buckets,
+        }
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
 
 
@@ -327,8 +329,7 @@ class TopArtistsService(EchoNestService):
 
 
     def __init__(self):
-        super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+        super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
         self.payload['results'] = N_SRVC_RESULTS
 
 
