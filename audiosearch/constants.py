@@ -1,15 +1,13 @@
 # Echo Nest API.
 API_KEY = 'QZQG43T7640VIF4FN'
 CALL_SNOOZE = 1         # In seconds.
-CALL_TIMEOUT = 15
-CALL_LIMIT = 15
+CALL_ATTEMPT_LIMIT = 15
 N_SRVC_RESULTS = 100
 
 
 # Redis cache.
 STANDARD_TTL = 3000     # In seconds.
-PERSIST = 0             # Does not expire.
-K_SEPARATOR = '::'      # Key separator.
+PERSIST = 0             # Will not expire.
 
 
 # Cache key status codes.
@@ -33,6 +31,6 @@ N_GENRE_TAGS = 5
 
 # Messages.
 MSG_SERVICE_TIMOUT = "Audiosearch is receiving too many requests.  Try again soon!"
-# EMPTY_MSG = "Your search did not match any music data."
+MSG_NO_SEARCH_DATA = "Your search did not match any music data."
 MSG_NO_DATA = "We could not find data for this item."
 MSG_UNEXPECTED_STORAGE_TYPE = "Unexpected data type received."

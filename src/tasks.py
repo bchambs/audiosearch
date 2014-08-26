@@ -1,3 +1,7 @@
+"""
+TODO: create scheduled task to track cache hit / miss stats.
+TODO: first action is to store key in pending set.
+"""
 from __future__ import absolute_import
 import logging
 

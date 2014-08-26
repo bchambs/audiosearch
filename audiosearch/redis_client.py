@@ -36,16 +36,17 @@ class UnexpectedTypeError(Exception):
 
 class RedisDataType(object):
     """Redis data storage type enums."""
-    string_ = 'string'
-    list_ = 'list'
-    set_ = 'set'
-    zset_ = 'zset'
-    hash_ = 'hash'
+    # string_ = 'string'
+    # list_ = 'list'
+    # set_ = 'set'
+    # zset_ = 'zset'
+    # hash_ = 'hash'
+    string_ = 0
+    list_ = 1
+    set_ = 2
+    zset_ = 3
+    hash_ = 4
 _RDT = RedisDataType()
-
-
-
-
 
 
 def fetch(key, ttl):
@@ -88,12 +89,12 @@ def fetch(key, ttl):
                 elif is_available:
                     value_type = pipe.type(key).execute().pop()
 
-                    if value_type == _RDT.list_:
+                    if value_type is _RDT.list_:
                         status = AVAIL
                         value = _cache.lrange(key, 0,-1)
                         break
 
-                    elif value_type == _RDT.hash_:
+                    elif value_type is _RDT.hash_:
                         status = AVAIL
                         value = _cache.hgetall(key)
                         break

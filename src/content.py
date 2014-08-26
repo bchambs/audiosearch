@@ -3,7 +3,6 @@ Redis key format:
     resource_type :: *names :: content_type
     resource_type :: none :: content_type
 
-
 c_type = content type (key suffix)
 r_type = resource type (key prefix)
 
@@ -11,33 +10,35 @@ r_type = resource type (key prefix)
 
 from __future__ import absolute_import
 
-from audiosearch.constants import K_SEPARATOR, STANDARD_TTL
+from audiosearch.constants import STANDARD_TTL
 import src.services as services
 
 
 # TODO: move this to enum
 # Key prefixes representing the content type of a resource.
-ARTIST = "artist"
-SEARCH = "search"
-SONG = "song"
-TOP = "top"
-TRENDING = "trending"
+ARTIST = 'artist'
+SEARCH = 'search'
+SONG = 'song'
+TOP = 'top'
+TRENDING = 'trending'
 
 # TODO: move this to enum
 # Key suffixes representing the content type. 
-ARTISTS = "artists"
-PLAYLIST = "playlist"
-PROFILE = "profile"
-SIMILAR = "similar"
-SONGS = "songs"
+ARTISTS = 'artists'
+PLAYLIST = 'playlist'
+PROFILE = 'profile'
+SIMILAR = 'similar'
+SONGS = 'songs'
 
-# Template mappings.
-T_SEPARATOR = "_"
+# TODO: move this to enum
+# Separators for key and id generation.
+T_SEPARATOR = "_"       # Template id.
+K_SEPARATOR = '::'      # Resource key.
 
 
 class InvalidContentError(Exception):
     """Invalid parameters passed to content constructor."""
-        
+
 
 def build_keys(prefix, suffix, root=None):
     # Redis cache key.

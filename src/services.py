@@ -1,3 +1,12 @@
+"""
+TODO: redo services similar to how content classes are structured. 
+TODO: content.py assigns ttl, this should be determined by service class.
+TODO: have ttl be determined by resource popularity with a tier system.
+    1. top 5%, ttl = 6000 seconds
+    2. next 30%, ttl = 3000 seconds
+    3. rest, ttl = 2000
+"""
+
 from __future__ import absolute_import
 
 from audiosearch.constants import API_KEY, N_SRVC_RESULTS
@@ -70,10 +79,9 @@ class ArtistProfileService(EchoNestService):
         except KeyError:
             pass
         else:
-            genres = genres[:N_GENRE_TAGS]
             data['genres'] = []
 
-            for genre in genres:
+            for genre in genres[:N_GENRE_TAGS]:
                 data['genres'].append(genre['name'])
 
         # Years active.
@@ -276,31 +284,36 @@ class SongProfileService(EchoNestService):
             raise EmptyResponseError()
 
 
-    def process(self, data):
-        data = data[0]
-        result = {}
-
-        audio = data.get('audio_summary')
-
-        if not audio: 
-            raise EmptyResponseError()
-
+    def process(self, raw_data):
         try:
-            t = audio.get('duration')
-            result['duration'] = convert_seconds(t)
-        except AttributeError, IndexError:
-            pass
+            first_result = raw_data.pop()
+        except IndexError:
+            raise EmptyResponseError()
+        else:
+            data = {}
 
-        result['liveness'] = to_percent(audio.get('liveness'))
-        result['danceability'] = to_percent(audio.get('danceability'))
-        result['tempo'] = "%s bpm" %audio.get('tempo')
+            # Echo Nest audio analysis.
+            try:
+                audio = first_result.pop('audio_summary')
+            except KeyError:
+                pass
+            else:
+                data['tempo'] = "%s bpm" %(audio.get('tempo'))
+                data['danceability'] = to_percent(audio.get('danceability'))
+                data['liveness'] = to_percent(audio.get('liveness'))
 
-        result['tracks'] = data.get('tracks')
-        result['song_hotttnesss'] = data.get('song_hotttnesss')
-        result['song_hotttnesss_rank'] = data.get('song_hotttnesss_rank')
-        result['artist_foreign_ids'] = data.get('artist_foreign_ids')
+                # Song duration.
+                try:
+                    duration = audio.pop('duration')
+                    data['duration'] = convert_seconds(duration)
+                except KeyError:
+                    pass
 
-        return result
+            # General data.
+            data['song_hotttnesss'] = first_result.get('song_hotttnesss')
+            data['song_hotttnesss_rank'] = first_result.get('song_hotttnesss_rank')
+
+            return data
 
 
 # TODO: create scheduled service to update this.
@@ -341,27 +354,29 @@ def to_percent(float):
 
 
 # Used to display (M:S) duration on song profile.
-def convert_seconds(t):
-    print "t is %s" %(type(t))
-    print "t is %s" %(type(t))
-    print "t is %s" %(type(t))
-    print "t is %s" %(type(t))
-    print "t is %s" %(type(t))
-    time = str(t)
-    minutes = time.split('.')[0]
+def convert_seconds(duration):
+    print "t is %s" %(type(duration))
+    print "t is %s" %(type(duration))
+    print "t is %s" %(type(duration))
+    print "t is %s" %(type(duration))
+    print "t is %s" %(type(duration))
+    # time = str(duration)
+    # try:
+    #     minutes = time.split('.').pop() # this is wrong
 
-    if len(minutes) > 1:
-        m = int(minutes) / 60
-        s = round(t - (m * 60))
-        seconds = str(s).split('.')[0]
+    # if len(minutes) > 1:
+    #     m = int(minutes) / 60
+    #     s = round(duration - (m * 60))
+    #     seconds = str(s).split('.')[0]
 
-        if len(seconds) < 2:
-            seconds = seconds + "0"
+    #     if len(seconds) < 2:
+    #         seconds = seconds + "0"
 
-        return "(%s:%s)" %(m, seconds)
-    else:
-        return "(:%s)" %(minutes[0])
+    #     return "(%s:%s)" %(m, seconds)
+    # else:
+    #     return "(:%s)" %(minutes[0])
 
+    return ''
 
 
 

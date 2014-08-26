@@ -5,7 +5,7 @@ from time import sleep
 
 import requests
 
-from audiosearch.constants import CALL_LIMIT, MSG_SERVICE_TIMOUT
+from audiosearch.constants import CALL_ATTEMPT_LIMIT, MSG_SERVICE_TIMOUT
 from src.services import EmptyResponseError, ServiceError
 
 
@@ -21,7 +21,7 @@ class ENConsumer(object):
     def consume(package):
         attempt = 0
 
-        while attempt < CALL_LIMIT:
+        while attempt < CALL_ATTEMPT_LIMIT:
             try:
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
