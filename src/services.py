@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-import audiosearch.constants as constants
+from audiosearch.constants import API_KEY, N_SRVC_RESULTS
 
 
 
@@ -14,15 +14,15 @@ class EmptyResponseError(Exception):
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
+    payload = {
+        'api_key': API_KEY,
+        'format': "json",
+    }
 
 
     def __init__(self, type_, method, buckets=None):
         self.dependency = None
-        self.payload = {
-            'api_key': constants.API_KEY,
-            'bucket': buckets,
-            'format': "json",
-        }
+        self.payload['bucket'] = buckets
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
 
 
@@ -45,7 +45,8 @@ class ArtistProfileService(EchoNestService):
 
 
     def __init__(self, artist):
-        super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
         self.payload['name'] = artist
 
 
@@ -53,37 +54,49 @@ class ArtistProfileService(EchoNestService):
         return "ArtistProfileService"
 
 
-    def trim(self, data):
-        result = {}
+    def process(self, raw_data):
+        data = {}
 
-        location_dict = data.get('artist_location')
-        if location_dict:
-            result['location'] = location_dict.get('location')
+        # Artist location.
+        try:
+            location_wrap = raw_data.pop('artist_location')
+            data['location'] = location_wrap.pop('location')
+        except KeyError:
+            pass
 
-        genres = data.get('genres')
-        if genres:
-            genres = genres[:constants.GENRE_COUNT]
-            result['genres'] = []
+        # Genre tags.
+        try:
+            genres = raw_data.pop('genres')
+        except KeyError:
+            pass
+        else:
+            genres = genres[:N_GENRE_TAGS]
+            data['genres'] = []
 
             for genre in genres:
-                result['genres'].append(genre['name'])
+                data['genres'].append(genre['name'])
 
-        years_active = data.get('years_active')
-        if years_active:
-            years_active = years_active[0]
+        # Years active.
+        try:
+            years_active_wrap = raw_data.pop('years_active')
+            years_active = years_active_wrap.pop(0)
+        except IndexError, KeyError:
+            pass
+        else:
             start = years_active.get('start', "Unknown")
             end = years_active.get('end', "Present")
 
-            result['years_active'] = "(%s - %s)" %(start, end)
+            data['years_active'] = "(%s - %s)" %(start, end)
 
-        images = data.get('images')
-        if images:
-            try:
-                result['image'] = images[0]['url']
-            except KeyError:
-                pass
+        # Image urls.
+        try:
+            image_wrap = raw_data.pop('images')
+            image = image_wrap.pop(0)
+            data['image'] = image.pop('url')
+        except IndexError, KeyError:
+            pass
 
-        return result
+        return data
 
 
 class ArtistSongsService(EchoNestService):
@@ -95,10 +108,11 @@ class ArtistSongsService(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, artist_name):
-        super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['artist'] = artist_name
-        self.payload['results'] = constants.RESULTS
+    def __init__(self, artist):
+        super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
+        self.payload['artist'] = artist
+        self.payload['results'] = N_SRVC_RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
 
 
@@ -117,10 +131,11 @@ class SimilarArtistsService(EchoNestService):
     ECHO_NEST_KEY = 'artists'
 
 
-    def __init__(self, artist_name):
-        super(SimilarArtistsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['name'] = artist_name
-        self.payload['results'] = constants.RESULTS
+    def __init__(self, artist):
+        super(SimilarArtistsService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
+        self.payload['name'] = artist
+        self.payload['results'] = N_SRVC_RESULTS
 
 
     def __str__(self):
@@ -136,7 +151,7 @@ class SearchArtistsService(EchoNestService):
     def __init__(self, artist_name):
         super(SearchArtistsService, self).__init__(self.TYPE_, self.METHOD)
         self.payload['name'] = artist_name
-        self.payload['results'] = constants.RESULTS
+        self.payload['results'] = N_SRVC_RESULTS
 
 
     def __str__(self):
@@ -153,11 +168,12 @@ class SearchSongsService(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, song_title, artist_name=None):
-        super(SearchSongsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['title'] = song_title
-        self.payload['artist'] = artist_name
-        self.payload['results'] = constants.RESULTS
+    def __init__(self, song, artist=None):
+        super(SearchSongsService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
+        self.payload['title'] = song
+        self.payload['artist'] = artist
+        self.payload['results'] = N_SRVC_RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
 
@@ -169,8 +185,8 @@ class SearchSongsService(EchoNestService):
 # Used to acquire a song's Echo Nest id.
 class SongID(SearchSongsService):
 
-    def __init__(self, artist_name, song_title):
-        super(SongID, self).__init__(song_title, artist_name=artist_name)
+    def __init__(self, artist, song):
+        super(SongID, self).__init__(song, artist)
         self.payload['results'] = 1
         self.payload['song_type'] = None
 
@@ -190,7 +206,7 @@ class Playlist(EchoNestService):
 
     def __init__(self):
         super(Playlist, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['results'] = constants.RESULTS
+        self.payload['results'] = N_SRVC_RESULTS
 
 
     def __str__(self):
@@ -198,10 +214,10 @@ class Playlist(EchoNestService):
 
 
 class SongPlaylistService(Playlist):
-    def __init__(self, artist_name, song_title):
+    def __init__(self, artist, song):
         super(SongPlaylistService, self).__init__()
         self.payload['type'] = "song-radio"
-        self.dependency = SongID(song_title, artist_name)
+        self.dependency = SongID(song, artist)
 
 
     def __str__(self):
@@ -211,19 +227,16 @@ class SongPlaylistService(Playlist):
     # Song playlists require an Echo Nest id to be used as a seed.
     def combine_dependency(self, intermediate):
         try:
-            self.payload['song_id'] = intermediate[0].get('id')
-
-            if not self.payload['song_id']:
-                raise EmptyResponseError()
-
-        except IndexError:
+            first_result = intermediate.pop(0)
+            self.payload['song_id'] = first_result.pop('id')
+        except IndexError, KeyError:
             raise EmptyResponseError()
 
 
 class ArtistPlaylistService(Playlist):
-    def __init__(self, artist_name):
+    def __init__(self, artist):
         super(ArtistPlaylistService, self).__init__()
-        self.payload['artist'] = artist_name
+        self.payload['artist'] = artist
         self.payload['variety'] = 1
         self.payload['type'] = "artist-radio"
 
@@ -245,7 +258,8 @@ class SongProfileService(EchoNestService):
 
 
     def __init__(self, artist, song):
-        super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
+        super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
         self.dependency = SongID(artist, song)
 
 
@@ -256,16 +270,13 @@ class SongProfileService(EchoNestService):
     # Song playlists require an Echo Nest id.
     def combine_dependency(self, intermediate):
         try:
-            self.payload['song_id'] = intermediate[0].get('id')
-
-            if not self.payload['song_id']:
-                raise EmptyResponseError()
-
-        except IndexError:
+            first_result = intermediate.pop(0)
+            self.payload['song_id'] = first_result.pop('id')
+        except IndexError, KeyError:
             raise EmptyResponseError()
 
 
-    def trim(self, data):
+    def process(self, data):
         data = data[0]
         result = {}
 
@@ -299,14 +310,13 @@ class TopArtistsService(EchoNestService):
     BUCKETS = [
         'hotttnesss_rank',
     ]
-
     ECHO_NEST_KEY = 'artists'
 
 
     def __init__(self):
         super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, 
             self.BUCKETS)
-        self.payload['results'] = constants.RESULTS
+        self.payload['results'] = N_SRVC_RESULTS
 
 
     def __str__(self):
@@ -321,7 +331,7 @@ def to_percent(float):
     percent = str(p).split('.')
 
     try:
-        s =  percent[0] + " %"
+        s =  percent.pop(0) + " %"
     except IndexError:
         s =  ''
 
@@ -332,6 +342,11 @@ def to_percent(float):
 
 # Used to display (M:S) duration on song profile.
 def convert_seconds(t):
+    print "t is %s" %(type(t))
+    print "t is %s" %(type(t))
+    print "t is %s" %(type(t))
+    print "t is %s" %(type(t))
+    print "t is %s" %(type(t))
     time = str(t)
     minutes = time.split('.')[0]
 

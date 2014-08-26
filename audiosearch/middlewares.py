@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-
 import json
 import urllib
 
@@ -16,7 +15,7 @@ class Normalizer(object):
         if len(vkwargs):
             for k, v in vkwargs.items():
                 try:
-                    vkwargs[k] = normalize(v)
+                    vkwargs[k] = _normalize(v)
                 except AttributeError:
                     vkwargs[k] = v 
 
@@ -24,15 +23,15 @@ class Normalizer(object):
         if len(request.GET):
             for k, v in request.GET.items():
                 try:
-                    # un_param = unescape_html(param) 
-                    # vkwargs[param] = normalize(un_param)
-                    vkwargs[k] = normalize(v)
+                    # un_param = _unescape_html(param) 
+                    # vkwargs[param] = _normalize(un_param)
+                    vkwargs[k] = _normalize(v)
                 except AttributeError:
                     vkwargs[k] = v
 
 
 # Convert item to lowercase, strip white space, and remove consecutive spaces.
-def normalize(item):
+def _normalize(item):
     normal = item.strip().lower()
     normal = urllib.unquote_plus(normal)
     return ' '.join(normal.split())
@@ -40,7 +39,7 @@ def normalize(item):
 
 # Remove escaping from ajax requests.
 # TODO: see if I can remove this.
-def unescape_html(s):
+def _unescape_html(s):
     s = s.replace("&lt;", "<")
     s = s.replace("&gt;", ">")
     s = s.replace("&amp;", "&")

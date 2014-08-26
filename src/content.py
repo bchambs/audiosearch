@@ -5,18 +5,17 @@ Redis key format:
 
 
 c_type = content type (key suffix)
-d_type = data type 
 r_type = resource type (key prefix)
 
 """
 
 from __future__ import absolute_import
 
-from audiosearch.constants import DICT_, LIST_, STR_, STANDARD_TTL
-from audiosearch.redis_client import K_SEPARATOR
+from audiosearch.constants import K_SEPARATOR, STANDARD_TTL
 import src.services as services
 
 
+# TODO: move this to enum
 # Key prefixes representing the content type of a resource.
 ARTIST = "artist"
 SEARCH = "search"
@@ -24,6 +23,7 @@ SONG = "song"
 TOP = "top"
 TRENDING = "trending"
 
+# TODO: move this to enum
 # Key suffixes representing the content type. 
 ARTISTS = "artists"
 PLAYLIST = "playlist"
@@ -53,7 +53,6 @@ def build_keys(prefix, suffix, root=None):
 
 class Profile(object):
     c_type = PROFILE
-    d_type = DICT_
     ttl = STANDARD_TTL
 
 
@@ -89,7 +88,6 @@ class Profile(object):
 
 class Top100(object):
     c_type = ARTISTS
-    d_type = LIST_
     ttl = 0
 
 

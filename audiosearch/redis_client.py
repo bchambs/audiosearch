@@ -1,15 +1,21 @@
+'''
+add fetch_all to pipeline the resource request list using 1 pipeline
+    wrap fetch() with a pipeline param
+
+create scheduled task to iterate over failed resources, try them again, and tally
+    their total failed attempts
+'''
 from __future__ import absolute_import
+import logging
 
 import redis
 
-from audiosearch.constants import HASH_, LIST_, N_CONTENT_ROWS, STRING_
+from audiosearch.constants import (AVAIL, FAIL, PEND, NEW, MSG_NO_DATA, 
+    MSG_UNEXPECTED_STORAGE_TYPE)
 
-# Key separator.
-K_SEPARATOR = "::"
 
-# Key statusus.
-FAILED = "FAILED"
-PENDING = "PENDING"
+logger = logging.getLogger("general_logger")
+
 
 # Redis client.
 _HOST = 'localhost'
@@ -18,69 +24,159 @@ _DATABASE = 0
 _cache = redis.StrictRedis(host=_HOST, port=_PORT, db=_DATABASE)
 _cache.client_setname("django_redis_client")
 
+# Set of pending resource keys.
+_PENDING_RESOURCES = '::PENDING_RESOURCES'
+# Hash of 'resource key': 'error message' elements.
+_FAILED_RESOURCES = '::FAILED_RESOURCES'
 
-def query(resources, n_items=None):
+
+class UnexpectedTypeError(Exception):
+    pass
+
+
+class RedisDataType(object):
+    """Redis data storage type enums."""
+    string_ = 'string'
+    list_ = 'list'
+    set_ = 'set'
+    zset_ = 'zset'
+    hash_ = 'hash'
+_RDT = RedisDataType()
+
+
+
+
+
+
+def fetch(key, ttl):
+    """
+    Refresh the time to live of key.
+    Return a tuple of (status, value).  
+    """
+
     global _cache
 
-    n_items = n_items or N_CONTENT_ROWS     # Size of resource list to return.
+    with _cache.pipeline() as pipe:
+        # Refresh ttl before assessing status.
+        if ttl:
+            pipe.expire(key, ttl).execute() 
 
-    # Dict containing all available resources (cache hit). 
-    # Key = resource object.  Value = redis value at resource.key.
-    available = {}
+        # Obtain value from cache at key.  If the Pending set or Failed hash
+        # are modified in the body of the loop, the loop will restart to ensure
+        # the block is atomic.  
+        while True:
+            try:
+                pipe.watch(_PENDING_RESOURCES, _FAILED_RESOURCES)
 
-    # List of unavailable resources grouped by status.
-    failed = []    
-    new = []
-    pending = []  
+                pipe.multi()
+                pipe.sismember(_PENDING_RESOURCES, key)
+                pipe.hexists(_FAILED_RESOURCES, key)
+                pipe.exists(key)
 
-    # If resource.key is in cache, branch by value type, and determine status.
-    for resource in resources:
-        key = resource.key
+                is_pending, has_failed, is_available = pipe.execute()
 
-        # Refresh ttl.
-        if resource.ttl:
-            pipe = _cache.pipeline()
-            pipe.expire(key, resource.TTL)
-            pipe.exists(key)
-            expire, hit = pipe.execute()
-        else:
-            hit = _cache.exists(key)
+                if is_pending:
+                    status = PEND
+                    break
 
-        if hit:
-            d_type = resource.d_type
-            template_id = resource.template_id
+                elif has_failed:
+                    status = FAIL
+                    value = pipe.hget(_FAILED_RESOURCES, key)
+                    break
 
-            if d_type == LIST_:
-                available[resource] = _cache.lrange(key, 0,-1)
+                # Resource data is ready to be served.*  
+                elif is_available:
+                    value_type = pipe.type(key).execute().pop()
 
-            elif d_type == STRING_:
-                value = _cache.get(key)
+                    if value_type == _RDT.list_:
+                        status = AVAIL
+                        value = _cache.lrange(key, 0,-1)
+                        break
 
-                if value == PENDING:
-                    pending.append(resource)
-                elif value == FAILED:
-                    failed.append(resource)
+                    elif value_type == _RDT.hash_:
+                        status = AVAIL
+                        value = _cache.hgetall(key)
+                        break
+
+                    # *Unexpected type.  This should only be raised if the Echo
+                    # Nest API is updated.
+                    else:
+                        status = FAIL
+                        value = MSG_NO_DATA
+                        raise UnexpectedTypeError()
+
+                # Resource is not in cache.
                 else:
-                    available[resource] = value
+                    status = NEW
+                    break
 
-            elif d_type == HASH_:
-                available[resource] = _cache.hgetall(key)
-        else:
-            new.append(resource)    
+            # Pending set or Failed hash were modified during fetch.  Restart.
+            # TODO: see if I can except on the key value which was modified.
+            # If true, for Failed modifications break from the loop and return
+            # the stored message as an error_message.  For Pending modications
+            # return (PEND, None).
+            except redis.WatchError:
+                continue
 
-    return available, failed, new, pending
+            # TODO: see if storing a key in this scope raises watcherror.
+            # If it does we need to use a lambda in an else statement.
+            except UnexpectedTypeError:
+                logger.error("Unexpected value type::%s, %s" %(key, value_type))
+                break
+
+    try:
+        data = value
+    except NameError:
+        data = None
+
+    return status, data
+
+
+
+
 
 
 
 def store(key, value, ttl):
     global _cache
 
-    if type(value) is list:
-        _cache.rpush(key, *value)
-    elif type(value) is str:
-        _cache.set(str)
-    elif type(value) is dict:
-        _cache.hmset(key, value)
+    with _cache.pipeline() as pipe:
+        while True:
+            try:
+                pipe.watch(_PENDING_RESOURCES, _FAILED_RESOURCES)
+
+                pipe.multi()
+                pipe.sismember(_PENDING_RESOURCES, key)
+                pipe.hexists(_FAILED_RESOURCES, key)
+                pipe.exists(key)
+
+                is_pending, has_failed, is_available = pipe.execute()
+
+                # key:value has been stored by another worker.
+                if is_pending or has_failed or is_available:
+                    break
+
+                # Store key:value according to data type.
+                elif type(value) is list:
+                    _cache.rpush(key, *value)
+                    break
+
+                elif type(value) is dict:
+                    _cache.hmset(key, value)
+                    break
+
+                # *Unexpected type.  This should only be raised if the Echo Nest
+                # API is updated.
+                else:
+                    raise UnexpectedTypeError()
+
+            # Pending set or Failed hash were modified during fetch.  Restart.
+            except redis.WatchError:
+                continue
+
+            except UnexpectedTypeError:
+                logger.error("Unexpected value type::%s, %s" %(key, value_type))
+                break
 
     if ttl:
         _cache.expire(key, ttl)

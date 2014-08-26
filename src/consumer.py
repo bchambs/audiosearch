@@ -1,22 +1,20 @@
 from __future__ import absolute_import
-
 import json
 import urllib
 from time import sleep
 
 import requests
 
-from audiosearch.constants import CALL_LIMIT, SERVICE_TIMOUT_MSG
-import src.services as services
+from audiosearch.constants import CALL_LIMIT, MSG_SERVICE_TIMOUT
+from src.services import EmptyResponseError, ServiceError
 
 
 class ENConsumer(object):
-
     # EchoNest response codes.
-    SUCCESS = 0
-    LIMIT_EXCEEDED = 3
-    MISSING_PARAM = 4
-    INVALID_PARAM = 5
+    _SUCCESS = 0
+    _LIMIT_EXCEEDED = 3
+    _MISSING_PARAM = 4
+    _INVALID_PARAM = 5
 
 
     @staticmethod
@@ -28,37 +26,35 @@ class ENConsumer(object):
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
 
-                # TODO: move key path to two static variables. 
-                code = json_response['response']['status']['code']
-                status_msg = json_response['response']['status']['message']
+                status_code = json_response['response']['status']['code']
+                status_message = json_response['response']['status']['message']
 
                 # Received a valid response.  Raise exception if data is empty.
-                if code == ENConsumer.SUCCESS:
+                if status_code == ENConsumer._SUCCESS:
                     data = json_response['response'][package.ECHO_NEST_KEY]
 
                     if len(data):
                         return data
                     else:
-                        raise services.EmptyResponseError()
+                        raise EmptyResponseError()
 
                 # Exceeded API access limit.  Snooze then retry.
-                elif code == ENConsumer.LIMIT_EXCEEDED:
+                elif status_code == ENConsumer._LIMIT_EXCEEDED:
                     attempt += 1
                     sleep(CALL_SNOOZE)
 
                 # TODO: make this less fragile.  Check echo nest docs.
-                elif "does not exist" in status_msg:
-                    raise services.EmptyResponseError()
+                elif "does not exist" in status_message:
+                    raise EmptyResponseError()
 
                 # Received error code in response.
                 else:
-                    raise services.ServiceError(status_msg)
+                    raise ServiceError(status_message)
 
             # Invalid request or unable to parse json response.
             except (requests.RequestException, ValueError, KeyError) as e:
-                raise services.ServiceError(e)
+                raise ServiceError(e)
 
         # Service timed out.
-        # TODO: move str to constants.py.
-        raise services.ServiceError(SERVICE_TIMOUT_MSG)
+        raise ServiceError(MSG_SERVICE_TIMOUT)
         
