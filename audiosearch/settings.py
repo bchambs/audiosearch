@@ -59,8 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'src',
-    'src.templatetags.audiosearch_tags',
+    'audiosearch',
     # 'django.contrib.humanize',
 )
 
@@ -71,19 +70,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'audiosearch.middlewares.Normalizer',
+    'audiosearch.middleware.preprocess.Normalizer',
 )
 
 ROOT_URLCONF = 'audiosearch.urls'
 
 WSGI_APPLICATION = 'audiosearch.wsgi.application'
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, '/data/db.sqlite3'),
-#     }
-# }
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -116,20 +108,20 @@ APPEND_SLASH = True
 BROKER_URL = 'redis://localhost:6379/0'
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
-CELERY_IMPORTS = ("src.tasks", )
+CELERY_IMPORTS = ("audiosearch.tasks", )
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_TIMEZONE = 'EST'
 
 
-from datetime import timedelta
+# from datetime import timedelta
 
-CELERYBEAT_SCHEDULE = {
-    'dbsize-tracker': {
-        'task': 'src.tasks.log_dbsize',
-        'schedule': timedelta(hours=1),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'dbsize-tracker': {
+#         'task': 'src.tasks.log_dbsize',
+#         'schedule': timedelta(hours=1),
+#     },
+# }
 
 
 
@@ -138,8 +130,6 @@ CELERYBEAT_SCHEDULE = {
 ######################################################
 ################### LOGGER CONFIG ####################
 ######################################################
-import logging
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -21,7 +21,7 @@ def build_content_from_data(available_resources, nav, page=None, n_items=None):
         
         try:
             template_content[resource.div_id] = _page(data, page, n_items)
-        except AttributeError::
+        except AttributeError:
             template_content[resource.div_id] = data
 
     return content

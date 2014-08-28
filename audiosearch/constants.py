@@ -1,13 +1,12 @@
+"""
+TODO: move to /audiosearch/conf/global_settings.py or remove need for globals.
+"""
 # Echo Nest API.
 API_KEY = 'QZQG43T7640VIF4FN'
 CALL_SNOOZE = 1         # In seconds.
-CALL_ATTEMPT_LIMIT = 15
-N_SRVC_RESULTS = 100
 
 
 # Redis cache.
-STANDARD_TTL = 3000     # In seconds.
-PERSIST = 0             # Will not expire.
 
 
 # Cache key status codes.

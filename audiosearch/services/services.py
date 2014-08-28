@@ -1,16 +1,17 @@
 """
-TODO: redo services similar to how content classes are structured. 
 TODO: content.py assigns ttl, this should be determined by service class.
 TODO: have ttl be determined by resource popularity with a tier system.
     1. top 5%, ttl = 6000 seconds
     2. next 30%, ttl = 3000 seconds
     3. rest, ttl = 2000
+TODO: move to /audiosearch/services/[some_name] then remove Service suffix.
 """
 
 from __future__ import absolute_import
 
-from audiosearch.constants import API_KEY, N_SRVC_RESULTS
 
+_API_KEY = 'QZQG43T7640VIF4FN'
+_N_GENRE_TAGS = 5
 
 
 class ServiceError(Exception):
@@ -24,16 +25,19 @@ class EmptyResponseError(Exception):
 class EchoNestService(object):
     _LEAD = "http://developer.echonest.com/api"
     _VERSION = "v4"
-    
+    _FORMAT = 'json'
+    _RESULT_MAX_LEN = 100   # Largest size result for Echo Nest responses.
+    _PERSIST = 0            # Will not expire in cache.
 
 
     def __init__(self, type_, method, buckets=None):
         self.dependency = None
         self.payload = {
-            'api_key': API_KEY,
-            'format': "json",
+            'api_key': _API_KEY,
+            'format': EchoNestService._FORMAT,
             'bucket': buckets,
         }
+        self.ttl = EchoNestService._RESULT_MAX_LEN
         self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
 
 
@@ -83,13 +87,13 @@ class ArtistProfileService(EchoNestService):
         else:
             data['genres'] = []
 
-            for genre in genres[:N_GENRE_TAGS]:
+            for genre in genres[:_N_GENRE_TAGS]:
                 data['genres'].append(genre['name'])
 
         # Years active.
         try:
             years_active_wrap = raw_data.pop('years_active')
-            years_active = years_active_wrap.pop(0)
+            years_active = years_active_wrap.pop()
         except IndexError, KeyError:
             pass
         else:
@@ -101,7 +105,7 @@ class ArtistProfileService(EchoNestService):
         # Image urls.
         try:
             image_wrap = raw_data.pop('images')
-            image = image_wrap.pop(0)
+            image = image_wrap.pop()
             data['image'] = image.pop('url')
         except IndexError, KeyError:
             pass
@@ -122,7 +126,7 @@ class ArtistSongsService(EchoNestService):
         super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, 
             self.BUCKETS)
         self.payload['artist'] = artist
-        self.payload['results'] = N_SRVC_RESULTS
+        self.payload['results'] = EchoNestService._RESULT_MAX_LEN
         self.payload['sort'] = "song_hotttnesss-desc"
 
 
@@ -145,8 +149,6 @@ class SimilarArtistsService(EchoNestService):
         super(SimilarArtistsService, self).__init__(self.TYPE_, self.METHOD, 
             self.BUCKETS)
         self.payload['name'] = artist
-        self.payload['results'] = N_SRVC_RESULTS
-
 
     def __str__(self):
         return "SimilarArtistsService"
@@ -158,11 +160,9 @@ class SearchArtistsService(EchoNestService):
     ECHO_NEST_KEY = 'artists'
 
 
-    def __init__(self, artist_name):
+    def __init__(self, artist):
         super(SearchArtistsService, self).__init__(self.TYPE_, self.METHOD)
-        self.payload['name'] = artist_name
-        self.payload['results'] = N_SRVC_RESULTS
-
+        self.payload['name'] = artist
 
     def __str__(self):
         return "SearchArtistsService"
@@ -183,7 +183,6 @@ class SearchSongsService(EchoNestService):
             self.BUCKETS)
         self.payload['title'] = song
         self.payload['artist'] = artist
-        self.payload['results'] = N_SRVC_RESULTS
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
 
@@ -216,7 +215,6 @@ class Playlist(EchoNestService):
 
     def __init__(self):
         super(Playlist, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['results'] = N_SRVC_RESULTS
 
 
     def __str__(self):
@@ -224,11 +222,12 @@ class Playlist(EchoNestService):
 
 
 class SongPlaylistService(Playlist):
+
     def __init__(self, artist, song):
         super(SongPlaylistService, self).__init__()
         self.payload['type'] = "song-radio"
+        self.payload['bucket'] += ['audio_summary']
         self.dependency = SongID(song, artist)
-
 
     def __str__(self):
         return "SongPlaylistService"
@@ -237,7 +236,7 @@ class SongPlaylistService(Playlist):
     # Song playlists require an Echo Nest id to be used as a seed.
     def combine_dependency(self, intermediate):
         try:
-            first_result = intermediate.pop(0)
+            first_result = intermediate.pop()
             self.payload['song_id'] = first_result.pop('id')
         except IndexError, KeyError:
             raise EmptyResponseError()
@@ -280,7 +279,7 @@ class SongProfileService(EchoNestService):
     # Song playlists require an Echo Nest id.
     def combine_dependency(self, intermediate):
         try:
-            first_result = intermediate.pop(0)
+            first_result = intermediate.pop()
             self.payload['song_id'] = first_result.pop('id')
         except IndexError, KeyError:
             raise EmptyResponseError()
@@ -329,8 +328,9 @@ class TopArtistsService(EchoNestService):
 
 
     def __init__(self):
-        super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-        self.payload['results'] = N_SRVC_RESULTS
+        super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, 
+            self.BUCKETS)
+        self.payload['results'] = EchoNestService._PERSIST
 
 
     def __str__(self):
@@ -345,7 +345,7 @@ def to_percent(float):
     percent = str(p).split('.')
 
     try:
-        s =  percent.pop(0) + " %"
+        s =  percent.pop() + " %"
     except IndexError:
         s =  ''
 

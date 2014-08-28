@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from django.conf.urls import patterns, include, url
 from django.http import HttpResponse
 
-import src.views as views
+from audiosearch import views
 
 
 urlpatterns = patterns('',
@@ -31,7 +31,7 @@ urlpatterns = patterns('',
 
     # Ajax.
     # url(ur'^ajax/retrieval/$', views.retrieve_content),
-    url(ur'^ajax/clear/$', views.clear_resource),
+    # url(ur'^ajax/clear/$', views.clear_resource),
 
 
     # Disallow web spiders.

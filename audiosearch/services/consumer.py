@@ -1,14 +1,16 @@
 from __future__ import absolute_import
-import json
-import urllib
 from time import sleep
 
 import requests
 
-from audiosearch.constants import CALL_ATTEMPT_LIMIT, MSG_SERVICE_TIMOUT
-from src.services import EmptyResponseError, ServiceError
+from audiosearch.constants import MSG_SERVICE_TIMOUT
+from src import services
+
+_ATTEMPT_LIMIT = 15
+_CALL_SNOOZE = 2
 
 
+# TODO: this doesnt need to be a class.
 class ENConsumer(object):
     # EchoNest response codes.
     _SUCCESS = 0
@@ -21,11 +23,13 @@ class ENConsumer(object):
     def consume(package):
         attempt = 0
 
-        while attempt < CALL_ATTEMPT_LIMIT:
+        while attempt < _ATTEMPT_LIMIT:
             try:
+                print package.url
                 response = requests.get(package.url, params=package.payload)
                 json_response = response.json()
 
+                # put this in the echo nest base service
                 status_code = json_response['response']['status']['code']
                 status_message = json_response['response']['status']['message']
 
@@ -36,25 +40,25 @@ class ENConsumer(object):
                     if len(data):
                         return data
                     else:
-                        raise EmptyResponseError()
+                        raise services.EmptyResponseError()
 
                 # Exceeded API access limit.  Snooze then retry.
                 elif status_code == ENConsumer._LIMIT_EXCEEDED:
                     attempt += 1
-                    sleep(CALL_SNOOZE)
+                    sleep(_CALL_SNOOZE)
 
                 # TODO: make this less fragile.  Check echo nest docs.
                 elif "does not exist" in status_message:
-                    raise EmptyResponseError()
+                    raise services.EmptyResponseError()
 
                 # Received error code in response.
                 else:
-                    raise ServiceError(status_message)
+                    raise services.ServiceError(status_message)
 
             # Invalid request or unable to parse json response.
             except (requests.RequestException, ValueError, KeyError) as e:
-                raise ServiceError(e)
+                raise services.ServiceError(e)
 
         # Service timed out.
-        raise ServiceError(MSG_SERVICE_TIMOUT)
+        raise services.ServiceError(MSG_SERVICE_TIMOUT)
         

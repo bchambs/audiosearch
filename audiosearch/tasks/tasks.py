@@ -1,14 +1,15 @@
 """
 TODO: create scheduled task to track cache hit / miss stats.
 TODO: first action is to store key in pending set.
+TODO: move to /audiosearch/celery/[better_name].py
 """
 from __future__ import absolute_import
 import logging
 
 from celery import shared_task
-from redis import WatchError
 
-from audiosearch.redis_client import store
+from audiosearch import redis_client as cache
+from audiosearch import constants
 from src.consumer import ENConsumer
 from src.services import EmptyResponseError, ServiceError
 
@@ -17,8 +18,9 @@ logger = logging.getLogger("general_logger")
 
 
 @shared_task
-def call_echo_nest(key, service, ttl):
+def call_echo_nest(key, service):
     try:
+        # build a list of required services placing all dependncies in order use a helper function.
         if service.dependency:
             intermediate = ENConsumer.consume(service.dependency)
             service.combine_dependency(intermediate)
@@ -39,11 +41,11 @@ def call_echo_nest(key, service, ttl):
 
     # Service did not return results.  
     except EmptyResponseError:
-        error_message = MSG_NO_DATA
+        error_message = constants.MSG_NO_DATA
 
     data = data or error_message
 
-    store(key, data, ttl)
+    cache.store(key, data, service.ttl)
 
 
 

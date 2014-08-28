@@ -1,6 +1,6 @@
 ./audiosearch
     ./cache
-        redis_client.py
+        client.py
             class RedisClient()
                 def fetch(key, hit=None, miss=None)
                 def store(key, data, ttl=None)
@@ -10,8 +10,8 @@
     ./middleware
         preprocess.py
             class Normalizer()
-    ./models
-        resource.py
+    ./resources
+        base.py
         artist.py
         playlist.py
         song.py
@@ -19,29 +19,30 @@
         top.py
     ./services
         consumer.py
-        echoNest.py
+        base.py
             class EchoNestBase()
             base error(Exception)
             errors
-        artist.py
+        artistService.py
             class profile
             class similar
             class songs
         dependency.py
             class dependency
-        playlist.py
+        playlistService.py
             class artist
             class songs
-        song.py
+        songService.py
             class profile
-        search.py
+        searchService.py
             class Song
             class Artist
-        top.py
+        topService.py
             class artists
     ./tasks
         [celery.py]
         [tasks.py]
+    ./templatetags
     messages.py
     key_pool.py
     settings.py
@@ -59,5 +60,5 @@
 ./logs
 ./static
 ./templates
-    ./tags
+
 
