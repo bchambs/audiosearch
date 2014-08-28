@@ -1,0 +1,63 @@
+./audiosearch
+    ./cache
+        redis_client.py
+            class RedisClient()
+                def fetch(key, hit=None, miss=None)
+                def store(key, data, ttl=None)
+    ./handlers  (closure outer = set local key, local ttl, **kwargs)
+        refresh.py (inner = cache.expire(ttl))
+        call_api.py (iner = tasks.[get_resource].delay())
+    ./middleware
+        preprocess.py
+            class Normalizer()
+    ./models
+        resource.py
+        artist.py
+        playlist.py
+        song.py
+        search.py
+        top.py
+    ./services
+        consumer.py
+        echoNest.py
+            class EchoNestBase()
+            base error(Exception)
+            errors
+        artist.py
+            class profile
+            class similar
+            class songs
+        dependency.py
+            class dependency
+        playlist.py
+            class artist
+            class songs
+        song.py
+            class profile
+        search.py
+            class Song
+            class Artist
+        top.py
+            class artists
+    ./tasks
+        [celery.py]
+        [tasks.py]
+    messages.py
+    key_pool.py
+    settings.py
+    urls.py
+    views.py
+    wsg.py
+
+
+
+./cfg
+    celerybeat.py
+    celeryd.py
+    redis.conf
+./doc
+./logs
+./static
+./templates
+    ./tags
+
