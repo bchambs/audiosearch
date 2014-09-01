@@ -7,6 +7,10 @@ _ID_SEPARATOR = '_'
 _KEY_SEPARATOR = '::'
 
 
+def build_template_map(content):
+    
+
+
 class Resource(object):
     _ttl = _DEFAULT_TTL
 
@@ -23,7 +27,7 @@ class Resource(object):
         return self._ttl
 
     def handle_miss(self):
-        return miss.get_echonest_data(self.key, self.ttl, self._build_service)
+        return miss.get_echo_nest_data(self.key, self.ttl, self._build_service)
 
 
 

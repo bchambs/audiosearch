@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from audiosearch.resources.base import Resource
-from audiosearch.services import services
+from audiosearch.services.artist import ArtistProfileService
 
 
 class Artist(Resource):
@@ -23,7 +23,7 @@ class ArtistProfile(Artist):
         return "%s profile" %(self.name)
 
     def _build_service(self):
-        return services.ArtistProfileService(self.name)
+        return ArtistProfileService(self.name)
 
 
 

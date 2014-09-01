@@ -7,6 +7,7 @@ from django.template import Context
 
 from audiosearch.cache.client import client
 from audiosearch.resources import artist
+from audiosearch.resources.base import build_template_map
 
 
 def music_home(request, **kwargs):
@@ -44,6 +45,8 @@ def music_home(request, **kwargs):
 
 def artist_home(request, **kwargs):
     artist_name = kwargs.get('artist')
+    page = kwargs.get('page')
+    n_items = 15
 
     if not artist_name:
         return redirect(music_home)
@@ -54,36 +57,20 @@ def artist_home(request, **kwargs):
 
     available, failed, pending = client.fetch_all(content)
 
+    print
+    print len(available)
+    print len(failed)
+    print len(pending)
+    print
 
-
-    # resources = []
-
-    # page = kwargs.get('page')
-    # n_items = 15
-    # nav = NAV_STYLE.more
-    # resources = [
-    #     resource.Top100(ARTISTS),
-    # ]
-
-    # available, failed, new, pending = _get_cache_status(resources)
-
-    # # if new:
-    # #     _generate_resource_data(new)
-
-    # if available:
-    #     complete = build_content_from_data(available, nav, page, n_items)
-    # else:
-    #     complete = []
-
-    # context = Context({
-    #     'resource': "top::none::artists",
-    #     'page': page,
-    #     'n_items': n_items,
-    #     'complete': complete,
-    #     'failed': failed,
-    #     'pending': pending + new,
-    # })
-    context = Context({})
+    context = Context({
+        'resource': "top::none::artists",
+        'page': page,
+        'n_items': n_items,
+        'complete': build_template_map(available),
+        'failed': build_template_map(failed),
+        'pending': pending,
+    })
 
     return render(request, 'artist-home.html', context)
 
