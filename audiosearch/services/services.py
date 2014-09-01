@@ -4,11 +4,13 @@ TODO: have ttl be determined by resource popularity with a tier system.
     1. top 5%, ttl = 6000 seconds
     2. next 30%, ttl = 3000 seconds
     3. rest, ttl = 2000
-TODO: move to /audiosearch/services/[some_name] then remove Service suffix.
 """
 
 from __future__ import absolute_import
 
+from collections import namedtuple
+
+DepMap = namedtuple('DepMap', 'service fields')
 
 _API_KEY = 'QZQG43T7640VIF4FN'
 _N_GENRE_TAGS = 5
@@ -27,22 +29,32 @@ class EchoNestService(object):
     _VERSION = "v4"
     _FORMAT = 'json'
     _RESULT_MAX_LEN = 100   # Largest size result for Echo Nest responses.
-    _PERSIST = 0            # Will not expire in cache.
 
 
-    def __init__(self, type_, method, buckets=None):
-        self.dependency = None
-        self.payload = {
+    def __init__(self, type_, method, payload, **kwargs):
+        self._dependencies = kwargs.get('dependencies')
+        self._url = '/'.join([self._LEAD, self._VERSION, type_, method])
+        self._payload = {
             'api_key': _API_KEY,
             'format': EchoNestService._FORMAT,
-            'bucket': buckets,
+            'bucket': kwargs.get('buckets'),
         }
-        self.ttl = EchoNestService._RESULT_MAX_LEN
-        self.url = '/'.join([self._LEAD, self._VERSION, type_, method])
-
+        self._payload.update(payload)
 
     def __str__(self):
         return "EchoNestService"
+
+    @property
+    def dependencies(self):
+        return self._dependencies
+
+    @property
+    def payload(self):
+        return self._payload
+
+    @property
+    def url(self):
+        return self._url
 
 
 class ArtistProfileService(EchoNestService):
@@ -60,14 +72,14 @@ class ArtistProfileService(EchoNestService):
 
 
     def __init__(self, artist):
+        payload = dict(name=artist)
+        print payload
         super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+            payload, buckets=self.BUCKETS)
         self.payload['name'] = artist
-
 
     def __str__(self):
         return "ArtistProfileService"
-
 
     def process(self, raw_data):
         data = {}
@@ -107,7 +119,7 @@ class ArtistProfileService(EchoNestService):
             image_wrap = raw_data.pop('images')
             image = image_wrap.pop()
             data['image'] = image.pop('url')
-        except IndexError, KeyError:
+        except (IndexError, KeyError):
             pass
 
         return data
@@ -124,11 +136,10 @@ class ArtistSongsService(EchoNestService):
 
     def __init__(self, artist):
         super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+            buckets=self.BUCKETS)
         self.payload['artist'] = artist
         self.payload['results'] = EchoNestService._RESULT_MAX_LEN
         self.payload['sort'] = "song_hotttnesss-desc"
-
 
     def __str__(self):
         return "ArtistSongsService"
@@ -147,7 +158,7 @@ class SimilarArtistsService(EchoNestService):
 
     def __init__(self, artist):
         super(SimilarArtistsService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+            buckets=self.BUCKETS)
         self.payload['name'] = artist
 
     def __str__(self):
@@ -180,12 +191,11 @@ class SearchSongsService(EchoNestService):
 
     def __init__(self, song, artist=None):
         super(SearchSongsService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+            buckets=self.BUCKETS)
         self.payload['title'] = song
         self.payload['artist'] = artist
         self.payload['sort'] = "song_hotttnesss-desc"
         self.payload['song_type'] = "studio"
-
 
     def __str__(self):
         return "SearchSongsService"
@@ -198,7 +208,6 @@ class SongID(SearchSongsService):
         super(SongID, self).__init__(song, artist)
         self.payload['results'] = 1
         self.payload['song_type'] = None
-
 
     def __str__(self):
         return "SongID"
@@ -213,9 +222,9 @@ class Playlist(EchoNestService):
     ECHO_NEST_KEY = 'songs'
     
 
-    def __init__(self):
-        super(Playlist, self).__init__(self.TYPE_, self.METHOD, self.BUCKETS)
-
+    def __init__(self, **kwargs):
+        super(Playlist, self).__init__(self.TYPE_, self.METHOD, 
+            buckets=self.BUCKETS, **kwargs)
 
     def __str__(self):
         return "Playlist"
@@ -224,21 +233,26 @@ class Playlist(EchoNestService):
 class SongPlaylistService(Playlist):
 
     def __init__(self, artist, song):
-        super(SongPlaylistService, self).__init__()
+        dependencies = [
+            SongID(song, artist),
+        ]
+
+        li = ['one', 'two', 'three']
+        srv = ArtistSongsService(artist)
+        self.yo = DepMap(srv, li)
+
+        super(SongPlaylistService, self).__init__(dependencies=dependencies)
         self.payload['type'] = "song-radio"
         self.payload['bucket'] += ['audio_summary']
-        self.dependency = SongID(song, artist)
 
     def __str__(self):
         return "SongPlaylistService"
 
-
-    # Song playlists require an Echo Nest id to be used as a seed.
     def combine_dependency(self, intermediate):
         try:
             first_result = intermediate.pop()
             self.payload['song_id'] = first_result.pop('id')
-        except IndexError, KeyError:
+        except (IndexError, KeyError):
             raise EmptyResponseError()
 
 
@@ -268,22 +282,19 @@ class SongProfileService(EchoNestService):
 
     def __init__(self, artist, song):
         super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
-        self.dependency = SongID(artist, song)
+            buckets=self.BUCKETS)
+        self.dependencies = [SongID(song, artist)]
 
 
     def __str__(self):
         return "SongProfileService"
 
-
-    # Song playlists require an Echo Nest id.
     def combine_dependency(self, intermediate):
         try:
             first_result = intermediate.pop()
             self.payload['song_id'] = first_result.pop('id')
-        except IndexError, KeyError:
+        except (IndexError, KeyError):
             raise EmptyResponseError()
-
 
     def process(self, raw_data):
         try:
@@ -329,7 +340,7 @@ class TopArtistsService(EchoNestService):
 
     def __init__(self):
         super(TopArtistsService, self).__init__(self.TYPE_, self.METHOD, 
-            self.BUCKETS)
+            buckets=self.BUCKETS)
         self.payload['results'] = EchoNestService._PERSIST
 
 

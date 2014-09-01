@@ -1,24 +1,29 @@
-"""
-template dict
-
-resource:
-    name: string
-    div_id: str(resource)
-    title: header text
-    nav: 'page' or 'more'
-    data: {
-        paged dict
-    }
-"""
 from __future__ import absolute_import
 
+from audiosearch.handlers import miss
+
 _DEFAULT_TTL = 3000     # In seconds.
+_ID_SEPARATOR = '_'
+_KEY_SEPARATOR = '::'
 
 
-class BaseResource(object):
-    _separator = '::'
-    ttl = _DEFAULT_TTL
+class Resource(object):
+    _ttl = _DEFAULT_TTL
+
+    def __init__(self, head, tail, name):
+        id_ = _ID_SEPARATOR.join([head, tail])
+        self._key = _KEY_SEPARATOR.join([id_, name])
+
+    @property
+    def key(self):
+        return self._key
+
+    @property
+    def ttl(self):
+        return self._ttl
+
+    def handle_miss(self):
+        return miss.get_echonest_data(self.key, self.ttl, self._build_service)
 
 
-    def __init__(self, prefix, name):
-        self.key = _separator.join([prefix, name])
+

@@ -1,8 +1,12 @@
 from __future__ import absolute_import
 import os
+import sys
 
 from django.conf import settings
 from celery import Celery
+
+
+sys.dont_write_bytecode = True
 
 
 # set the default Django settings module for the 'celery' program.

@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
+from audiosearch.cache.client import client
 from audiosearch.resources import artist
 
 
@@ -39,6 +40,52 @@ def music_home(request, **kwargs):
     context = Context({})
 
     return render(request, 'music-home.html', context)
+
+
+def artist_home(request, **kwargs):
+    artist_name = kwargs.get('artist')
+
+    if not artist_name:
+        return redirect(music_home)
+
+    content = [
+        artist.ArtistProfile(artist_name),
+    ]
+
+    available, failed, pending = client.fetch_all(content)
+
+
+
+    # resources = []
+
+    # page = kwargs.get('page')
+    # n_items = 15
+    # nav = NAV_STYLE.more
+    # resources = [
+    #     resource.Top100(ARTISTS),
+    # ]
+
+    # available, failed, new, pending = _get_cache_status(resources)
+
+    # # if new:
+    # #     _generate_resource_data(new)
+
+    # if available:
+    #     complete = build_content_from_data(available, nav, page, n_items)
+    # else:
+    #     complete = []
+
+    # context = Context({
+    #     'resource': "top::none::artists",
+    #     'page': page,
+    #     'n_items': n_items,
+    #     'complete': complete,
+    #     'failed': failed,
+    #     'pending': pending + new,
+    # })
+    context = Context({})
+
+    return render(request, 'artist-home.html', context)
 
 
 # def _generate_resource_data(new_resources):

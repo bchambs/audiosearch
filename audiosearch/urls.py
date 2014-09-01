@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from django.http import HttpResponse
 
 from audiosearch import views
@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+similar/$', views.artist_content, {'content_key': 'similar_artists'}),
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+songs/$', views.artist_content, {'content_key': 'songs'}),
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+recommended/$', views.artist_content, {'content_key': 'song_playlist'}),
-    # url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_home),
+    url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_home),
 
 
     # Ajax.
