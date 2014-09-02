@@ -6,56 +6,36 @@ from django.shortcuts import render, redirect
 from django.template import Context
 
 from audiosearch.cache.client import client
-from audiosearch.resources import artist
-from audiosearch.resources.base import build_template_map
+from audiosearch.handlers import miss
+from audiosearch.resources import proxy
+from audiosearch.resources.template import (build_template_map, NAV_MORE, 
+    NAV_PAGES)
 
-
-def music_home(request, **kwargs):
-    # resources = []
-
-    # page = kwargs.get('page')
-    # n_items = 15
-    # nav = NAV_STYLE.more
-    # resources = [
-    #     resource.Top100(ARTISTS),
-    # ]
-
-    # available, failed, new, pending = _get_cache_status(resources)
-
-    # # if new:
-    # #     _generate_resource_data(new)
-
-    # if available:
-    #     complete = build_content_from_data(available, nav, page, n_items)
-    # else:
-    #     complete = []
-
-    # context = Context({
-    #     'resource': "top::none::artists",
-    #     'page': page,
-    #     'n_items': n_items,
-    #     'complete': complete,
-    #     'failed': failed,
-    #     'pending': pending + new,
-    # })
-    context = Context({})
-
-    return render(request, 'music-home.html', context)
+from functools import wraps
+def reset(view_func):
+    def _decorator(request, *args, **kwargs):
+        client.flushall()
+        response = view_func(request, *args, **kwargs)
+        return response
+    return wraps(view_func)(_decorator)
 
 
 def artist_home(request, **kwargs):
-    artist_name = kwargs.get('artist')
+    artist = kwargs.get('artist')
+
+    if not artist: return redirect(music_home)
+        
     page = kwargs.get('page')
     n_items = 15
 
-    if not artist_name:
-        return redirect(music_home)
-
-    content = [
-        artist.ArtistProfile(artist_name),
+    resources = [
+        proxy.Profile(artist=artist),
+        # artist.ArtistSongs(artist),
     ]
+    handler = miss.get_echo_data
+    available, failed, pending = client.fetch_all(resources, handler)
 
-    available, failed, pending = client.fetch_all(content)
+    content = build_template_map(available, failed, page, n_items, NAV_MORE)
 
     print
     print len(available)
@@ -67,19 +47,42 @@ def artist_home(request, **kwargs):
         'resource': "top::none::artists",
         'page': page,
         'n_items': n_items,
-        'complete': build_template_map(available),
-        'failed': build_template_map(failed),
+        'content': content, 
         'pending': pending,
     })
 
     return render(request, 'artist-home.html', context)
 
+def music_home(request):
+    print
+    print
 
-# def _generate_resource_data(new_resources):
-#     for resource in new_resources:
-#         service = resource.build_service()
-#         call_echo_nest.delay(resource.key, resource.ttl, service)
+    from audiosearch.celery import insp as i
+    from audiosearch.tasks import do_nothing
+    do_nothing.delay(5)
+    do_nothing.delay(5)
+    do_nothing.delay(5)
+    do_nothing.delay(5)
+    do_nothing.delay(5)
+    do_nothing.delay(8)
 
+    print i.reserved()
+    
+
+    # print 'registered: ', 
+    # print i.registered()
+    # print 'active: ', 
+    # print i.active()
+    # print 'reserved: ', 
+    # print i.reserved()
+
+
+    print
+    print
+
+    context = Context({})
+    return render(request, 'music-home.html', context)
+    
 
 # def clear_resource(request, **kwargs):
 #     """Remove resource.key from cache."""
@@ -99,4 +102,6 @@ def artist_home(request, **kwargs):
 #     print banner
 
 #     return HttpResponse(json.dumps({}), content_type="application/json")
+
+
 

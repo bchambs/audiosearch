@@ -3,15 +3,11 @@ from __future__ import absolute_import
 
 _API_KEY = 'QZQG43T7640VIF4FN'
 
-class Error(Exception):
-    pass
-    
 
-class ServiceError(Error):
+class ServiceError(Exception):
     pass
 
-
-class EmptyResponseError(Error):
+class EmptyResponseError(Exception):
     pass
 
 

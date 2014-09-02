@@ -16,9 +16,15 @@ from audiosearch.services.dependency import DependencyError
 
 logger = logging.getLogger("general_logger")
 
-
+#todo redo tries
 @shared_task
 def call_echo_nest(key, ttl, service, dependencies):
+    """
+
+
+    CONSUME CAN RETURN EMPTY DATA CATCH THIS
+
+    """
     print 1
     continue_task = client.establish_pending(key)
     print 2
@@ -67,3 +73,12 @@ def _fulfill_dependencies(service, dependencies):
         intermediate = consume(prereq)
         required_fields = prereq.build(intermediate)
         service.payload.update(required_fields)
+
+
+
+
+from time import sleep
+@shared_task
+def do_nothing(x):
+    sleep(x)
+    print "awake"

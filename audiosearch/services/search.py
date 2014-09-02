@@ -10,8 +10,9 @@ class SearchArtistsService(EchoNestService):
 
 
     def __init__(self, artist):
-        super(SearchArtistsService, self).__init__(self.TYPE_, self.METHOD)
-        self.payload['name'] = artist
+        payload = dict(name=artist)
+        super(SearchArtistsService, self).__init__(self.TYPE_, self.METHOD, 
+            payload)
 
     def __str__(self):
         return "SearchArtistsService"
@@ -27,13 +28,16 @@ class SearchSongsService(EchoNestService):
     ECHO_NEST_KEY = 'songs'
 
 
-    def __init__(self, song, artist=None):
+    def __init__(self, artist, song):
+        payload = {
+            'artist': artist,
+            'bucket': SearchSongsService.BUCKETS,
+            'song_type': "studio",
+            'sort': "song_hotttnesss-desc",
+            'title': song,
+        }
         super(SearchSongsService, self).__init__(self.TYPE_, self.METHOD, 
-            buckets=self.BUCKETS)
-        self.payload['title'] = song
-        self.payload['artist'] = artist
-        self.payload['sort'] = "song_hotttnesss-desc"
-        self.payload['song_type'] = "studio"
+            payload)
 
     def __str__(self):
         return "SearchSongsService"

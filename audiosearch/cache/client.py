@@ -22,16 +22,10 @@ STRING_ = 'string'
 _LOOP_THRESHOLD = 10
 
 
-class Error(Exception):
+class CycleError(Exception):
     pass
 
-class CycleError(Error):
-    pass
-
-class DuplciateStorageError(Error):
-    pass
-
-class UnexpectedTypeError(Error):
+class UnexpectedTypeError(Exception):
     pass
 
 
@@ -63,35 +57,17 @@ class AudiosearchCache(redis.StrictRedis):
         return self._failed_pool_key
 
 
-    def fetch_all(self, content):
+    def fetch_all(self, resources, handler):
         wrap = {
             _AVAIL: list(),
             _FAIL: list(),
             _PEND: list(),
         }
 
-        for item in content:
-            try:
-                status, data = self._fetch(item.key, item.ttl, 
-                    miss=item.handle_miss)
-
-            except CycleError:
-                logger.exception(item.key)
-                bundle = item.key, messages.CONTENT_CREATION_FAIL
-                wrap[_FAIL].append(bundle)
-
-            except UnexpectedTypeError:
-                logger.exception(item.key)
-                bundle = item.key, messages.CONTENT_CREATION_FAIL
-                wrap[_FAIL].append(bundle)
-
-            else:
-                if status == _AVAIL:
-                    wrap[_AVAIL].append((item, data))
-                elif status == _FAIL:
-                    wrap[_FAIL].append((item, data))
-                else:
-                    wrap[_PEND].append(item.key)
+        for res in resources:
+            status, data = self._fetch(res.key, res.ttl, miss=handler(res))
+            bundle = (res, data) if data else res
+            wrap[status].append(bundle)
 
         return  wrap[_AVAIL], wrap[_FAIL], wrap[_PEND]
 
@@ -117,6 +93,8 @@ class AudiosearchCache(redis.StrictRedis):
                         value_type = pipe.type(key)
 
                         if value_type != LIST_ or value_type != HASH_:
+                            print value_type
+                            print HASH_
                             raise UnexpectedTypeError()
                     
                     pipe.multi()
@@ -140,6 +118,7 @@ class AudiosearchCache(redis.StrictRedis):
 
                 # This should only be raised if the Echo Nest API is updated.
                 except UnexpectedTypeError:
+                    print "???"
                     logger.exception(key)
                     break
 
@@ -169,10 +148,6 @@ class AudiosearchCache(redis.StrictRedis):
                     logger.exception(key)
                     return False
 
-                except DuplciateStorageError:
-                    logger.exception(key)
-                    return False
-
                 # Pending set or Failed hash were modified during fetch.  Restart.
                 except redis.WatchError:
                     logger.exception("WatchError in establish_pending.")
@@ -194,10 +169,11 @@ class AudiosearchCache(redis.StrictRedis):
 
             while True:
                 loop_counter += 1
-                if loop_counter > _LOOP_THRESHOLD: raise CycleError()
 
                 try:
                     pipe.watch(key)
+
+                    if loop_counter > _LOOP_THRESHOLD: raise CycleError()
 
                     is_pending = pipe.sismember(self.pending_pool, key)
                     has_failed = pipe.hexists(self.failed_pool, key)
@@ -242,10 +218,18 @@ class AudiosearchCache(redis.StrictRedis):
                         finally:
                             break
 
+                except (CycleError, UnexpectedTypeError):
+                    logger.exception(key)
+                    status = _FAIL
+                    value = messages.CONTENT_CREATION_FAIL
+                    break
+
                 except redis.WatchError:
                     logger.exception("WatchError in _fetch.")
                     continue
 
+        print key
+        print status
         return status, value
 
 

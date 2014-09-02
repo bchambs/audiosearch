@@ -16,6 +16,10 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
+# REMOVE
+from celery.task.control import inspect
+
+insp = app.control.inspect()
 
 
 
