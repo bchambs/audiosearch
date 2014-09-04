@@ -13,6 +13,7 @@ from audiosearch.resources.template import (build_template_map, NAV_MORE,
 
 from functools import wraps
 def reset(view_func):
+    @wraps
     def _decorator(request, *args, **kwargs):
         client.flushall()
         response = view_func(request, *args, **kwargs)
@@ -54,32 +55,6 @@ def artist_home(request, **kwargs):
     return render(request, 'artist-home.html', context)
 
 def music_home(request):
-    print
-    print
-
-    from audiosearch.celery import insp as i
-    from audiosearch.tasks import do_nothing
-    do_nothing.delay(5)
-    do_nothing.delay(5)
-    do_nothing.delay(5)
-    do_nothing.delay(5)
-    do_nothing.delay(5)
-    do_nothing.delay(8)
-
-    print i.reserved()
-    
-
-    # print 'registered: ', 
-    # print i.registered()
-    # print 'active: ', 
-    # print i.active()
-    # print 'reserved: ', 
-    # print i.reserved()
-
-
-    print
-    print
-
     context = Context({})
     return render(request, 'music-home.html', context)
     
