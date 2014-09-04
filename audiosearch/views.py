@@ -7,7 +7,8 @@ from django.template import Context
 
 from audiosearch.cache.client import client
 from audiosearch.handlers import miss
-from audiosearch.resources import proxy
+from audiosearch.resources import (discography, playlist, profile, search, 
+    similar, top)
 from audiosearch.resources.template import (build_template_map, NAV_MORE, 
     NAV_PAGES)
 
@@ -21,41 +22,43 @@ def reset(view_func):
     return wraps(view_func)(_decorator)
 
 
-def artist_home(request, **kwargs):
-    artist = kwargs.get('artist')
+def artist_home(request, get_params, kwargs):
+    print kwargs.items()
+    try:
+        artist = kwargs.pop('artist')
+    except KeyError:
+        return redirect(music_home)
 
-    if not artist: return redirect(music_home)
-        
     page = kwargs.get('page')
     n_items = 15
 
     resources = [
-        proxy.Profile(artist=artist),
-        # artist.ArtistSongs(artist),
     ]
-    handler = miss.get_echo_data
-    available, failed, pending = client.fetch_all(resources, handler)
 
-    content = build_template_map(available, failed, page, n_items, NAV_MORE)
+    # handler = miss.get_echo_data
+    # available, failed, pending = client.fetch_all(resources, handler)
 
-    print
-    print len(available)
-    print len(failed)
-    print len(pending)
-    print
+    # content = build_template_map(available, failed, page, n_items, NAV_MORE)
 
-    context = Context({
-        'resource': "top::none::artists",
-        'page': page,
-        'n_items': n_items,
-        'content': content, 
-        'pending': pending,
-    })
+    # print
+    # print len(available)
+    # print len(failed)
+    # print len(pending)
+    # print
 
+    # context = Context({
+    #     'resource': "top::none::artists",
+    #     'page': page,
+    #     'n_items': n_items,
+    #     'content': content, 
+    #     'pending': pending,
+    # })
+
+    context = Context({})
     return render(request, 'artist-home.html', context)
 
-def music_home(request):
-    factory
+
+def music_home(request, get_params, kwargs):
     context = Context({})
     return render(request, 'music-home.html', context)
     

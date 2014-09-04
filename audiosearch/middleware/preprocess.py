@@ -4,35 +4,38 @@ import urllib
 
 from django.http import HttpResponse
 
-
+# TODO: map two values for each key, one normalized and one with preserved case.
 class Normalizer(object):
 
-    # Normalize kwargs and query parameters.  
-    # Store normal query params in kwargs.
-    def process_view(self, request, vfunc, vargs, vkwargs):
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        normal_GET = dict()
+        normal_kwargs = dict()
 
-        # Kwargs.
-        if len(vkwargs):
-            for k, v in vkwargs.items():
-                try:
-                    vkwargs[k] = _normalize(v)
-                except AttributeError:
-                    vkwargs[k] = v 
+        if request.GET:
+            normal_GET = _normalize(request.GET.copy())
 
-        # Query parameters.  Javascript strings (from ajax) must be unescaped (?).
-        if len(request.GET):
-            for k, v in request.GET.items():
-                try:
-                    # un_param = _unescape_html(param) 
-                    # vkwargs[param] = _normalize(un_param)
-                    vkwargs[k] = _normalize(v)
-                except AttributeError:
-                    vkwargs[k] = v
+        if view_kwargs:
+            normal_kwargs = _normalize(view_kwargs)
+
+        return view_func(request, normal_GET, normal_kwargs)
 
 
-# Convert item to lowercase, strip white space, and remove consecutive spaces.
-def _normalize(item):
-    normal = item.strip().lower()
+def _normalize(d):
+    normal = dict()
+
+    for k, v in d.iteritems():
+        if v:  # Why is an empty unicode str not None???
+            try:
+                normal[k] = _normalize_string(v)
+            except AttributeError:
+                normal[k] = v 
+
+    return normal
+
+
+# Convert string to lowercase, strip white space, and remove consecutive spaces.
+def _normalize_string(value):
+    normal = value.strip().lower()
     normal = urllib.unquote_plus(normal)
     return ' '.join(normal.split())
 
