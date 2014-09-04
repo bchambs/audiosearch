@@ -55,6 +55,7 @@ def artist_home(request, **kwargs):
     return render(request, 'artist-home.html', context)
 
 def music_home(request):
+    factory
     context = Context({})
     return render(request, 'music-home.html', context)
     
