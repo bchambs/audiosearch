@@ -99,12 +99,14 @@ STATIC_URL = '/static/'
 APPEND_SLASH = True
 
 
+# '''REDIS CLIENT'''
+# try:
+#     from audiosearch.cache import client
+# except ImportError:
+#     print 'help'    # TODO: handle this
 
 
-######################################################
-################### CELERY CONFIG ####################
-######################################################
-
+'''CELERY CONFIG'''
 BROKER_URL = 'redis://localhost:6379/0'
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
@@ -127,9 +129,7 @@ CELERY_TIMEZONE = 'EST'
 
 
 
-######################################################
-################### LOGGER CONFIG ####################
-######################################################
+'''LOGGER CONFIG'''
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -5,19 +5,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from audiosearch.cache.client import client
+from audiosearch import cache
 from audiosearch.handlers import miss
-from audiosearch.resources import (discography, playlist, profile, search, 
-    similar, top)
-from audiosearch.resources.template import (build_template_map, NAV_MORE, 
-    NAV_PAGES)
-
-def reset(view_func):
-    def _decorator(request, *args, **kwargs):
-        client.flushall()
-        response = view_func(request, *args, **kwargs)
-        return response
-    return wraps(view_func)(_decorator)
+from audiosearch import resources 
 
 
 def artist_home(request, GET, opt):
@@ -29,8 +19,20 @@ def artist_home(request, GET, opt):
     page = GET.get('page')
     n_items = 15
 
-    resources = [
+    profile = resources.Profile(artist=artist)
+
+    res = [
+        profile,
     ]
+
+    print
+    print profile.id
+    print profile.key
+    print profile.ttl
+    print
+
+    available, failed, pending = cache.fetch(res)
+
 
     # handler = miss.get_echo_data
     # available, failed, pending = client.fetch_all(resources, handler)
@@ -50,6 +52,9 @@ def artist_home(request, GET, opt):
     #     'content': content, 
     #     'pending': pending,
     # })
+
+
+
 
     context = Context({})
     return render(request, 'artist-home.html', context)

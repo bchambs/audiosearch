@@ -27,5 +27,7 @@ class BaseResource(object):
     def ttl(self):
         return self._ttl
 
-
+    @staticmethod
+    def _song_by_artist(artist, song):
+        return _ARTIST_SONG_SEP.join([song, artist])
 

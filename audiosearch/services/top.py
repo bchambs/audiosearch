@@ -4,7 +4,7 @@ from audiosearch.services.base import EchoNestService
 
 
 # TODO: create scheduled service to update this.
-class TopArtistsService(EchoNestService):
+class TopArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'top_hottt'
     BUCKETS = [

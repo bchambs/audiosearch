@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from audiosearch.services.base import EchoNestService
 
 
-class SearchArtistsService(EchoNestService):
+class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'suggest'
     ECHO_NEST_KEY = 'artists'
@@ -18,7 +18,7 @@ class SearchArtistsService(EchoNestService):
         return "SearchArtistsService"
 
 
-class SearchSongsService(EchoNestService):
+class SearchSongs(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'search'
     BUCKETS = [

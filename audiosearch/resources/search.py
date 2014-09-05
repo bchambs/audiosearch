@@ -1,12 +1,11 @@
 from __future__ import absolute_import
 
 from audiosearch.resources.base import BaseResource, _ARTIST_SONG_SEP
-from audiosearch.services.search import (SearchArtistsService, 
-    SearchSongsService)
+from audiosearch.services import SearchArtists, SearchSongs
 
 
-class Playlist(BaseResource):
-    _id_tail = 'playlist'
+class Search(BaseResource):
+    _id_tail = 'search'
 
 
     def __init__(self, **kwargs):
@@ -26,5 +25,5 @@ class Playlist(BaseResource):
             self._id_head = 'artist'
             self._build_service(SearchArtistsService, artist)
 
-        super(Playlist, self).__init__(self._id_head, Playlist._id_tail, name)
+        super(Search, self).__init__(self._id_head, Search._id_tail, name)
 

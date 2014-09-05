@@ -4,7 +4,7 @@ from audiosearch.services import dependency
 from audiosearch.services.base import EchoNestService, EmptyResponseError
 
 
-class SongProfileService(EchoNestService):
+class SongProfile(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'profile'
     BUCKETS = [

@@ -7,11 +7,7 @@ import logging
 
 from celery import shared_task
 
-from audiosearch import messages
-from audiosearch.cache.client import client
-from audiosearch.services.base import EmptyResponseError, ServiceError
-from audiosearch.services.consumer import consume
-from audiosearch.services.dependency import DependencyError
+# from audiosearch.cache.client import client
 
 
 logger = logging.getLogger("general_logger")
@@ -19,53 +15,54 @@ logger = logging.getLogger("general_logger")
 #todo redo tries
 @shared_task
 def call_echo_nest(key, ttl, service, dependencies):
-    """
+    # """
 
 
-    CONSUME CAN RETURN EMPTY DATA CATCH THIS
+    # CONSUME CAN RETURN EMPTY DATA CATCH THIS
 
-    """
-    print 1
-    continue_task = client.establish_pending(key)
-    print 2
+    # """
+    # print 1
+    # continue_task = client.establish_pending(key)
+    # print 2
 
-    if not continue_task: return
-    print 3
+    # if not continue_task: return
+    # print 3
 
-    if dependencies:
-        try:
-            _fulfill_dependencies(service, dependencies)
-        except EmptyResponseError:
-            client.establish_failed(key, messages.NO_DATA)
-            return False
-        except DependencyError:
-            client.establish_failed(key, messages.CONTENT_CREATION_FAIL)
-            logger.exception(key)
-            return False
-        except ServiceError as e:
-            client.establish_failed(key, repr(e))
-            logger.exception("%s: %s" %(key, repr(e)))
-            return False
-    print 4
+    # if dependencies:
+    #     try:
+    #         _fulfill_dependencies(service, dependencies)
+    #     except EmptyResponseError:
+    #         client.establish_failed(key, messages.NO_DATA)
+    #         return False
+    #     except DependencyError:
+    #         client.establish_failed(key, messages.CONTENT_CREATION_FAIL)
+    #         logger.exception(key)
+    #         return False
+    #     except ServiceError as e:
+    #         client.establish_failed(key, repr(e))
+    #         logger.exception("%s: %s" %(key, repr(e)))
+    #         return False
+    # print 4
 
-    try:
-        echo_nest_response = consume(service)
-    except EmptyResponseError:
-        client.establish_failed(key, messages.NO_DATA)
-    except ServiceError as e:
-        logger.exception("%s: %s" %(key, repr(e)))
-        client.establish_failed(key, str(e))
-    else:
-        print 5
+    # try:
+    #     echo_nest_response = consume(service)
+    # except EmptyResponseError:
+    #     client.establish_failed(key, messages.NO_DATA)
+    # except ServiceError as e:
+    #     logger.exception("%s: %s" %(key, repr(e)))
+    #     client.establish_failed(key, str(e))
+    # else:
+    #     print 5
 
-        try:
-            data = service.process(echo_nest_response)
-        except AttributeError:
-            data = echo_nest_response
-        print 6
+    #     try:
+    #         data = service.process(echo_nest_response)
+    #     except AttributeError:
+    #         data = echo_nest_response
+    #     print 6
         
-        client.store(key, data, ttl)
-        print 7
+    #     client.store(key, data, ttl)
+    #     print 7
+    pass
 
 
 def _fulfill_dependencies(service, dependencies):

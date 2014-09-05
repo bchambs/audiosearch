@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from audiosearch.resources.base import BaseResource
-from audiosearch.services.top import TopArtistsService
+from audiosearch.services import TopArtists
 
 # Type matching for init.
 _ARTISTS = 'artists'

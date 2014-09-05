@@ -21,7 +21,7 @@ class PlaylistBase(EchoNestService):
         return "PlaylistBase"
 
 
-class SongPlaylistService(PlaylistBase):
+class SongPlaylist(PlaylistBase):
     BUCKETS = [
         'audio_summary',
     ]
@@ -45,7 +45,7 @@ class SongPlaylistService(PlaylistBase):
     #         raise EmptyResponseError()
 
 
-class ArtistPlaylistService(PlaylistBase):
+class ArtistPlaylist(PlaylistBase):
 
     def __init__(self, artist):
         payload = dict(artist=artist, variety=1, type='artist-radio')

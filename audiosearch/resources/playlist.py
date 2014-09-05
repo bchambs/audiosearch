@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 
 from audiosearch.resources.base import BaseResource, _ARTIST_SONG_SEP
-from audiosearch.services.playlist import (SongPlaylistService, 
-    ArtistPlaylistService)
+from audiosearch.services import SongPlaylist, ArtistPlaylist
 
 
 class Playlist(BaseResource):

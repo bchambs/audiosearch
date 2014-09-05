@@ -6,7 +6,7 @@ from audiosearch.services.base import EchoNestService
 _N_GENRE_TAGS = 5
 
 
-class ArtistProfileService(EchoNestService):
+class ArtistProfile(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'profile'
     BUCKETS = [
@@ -21,12 +21,12 @@ class ArtistProfileService(EchoNestService):
 
 
     def __init__(self, artist):
-        payload = dict(name=artist, bucket=ArtistProfileService.BUCKETS)
-        super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, 
+        payload = dict(name=artist, bucket=ArtistProfile.BUCKETS)
+        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
             payload)
 
     def __str__(self):
-        return "ArtistProfileService"
+        return "artist profile service"
 
     def process(self, raw_data):
         data = {}
@@ -72,7 +72,7 @@ class ArtistProfileService(EchoNestService):
         return data
 
 
-class SimilarArtistsService(EchoNestService):
+class SimilarArtists(EchoNestService):
     TYPE_ = 'artist'
     METHOD = 'similar'
     BUCKETS = [
@@ -84,15 +84,15 @@ class SimilarArtistsService(EchoNestService):
 
 
     def __init__(self, artist):
-        payload = dict(name=artist, bucket=SimilarArtistsService.BUCKETS)
-        super(ArtistProfileService, self).__init__(self.TYPE_, self.METHOD, 
+        payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
+        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
             payload)
 
     def __str__(self):
-        return "SimilarArtistsService"
+        return "SimilarArtists"
 
 
-class ArtistSongsService(EchoNestService):
+class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
     BUCKETS = [
@@ -107,7 +107,7 @@ class ArtistSongsService(EchoNestService):
             'results': EchoNestService._RESULT_MAX_LEN,
             'sort': "song_hotttnesss-desc",
         }
-        super(ArtistSongsService, self).__init__(self.TYPE_, self.METHOD, payload)
+        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, payload)
 
     def __str__(self):
-        return "ArtistSongsService"
+        return "ArtistSongs"

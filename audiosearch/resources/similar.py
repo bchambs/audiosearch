@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from audiosearch.resources.base import BaseResource
-from audiosearch.services.artist import SimilarArtistsService
+from audiosearch.services import SimilarArtists
 
 
 class Similar(BaseResource):
