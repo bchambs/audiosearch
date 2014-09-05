@@ -1,10 +1,7 @@
 from __future__ import absolute_import
-import json
 import urllib
 
-from django.http import HttpResponse
 
-# TODO: map two values for each key, one normalized and one with preserved case.
 class Normalizer(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
