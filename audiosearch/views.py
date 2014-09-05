@@ -12,9 +12,7 @@ from audiosearch.resources import (discography, playlist, profile, search,
 from audiosearch.resources.template import (build_template_map, NAV_MORE, 
     NAV_PAGES)
 
-from functools import wraps
 def reset(view_func):
-    @wraps
     def _decorator(request, *args, **kwargs):
         client.flushall()
         response = view_func(request, *args, **kwargs)
@@ -22,14 +20,13 @@ def reset(view_func):
     return wraps(view_func)(_decorator)
 
 
-def artist_home(request, get_params, kwargs):
-    print kwargs.items()
+def artist_home(request, GET, opt):
     try:
-        artist = kwargs.pop('artist')
+        artist = opt.pop('artist')
     except KeyError:
         return redirect(music_home)
 
-    page = kwargs.get('page')
+    page = GET.get('page')
     n_items = 15
 
     resources = [
@@ -58,7 +55,7 @@ def artist_home(request, get_params, kwargs):
     return render(request, 'artist-home.html', context)
 
 
-def music_home(request, get_params, kwargs):
+def music_home(request, GET, opt):
     context = Context({})
     return render(request, 'music-home.html', context)
     

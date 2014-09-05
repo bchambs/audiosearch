@@ -2,17 +2,18 @@ from __future__ import absolute_import
 
 
 _DEFAULT_TTL = 3000     # In seconds.
-_ID_SEPARATOR = '_'
-_KEY_SEPARATOR = '::'
+
+_ARTIST_SONG_SEP = ' BY '
+_ID_SEP = '_'
+_KEY_SEP = '::'
 
 
 class BaseResource(object):
     _ttl = _DEFAULT_TTL
 
     def __init__(self, head, tail, name):
-        self._id_ = _ID_SEPARATOR.join([head, tail])
-        self._name = name
-        self._key = _KEY_SEPARATOR.join([self._id_, name])
+        self._id_ = _ID_SEP.join([head, tail])
+        self._key = _KEY_SEP.join([self._id_, name])
 
     @property
     def id(self):
@@ -21,10 +22,6 @@ class BaseResource(object):
     @property
     def key(self):
         return self._key
-
-    @property
-    def name(self):
-        return self._name
 
     @property
     def ttl(self):
