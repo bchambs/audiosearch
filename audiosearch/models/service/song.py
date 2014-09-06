@@ -4,6 +4,31 @@ from audiosearch.services import dependency
 from audiosearch.services.base import EchoNestService, EmptyResponseError
 
 
+class SearchSongs(EchoNestService):
+    TYPE_ = 'song'
+    METHOD = 'search'
+    BUCKETS = [
+        'song_hotttnesss', 
+        'song_hotttnesss_rank', 
+    ]
+    ECHO_NEST_KEY = 'songs'
+
+
+    def __init__(self, artist, song):
+        payload = {
+            'artist': artist,
+            'bucket': SearchSongs.BUCKETS,
+            'song_type': "studio",
+            'sort': "song_hotttnesss-desc",
+            'title': song,
+        }
+        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, 
+            payload)
+
+    def __str__(self):
+        return "search songs"
+
+
 class SongProfile(EchoNestService):
     TYPE_ = 'song'
     METHOD = 'profile'
@@ -18,13 +43,13 @@ class SongProfile(EchoNestService):
 
     def __init__(self, artist, song):
         dependencies = list(dependency.SongID(song, artist))
-        payload = dict(bucket=SongProfileService.BUCKETS)
+        payload = dict(bucket=SongProfile.BUCKETS)
 
-        super(SongProfileService, self).__init__(self.TYPE_, self.METHOD, 
+        super(SongProfile, self).__init__(self.TYPE_, self.METHOD, 
             payload, dependencies=dependencies)
 
     def __str__(self):
-        return "SongProfileService"
+        return "song profile"
 
     def combine_dependency(self, intermediate):
         try:

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Django settings for audiosearch project.
 
@@ -13,14 +15,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# this is changed for production and test 
 SECRET_KEY = 'vchh__-$5w79n9h$o03gsdgSDgl1o=)m$h(45!!7)l@1ajce7'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  True
 TEMPLATE_DEBUG = True
 
@@ -34,20 +30,19 @@ ALLOWED_HOSTS = [
     'http://wwww.audiosearch.net',
 ]
 
-# List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#   'django.template.loaders.eggs.Loader',
+    ''
 )
 
 TEMPLATE_DIRS = (
-    'templates',
-    'templates/artist',
-    'templates/content',
-    'templates/general',
-    'templates/song',
-    'templates/static',
+    '/audiosearch/templates',
+    '/audiosearch/templates/artist',
+    '/audiosearch/templates/content',
+    '/audiosearch/templates/general',
+    '/audiosearch/templates/song',
+    '/audiosearch/templates/static',
 )
 
 # Application definition
@@ -60,7 +55,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'audiosearch',
-    # 'django.contrib.humanize',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -89,24 +83,29 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "static"),
+    os.path.join(PROJECT_ROOT, "/audiosearch/static/"),
 )
 
-STATIC_URL = '/static/'
+STATIC_URL = '/audiosearch/static/'
 
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-APPEND_SLASH = True
+
+# Echo Nest
+ECHO_API_KEY = 'QZQG43T7640VIF4FN'
 
 
-# '''REDIS CLIENT'''
-# try:
-#     from audiosearch.cache import client
-# except ImportError:
-#     print 'help'    # TODO: handle this
+# Redis 
+RESOURCE_CACHE = {
+    'audiosearch': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DATABASE': 0,
+    }
+}
 
 
-'''CELERY CONFIG'''
+# Celery
 BROKER_URL = 'redis://localhost:6379/0'
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
@@ -126,10 +125,7 @@ CELERY_TIMEZONE = 'EST'
 # }
 
 
-
-
-
-'''LOGGER CONFIG'''
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -163,4 +159,9 @@ LOGGING = {
         },
     }
 }
+
+
+'''MISC'''
+APPEND_SLASH = True
+
 

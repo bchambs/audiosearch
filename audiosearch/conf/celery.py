@@ -6,7 +6,7 @@ from celery import Celery
 
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'audiosearch.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'audiosearch.conf.settings')
 app = Celery('audiosearch')
 
 
@@ -16,7 +16,7 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-# REMOVE
+# TODO: remove
 from celery.task.control import inspect
 
 insp = app.control.inspect()

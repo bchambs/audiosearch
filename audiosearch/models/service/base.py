@@ -1,13 +1,17 @@
 from __future__ import absolute_import
 
+from audiosearch import conf
 
-_API_KEY = 'QZQG43T7640VIF4FN'
 
 
-class ServiceError(Exception):
+
+class Error(Exception):
     pass
 
-class EmptyResponseError(Exception):
+class ServiceError(Error):
+    pass
+
+class EmptyResponseError(Error):
     pass
 
 
@@ -22,7 +26,7 @@ class EchoNestService(object):
         self._dependencies = kwargs.get('dependencies')
         self._url = '/'.join([self._LEAD, self._VERSION, type_, method])
         self._payload = {
-            'api_key': _API_KEY,
+            'api_key': conf.API_KEY,
             'format': EchoNestService._FORMAT,
         }
         self._payload.update(payload)

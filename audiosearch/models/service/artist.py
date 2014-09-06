@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from audiosearch.services.base import EchoNestService
+from audiosearch.service.base import EchoNestService
 
 
 _N_GENRE_TAGS = 5
@@ -23,7 +23,7 @@ class ArtistProfile(EchoNestService):
     def __init__(self, artist):
         payload = dict(name=artist, bucket=ArtistProfile.BUCKETS)
         super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
-            payload)
+                                            payload)
 
     def __str__(self):
         return "artist profile service"
@@ -72,26 +72,6 @@ class ArtistProfile(EchoNestService):
         return data
 
 
-class SimilarArtists(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'similar'
-    BUCKETS = [
-        'images',
-        'terms',
-        'songs',
-    ]
-    ECHO_NEST_KEY = 'artists'
-
-
-    def __init__(self, artist):
-        payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
-        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
-            payload)
-
-    def __str__(self):
-        return "SimilarArtists"
-
-
 class ArtistSongs(EchoNestService):
     TYPE_ = 'playlist'
     METHOD = 'static'
@@ -110,4 +90,61 @@ class ArtistSongs(EchoNestService):
         super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, payload)
 
     def __str__(self):
-        return "ArtistSongs"
+        return "artist songs"
+
+
+class SearchArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'suggest'
+    ECHO_NEST_KEY = 'artists'
+
+
+    def __init__(self, artist):
+        payload = dict(name=artist)
+        super(SearchArtists, self).__init__(self.TYPE_, self.METHOD, 
+                                            payload)
+
+    def __str__(self):
+        return "search artists"
+
+
+class SimilarArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'similar'
+    BUCKETS = [
+        'images',
+        'terms',
+        'songs',
+    ]
+    ECHO_NEST_KEY = 'artists'
+
+
+    def __init__(self, artist):
+        payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
+        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
+                                            payload)
+
+    def __str__(self):
+        return "similar artists"
+
+
+
+# TODO: create scheduled service to update this.
+class TopArtists(EchoNestService):
+    TYPE_ = 'artist'
+    METHOD = 'top_hottt'
+    BUCKETS = [
+        'hotttnesss_rank',
+    ]
+    ECHO_NEST_KEY = 'artists'
+
+
+    def __init__(self):
+        payload = {
+            'results': EchoNestService._PERSIST,
+            'bucket': TopArtists.BUCKETS,
+        }
+        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, payload)
+
+    def __str__(self):
+        return "top artists"

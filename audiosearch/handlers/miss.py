@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from audiosearch import tasks
 
 
-def get_echo_data(resource):
+def get_echo_data(type_, method, key, ttl):
     key = resource.key
     ttl = resource.ttl
     build = resource.build_service
