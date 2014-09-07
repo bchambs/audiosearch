@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-from audiosearch.cache import redis as redis_
-from audiosearch
+from audiosearch.cache.redis import RedisCache
 
-cache = redis_.RedisCache()
+# Cache = redis_.RedisCache()

@@ -5,9 +5,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    sys.dont_write_bytecode = True
-    
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "audiosearch.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "audiosearch.conf.settings")
 
     from django.core.management import execute_from_command_line
 

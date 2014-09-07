@@ -5,13 +5,24 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from audiosearch import cache
-from audiosearch.redis import KeyNotFoundError
+from audiosearch import Cache
+# from audiosearch.redis import KeyNotFoundError
 from audiosearch.handlers import miss
-from audiosearch import resource 
+from audiosearch.models import resource 
+from audiosearch.utils.decorators import debug_view
 
 
+@debug_view
 def artist_home(request, GET, opt):
+
+    x = Cache.get('test')
+    print x
+
+    context = Context({})
+    return render(request, 'artist-home.html', context)
+
+
+    ###################
     try:
         artist = opt.pop('artist')
     except KeyError:
@@ -31,7 +42,6 @@ def artist_home(request, GET, opt):
     #     print
 
 
-    print
     context = Context({})
     return render(request, 'artist-home.html', context)
 

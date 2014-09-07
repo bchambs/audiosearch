@@ -33,16 +33,15 @@ ALLOWED_HOSTS = [
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    ''
 )
 
 TEMPLATE_DIRS = (
-    '/audiosearch/templates',
-    '/audiosearch/templates/artist',
-    '/audiosearch/templates/content',
-    '/audiosearch/templates/general',
-    '/audiosearch/templates/song',
-    '/audiosearch/templates/static',
+    'audiosearch/templates/',
+    'audiosearch/templates/artist',
+    'audiosearch/templates/content',
+    'audiosearch/templates/general',
+    'audiosearch/templates/song',
+    'audiosearch/templates/static',
 )
 
 # Application definition
@@ -96,12 +95,13 @@ ECHO_API_KEY = 'QZQG43T7640VIF4FN'
 
 
 # Redis 
-RESOURCE_CACHE = {
-    'audiosearch': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DATABASE': 0,
-    }
+CACHE_CONFIG = {
+    'HOST': 'localhost',
+    'PORT': 6379,
+    'DATABASE': 0,
+    'DEFAULT_TTL': 180,    # In seconds.
+    'CONNECTION_TIMEOUT': 10, 
+    'NAME': 'django',
 }
 
 

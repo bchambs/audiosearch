@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from audiosearch.resource import base
+from audiosearch.models.resource import base
 
 
 class Discography(base.BaseResource):

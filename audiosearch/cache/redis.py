@@ -8,18 +8,39 @@ class RedisCache(base.BaseCache):
     def __init__(self, params):
         super(RedisCache, self).__init__(params)
         db = params.get('DATABASE', 0)
-        self._client_kwargs = dict(host=self._host, port=self._port, db=db)
+        timeout = params.get('CONNECTION_TIMEOUT')
 
+        self._client_kwargs = {
+            'host': self._host,
+            'port': self._port,
+            'db': db,
+            'socket_connect_timeout': timeout,
+        }
+
+
+    def __repr__(self):
+        return "%s _ redis connection." % (self.name)
+        
 
     @property
     def _cache(self):
         if getattr(self, '_client', None) is None:
-            self._client = redis.StrictRedis(self._client_kwargs)
+            self._client = redis.StrictRedis(**self._client_kwargs)
+            self._client.client_setname(self._connection_name)
         return self._client
 
 
+    @property
+    def name(self):
+        if self._cache:
+            connection_name = self._client.client_getname()
+        else:
+            connection_name = "No redis connection."
+        return connection_name
+
+
     def get(self, key):
-        pass
+        return self._cache.get(key)
 
     def set(self, key, value):
         pass
