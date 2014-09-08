@@ -25,9 +25,6 @@ class SearchSongs(EchoNestService):
         super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, 
             payload)
 
-    def __str__(self):
-        return "search songs"
-
 
 class SongProfile(EchoNestService):
     TYPE_ = 'song'
@@ -48,8 +45,6 @@ class SongProfile(EchoNestService):
         super(SongProfile, self).__init__(self.TYPE_, self.METHOD, 
             payload, dependencies=dependencies)
 
-    def __str__(self):
-        return "song profile"
 
     def combine_dependency(self, intermediate):
         try:

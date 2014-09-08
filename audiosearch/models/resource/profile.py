@@ -4,6 +4,7 @@ from audiosearch.models.resource import base
 
 
 class ArtistProfile(base.BaseResource):
-
-    def __init__(self, name):
-        super(ArtistProfile, self).__init__('artist', 'profile', name)
+    _fields = ['artist']
+    category = 'artist'
+    content = 'profile'
+    _ttl = 0

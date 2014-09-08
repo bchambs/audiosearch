@@ -16,8 +16,8 @@ class EmptyResponseError(Error):
 
 
 class EchoNestService(object):
-    _LEAD = "http://developer.echonest.com/api"
-    _VERSION = "v4"
+    _LEAD = 'http://developer.echonest.com/api'
+    _VERSION = 'v4'
     _FORMAT = 'json'
     _RESULT_MAX_LEN = 100   # Largest size result for Echo Nest responses.
 
@@ -31,16 +31,19 @@ class EchoNestService(object):
         }
         self._payload.update(payload)
 
-    def __str__(self):
-        return "EchoNestService"
+    def __repr__(self):
+        return "%s %s service" % (self.TYPE_, self.METHOD)
+
 
     @property
     def dependencies(self):
         return self._dependencies
 
+
     @property
     def payload(self):
         return self._payload
+
 
     @property
     def url(self):

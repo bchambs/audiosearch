@@ -4,6 +4,7 @@ from audiosearch.models.resource import base
 
 
 class Discography(base.BaseResource):
+    _fields = ['artist']
+    category = 'artist'
+    content = 'discography'
 
-    def __init__(self, name):
-        super(Discography, self).__init__('artist', 'discography', name)

@@ -17,9 +17,6 @@ class PlaylistBase(EchoNestService):
         super(PlaylistBase, self).__init__(self.TYPE_, self.METHOD, payload,
             **kwargs)
 
-    def __str__(self):
-        return "PlaylistBase"
-
 
 class SongPlaylist(PlaylistBase):
     BUCKETS = [
@@ -34,8 +31,6 @@ class SongPlaylist(PlaylistBase):
         super(SongPlaylistService, self).__init__(payload, 
             dependencies=dependencies)
 
-    def __str__(self):
-        return "SongPlaylistService"
 
     # def combine_dependency(self, intermediate):
     #     try:
@@ -51,5 +46,3 @@ class ArtistPlaylist(PlaylistBase):
         payload = dict(artist=artist, variety=1, type='artist-radio')
         super(ArtistPlaylistService, self).__init__(payload)
 
-    def __str__(self):
-        return "ArtistPlaylistService"

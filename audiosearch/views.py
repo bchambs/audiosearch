@@ -9,29 +9,29 @@ from audiosearch import Cache
 # from audiosearch.redis import KeyNotFoundError
 from audiosearch.handlers import miss
 from audiosearch.models import resource 
-from audiosearch.utils.decorators import debug_view
 
 
-@debug_view
-def artist_home(request, GET, opt):
-
-    x = Cache.get('test')
-    print x
-
-    context = Context({})
-    return render(request, 'artist-home.html', context)
-
-
-    ###################
+def artist_home(request, GET, **params):
+    print
+    print
     try:
-        artist = opt.pop('artist')
+        artist = params.pop('artist')
     except KeyError:
         return redirect(music_home)
 
     profile = resource.ArtistProfile(artist)
     disc = resource.Discography(artist)
 
-    content = _get_content(profile, disc)
+    p2 = resource.ArtistProfile(artist)
+
+    resources = [
+        profile,
+        disc,
+        p2,
+    ]
+
+
+    available, failed, pending = Cache.get_many(resources)
 
 
     # for _ in resources:
@@ -41,21 +41,26 @@ def artist_home(request, GET, opt):
     #     print _.ttl
     #     print
 
+    """
+    'artist name' : {
+        'artist profile': {
+            __pageinfo__,
+            ...
+        }
+    }
 
-    context = Context({})
+    """
+    context = Context({
+        'test': 1,
+    })
+
+
+    print
+    print
     return render(request, 'artist-home.html', context)
 
 
-def _get_content(*resources):
-    available = dict()
 
-    for res in resources:
-        try:
-            available[res.key] = cache.fetch(res.key, res.ttl)
-        except cache.KeyNotFoundError:
-            pass
-
-    return available
 
 
 

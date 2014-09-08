@@ -27,8 +27,10 @@ class SongID(EchoNestService):
         payload = dict(results=1, song_type=None)
         super(SongID, self).__init__(self.TYPE_, self.METHOD, payload)
 
-    def __str__(self):
-        return "SongID"
+    def __repr__(self):
+        tail = " (dependency)"
+        return super(SongID, self).__repr__(tail)
+
 
     def build(self, response):
         try:

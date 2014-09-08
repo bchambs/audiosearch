@@ -1,8 +1,10 @@
 from __future__ import absolute_import
+import os
 
 import redis
 
 from audiosearch.cache import base
+
 
 class RedisCache(base.BaseCache):
     def __init__(self, params):
@@ -10,56 +12,82 @@ class RedisCache(base.BaseCache):
         db = params.get('DATABASE', 0)
         timeout = params.get('CONNECTION_TIMEOUT')
 
-        self._client_kwargs = {
+        self._client_params = {
             'host': self._host,
             'port': self._port,
             'db': db,
             'socket_connect_timeout': timeout,
         }
 
+        try:
+            self._pid = os.getpid()
+        except os.OSError:
+            self._pid = 'Unknown'
+
 
     def __repr__(self):
-        return "%s _ redis connection." % (self.name)
-        
+        indent = ' ' * 4
+        title = "%s _ redis connection _ PID = %d:" % (self.name, self._pid)
+        spec = ([("%s%s: %s") % (indent, k.upper(), v) for (k, v) in 
+            self._client_params.items()])
+
+        return '\n'.join([title] + spec)
+
 
     @property
     def _cache(self):
         if getattr(self, '_client', None) is None:
-            self._client = redis.StrictRedis(**self._client_kwargs)
-            self._client.client_setname(self._connection_name)
+            self._client = redis.StrictRedis(**self._client_params)
         return self._client
 
 
     @property
+    def info(self):
+        return self._client_params
+
+
+    @property
     def name(self):
-        if self._cache:
-            connection_name = self._client.client_getname()
-        else:
-            connection_name = "No redis connection."
-        return connection_name
+        return self._name
 
 
     def get(self, key):
         return self._cache.get(key)
 
+
     def set(self, key, value):
         pass
 
-    def get_many(self, keys):
-        d = {}
-        for k in keys:
-            val = self.get(k)
-            if val is not None:
-                d[k] = val
-        return d
+
+    def get_many(self, resources):
+        """List of resources, return available, failed, pending structs.
+
+        available: dict of {(category, content): raw_data}
+        failed: dict of {(category, content): err code}
+        pending: set of pending keys
+        """
+
+        # break this into 2 sets, those with custom TTL and those with none
+        timed_keys = set([(res.key, res.ttl) for res in resources])
+
+        pass
+        # d = {}
+        # for k in keys:
+        #     val = self.get(k)
+        #     if val is not None:
+        #         d[k] = val
+        # return d
+
+        return 1, 2, 3
+
 
     def set_many(self, data):
         for key, value in data.items():
             self.set(key, value)
 
 
-
-
+    def _get_many(self):
+        pass
 
 
 

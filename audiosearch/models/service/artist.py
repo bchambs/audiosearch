@@ -25,8 +25,6 @@ class ArtistProfile(EchoNestService):
         super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
                                             payload)
 
-    def __str__(self):
-        return "artist profile service"
 
     def process(self, raw_data):
         data = {}
@@ -89,9 +87,6 @@ class ArtistSongs(EchoNestService):
         }
         super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, payload)
 
-    def __str__(self):
-        return "artist songs"
-
 
 class SearchArtists(EchoNestService):
     TYPE_ = 'artist'
@@ -103,9 +98,6 @@ class SearchArtists(EchoNestService):
         payload = dict(name=artist)
         super(SearchArtists, self).__init__(self.TYPE_, self.METHOD, 
                                             payload)
-
-    def __str__(self):
-        return "search artists"
 
 
 class SimilarArtists(EchoNestService):
@@ -123,10 +115,6 @@ class SimilarArtists(EchoNestService):
         payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
         super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
                                             payload)
-
-    def __str__(self):
-        return "similar artists"
-
 
 
 # TODO: create scheduled service to update this.
@@ -146,5 +134,3 @@ class TopArtists(EchoNestService):
         }
         super(TopArtists, self).__init__(self.TYPE_, self.METHOD, payload)
 
-    def __str__(self):
-        return "top artists"
