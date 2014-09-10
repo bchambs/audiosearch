@@ -6,6 +6,14 @@ import redis
 from audiosearch.cache import base
 
 
+class Error(Exception):
+    pass
+
+
+class UnexpectedTypeError(Exception):
+    pass
+
+
 class RedisCache(base.BaseCache):
     def __init__(self, params):
         super(RedisCache, self).__init__(params)
@@ -51,43 +59,80 @@ class RedisCache(base.BaseCache):
         return self._name
 
 
-    def get(self, key):
-        return self._cache.get(key)
+    def get_list(self, key, start=0, end=-1):
+        return self._cache.lrange(key, start, end)
 
 
-    def set(self, key, value):
-        pass
+    def get_hash(self, key):
+        return self._cache.hgetall(key)
 
 
-    def get_many(self, resources):
-        """List of resources, return available, failed, pending structs.
-
-        available: dict of {(category, content): raw_data}
-        failed: dict of {(category, content): err code}
-        pending: set of pending keys
-        """
-
-        # break this into 2 sets, those with custom TTL and those with none
-        timed_keys = set([(res.key, res.ttl) for res in resources])
-
-        pass
-        # d = {}
-        # for k in keys:
-        #     val = self.get(k)
-        #     if val is not None:
-        #         d[k] = val
-        # return d
-
-        return 1, 2, 3
 
 
-    def set_many(self, data):
-        for key, value in data.items():
-            self.set(key, value)
 
 
-    def _get_many(self):
-        pass
+
+
+
+
+    # def get_list_many(self, keys, start=0, end=-1):
+    #     hit = {}
+    #     miss = set()
+
+    #     for k in keys:
+    #         value = self.get_list(k, start, end)
+
+    #         if value:
+    #             hit[k] = value
+    #         else:
+    #             miss.add(k)
+
+    #     return hit, miss
+
+
+    
+
+
+    # def get(self, key):
+    #     value = None
+
+    #     if key in self._cache:
+    #         type_ = self._cache.type(key)
+
+    #         if type_ == 'list':
+    #             value = self.get_list(key)
+    #         elif type_ == 'hash':
+    #             value = self.get_hash(key)
+    #         else:
+    #             raise UnexpectedTypeError(key)
+
+    #     return value
+
+
+    # def get_many(self, resources, start, end):
+    #     hashes = []
+    #     lists = []
+
+    #     for res in resources:
+    #         if res.type_ =
+
+
+    #     ''''''''
+    #     hit = {}
+    #     miss = set()
+    #     keys = set([res.key for res in resources])
+        
+    #     for k in keys:
+    #         value = self.get(k)
+
+    #         if value:
+    #             hit[k] = value
+    #         else:
+    #             miss.add(k)
+
+    #     return hit, miss
+
+
 
 
 

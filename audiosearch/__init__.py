@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from audiosearch.conf.settings import CACHE_CONFIG
 from audiosearch.cache import InvalidBackendError, RedisCache
+from audiosearch.celery import app as celery_app
 
 
 Cache = RedisCache(CACHE_CONFIG)

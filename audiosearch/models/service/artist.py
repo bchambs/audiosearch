@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from audiosearch.service.base import EchoNestService
+from audiosearch.models.service.base import EchoNestService
 
 
 _N_GENRE_TAGS = 5
@@ -22,8 +22,8 @@ class ArtistProfile(EchoNestService):
 
     def __init__(self, artist):
         payload = dict(name=artist, bucket=ArtistProfile.BUCKETS)
-        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
-                                            payload)
+        super(ArtistProfile, self).__init__(ArtistProfile.TYPE_, 
+                                            ArtistProfile.METHOD, payload)
 
 
     def process(self, raw_data):
@@ -85,7 +85,8 @@ class ArtistSongs(EchoNestService):
             'results': EchoNestService._RESULT_MAX_LEN,
             'sort': "song_hotttnesss-desc",
         }
-        super(ArtistSongs, self).__init__(self.TYPE_, self.METHOD, payload)
+        super(ArtistSongs, self).__init__(ArtistSongs.TYPE_, ArtistSongs.METHOD,
+                                            payload)
 
 
 class SearchArtists(EchoNestService):
@@ -96,8 +97,8 @@ class SearchArtists(EchoNestService):
 
     def __init__(self, artist):
         payload = dict(name=artist)
-        super(SearchArtists, self).__init__(self.TYPE_, self.METHOD, 
-                                            payload)
+        super(SearchArtists, self).__init__(SearchArtists.TYPE_, 
+                                            SearchArtists.METHOD, payload)
 
 
 class SimilarArtists(EchoNestService):
@@ -113,8 +114,8 @@ class SimilarArtists(EchoNestService):
 
     def __init__(self, artist):
         payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
-        super(ArtistProfile, self).__init__(self.TYPE_, self.METHOD, 
-                                            payload)
+        super(ArtistProfile, self).__init__(SimilarArtists.TYPE_, 
+                                            SimilarArtists.METHOD, payload)
 
 
 # TODO: create scheduled service to update this.
@@ -132,5 +133,6 @@ class TopArtists(EchoNestService):
             'results': EchoNestService._PERSIST,
             'bucket': TopArtists.BUCKETS,
         }
-        super(TopArtists, self).__init__(self.TYPE_, self.METHOD, payload)
+        super(TopArtists, self).__init__(TopArtists.TYPE_, TopArtists.METHOD, 
+                                        payload)
 

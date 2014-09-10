@@ -1,0 +1,26 @@
+View Context-to-Template dict mapping.
+    Templates can assume the following Context layout with res as resource:
+
+    Context = {
+        res.name: {
+            'res.category res. content': {
+                'div_id': div id selector prefix,
+                'title': context table or box header,
+                'is_preview': boolean determining content nav bar,
+
+            # If resource is available
+                'data': value at Cache[res.key],
+                'next': next page number or None,
+                'previous': previous page number or None,
+                'current': current page number or None,
+                'total': total page count,
+                'offset': table index offset,
+
+            # If resource failed
+                1. use %for% %empty% django tag
+
+            # If resource is pending
+                1. spinner div id selector
+            }
+        },
+    }

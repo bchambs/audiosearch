@@ -51,29 +51,8 @@ class BaseCache(object):
             raise InvalidBackendError()
         else:
             self.default_ttl = params.get('DEFAULT_TTL', 300)
+            self.persist_set = params.get('PERSIST_SET')
 
 
     def __contains__(self, key):
-        return self.has_key(key)
-
-
-    def has_key(self, key):
-        return self.get(key) is not None
-
-
-    def get(self, key):
-        pass
-
-
-    def set(self, key, value):
-        pass
-
-
-    def get_many(self, keys):
-        pass
-
-
-    def set_many(self, data):
-        pass
-
-    
+        return self._cache.exists(key)

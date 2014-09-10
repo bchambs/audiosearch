@@ -1,14 +1,8 @@
 from __future__ import absolute_import
-import logging
 from time import sleep
 
 from requests import get, RequestException
 
-from audiosearch import messages
-from audiosearch.services.base import EmptyResponseError, ServiceError
-
-
-logger = logging.getLogger("general_logger")
 
 _ATTEMPT_LIMIT = 15
 _CALL_SNOOZE = 2    # In seconds.
@@ -19,16 +13,17 @@ _LIMIT_EXCEEDED = 3
 _MISSING_PARAM = 4
 _INVALID_PARAM = 5
 
-class EchoCodeError(Exception):
-    pass
 
-class NoDataError(Exception):
-    pass
-
-class TimeoutError(Exception):
+class Error(Exception):
     pass
 
 
+class ServiceFailureError(Error):
+    pass
+
+
+class TimeoutError(Error):
+    pass
 
 
 def consume(package):
@@ -57,21 +52,23 @@ def consume(package):
 
             # TODO: make this less fragile.  Check echo nest docs.
             elif "does not exist" in status_message:
-                raise EchoCodeError(status_message)
+                # raise EchoCodeError(status_message)
+                pass
 
             # Received error code in response.
             else:
-                raise EchoCodeError(status_code)
+                # raise EchoCodeError(status_code)
+                pass
 
         # Invalid request or unable to parse json response.
-        except (EchoCodeError, KeyError, RequestException, ValueError) as e:
-            logger.exception(e)
-            raise NoDataError()
+        except (KeyError, RequestException, ValueError) as e:
+            # raise NoDataError()
+            pass
             break
 
         except TimeoutError:
-            logger.exception(response)
-            raise NoDataError()
+            # raise NoDataError()
+            pass
             break
 
     return data

@@ -102,6 +102,7 @@ CACHE_CONFIG = {
     'DEFAULT_TTL': 180,    # In seconds.
     'CONNECTION_TIMEOUT': 10, 
     'NAME': 'django',
+    'PERSIST_SET': set('top'),
 }
 
 

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
-from audiosearch.services import dependency
-from audiosearch.services.base import EchoNestService
+from audiosearch.models.service.dependency import SongID
+from audiosearch.models.service.base import EchoNestService
 
 
 class PlaylistBase(EchoNestService):
@@ -24,12 +24,12 @@ class SongPlaylist(PlaylistBase):
     ]
 
     def __init__(self, artist, song):
-        buckets = PlaylistBase.BUCKETS + SongPlaylistService.BUCKETS
+        buckets = PlaylistBase.BUCKETS + SongPlaylist.BUCKETS
         payload = dict(type='song-radio', bucket=buckets)
-        dependencies = list(dependency.SongID(song, artist))
+        req = SongID(song, artist)
 
-        super(SongPlaylistService, self).__init__(payload, 
-            dependencies=dependencies)
+        super(SongPlaylist, self).__init__(payload, 
+            dependency=req)
 
 
     # def combine_dependency(self, intermediate):

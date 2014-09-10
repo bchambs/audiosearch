@@ -7,4 +7,9 @@ class ArtistProfile(base.BaseResource):
     _fields = ['artist']
     category = 'artist'
     content = 'profile'
-    _ttl = 0
+
+
+class SongProfile(base.BaseResource):
+    _fields = ['artist', 'song']
+    category = 'song'
+    content = 'profile'

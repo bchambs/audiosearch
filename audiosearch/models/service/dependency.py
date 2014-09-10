@@ -1,11 +1,6 @@
 from __future__ import absolute_import
-import logging
 
-from audiosearch.services.base import (EchoNestService, EmptyResponseError, 
-    ServiceError)
-
-
-logger = logging.getLogger("general_logger")
+from audiosearch.models.service.base import EchoNestService
 
 
 class Error(Exception):
@@ -25,24 +20,15 @@ class SongID(EchoNestService):
 
     def __init__(self, artist, song):
         payload = dict(results=1, song_type=None)
-        super(SongID, self).__init__(self.TYPE_, self.METHOD, payload)
+        super(SongID, self).__init__(SongID.TYPE_, SongID.METHOD, payload)
+
 
     def __repr__(self):
         tail = " (dependency)"
-        return super(SongID, self).__repr__(tail)
+        return super(SongID, self).__repr__() + tail
 
 
     def build(self, response):
-        try:
-            first_result = response.pop()
-        except IndexError:
-            raise EmptyResponseError()
-        else:
-            try:
-                id_ = first_result.pop('id')
-            except KeyError:
-                raise ServiceError("Missing required service field.")
-            else:
-                return dict(song_id=id_)
+        pass
 
 

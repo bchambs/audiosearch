@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 
-from audiosearch import handlers
-from audiosearch import DEFAULT_TTL
-
+from audiosearch.handlers import get_echo_data
 
 _ARTIST_SONG_SEP = ' BY '
 _ID_SEP = ' '
@@ -32,39 +30,39 @@ class BaseResource(object):
         if self.category == 'artist':
             name = self.artist
         elif self.category == 'song':
-            name = _ARTIST_SONG_SEP.join([self._song, self.artist])
+            name = _ARTIST_SONG_SEP.join([self.song, self.artist])
+        elif self.category == 'top':
+            name = '$'
         else:
             raise TypeError('Unexpected category')
 
-        key_id = _ID_SEP.join([self.category, self.content])
-        self.key = _KEY_SEP.join([key_id, name])
-        self.name = name
+        self._rid = _ID_SEP.join([self.category, self.content])
+        self._key = _KEY_SEP.join([self._rid, name])
+        self._name = name
 
 
     def __cmp__(self, other):
-        print ord(self.key)
-        print ord(other.key)
         return (ord(self.key) < ord(other.key))
 
 
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+
     def __repr__(self):
-        return "%s %s for %s" % (self.category, self.content, self.name)
+        return "%s for %s" % (self.rid, self.name)
 
 
     @property
-    def category(self):
-        return self.category
+    def rid(self):
+        return self._rid
 
 
     @property
-    def content(self):
-        return self.content
+    def key(self):
+        return self._key
 
 
-    @property
-    def ttl(self):
-        if getattr(self, '_ttl', None) is None:
-            self._ttl = DEFAULT_TTL
-        return self._ttl
-
-
+    def get(self):
+        params = dict([(field, getattr(self, field)) for field in self._fields])
+        get_echo_data(self.key, self.category, self.content, params)

@@ -1,29 +1,22 @@
-"""
-TODO: create scheduled task to track cache hit / miss stats.
-TODO: first action is to store key in pending set.
-"""
 from __future__ import absolute_import
-import logging
 
 from celery import shared_task
 
-# from audiosearch.cache.client import client
+from audiosearch.models.service import consume, ServiceFailureError
 
 
-logger = logging.getLogger("general_logger")
-
-#todo redo tries
 @shared_task
-def call_echo_nest(key, ttl, service, dependencies):
-    # """
+def call_api(key, service):
+    if service.dependency:
+        try:
+            intermediate = consume(service.dependency)
+        except ServiceFailureError:
+            return
+        req_fields = service.dependency.build(intermediate)
+        service.payload.update(req_fields)
 
 
-    # CONSUME CAN RETURN EMPTY DATA CATCH THIS
 
-    # """
-    # print 1
-    # continue_task = client.establish_pending(key)
-    # print 2
 
     # if not continue_task: return
     # print 3
@@ -65,17 +58,4 @@ def call_echo_nest(key, ttl, service, dependencies):
     pass
 
 
-def _fulfill_dependencies(service, dependencies):
-    for prereq in dependencies:
-        intermediate = consume(prereq)
-        required_fields = prereq.build(intermediate)
-        service.payload.update(required_fields)
 
-
-
-
-from time import sleep
-@shared_task
-def do_nothing(x):
-    sleep(x)
-    print "awake"

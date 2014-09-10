@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
-from audiosearch.services import dependency
-from audiosearch.services.base import EchoNestService, EmptyResponseError
+from audiosearch.models.service.dependency import SongID
+from audiosearch.models.service.base import EchoNestService
 
 
 class SearchSongs(EchoNestService):
@@ -22,8 +22,8 @@ class SearchSongs(EchoNestService):
             'sort': "song_hotttnesss-desc",
             'title': song,
         }
-        super(SearchSongs, self).__init__(self.TYPE_, self.METHOD, 
-            payload)
+        super(SearchSongs, self).__init__(SearchSongs.TYPE_, SearchSongs.METHOD, 
+                                            payload)
 
 
 class SongProfile(EchoNestService):
@@ -39,11 +39,11 @@ class SongProfile(EchoNestService):
 
 
     def __init__(self, artist, song):
-        dependencies = list(dependency.SongID(song, artist))
-        payload = dict(bucket=SongProfile.BUCKETS)
+        req = SongID(song, artist)
+        payload = {'bucket': SongProfile.BUCKETS}
 
-        super(SongProfile, self).__init__(self.TYPE_, self.METHOD, 
-            payload, dependencies=dependencies)
+        super(SongProfile, self).__init__(SongProfile.TYPE_, SongProfile.METHOD, 
+                                            payload, dependency=req)
 
 
     def combine_dependency(self, intermediate):
@@ -51,13 +51,15 @@ class SongProfile(EchoNestService):
             first_result = intermediate.pop()
             self.payload['song_id'] = first_result.pop('id')
         except (IndexError, KeyError):
-            raise EmptyResponseError()
+            # raise EmptyResponseError()
+            pass
 
     def process(self, raw_data):
         try:
             first_result = raw_data.pop()
         except IndexError:
-            raise EmptyResponseError()
+            # raise EmptyResponseError()
+            pass
         else:
             data = {}
 
@@ -80,7 +82,8 @@ class SongProfile(EchoNestService):
 
             # General data.
             data['song_hotttnesss'] = first_result.get('song_hotttnesss')
-            data['song_hotttnesss_rank'] = first_result.get('song_hotttnesss_rank')
+            data['song_hotttnesss_rank'] = first_result.get(
+                                            'song_hotttnesss_rank')
 
             return data
             

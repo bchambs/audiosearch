@@ -3,41 +3,32 @@ from __future__ import absolute_import
 from audiosearch import conf
 
 
-
-
-class Error(Exception):
-    pass
-
-class ServiceError(Error):
-    pass
-
-class EmptyResponseError(Error):
-    pass
-
-
 class EchoNestService(object):
     _LEAD = 'http://developer.echonest.com/api'
     _VERSION = 'v4'
     _FORMAT = 'json'
     _RESULT_MAX_LEN = 100   # Largest size result for Echo Nest responses.
+    url = _LEAD
 
 
     def __init__(self, type_, method, payload, **kwargs):
-        self._dependencies = kwargs.get('dependencies')
-        self._url = '/'.join([self._LEAD, self._VERSION, type_, method])
+        self.dependency_ = kwargs.get('dependency')
+        self._url = '/'.join([EchoNestService._LEAD, EchoNestService._VERSION, 
+            type_, method])
         self._payload = {
-            'api_key': conf.API_KEY,
+            'api_key': conf.ECHO_API_KEY,
             'format': EchoNestService._FORMAT,
         }
         self._payload.update(payload)
+
 
     def __repr__(self):
         return "%s %s service" % (self.TYPE_, self.METHOD)
 
 
     @property
-    def dependencies(self):
-        return self._dependencies
+    def dependency(self):
+        return self.dependency_
 
 
     @property
@@ -48,3 +39,6 @@ class EchoNestService(object):
     @property
     def url(self):
         return self._url
+
+
+
