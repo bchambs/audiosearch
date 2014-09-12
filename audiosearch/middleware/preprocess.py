@@ -32,7 +32,7 @@ class Normalizer(object):
 
 
 def _normalize(d):
-    """Return a new dict with normalized values."""
+    """Return a 'copy' of d with normalized values."""
 
     normal = {}
 
@@ -45,24 +45,13 @@ def _normalize(d):
         else:
             normal[k] = None    # TODO: see why empty unicode strs do not throw. 
                                 # --> see if unicode has strip(), lower()... etc
-
     return normal
 
 
-# Convert string to lowercase, strip white space, and remove consecutive spaces.
 def _normalize_string(s):
+    """Strip white space, convert to lowercase, and remove consecutive spaces."""
     stripped = s.strip()
     lowered = stripped.lower()
     spacey = urllib.unquote_plus(lowered)
     return ' '.join(spacey.split())
 
-
-# Remove escaping from ajax requests.
-# TODO: see if I can remove this.
-def _unescape_html(s):
-    s = s.replace("&lt;", "<")
-    s = s.replace("&gt;", ">")
-    s = s.replace("&amp;", "&")
-    s = s.replace("&#39;", "'")
-
-    return s

@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from collections import namedtuple
+import ast
 import json
 
 from django.http import HttpResponse
@@ -7,18 +7,9 @@ from django.shortcuts import render, redirect
 from django.template import Context
 
 from audiosearch import Cache
-from audiosearch.handlers import miss
-from audiosearch.models import resource 
+from audiosearch.conf import N_ROWS_PTABLE, N_ROWS_HTABLE
+from audiosearch.models import make_id, make_key, resource 
 from audiosearch.utils.decorators import stdout_gap
-
-
-# Resource = namedtuple('Resource', 'id_ key')
-
-
-# def make_key(category, content, name):
-#     id_ = ' '.join([category, content])
-#     key = '::'.join([id_, name])
-#     return Resource(content, key)
 
 
 @stdout_gap
@@ -53,23 +44,73 @@ def artist_home(request, GET, **params):
 
 @stdout_gap
 def music_home(request, GET, **params):
-    content = {}
+    row_count = N_ROWS_HTABLE
     top = resource.TopArtists()
+    content = {
+        'title': "Popular artists",
+        'row_count': row_count,
+    }
 
     if top.key in Cache:
-        content[top.rid] = Cache.get_list(top.key, 0, 14)
+        resource_data = Cache.get_list(top.key, 0, 14)
+        content[top.rid] = dict(resource_data=resource_data)
     else:
-        content['pendingA'] = top.rid
-        # top.get()
+        opts = _create_opts(top, row_count)
+        content['pending'] = [opts]
+        top.get_resource()
 
-    # prof = resource.ArtistProfile('bright eyes')
-    # prof.get()
-    # print
-
-    prof2 = resource.SongProfile('bright eyes', 'something vague')
-    prof2.get()
-
+    opts = _create_opts(top, row_count)
+    content['pending'] = [opts]
 
     context = Context(content)
     return render(request, 'music-home.html', context)
 
+
+def ajax_retrieve_content(request, GET, **params):
+    context = {}
+    category = GET.get('category')
+    content = GET.get('content')
+    name = GET.get('name')
+    page = GET.get('page')
+    row_count = GET.get('row_count', N_ROWS_PTABLE)
+
+    if not category or not content or not name:
+        return HttpResponse(json.dumps({'status': 'failed'}), 
+                            content_type="application/json")
+
+    key = make_key(category, content, name)
+
+    if key in Cache:
+        start, end = _calculate_page_range(page, row_count)
+        context['resource_data'] = Cache.get(key, start, end)
+        context['resource_type'] = content
+        context['div_id'] = make_id(category, content)
+        context['status'] = 'complete'
+    else:
+        context['status'] = 'pending'
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+def _create_opts(resource, row_count, page=None):
+    params = {
+        'category': resource.category,
+        'content': resource.content,
+        'name': resource.name,
+        'row_count': row_count,
+    }
+
+    if page: 
+        params['page'] = page
+
+    return json.dumps(params, ensure_ascii=False)
+
+
+def _calculate_page_range(page, count):
+    if page:
+        start = page * count
+        end = start + count
+    else:
+        start = 0
+        end = count
+    return start, end

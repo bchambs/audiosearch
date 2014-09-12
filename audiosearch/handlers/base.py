@@ -1,9 +1,7 @@
 from __future__ import absolute_import
-
-
     
 
 class BaseHandler(object):
 
-    def get(self, *args, **kwargs):
+    def get_resource(self, *args, **kwargs):
         pass

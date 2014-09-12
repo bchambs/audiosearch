@@ -6,7 +6,8 @@ from audiosearch.models.service.artist import (ArtistProfile, ArtistSongs,
                                                 TopArtists)
 from audiosearch.models.service.playlist import SongPlaylist, ArtistPlaylist
 from audiosearch.models.service.song import SearchSongs, SongProfile
-from audiosearch.models.service.consumer import consume, ServiceFailureError
+from audiosearch.models.service.consumer import (consume, ServiceFailureError, 
+                                                TimeoutError)
 
 def create_service_map():
     import os

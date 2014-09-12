@@ -1,12 +1,10 @@
-{% load audiosearch_tags %}
-
 <!-- content tables -->
 <div id="{{ div_id }}-tables" class="content center">
     <div class="container-table">
         <div class="header">
 
             <div class="section-title left">
-                {{ content_title|title }}
+                {{ title|title }}
             </div>
 
             <!-- spinner -->
@@ -35,10 +33,9 @@
         {% else %}
             <table id="{{ div_id }}-table">
                 {% with content=content spinner_id="content-spinner" %}
-                    {% include "content_TBODY.html" %}
+                    {% include "content_tbody.html" %}
                 {% endwith %}
             </table>
         {% endif %}
-
     </div>
 </div><!--END content tables -->

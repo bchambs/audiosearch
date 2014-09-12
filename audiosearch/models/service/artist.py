@@ -130,7 +130,7 @@ class TopArtists(EchoNestService):
 
     def __init__(self):
         payload = {
-            'results': EchoNestService._PERSIST,
+            'results': EchoNestService.max_results,
             'bucket': TopArtists.BUCKETS,
         }
         super(TopArtists, self).__init__(TopArtists.TYPE_, TopArtists.METHOD, 

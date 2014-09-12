@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import ast
 import os
 
 import redis
@@ -60,15 +61,37 @@ class RedisCache(base.BaseCache):
 
 
     def get_list(self, key, start=0, end=-1):
-        return self._cache.lrange(key, start, end)
+        raw = self._cache.lrange(key, start, end)
+        return [ast.literal_eval(i) for i in raw]
 
 
     def get_hash(self, key):
-        return self._cache.hgetall(key)
+        raw = self._cache.hgetall(key)
+        return ast.literal_eval(raw)
 
 
+    def get(self, key, start, end):
+        value_type = self._cache.type(key)
+
+        if value_type == 'list':
+            value = self.get_list(key, start, end)
+        elif value_type == 'hash':
+            value = self.get_hash(key)
+        else:
+            pass    # log key, type
+
+        return value
 
 
+    def store(self, key, value):
+        if type(value) is list:
+            self._cache.rpush(key, *value)
+        elif type(value) is dict:
+            self._cachce.hmset(key, value)
+        else:   # Unexpected type
+            pass    # log key, type
+
+        self._cache.expire(key, self.default_ttl)
 
 
 

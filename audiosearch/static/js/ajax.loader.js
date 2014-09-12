@@ -297,22 +297,6 @@ function build_paged_table_nav(content_key, use_generic_key, data, urls) {
 }
 
 
-function hide_spinner(content_key, use_generic_key) {
-    $("#content-spinner").hide();
-
-    //OLD
-    // if (use_generic_key) {
-    //     $("#content-spinner").hide();
-    // }
-    // else {
-    //     var $spinner = "#" + content_key + "-spinner";
-
-    //     $($spinner).hide();
-    // }
-}
-
-
-// function handle_failed(content_key, use_generic_key) {
 function handle_failed() {
     var $div_id = "#content-notification";
 
@@ -346,97 +330,138 @@ function handle_failed() {
 }
 
 
-function handle_slow_results(content_key, use_generic_key) {
-    if (use_generic_key) {
-        var $div_id = "#content-notification";
-    }
-    else {
-        var $div_id = "#" + content_key + "-notification";
+function load_resource_table(res_data, div_id) {
+    var $table_id = "#" + div_id + "-table",
+        $tbody = $("<tbody />"),
+        index = 0;
+
+    $($table_id).append($tbody);
+
+    for (var index = 0, len = res_data.length - 1; index < len; index++) {
+        if (index % 2 === 0) {
+            var row_class = "even";
+        }
+        else {
+            var row_class = "odd";
+        }
+
+        var $tr = $("<tr />",{
+                class: row_class
+            }),
+            $td_index = $("<td />",{
+                class: 'index'
+            }),
+            $td_data = $("<td />");
+            // $item_a = urls['item'](res_data[item]);
+
+        // $td_index.append(index + res_data['offset'] + ".");
+        // $td_data.append($item_a);
+        $td_index.append((index + 1) + ".");
+        $td_data.append(res_data[index].name);
+        $tr.append($td_index);
+        $tr.append($td_data).hide().fadeIn(150 + (index * 180));  
+        
+        $($tbody).append($tr);
     }
 
-    $($div_id).text("This request appears to be taking longer than expected.").fadeIn(NOTIF_DELAY);
+    console.log($table_id);
+    for (var key in res_data[0]) {
+        if (res_data[0].hasOwnProperty(key)) {
+            console.log(key + ": " + res_data[0][key]);
+        }
+    }
 }
 
 
-function handle_no_results(content_key, use_generic_key) {
-    if (use_generic_key) {
-        var $div_id = "#content-notification";
-    }
-    else {
-        var $div_id = "#" + content_key + "-notification";
-    }
+function load_profile(res_data, div_id) {
+    var offset = 0;
+    $("#profile-box").show();
 
-    if (content_key === "search_songs" || content_key === "search_artists") {
-        var msg = "Your search did not match any music data."
-    }
-    else {
-        var msg = "We could not find data for this item."
-    }
+    for (var key in res_data) {
+        var key_string = "#profile-" + key; // make this profile-data
 
-    $($div_id).text(msg).fadeIn(NOTIF_DELAY);
+        if (key === "genres") {
+            for (var i = 0; i < res_data[key].length; i++) {
+                var $tag = $("<li />",{
+                    class: "genre-tag left",
+                    text: res_data[key][i]
+                });
+
+                $(key_string).append($tag);
+                $(key_string).append(" ");
+            }
+        }
+        else {
+            $(key_string).append(res_data[key]).fadeIn(150 + (offset * 180));
+        }
+
+        offset++;
+    }
 }
 
 
-// Send AJAX request for content status update.  
-// @opts contain various request information and is defined in static_AJAX_OPTS.html template.
-// On status = success, load the content according to its data type (table, string, etc).
-function dispatch(opts) {
+function load_resource_data(res_data, res_type, div_id) {
+    if (res_type === 'profile') {
+        load_profile(res_data, div_id);
+    }
+    else {
+        load_resource_table(res_data, div_id);
+    }
+}
+
+
+function hide_spinner(div_id) {
+    $("#" + div_id + "-spinner").hide();
+}
+
+
+function dispatch(opts, attempt) {
     $.ajax({
         url: "/ajax/retrieval/",
         data: opts,
         dataType: 'json',
+        contentType: "application/json",
         type: 'GET',
-        success: function(json_context, stat, o) {
-            console.log(json_context['status']);
+        success: function(context, stat, o) {
+            console.log(context['status']);
 
-
-            switch (json_context['status']) {
+            switch (context['status']) {
 
             case 'complete':
-                hide_spinner(opts.content_key, opts.use_generic_key);
-                load_content(opts, json_context['data']);
+                var res_data = context['resource_data'],
+                    res_type = context['resource_type'],
+                    div_id = context['div_id'];
 
+
+                // console.log(res_data);
+                console.log(res_type);
+                console.log(div_id);
+
+
+                hide_spinner(div_id);
+                load_resource_data(res_data, res_type, div_id);
                 break;
 
             case 'pending':
-                // Check if past failure threshold.
-                if (opts.attempt > AJAX_FAIL_THRESHOLD) {
-                    hide_spinner(opts.content_key, opts.use_generic_key);
-                    handle_failed(opts.content_key, opts.use_generic_key);
-
-                    break;
+                if (attempt > AJAX_FAIL_THRESHOLD) {
+                    // handle failed.
+                    return false;
                 }
                 else {
-                    // Check if past slow load threshold.
-                    if (opts.attempt > AJAX_SLOW_THRESHOLD) {
-                        handle_slow_results(opts.content_key, opts.use_generic_key);
-                    }
-
                     // Continue AJAX requests.
-                    opts.attempt++;
                     setTimeout(function() {
-                            dispatch(opts);
-                        }, AJAX_SNOOZE);
+                        dispatch(opts, attempt++)
+                    }, AJAX_SNOOZE);
                 }
-
-                break;
-
-            case 'empty':
-                hide_spinner(opts.content_key, opts.use_generic_key);
-                handle_no_results(opts.content_key, opts.use_generic_key);
-
                 break;
 
             case 'failed':
-                hide_spinner(opts.content_key, opts.use_generic_key);
-                handle_failed(opts.content_key, opts.use_generic_key);
-
+                // handle failed.
                 break;
             }  
         },
         error: function(o, stat, er) {
-            hide_spinner();
-            handle_failed();
+            return false;
         }
         // ,complete: function(o, stat) {}
     });

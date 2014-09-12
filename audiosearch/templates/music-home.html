@@ -3,14 +3,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    {% include "general_HTML_HEAD.html" %}
+    {% include "html_head.html" %}
 
     <title>audiosearch - top100</title>
 </head>
 
 <body>
 
-{% include "general_HEADER.html" %}
+{% include "page_header.html" %}
 
 <div class="page-wrapper">
 
@@ -32,20 +32,20 @@
         Music ranked by popularity according to the Echo Nest.
     </div>
 
-    {% with content=complete.top_artists div_id='top_artists' content_title=title %}
-        {% include "content_CONTAINER.html" %}
+    {% with content=top div_id='top_artists' %}
+        {% include "content_box.html" %}
     {% endwith %}
     
 </div><!--END content -->
 
-{% include "general_FOOTER.html" %}
+{% include "page_footer.html" %}
 
 </div><!--END page wrapper -->
 
-{% include "general_JS_LINKS.html" %}
+{% include "js_source.html" %}
 
-{% include "static_AJAX_OPTS.html" %}
-{% include "static_AJAX_DEBUG.html" %}
+{% include "ajax_source.html" %}
+{% include "ajax_debug.html" %}
 
 </body>
 </html>

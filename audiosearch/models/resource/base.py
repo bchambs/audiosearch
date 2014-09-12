@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 from audiosearch.handlers import get_echo_data
+from audiosearch.models import make_id, make_key
+
 
 _ARTIST_SONG_SEP = ' BY '
-_ID_SEP = ' '
-_KEY_SEP = '::'
 
 
 class BaseResource(object):
@@ -17,10 +17,12 @@ class BaseResource(object):
         
         # Set all of the positional arguments
         for name, value in zip(self._fields, args):
+            print '    setting {} to {}'.format(name, value)
             setattr(self, name, value)
         
         # Set the remaining keyword arguments
         for name in self._fields[len(args):]:
+            print '    kwargs in resource construct' * 5
             setattr(self, name, kwargs.pop(name))
         
         # Check for any remaining unknown arguments
@@ -31,13 +33,11 @@ class BaseResource(object):
             name = self.artist
         elif self.category == 'song':
             name = _ARTIST_SONG_SEP.join([self.song, self.artist])
-        elif self.category == 'top':
-            name = '$'
         else:
-            raise TypeError('Unexpected category')
+            name = '$'
 
-        self._rid = _ID_SEP.join([self.category, self.content])
-        self._key = _KEY_SEP.join([self._rid, name])
+        self._rid = make_id(self.category, self.content)
+        self._key = make_key(self.category, self.content, name)
         self._name = name
 
 
@@ -50,7 +50,7 @@ class BaseResource(object):
 
 
     def __repr__(self):
-        return "%s for %s" % (self.rid, self.name)
+        return "%s for %s" % (self.rid, self._name)
 
 
     @property
@@ -59,10 +59,15 @@ class BaseResource(object):
 
 
     @property
+    def name(self):
+        return self._name
+
+
+    @property
     def key(self):
         return self._key
 
 
-    def get(self):
+    def get_resource(self):
         params = dict([(field, getattr(self, field)) for field in self._fields])
         get_echo_data(self.key, self.category, self.content, params)

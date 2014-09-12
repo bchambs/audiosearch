@@ -27,12 +27,12 @@ class TimeoutError(Error):
 
 
 def consume(package):
-    attempt = 0
-    print package.url
+    attempt = 1
 
-    while True:
+    while 1:
         try:
-            if attempt > _ATTEMPT_LIMIT: raise TimeoutError()
+            if attempt > _ATTEMPT_LIMIT: 
+                raise TimeoutError()
 
             response = get(package.url, params=package.payload)
             json_response = response.json()
@@ -42,35 +42,25 @@ def consume(package):
 
             # Response is valid, branch on echo nest code.
             if status_code == _SUCCESS:
-                data = json_response['response'][package.ECHO_NEST_KEY]
-                break
+                data = json_response['response'][package.echo_key]
 
-            # Exceeded API access limit.  Snooze then retry.
             elif status_code == _LIMIT_EXCEEDED:
                 attempt += 1
                 sleep(_CALL_SNOOZE)
 
-            # TODO: make this less fragile.  Check echo nest docs.
-            elif "does not exist" in status_message:
-                # raise EchoCodeError(status_message)
-                pass
+            elif "does not exist" in status_message:    # log error
+                raise ServiceFailureError()
+                break
 
             # Received error code in response.
-            else:
-                # raise EchoCodeError(status_code)
-                pass
-
+            else:   # log error
+                raise ServiceFailureError()
+                break
         # Invalid request or unable to parse json response.
-        except (KeyError, RequestException, ValueError) as e:
-            # raise NoDataError()
-            pass
+        except (KeyError, RequestException, ValueError) as e:   # log error
+            raise ServiceFailureError()
             break
-
-        except TimeoutError:
-            # raise NoDataError()
-            pass
-            break
-
-    return data
+        else:
+            return data
 
     

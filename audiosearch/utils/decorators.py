@@ -19,3 +19,4 @@ def stdout_gap(view_func):
 
         return http_response
     return print_gap
+

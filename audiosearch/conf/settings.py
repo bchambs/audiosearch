@@ -90,6 +90,11 @@ STATIC_URL = '/audiosearch/static/'
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
+# Site display
+N_ROWS_PTABLE = 10  # Number of rows displayed in a paged table.
+N_ROWS_HTABLE = 15  # Number of rows displayed in a table on home pages.
+
+
 # Echo Nest
 ECHO_API_KEY = 'QZQG43T7640VIF4FN'
 

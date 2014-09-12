@@ -30,7 +30,7 @@ urlpatterns = patterns('',
 
 
     # Ajax.
-    # url(ur'^ajax/retrieval/$', views.retrieve_content),
+    url(ur'^ajax/retrieval/$', views.ajax_retrieve_content),
     # url(ur'^ajax/clear/$', views.clear_resource),
 
 

@@ -1,0 +1,12 @@
+{% load audiosearch_tags %}
+
+{% for resource in pending %}
+    <script type="text/javascript">
+        var opts = JSON.parse("{{ resource|escapejs }}"),
+            attempt = 0;
+
+        setTimeout(function() {
+            dispatch(opts, attempt)
+        }, AJAX_SNOOZE);
+    </script>
+{% endfor %}
