@@ -37,7 +37,6 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = (
     'audiosearch/templates/',
-    'audiosearch/templates/ajax',
     'audiosearch/templates/artist',
     'audiosearch/templates/content',
     'audiosearch/templates/general',
@@ -65,6 +64,18 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'audiosearch.middleware.preprocess.Normalizer',
+    'audiosearch.middleware.context_mapper.ResourceContextMapper',
+)
+
+# TODO: see if this is needed in production (reason: dev static serving)
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
 )
 
 ROOT_URLCONF = 'audiosearch.urls'
@@ -92,8 +103,8 @@ STATIC_URL = '/audiosearch/static/'
 
 
 # Site display
-N_ROWS_PTABLE = 10  # Number of rows displayed in a paged table.
-N_ROWS_HTABLE = 15  # Number of rows displayed in a table on home pages.
+DEFAULT_ROW_COUNT = 10  # Number of rows displayed in a paged table.
+HOME_ROW_COUNT = 15     # Number of rows displayed in a table on home pages.
 
 
 # Echo Nest

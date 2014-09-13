@@ -1,19 +1,27 @@
+"""
+Regular view (not async) execution:
+    1. Establish args/kwargs and redirect if necessary.
+    2. Create requested resources.
+    3. Assign resources to 'available' or 'pending' status lists.
+    4. Pass TemplateResponse to context mapper middleware.
+"""
+
 from __future__ import absolute_import
 import json
 
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, render_to_response
 from django.template import Context, RequestContext
+from django.template.response import TemplateResponse
 
 from audiosearch import Cache
-from audiosearch.conf import N_ROWS_PTABLE, N_ROWS_HTABLE
+from audiosearch.conf import DEFAULT_ROW_COUNT, HOME_ROW_COUNT
 from audiosearch.models import make_key, resource 
 from audiosearch.utils.decorators import stdout_gap
 
 
 @stdout_gap
 def artist_home(request, GET, **params):
-    print 'why are you here_________________' * 5
     try:
         artist = params.pop('artist')
     except KeyError:
@@ -42,40 +50,29 @@ def artist_home(request, GET, **params):
     return render(request, 'artist-home.html', context)
 
 
+# TODO: fix the need for this, 'content['is_pending'] = True'
+# Add titles to resource classes
+# Move '14' to constant
 @stdout_gap
 def music_home(request, GET, **params):
-    row_count = N_ROWS_HTABLE
-    top = resource.TopArtists()
-    content = {
-        'div_id': top.rid,
-        'row_count': row_count,
-        'title': "Popular artists",
+
+    context = {
+        'available': [],
+        'pending': [],
+        'row_count': HOME_ROW_COUNT,
     }
-    pending = []
+
+    row_count = HOME_ROW_COUNT
+    top = resource.TopArtists()
 
     if top.key in Cache:
-        # content['resource_data'] = Cache.get_list(top.key, 0, 14)
-        pass
+        resource_data = Cache.get_list(top.key, 0, 14)
+        context['available'].append(top.res_id, resource_data)
     else:
-        # opts = _create_opts(top, row_count=row_count)
-        # content['pending'] = [opts]
-        # content['is_pending'] = True
-        # top.get_resource()
-        pass
+        top.get_resource()
+        context['pending'].append(top)
 
-    ####################### testing
-    top.get_resource()
-    content['is_pending'] = True
-    opts = _create_opts(top, row_count=row_count)
-    pending.append(opts)
-    ####################### testing
-
-    namespaced = {
-        top.rid: content,
-        'pending': pending,
-    }
-
-    return render(request, 'music-home.html', Context(namespaced))
+    return TemplateResponse(request, 'music-home.html', context)
 
 
 def ajax_retrieve_content(request, GET, **params):
@@ -89,7 +86,7 @@ def ajax_retrieve_content(request, GET, **params):
     
     context = {}
     page = GET.get('page')
-    row_count = GET.get('row_count', N_ROWS_PTABLE)
+    row_count = GET.get('row_count', DEFAULT_ROW_COUNT)
 
     key = make_key(group, category, name)
 
@@ -111,24 +108,7 @@ def ajax_retrieve_content(request, GET, **params):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 
-def _create_opts(resource, page=None, row_count=None):
-    opts = {
-        'group': resource.group,
-        'category': resource.category,
-        'div_id': resource.rid,
-        'name': resource.name,
-        'qstring': {},
-    }
-
-    if page: 
-        opts['qstring']['page'] = page
-
-    if row_count: 
-        opts['qstring']['row_count'] = row_count
-
-    return opts
-
-
+# TODO: move this somewhere
 def _calculate_page_range(page, count):
     count = int(count)
 

@@ -4,30 +4,30 @@ from audiosearch import conf
 
 
 class EchoNestService(object):
-    LEAD = 'http://developer.echonest.com/api'
-    VERSION = 'v4'
-    FORMAT = 'json'
+    _lead = 'http://developer.echonest.com/api'
+    _version = 'v4'
+    _format = 'json'
     max_results = 100   # Largest size result for Echo Nest responses.
 
 
     def __init__(self, type_, method, payload, **kwargs):
         self.dependency_ = kwargs.get('dependency')
-        self._url = '/'.join([EchoNestService.LEAD, EchoNestService.VERSION, 
+        self._url = '/'.join([EchoNestService._lead, EchoNestService._version, 
             type_, method])
         self._payload = {
             'api_key': conf.ECHO_API_KEY,
-            'format': EchoNestService.FORMAT,
+            'format': EchoNestService._format,
         }
         self._payload.update(payload)
 
 
     def __repr__(self):
-        return "%s %s service" % (self.TYPE_, self.METHOD)
+        return "%s %s service" % (self._type, self._method)
 
 
     @property
     def echo_key(self):
-        return self.ECHO_NEST_KEY
+        return self.echo_key
 
 
     @property

@@ -22,7 +22,7 @@ function dispatch(url, div_id, attempt) {
         else if (context['status'] === 'pending' && attempt < AJAX_FAIL_THRESHOLD) {
             setTimeout(function() {
                 dispatch(url, div_id, ++attempt);
-            }, AJAX_INITIAL_SNOOZE);
+            }, AJAX_SNOOZE);
         }
         else {
             console.log('failed');

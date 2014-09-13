@@ -13,14 +13,14 @@ class DependencyError(Error):
 
 class SongID(EchoNestService):
     """Used to acquire a song's Echo Nest id."""
-    TYPE_ = 'song'
-    METHOD = 'search'
-    ECHO_NEST_KEY = 'songs'
+    _type = 'song'
+    _method = 'search'
+    echo_key = 'songs'
 
 
     def __init__(self, artist, song):
         payload = dict(results=1, song_type=None)
-        super(SongID, self).__init__(SongID.TYPE_, SongID.METHOD, payload)
+        super(SongID, self).__init__(SongID._type, SongID._method, payload)
 
 
     def __repr__(self):

@@ -7,9 +7,9 @@ _N_GENRE_TAGS = 5
 
 
 class ArtistProfile(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'profile'
-    BUCKETS = [
+    _type = 'artist'
+    _method = 'profile'
+    _buckets = [
         'artist_location',
         'biographies',
         'images',
@@ -17,13 +17,13 @@ class ArtistProfile(EchoNestService):
         'genre',
         'years_active',
     ]
-    ECHO_NEST_KEY = 'artist'
+    echo_key = 'artist'
 
 
     def __init__(self, artist):
-        payload = dict(name=artist, bucket=ArtistProfile.BUCKETS)
-        super(ArtistProfile, self).__init__(ArtistProfile.TYPE_, 
-                                            ArtistProfile.METHOD, payload)
+        payload = dict(name=artist, bucket=ArtistProfile._buckets)
+        super(ArtistProfile, self).__init__(ArtistProfile._type, 
+                                            ArtistProfile._method, payload)
 
 
     def process(self, raw_data):
@@ -71,68 +71,68 @@ class ArtistProfile(EchoNestService):
 
 
 class ArtistSongs(EchoNestService):
-    TYPE_ = 'playlist'
-    METHOD = 'static'
-    BUCKETS = [
+    _type = 'playlist'
+    _method = 'static'
+    _buckets = [
         'audio_summary',
     ]
-    ECHO_NEST_KEY = 'songs'
+    echo_key = 'songs'
 
 
     def __init__(self, artist):
         payload = {
             'artist': artist,
-            'results': EchoNestService._RESULT_MAX_LEN,
+            'results': EchoNestService.max_results,
             'sort': "song_hotttnesss-desc",
         }
-        super(ArtistSongs, self).__init__(ArtistSongs.TYPE_, ArtistSongs.METHOD,
+        super(ArtistSongs, self).__init__(ArtistSongs._type, ArtistSongs._method,
                                             payload)
 
 
 class SearchArtists(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'suggest'
-    ECHO_NEST_KEY = 'artists'
+    _type = 'artist'
+    _method = 'suggest'
+    echo_key = 'artists'
 
 
     def __init__(self, artist):
         payload = dict(name=artist)
-        super(SearchArtists, self).__init__(SearchArtists.TYPE_, 
-                                            SearchArtists.METHOD, payload)
+        super(SearchArtists, self).__init__(SearchArtists._type, 
+                                            SearchArtists._method, payload)
 
 
 class SimilarArtists(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'similar'
-    BUCKETS = [
+    _type = 'artist'
+    _method = 'similar'
+    _buckets = [
         'images',
         'terms',
         'songs',
     ]
-    ECHO_NEST_KEY = 'artists'
+    echo_key = 'artists'
 
 
     def __init__(self, artist):
-        payload = dict(name=artist, bucket=SimilarArtists.BUCKETS)
-        super(ArtistProfile, self).__init__(SimilarArtists.TYPE_, 
-                                            SimilarArtists.METHOD, payload)
+        payload = dict(name=artist, bucket=SimilarArtists._buckets)
+        super(ArtistProfile, self).__init__(SimilarArtists._type, 
+                                            SimilarArtists._method, payload)
 
 
 # TODO: create scheduled service to update this.
 class TopArtists(EchoNestService):
-    TYPE_ = 'artist'
-    METHOD = 'top_hottt'
-    BUCKETS = [
+    _type = 'artist'
+    _method = 'top_hottt'
+    _buckets = [
         'hotttnesss_rank',
     ]
-    ECHO_NEST_KEY = 'artists'
+    echo_key = 'artists'
 
 
     def __init__(self):
         payload = {
             'results': EchoNestService.max_results,
-            'bucket': TopArtists.BUCKETS,
+            'bucket': TopArtists._buckets,
         }
-        super(TopArtists, self).__init__(TopArtists.TYPE_, TopArtists.METHOD, 
+        super(TopArtists, self).__init__(TopArtists._type, TopArtists._method, 
                                         payload)
 

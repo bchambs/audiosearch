@@ -5,26 +5,27 @@ from audiosearch.models.service.base import EchoNestService
 
 
 class PlaylistBase(EchoNestService):
-    TYPE_ = 'playlist'
-    METHOD = 'static'
-    BUCKETS = [
+    _type = 'playlist'
+    _method = 'static'
+    _buckets = [
         'song_hotttnesss',
     ]
     ECHO_NEST_KEY = 'songs'
     
 
     def __init__(self, payload, **kwargs):
-        super(PlaylistBase, self).__init__(self.TYPE_, self.METHOD, payload,
-            **kwargs)
+        super(PlaylistBase, self).__init__(PlaylistBase._type, 
+                                            PlaylistBase._method, payload, 
+                                            **kwargs)
 
 
 class SongPlaylist(PlaylistBase):
-    BUCKETS = [
+    _buckets = [
         'audio_summary',
     ]
 
     def __init__(self, artist, song):
-        buckets = PlaylistBase.BUCKETS + SongPlaylist.BUCKETS
+        buckets = PlaylistBase._buckets + SongPlaylist._buckets
         payload = dict(type='song-radio', bucket=buckets)
         req = SongID(song, artist)
 

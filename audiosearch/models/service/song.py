@@ -5,44 +5,44 @@ from audiosearch.models.service.base import EchoNestService
 
 
 class SearchSongs(EchoNestService):
-    TYPE_ = 'song'
-    METHOD = 'search'
-    BUCKETS = [
+    _type = 'song'
+    _method = 'search'
+    _buckets = [
         'song_hotttnesss', 
         'song_hotttnesss_rank', 
     ]
-    ECHO_NEST_KEY = 'songs'
+    echo_key = 'songs'
 
 
     def __init__(self, artist, song):
         payload = {
             'artist': artist,
-            'bucket': SearchSongs.BUCKETS,
+            'bucket': SearchSongs._buckets,
             'song_type': "studio",
             'sort': "song_hotttnesss-desc",
             'title': song,
         }
-        super(SearchSongs, self).__init__(SearchSongs.TYPE_, SearchSongs.METHOD, 
+        super(SearchSongs, self).__init__(SearchSongs._type, SearchSongs._method, 
                                             payload)
 
 
 class SongProfile(EchoNestService):
-    TYPE_ = 'song'
-    METHOD = 'profile'
-    BUCKETS = [
+    _type = 'song'
+    _method = 'profile'
+    _buckets = [
         'audio_summary',
         'song_hotttnesss', 
         'song_hotttnesss_rank', 
         'song_type',
     ]
-    ECHO_NEST_KEY = 'songs'
+    echo_key = 'songs'
 
 
     def __init__(self, artist, song):
         req = SongID(song, artist)
-        payload = {'bucket': SongProfile.BUCKETS}
+        payload = {'bucket': SongProfile._buckets}
 
-        super(SongProfile, self).__init__(SongProfile.TYPE_, SongProfile.METHOD, 
+        super(SongProfile, self).__init__(SongProfile._type, SongProfile._method, 
                                             payload, dependency=req)
 
 
