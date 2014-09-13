@@ -37,6 +37,7 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = (
     'audiosearch/templates/',
+    'audiosearch/templates/ajax',
     'audiosearch/templates/artist',
     'audiosearch/templates/content',
     'audiosearch/templates/general',

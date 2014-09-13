@@ -1,41 +1,39 @@
-<!-- content tables -->
-<div id="{{ div_id }}-tables" class="content center">
+<!-- content box -->
+<div class="content center">
     <div class="container-table">
         <div class="header">
 
+            <!-- box title -->
             <div class="section-title left">
-                {{ title|title }}
+                {{ content.title|title }}
             </div>
 
             <!-- spinner -->
-            {% if not content %}
-                <div id="{{ div_id }}-spinner" class="spinner left">
+            {% if content.is_pending %}
+                <div id="{{ content.div_id }}-spinner" class="spinner left">
                     <img src="{{ STATIC_URL }}img/spinner.gif"></img>
                 </div>
             {% endif %}
 
-            {% if content.display_page_nav %}
-                {% include "content_PAGE_NAV.html" %}
-            {% else %}
-                {% include "content_MORE_NAV.html" %}
-            {% endif %}
-
+            <!-- table nav -->
+                <!-- includes? -->
         </div>
 
-        <div id="{{ div_id }}-notification" class="content-notification hide">
+        <!-- error/empty message -->
+        <div id="{{ content.div_id }}-notification" class="content-notification hide">
         </div>
 
         <!-- content table -->
-        {% if content.empty %}
-            <div class="{{ div_id }}-notification">
-                {{ content.empty }}
-            </div>
-        {% else %}
-            <table id="{{ div_id }}-table">
-                {% with content=content spinner_id="content-spinner" %}
-                    {% include "content_tbody.html" %}
-                {% endwith %}
-            </table>
-        {% endif %}
+        <table>
+            <tbody id="{{ content.div_id }}-tbody">
+                {% if content.resource_data %}
+                    {% with resource_data=content.resource_data %}
+                        {% include "content_rows.html" %}
+                    {% endwith %}
+                {% else %}
+                    <!-- ZZZZZZZZZZZZZZz -->
+                {% endif %}
+            </tbody>
+        </table>
     </div>
-</div><!--END content tables -->
+</div><!--END content box -->

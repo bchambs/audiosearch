@@ -29,15 +29,15 @@ class BaseResource(object):
         if kwargs:
             raise TypeError('Invalid argument(s): {}'.format(','.join(kwargs)))
 
-        if self.category == 'artist':
+        if self.group == 'artist':
             name = self.artist
-        elif self.category == 'song':
+        elif self.group == 'song':
             name = _ARTIST_SONG_SEP.join([self.song, self.artist])
         else:
             name = '$'
 
-        self._rid = make_id(self.category, self.content)
-        self._key = make_key(self.category, self.content, name)
+        self._rid = make_id(self.group, self.category)
+        self._key = make_key(self.group, self.category, name)
         self._name = name
 
 
@@ -70,4 +70,4 @@ class BaseResource(object):
 
     def get_resource(self):
         params = dict([(field, getattr(self, field)) for field in self._fields])
-        get_echo_data(self.key, self.category, self.content, params)
+        get_echo_data(self.key, self.group, self.category, params)

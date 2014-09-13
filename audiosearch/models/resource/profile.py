@@ -5,11 +5,11 @@ from audiosearch.models.resource import base
 
 class ArtistProfile(base.BaseResource):
     _fields = ['artist']
-    category = 'artist'
-    content = 'profile'
+    group = 'artist'
+    category = 'profile'
 
 
 class SongProfile(base.BaseResource):
     _fields = ['artist', 'song']
-    category = 'song'
-    content = 'profile'
+    group = 'song'
+    category = 'profile'

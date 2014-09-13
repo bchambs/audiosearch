@@ -1,0 +1,25 @@
+{% load audiosearch_tags %}
+
+{% with index=content.offset|default:1 %}
+{% for item in resource_data %}
+<tr class="{% cycle 'even' 'odd' %}">
+    <td>
+        {{ forloop.counter0|add:index }}.
+    </td>
+    <td>
+        {% if item.title %}
+
+            {% if display_by_artist %}
+                <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                 by {{ item.artist_name }}
+            {% else %}
+                <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+            {% endif %}
+
+        {% else %}
+            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+{% endwith %}

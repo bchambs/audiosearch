@@ -5,6 +5,6 @@ from audiosearch.models.resource import base
 
 class Discography(base.BaseResource):
     _fields = ['artist']
-    category = 'artist'
-    content = 'discography'
+    group = 'artist'
+    category = 'discography'
 

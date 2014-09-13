@@ -4,7 +4,7 @@
 <div id="{{ div_id }}-next" class="right">
     {% if content.next %}
         {% if q_params %}
-            <a href = "?{{ q_params|build_query_string }}&page={{ content.next }}" >next</a>
+            <a href = "?{{ q_params|to_query_string }}&page={{ content.next }}" >next</a>
         {% else %}
             <a href = "?page={{ content.next }}" >next</a>
         {% endif %}
@@ -20,7 +20,7 @@
 <div id="{{ div_id }}-previous" class="right">
     {% if content.previous %}
         {% if q_params %}
-            <a href = "?{{ q_params|build_query_string }}&page={{ content.previous }}" >previous</a>
+            <a href = "?{{ q_params|to_query_string }}&page={{ content.previous }}" >previous</a>
         {% else %}
             <a href = "?page={{ content.previous }}" >previous</a>
         {% endif %}

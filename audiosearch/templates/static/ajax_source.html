@@ -1,12 +1,13 @@
 {% load audiosearch_tags %}
 
-{% for resource in pending %}
-    <script type="text/javascript">
-        var opts = JSON.parse("{{ resource|escapejs }}"),
-            attempt = 0;
+{% for res in pending %}
+<script>
+    var div_id = '#' + '{{ res.div_id }}'; 
+    var qs = "{{ res.qstring|to_query_string }}";
+    var url = '{% url "ajax_retrieval" res.group res.category res.name %}' + '?' + qs;
 
-        setTimeout(function() {
-            dispatch(opts, attempt)
-        }, AJAX_SNOOZE);
-    </script>
+    setTimeout(function() {
+        dispatch(url, div_id, 0);
+    }, AJAX_INITIAL_SNOOZE);
+</script>
 {% endfor %}

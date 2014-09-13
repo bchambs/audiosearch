@@ -4,6 +4,7 @@ register = template.Library()
 
 @register.filter
 def space_to_plus(url):
+    # TODO use builtin
     try:
         return url.replace(' ', '+')
     except AttributeError:
@@ -11,12 +12,12 @@ def space_to_plus(url):
 
 
 @register.filter
-def build_query_string(q_params):
-    if q_params:
-        return '&'.join("%s=%s" % (key,value) for (key,value) in q_params.iteritems())
-    else:
-        return ''
-
+def to_query_string(params):
+    try:
+        qs = '&'.join("%s=%s" % (k, v) for (k, v) in params.iteritems())
+    except AttributeError:
+        qs = ''
+    return qs
 
 @register.filter
 def inspect(item):

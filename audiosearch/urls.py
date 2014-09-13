@@ -30,7 +30,7 @@ urlpatterns = patterns('',
 
 
     # Ajax.
-    url(ur'^ajax/retrieval/$', views.ajax_retrieve_content),
+    url(ur'^ajax/(?P<group>.*)/(?P<category>.*)/(?P<name>.*)/$', views.ajax_retrieve_content, name='ajax_retrieval'),
     # url(ur'^ajax/clear/$', views.clear_resource),
 
 
@@ -42,7 +42,3 @@ urlpatterns = patterns('',
 # HTTP 500 router.
 # handler500 = 'views.server_error'
 
-
-
-# TODO: remap ajax urls to use named patterns for regular requests so text case
-# is preserved in **kwargs.

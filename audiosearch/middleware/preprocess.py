@@ -31,6 +31,7 @@ class Normalizer(object):
         return view_func(request, normal_GET, **normal_kwargs)
 
 
+
 def _normalize(d):
     """Return a 'copy' of d with normalized values."""
 
