@@ -5,17 +5,15 @@ import os
 import redis
 
 from audiosearch.cache import base
+from audiosearch.conf import messages
 
 
-class Error(Exception):
-    pass
-
-
-class UnexpectedTypeError(Exception):
-    pass
-
-
+# TODO: make this a borg and remove singleton comments from base.py
 class RedisCache(base.BaseCache):
+    """Cache interface for views.py.  Exposes two public methods for getting
+    and setting resource data.
+    """
+
     def __init__(self, params):
         super(RedisCache, self).__init__(params)
         db = params.get('DATABASE', 0)
@@ -28,6 +26,7 @@ class RedisCache(base.BaseCache):
             'socket_connect_timeout': timeout,
         }
 
+        # TODO: remove (for debugging)
         try:
             self._pid = os.getpid()
         except os.OSError:
@@ -60,27 +59,20 @@ class RedisCache(base.BaseCache):
         return self._name
 
 
-    def get_list(self, key, start=0, end=-1):
-        raw = self._cache.lrange(key, start, end)
-        return [ast.literal_eval(i) for i in raw]
-
-
-    def get_hash(self, key):
-        raw = self._cache.hgetall(key)
-        return ast.literal_eval(raw)
-
-
-    def get(self, key, start, end):
-        value_type = self._cache.type(key)
-
-        if value_type == 'list':
-            value = self.get_list(key, start, end)
-        elif value_type == 'hash':
-            value = self.get_hash(key)
+    def get(self, key, storage_type, start=None, end=None):
+        try:
+            if storage_type is list:
+                value = self._get_list(key, start, end)
+                size = self._get_list_size(key)
+            elif storage_type is dict:
+                pass
+            else:   # Unexpected type
+                raise base.UnexpectedTypeError
+        except (redis.ResponseError, base.UnexpectedTypeError):
+            # TODO: log this
+            raise base.FailedResourceError(messages.STORAGE_FAILURE)
         else:
-            pass    # log key, type
-
-        return value
+            return value, size
 
 
     def store(self, key, value):
@@ -89,245 +81,22 @@ class RedisCache(base.BaseCache):
         elif type(value) is dict:
             self._cachce.hmset(key, value)
         else:   # Unexpected type
-            pass    # log key, type
+            # log key, type
+            pass    
 
         self._cache.expire(key, self.default_ttl)
 
 
+    def _get_list(self, key, start=None, end=None):
+        value = self._cache.lrange(key, start, end)
+        if not value:
+            raise base.MissingResourceError()
+        return value
 
 
+    def _get_list_size(self, key):
+        return self._cache.llen(key)
 
 
-    # def get_list_many(self, keys, start=0, end=-1):
-    #     hit = {}
-    #     miss = set()
-
-    #     for k in keys:
-    #         value = self.get_list(k, start, end)
-
-    #         if value:
-    #             hit[k] = value
-    #         else:
-    #             miss.add(k)
-
-    #     return hit, miss
-
-
-    
-
-
-    # def get(self, key):
-    #     value = None
-
-    #     if key in self._cache:
-    #         type_ = self._cache.type(key)
-
-    #         if type_ == 'list':
-    #             value = self.get_list(key)
-    #         elif type_ == 'hash':
-    #             value = self.get_hash(key)
-    #         else:
-    #             raise UnexpectedTypeError(key)
-
-    #     return value
-
-
-    # def get_many(self, resources, start, end):
-    #     hashes = []
-    #     lists = []
-
-    #     for res in resources:
-    #         if res.type_ =
-
-
-    #     ''''''''
-    #     hit = {}
-    #     miss = set()
-    #     keys = set([res.key for res in resources])
-        
-    #     for k in keys:
-    #         value = self.get(k)
-
-    #         if value:
-    #             hit[k] = value
-    #         else:
-    #             miss.add(k)
-
-    #     return hit, miss
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class CacheConnection(object):
-
-    def __init__(self):
-        self._client = redis.StrictRedis(host=_HOST, port=_PORT, db=_DATABASE)
-
-
-    def fetch(self, key, ttl, miss=None):
-        loop = -1
-        
-        with self._client.pipeline() as pipe:
-            if ttl: pipe.expire(key, ttl).execute()
-
-            while 1:
-                loop += 1
-
-                try:
-                    if loop > _LOOP_THRESHOLD: raise CycleError()
-
-                    pipe.watch(key)
-
-                    hit = pipe.exists(key)
-                    if hit:
-                        value_type = pipe.type(key)
-
-                        pipe.multi()
-
-                        if value_type == 'list':
-                            value = self.lrange(key, 0,-1)
-                        elif value_type == 'hash':
-                            value = self.hgetall(key)
-                        else:
-                            raise UnexpectedTypeError()
-                    else:
-                        pipe.reset()
-                        raise KeyNotFoundError()
-                        break
-
-                except (CycleError, UnexpectedTypeError):
-                    pipe.reset()
-                    break
-                except redis.WatchError:
-                    continue
-
-                else:
-                    print 'in else'
-                    return value
-        print 'outside loop ??'
-
-
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-    # if ttl: pipe.expire(key, ttl).execute()
-
-    # while 1:
-    #     loop += 1
-
-    #     try:
-    #         if loop > _LOOP_THRESHOLD: raise CycleError()
-
-    #         pipe.watch(key)
-
-    #         hit = pipe.exists(key)
-
-    #         if hit:
-    #             value_type = pipe.type(key)
-
-    #             pipe.multi()
-
-    #             if value_type == LIST_:
-    #                 value = self.lrange(key, 0,-1)
-    #             elif value_type == HASH_:
-    #                 value = self.hgetall(key)
-    #             else:
-    #                 raise UnexpectedTypeError()
-
-    #         else:
-    #             pass
-
-    #     except CycleError:
-    #         pass
-    #     except UnexpectedTypeError:
-    #         pass
-    #     except redis.WatchError:
-    #         pass
-
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-                # Handle cache hit.
-    #             elif exists:
-    #                 value_type = pipe.type(key)
-
-    #                 pipe.multi()
-
-    #                 if value_type == LIST_:
-    #                     value = self.lrange(key, 0,-1)
-    #                 elif value_type == HASH_:
-    #                     value = self.hgetall(key)
-
-    #                 status = _AVAIL
-    #                 pipe.execute()
-    #                 break
-
-    #             # Handle cache miss.
-    #             else:
-    #                 try:
-    #                     miss()
-    #                 except TypeError:
-    #                     status = _FAIL
-    #                     value = messages.CONTENT_CREATION_FAIL
-    #                     logger.exception("No miss handler.")
-    #                 else:
-    #                     status = _PEND
-    #                     value = None
-    #                 finally:
-    #                     break
-
-    #         except (CycleError, UnexpectedTypeError):
-    #             logger.exception(key)
-    #             status = _FAIL
-    #             value = messages.CONTENT_CREATION_FAIL
-    #             break
-
-    #         except redis.WatchError:
-    #             logger.exception("WatchError in _fetch.")
-    #             continue
-
-    # print key
-    # print status
-    # return status, value
-
-
-
-
-
-
-    
-
-
-
-
-
+    def delete(self, key):
+        self._cache.delete(key)

@@ -8,26 +8,16 @@ _ARTIST_SONG_SEP = ' BY '
 
 
 class BaseResource(object):
-    _fields = []    # Map for *args location to attribute in subclass.
+    _fields = []    # Map for *args location to attribute in subclass
+    _storage_type = list    # Profiles overwrite this to dict
 
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args):
         if len(args) > len(self._fields):
             raise TypeError('Expected {} arguments'.format(len(self._fields)))
         
-        # Set all of the positional arguments
-        for name, value in zip(self._fields, args):
-            print '    setting {} to {}'.format(name, value)
-            setattr(self, name, value)
-        
-        # Set the remaining keyword arguments
-        for name in self._fields[len(args):]:
-            print '    kwargs in resource construct' * 5
-            setattr(self, name, kwargs.pop(name))
-        
-        # Check for any remaining unknown arguments
-        if kwargs:
-            raise TypeError('Invalid argument(s): {}'.format(','.join(kwargs)))
+        for field, value in zip(self._fields, args):
+            setattr(self, field, value)
 
         if self.group == 'artist':
             name = self.artist
@@ -36,8 +26,8 @@ class BaseResource(object):
         else:
             name = '$'
 
-        self._rid = make_id(self.group, self.category)
-        self._key = make_key(self.group, self.category, name)
+        self._res_id = make_id(self.group, self.category)
+        self._key = make_key(self._res_id, name)
         self._name = name
 
 
@@ -50,12 +40,17 @@ class BaseResource(object):
 
 
     def __repr__(self):
-        return "%s for %s" % (self.rid, self._name)
+        return "%s for %s" % (self._res_id, self._name)
 
 
     @property
-    def rid(self):
-        return self._rid
+    def echo_type(self):
+        return self._storage_type
+
+
+    @property
+    def key(self):
+        return self._key
 
 
     @property
@@ -64,8 +59,8 @@ class BaseResource(object):
 
 
     @property
-    def key(self):
-        return self._key
+    def res_id(self):
+        return self._res_id
 
 
     def get_resource(self):

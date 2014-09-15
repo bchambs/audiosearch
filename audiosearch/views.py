@@ -15,9 +15,11 @@ from django.template import Context, RequestContext
 from django.template.response import TemplateResponse
 
 from audiosearch import Cache
+from audiosearch.cache import FailedResourceError, MissingResourceError
 from audiosearch.conf import DEFAULT_ROW_COUNT, HOME_ROW_COUNT
-from audiosearch.models import make_key, resource 
-from audiosearch.utils.decorators import stdout_gap
+from audiosearch.handlers import Available, Failed, Pending
+from audiosearch.models import make_key, resource
+from audiosearch.utils.decorators import reset_cache, stdout_gap
 
 
 @stdout_gap
@@ -51,28 +53,32 @@ def artist_home(request, GET, **params):
 
 
 # TODO: fix the need for this, 'content['is_pending'] = True'
-# Add titles to resource classes
-# Move '14' to constant
+# @reset_cache('top')
 @stdout_gap
 def music_home(request, GET, **params):
-
-    context = {
-        'available': [],
-        'pending': [],
-        'row_count': HOME_ROW_COUNT,
-    }
-
-    row_count = HOME_ROW_COUNT
+    context = {}
     top = resource.TopArtists()
 
-    if top.key in Cache:
-        resource_data = Cache.get_list(top.key, 0, 14)
-        context['available'].append(top.res_id, resource_data)
-    else:
+    try:
+        print 1
+        raw_response = Cache.get(top.key, top.echo_type)
+        print 2
+        result_map = Available.process(top, raw_response)
+        print 3
+    except FailedResourceError as e:
+        print 4
+        result_map = Failed.process(top, e)
+        print 5
+    except MissingResourceError:
+        print 6
         top.get_resource()
-        context['pending'].append(top)
+        print 7
+        result_map = Pending.process(top, e)
+        print 8
+    finally:
+        context[top.res_id] = result_map
 
-    return TemplateResponse(request, 'music-home.html', context)
+    return render(request, 'music-home.html', context)
 
 
 def ajax_retrieve_content(request, GET, **params):
@@ -83,23 +89,22 @@ def ajax_retrieve_content(request, GET, **params):
     except KeyError:
         return HttpResponse(json.dumps({'status': 'failed'}), 
                             content_type="application/json")
-    
+
     context = {}
     page = GET.get('page')
     row_count = GET.get('row_count', DEFAULT_ROW_COUNT)
-
     key = make_key(group, category, name)
 
-    if key in Cache:    # Build dict to load table in content_rows.html
+    if key in Cache:
+        # Build dict to load table in content_rows.html
         content = {}
         start, end = _calculate_page_range(page, row_count)
         content['offset'] = start - 1
-        content['resource_data'] = Cache.get(key, start, end)
+        content['resource_data'], content['total_data'] = Cache.get(key, start, end)
 
         # Render template html then send with status as JSON encoded bundle.
         template_html = render_to_response('content_rows.html', content, 
                                 context_instance=RequestContext(request))
-
         context['template'] = template_html.content
         context['status'] = 'complete'
     else:

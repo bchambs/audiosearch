@@ -4,14 +4,14 @@
 .content {
     margin-top: 20px;
 }
-#container-content {
+.container-content {
     background: none repeat scroll 0 0 #5A5A5A;
     border: 0 none;
     color: #fff;
     font: inherit;
+    margin: 30px auto;
     padding: 0 20px 100px 20px;
     width: 970px;
-    margin: 30px auto;
 
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     
@@ -26,16 +26,16 @@
     clear: both;
 }
 #resource-title h1 {
-    max-width: 970px;
     float: left;
     margin-bottom: 5px;
-    word-wrap: break-word;
+    max-width: 970px;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    word-wrap: break-word;
 }
 #resource-title li {
+    /*padding: 0 0 0 15px;*/
     float: right;
     font-size: 20px;
-    /*padding: 0 0 0 15px;*/
     padding: 39px 0 0 15px;
 }
 
@@ -50,8 +50,8 @@
 }
 
 #profile-genres {
-    min-height: 30px;
     margin-top: 20px;
+    min-height: 30px;
 }
 #profile-genres li {
     margin-right: 8px;

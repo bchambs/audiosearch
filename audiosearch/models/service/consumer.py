@@ -14,15 +14,15 @@ _MISSING_PARAM = 4
 _INVALID_PARAM = 5
 
 
-class Error(Exception):
+class ServiceError(Exception):
     pass
 
 
-class ServiceFailureError(Error):
+class ServiceFailureError(ServiceError):
     pass
 
 
-class TimeoutError(Error):
+class TimeoutError(ServiceError):
     pass
 
 

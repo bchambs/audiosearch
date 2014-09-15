@@ -15,7 +15,7 @@
 <div class="page-wrapper">
 
 <!-- content -->
-<div id="container-content">
+<div class="container-content">
     
     <!-- resource title -->
     <div id="resource-title" class="center">
@@ -46,15 +46,6 @@
 
 {% include "ajax_source.html" %}
 {% include "ajax_debug.html" %}
-
-
-
-
-<pre> {% filter force_escape|print_context %} {% debug %} {% endfilter %} </pre>
-<pre> {% filter print_context|force_escape %} {% debug %} {% endfilter %} </pre>
-
-
-
 
 </body>
 </html>

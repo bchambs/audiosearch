@@ -7,7 +7,6 @@ from audiosearch.celery import app as celery_app
 
 Cache = RedisCache(CACHE_CONFIG)
 
-# Resource objects assume DEFAULT_TTL is defined if this passes on site setup.
 try:
     DEFAULT_TTL = CACHE_CONFIG.pop('DEFAULT_TTL')
 except KeyError:
