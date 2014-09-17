@@ -1,9 +1,12 @@
-
 from __future__ import absolute_import
 
-from audiosearch.models.service.artist import (ArtistProfile, ArtistSongs, 
-                                                SearchArtists, SimilarArtists, 
-                                                TopArtists)
+from audiosearch.models.service.artist import (
+    ArtistProfile, 
+    ArtistSongs, 
+    SearchArtists, 
+    SimilarArtists, 
+    TopArtists,
+)
 from audiosearch.models.service.playlist import SongPlaylist, ArtistPlaylist
 from audiosearch.models.service.song import SearchSongs, SongProfile
 from audiosearch.models.service.consumer import (consume, ServiceFailureError, 
@@ -11,7 +14,7 @@ from audiosearch.models.service.consumer import (consume, ServiceFailureError,
 
 def create_service_map():
     import os
-    print '\nbuilding service map @ {}'.format(os.getpid())
+    print '\nbuilding service map @ {}\n'.format(os.getpid())
 
     service_map = {
         'artist': {
@@ -33,9 +36,8 @@ def create_service_map():
         },
     }
 
-
-    def get_service(category, content, params):
-        return service_map[category][content](**params)
-    return get_service
+    def init_service(call_type, content_type, params):
+        return service_map[call_type][content_type](**params)
+    return init_service
 
 ServiceFactory = create_service_map()

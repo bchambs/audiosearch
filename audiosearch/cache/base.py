@@ -22,21 +22,21 @@ class UnexpectedTypeError(CacheError):
 
 
 class BaseCache(object):
-    """
-    params: RESOURCE_CACHE dict from audiosearch.conf.settings.
-    """
+    """API."""
 
-    def __init__(self, params):
-        try:
-            self._name = params.pop('NAME')
-            self._host = params.pop('HOST')
-            self._port = params.pop('PORT')
-        except KeyError:
-            raise InvalidBackendError()
-        else:
-            self.default_ttl = params.get('DEFAULT_TTL', 300)
-            self.persist_set = params.get('PERSIST_SET')
+    @property
+    def info(): pass
 
+    def delete(key): pass
+    
+    def gethash(key): pass
+    
+    def getlist(key, start=0, end=-1): pass
 
-    def __contains__(self, key):
-        return self._cache.exists(key)
+    def getlist_len(key): pass
+
+    def has_failed(key): pass
+    
+    def set_failed(key): pass
+    
+    def store(key, value): pass

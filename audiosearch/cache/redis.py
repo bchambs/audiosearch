@@ -1,102 +1,120 @@
 from __future__ import absolute_import
-import ast
+import cPickle
 import os
 
 import redis
 
 from audiosearch.cache import base
-from audiosearch.conf import messages
 
 
-# TODO: make this a borg and remove singleton comments from base.py
+_failed_keys = 'Failed keys'
+
+
 class RedisCache(base.BaseCache):
-    """Cache interface for views.py.  Exposes two public methods for getting
-    and setting resource data.
+    """Redis-py wrapper with cPickle serialization.  Echo requests which fail
+    to return data (because of error or no results) are stored in a set keyed
+    by ``_failed_keys.``
+
+    name: instance name
+    params: RESOURCE_CACHE dict from audiosearch.conf.settings
     """
 
-    def __init__(self, params):
-        super(RedisCache, self).__init__(params)
-        db = params.get('DATABASE', 0)
-        timeout = params.get('CONNECTION_TIMEOUT')
-
-        self._client_params = {
-            'host': self._host,
-            'port': self._port,
-            'db': db,
-            'socket_connect_timeout': timeout,
+    def __init__(self, name, params):
+        # Kwargs for StrictRedis init
+        self._spec = {
+            'db': params.get('DATABASE', 0),
+            'host': params.get('HOST'),
+            'port': params.get('PORT'),
+            'socket_connect_timeout': params.get('CONNECTION_TIMEOUT'),
         }
+        self._name = name
+        self.default_ttl = params.get('DEFAULT_TTL', 300)
+        self.persist_set = params.get('PERSIST_SET',set())
 
-        # TODO: remove (for debugging)
         try:
             self._pid = os.getpid()
         except os.OSError:
-            self._pid = 'Unknown'
+            self._pid = '????'
 
 
     def __repr__(self):
+        """
+        `instance name` redis connection @ `pid`
+            `OPT`: `value`
+            ...
+        """
         indent = ' ' * 4
-        title = "%s _ redis connection _ PID = %d:" % (self.name, self._pid)
-        spec = ([("%s%s: %s") % (indent, k.upper(), v) for (k, v) in 
-            self._client_params.items()])
+        specs = "{}{}: {}"
+        title = "{} redis connection @ {}".format(self._name, self._pid)
+        settings = [specs.format(indent, opt.upper(), value) 
+                    for (opt, value) 
+                    in self._spec.items()]
+        return '\n'.join([title] + settings)
 
-        return '\n'.join([title] + spec)
+
+    def __contains__(self, key):
+        return self._cache.exists(key)
 
 
     @property
     def _cache(self):
         if getattr(self, '_client', None) is None:
-            self._client = redis.StrictRedis(**self._client_params)
+            self._client = redis.StrictRedis(**self._spec)
         return self._client
 
 
     @property
     def info(self):
-        return self._client_params
+        """Return redis client specification."""
+        return self._spec
 
 
-    @property
-    def name(self):
-        return self._name
+    def delete(self, key):
+        return self._cache.delete(key)
 
 
-    def get(self, key, storage_type, start=None, end=None):
-        try:
-            if storage_type is list:
-                value = self._get_list(key, start, end)
-                size = self._get_list_size(key)
-            elif storage_type is dict:
-                pass
-            else:   # Unexpected type
-                raise base.UnexpectedTypeError
-        except (redis.ResponseError, base.UnexpectedTypeError):
-            # TODO: log this
-            raise base.FailedResourceError(messages.STORAGE_FAILURE)
-        else:
-            return value, size
+    def gethash(self, key):
+        return self._cache.hgetall(key)
+    
 
+    def getlist(self, key, start=0, end=-1):
+        return self._cache.lrange(key, start, end)
+
+
+    def getlist_len(self, key):
+        return self._cache.llen(key)
+
+
+    def has_failed(self, key):
+        return self._cache.sismember(_failed_keys, key)
+    
+    
+    def set_failed(self, key):
+        return self._cache.sadd(_failed_keys, key)
+    
 
     def store(self, key, value):
         if type(value) is list:
             self._cache.rpush(key, *value)
         elif type(value) is dict:
-            self._cachce.hmset(key, value)
-        else:   # Unexpected type
-            # log key, type
+            self._cache.hmset(key, value)
+        else:
             pass    
 
         self._cache.expire(key, self.default_ttl)
 
 
-    def _get_list(self, key, start=None, end=None):
-        value = self._cache.lrange(key, start, end)
-        if not value:
-            raise base.MissingResourceError()
-        return value
+    ###############################
+    ###############################
+    ###############################
+    ###############################
+    ###############################
+    def get_status(self, key):
+        if key in self._cache:
+            status = 'available'
+        elif self.has_failed(key):
+            status = 'failed'
+        else:
+            status = 'pending'
 
-
-    def _get_list_size(self, key):
-        return self._cache.llen(key)
-
-
-    def delete(self, key):
-        self._cache.delete(key)
+        return status

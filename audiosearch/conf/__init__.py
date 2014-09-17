@@ -1,4 +1,9 @@
+"""Import globally used constants to avoid importing settings.py."""
+
 from __future__ import absolute_import
 
-from audiosearch.conf.settings import (DEFAULT_ROW_COUNT,
-                                        ECHO_API_KEY, HOME_ROW_COUNT)
+from audiosearch.conf.settings import (
+    CACHE_CONFIG,
+    ECHO_API_KEY, 
+    NROWS_DEFAULT, 
+    )

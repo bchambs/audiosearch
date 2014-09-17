@@ -5,8 +5,7 @@ from audiosearch.cache import InvalidBackendError, RedisCache
 from audiosearch.celery import app as celery_app
 
 
-Cache = RedisCache(CACHE_CONFIG)
-
+Cache = RedisCache('django', CACHE_CONFIG)
 try:
     DEFAULT_TTL = CACHE_CONFIG.pop('DEFAULT_TTL')
 except KeyError:

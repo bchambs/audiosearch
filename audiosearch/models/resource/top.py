@@ -6,5 +6,5 @@ from audiosearch.models.resource import base
 class TopArtists(base.BaseResource):
     group = 'top'
     category = 'artists'
-    title = 'Popular artists'
+    description = 'Popular artists'
 

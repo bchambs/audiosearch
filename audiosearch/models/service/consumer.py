@@ -14,15 +14,15 @@ _MISSING_PARAM = 4
 _INVALID_PARAM = 5
 
 
-class ServiceError(Exception):
+class EchoServiceError(Exception):
     pass
 
 
-class ServiceFailureError(ServiceError):
+class ServiceFailureError(EchoServiceError):
     pass
 
 
-class TimeoutError(ServiceError):
+class TimeoutError(EchoServiceError):
     pass
 
 
@@ -36,30 +36,20 @@ def consume(package):
 
             response = get(package.url, params=package.payload)
             json_response = response.json()
-
             status_code = json_response['response']['status']['code']
-            status_message = json_response['response']['status']['message']
 
             # Response is valid, branch on echo nest code.
             if status_code == _SUCCESS:
                 data = json_response['response'][package.echo_key]
-
             elif status_code == _LIMIT_EXCEEDED:
                 attempt += 1
                 sleep(_CALL_SNOOZE)
-
-            elif "does not exist" in status_message:    # log error
+            else:
                 raise ServiceFailureError()
-                break
-
-            # Received error code in response.
-            else:   # log error
-                raise ServiceFailureError()
-                break
+                
         # Invalid request or unable to parse json response.
-        except (KeyError, RequestException, ValueError) as e:   # log error
+        except (KeyError, RequestException, ValueError):
             raise ServiceFailureError()
-            break
         else:
             return data
 

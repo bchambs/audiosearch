@@ -64,7 +64,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'audiosearch.middleware.preprocess.Normalizer',
-    'audiosearch.middleware.context_mapper.ResourceContextMapper',
 )
 
 # TODO: see if this is needed in production (reason: dev static serving)
@@ -103,8 +102,8 @@ STATIC_URL = '/audiosearch/static/'
 
 
 # Site display
-DEFAULT_ROW_COUNT = 10  # Number of rows displayed in a paged table.
-HOME_ROW_COUNT = 15     # Number of rows displayed in a table on home pages.
+NROWS_DEFAULT = 10  # Number of rows displayed in a paged table.
+# HOME_ROW_COUNT = 15     # Number of rows displayed in a table on home pages.
 
 
 # Echo Nest
@@ -118,15 +117,15 @@ CACHE_CONFIG = {
     'DATABASE': 0,
     'DEFAULT_TTL': 180,    # In seconds.
     'CONNECTION_TIMEOUT': 10, 
-    'NAME': 'django',
     'PERSIST_SET': set('top'),
 }
 
 
 # Celery
 BROKER_URL = 'redis://localhost:6379/0'
-
 CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
+CELERY_DISABLE_RATE_LIMITS = True
+CELERY_IGNORE_RESULT = True
 CELERY_IMPORTS = ("audiosearch.tasks", )
 CELERY_RESULT_SERIALIZER = 'pickle'
 CELERY_TASK_SERIALIZER = 'pickle'

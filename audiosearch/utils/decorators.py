@@ -4,7 +4,7 @@ from functools import wraps
 
 from audiosearch.models import resource 
 from audiosearch import Cache
-    
+
 
 def stdout_gap(view_func):
     """
@@ -18,26 +18,28 @@ def stdout_gap(view_func):
     def print_gap(*args, **kwargs):
         print title[:80]
         http_response = view_func(*args, **kwargs)
-        print banner
-        print
+        print banner + '\n'
 
         return http_response
     return print_gap
 
 
 def reset_cache(page):
+    """
+    Delete the keys associated with the requested page from cache before 
+    executing the view.
+    """
     def wrapper(view_func):
         def delete_key(*args, **kwargs):
-            print 'AAAAAAAAAAAA'
-            print page
             if page == 'top':
-                print '????'
                 key = resource.TopArtists().key
+            else:
+                key = None
 
             if key:
                 banner = ' ' + ('!' * 2) + ' '
-                print '\n{}Removing: {}'.format(banner, key)
-                Cache.remove(key)
+                print '\n{}Removing: {}{}'.format(banner, key, banner)
+                Cache.delete(key)
             
             return view_func(*args, **kwargs)
         return wraps(view_func)(delete_key)

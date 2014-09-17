@@ -28,8 +28,7 @@ class Normalizer(object):
         if view_kwargs:
             normal_kwargs = _normalize(view_kwargs)
 
-        http =  view_func(request, normal_GET, **normal_kwargs)
-        return http
+        return view_func(request, normal_GET, **normal_kwargs)
 
 
 def _normalize(d):
