@@ -112,34 +112,13 @@ ECHO_API_KEY = 'QZQG43T7640VIF4FN'
 
 # Redis 
 CACHE_CONFIG = {
-    'HOST': 'localhost',
-    'PORT': 6379,
-    'DATABASE': 0,
-    'DEFAULT_TTL': 180,    # In seconds.
-    'CONNECTION_TIMEOUT': 10, 
-    'PERSIST_SET': set('top'),
+    'host': 'localhost',
+    'port': 6379,
+    'database': 0,
+    'default_ttl': 180,    # In seconds.
+    'connection_timeout': 10, 
+    'persist_set': set('top'),
 }
-
-
-# Celery
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['pickle', 'application/json']
-CELERY_DISABLE_RATE_LIMITS = True
-CELERY_IGNORE_RESULT = True
-CELERY_IMPORTS = ("audiosearch.tasks", )
-CELERY_RESULT_SERIALIZER = 'pickle'
-CELERY_TASK_SERIALIZER = 'pickle'
-CELERY_TIMEZONE = 'EST'
-
-
-# from datetime import timedelta
-
-# CELERYBEAT_SCHEDULE = {
-#     'dbsize-tracker': {
-#         'task': 'src.tasks.log_dbsize',
-#         'schedule': timedelta(hours=1),
-#     },
-# }
 
 
 # Logging

@@ -23,9 +23,10 @@ class ArtistProfile(EchoNestService):
     def __init__(self, artist):
         payload = dict(name=artist, bucket=ArtistProfile._buckets)
         super(ArtistProfile, self).__init__(ArtistProfile._type, 
-                                            ArtistProfile._method, payload)
+                                            ArtistProfile._method, **payload)
+            
 
-
+    # redo
     def process(self, raw_data):
         data = {}
 
@@ -86,7 +87,7 @@ class ArtistSongs(EchoNestService):
             'sort': "song_hotttnesss-desc",
         }
         super(ArtistSongs, self).__init__(ArtistSongs._type, ArtistSongs._method,
-                                            payload)
+                                            **payload)
 
 
 class SearchArtists(EchoNestService):
@@ -98,7 +99,7 @@ class SearchArtists(EchoNestService):
     def __init__(self, artist):
         payload = dict(name=artist)
         super(SearchArtists, self).__init__(SearchArtists._type, 
-                                            SearchArtists._method, payload)
+                                            SearchArtists._method, **payload)
 
 
 class SimilarArtists(EchoNestService):
@@ -115,7 +116,7 @@ class SimilarArtists(EchoNestService):
     def __init__(self, artist):
         payload = dict(name=artist, bucket=SimilarArtists._buckets)
         super(ArtistProfile, self).__init__(SimilarArtists._type, 
-                                            SimilarArtists._method, payload)
+                                            SimilarArtists._method, **payload)
 
 
 # TODO: create scheduled service to update this.
@@ -134,5 +135,5 @@ class TopArtists(EchoNestService):
             'bucket': TopArtists._buckets,
         }
         super(TopArtists, self).__init__(TopArtists._type, TopArtists._method, 
-                                        payload)
+                                        **payload)
 

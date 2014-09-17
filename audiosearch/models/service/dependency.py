@@ -3,11 +3,7 @@ from __future__ import absolute_import
 from audiosearch.models.service.base import EchoNestService
 
 
-class Error(Exception):
-    pass
-
-
-class DependencyError(Error):
+class DependencyError(Exception):
     pass
 
 
@@ -20,15 +16,9 @@ class SongID(EchoNestService):
 
     def __init__(self, artist, song):
         payload = dict(results=1, song_type=None)
-        super(SongID, self).__init__(SongID._type, SongID._method, payload)
+        super(SongID, self).__init__(SongID._type, SongID._method, **payload)
 
 
     def __repr__(self):
         tail = " (dependency)"
         return super(SongID, self).__repr__() + tail
-
-
-    def build(self, response):
-        pass
-
-

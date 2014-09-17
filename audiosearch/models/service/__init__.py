@@ -1,3 +1,5 @@
+'''move this to a module'''
+
 from __future__ import absolute_import
 
 from audiosearch.models.service.artist import (
@@ -5,13 +7,12 @@ from audiosearch.models.service.artist import (
     ArtistSongs, 
     SearchArtists, 
     SimilarArtists, 
-    TopArtists,
-)
+    TopArtists)
 from audiosearch.models.service.playlist import SongPlaylist, ArtistPlaylist
 from audiosearch.models.service.song import SearchSongs, SongProfile
-from audiosearch.models.service.consumer import (consume, ServiceFailureError, 
-                                                TimeoutError)
 
+
+'''move this somewhere'''
 def create_service_map():
     import os
     print '\nbuilding service map @ {}\n'.format(os.getpid())

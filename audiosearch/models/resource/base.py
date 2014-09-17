@@ -1,6 +1,9 @@
+"""
+TODO: make resource classes use a 2 layered dict instead similar to service factory
+"""
 from __future__ import absolute_import
 
-from audiosearch.core import handlers
+from audiosearch.core import echonest
 
 
 _ID_SEP = '_'
@@ -81,7 +84,7 @@ class BaseResource(object):
 
     def retrieve(self):
         params = dict([(field, getattr(self, field)) for field in self._fields])
-        handlers.get_echo_data(self.key, self.group, self.category, params)
+        echonest.get_data(self.key, self.group, self.category, params)
 
 
     def async_rep(self):

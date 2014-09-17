@@ -4,7 +4,7 @@ from audiosearch.models.service.dependency import SongID
 from audiosearch.models.service.base import EchoNestService
 
 
-class PlaylistBase(EchoNestService):
+class BasePlaylist(EchoNestService):
     _type = 'playlist'
     _method = 'static'
     _buckets = [
@@ -13,24 +13,23 @@ class PlaylistBase(EchoNestService):
     ECHO_NEST_KEY = 'songs'
     
 
-    def __init__(self, payload, **kwargs):
-        super(PlaylistBase, self).__init__(PlaylistBase._type, 
-                                            PlaylistBase._method, payload, 
-                                            **kwargs)
+    def __init__(self, params):
+        super(BasePlaylist, self).__init__(BasePlaylist._type, 
+                                            BasePlaylist._method, **params)
 
 
-class SongPlaylist(PlaylistBase):
+class SongPlaylist(BasePlaylist):
     _buckets = [
         'audio_summary',
     ]
 
-    def __init__(self, artist, song):
-        buckets = PlaylistBase._buckets + SongPlaylist._buckets
-        payload = dict(type='song-radio', bucket=buckets)
-        req = SongID(song, artist)
 
-        super(SongPlaylist, self).__init__(payload, 
-            dependency=req)
+    def __init__(self, artist, song):
+        buckets = BasePlaylist._buckets + SongPlaylist._buckets
+        payload = dict(type='song-radio', bucket=buckets)
+        super(SongPlaylist, self).__init__(payload)
+        id_service = SongID(song, artist)
+        self.dependencies.append(id_service)
 
 
     # def combine_dependency(self, intermediate):
@@ -41,9 +40,9 @@ class SongPlaylist(PlaylistBase):
     #         raise EmptyResponseError()
 
 
-class ArtistPlaylist(PlaylistBase):
+class ArtistPlaylist(BasePlaylist):
 
     def __init__(self, artist):
         payload = dict(artist=artist, variety=1, type='artist-radio')
-        super(ArtistPlaylistService, self).__init__(payload)
+        super(ArtistPlaylist, self).__init__(payload)
 

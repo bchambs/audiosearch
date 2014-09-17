@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
-from audiosearch.conf.settings import CACHE_CONFIG
+from audiosearch.conf import settings
 from audiosearch.cache import InvalidBackendError, RedisCache
-from audiosearch.celery import app as celery_app
+from audiosearch.conf.celery import app as celery_app
 
 
-Cache = RedisCache('django', CACHE_CONFIG)
+Cache = RedisCache('django', settings.CACHE_CONFIG)
 try:
-    DEFAULT_TTL = CACHE_CONFIG.pop('DEFAULT_TTL')
+    DEFAULT_TTL = settings.CACHE_CONFIG.pop('default_ttl')
 except KeyError:
-    raise InvalidBackendError('Missing default TTL for cache keys')
+    raise InvalidBackendError('Missing default time to live for cache keys')

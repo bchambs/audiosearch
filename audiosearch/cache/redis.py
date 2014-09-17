@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import codecs
 import cPickle
 import os
 
@@ -22,14 +23,14 @@ class RedisCache(base.BaseCache):
     def __init__(self, name, params):
         # Kwargs for StrictRedis init
         self._spec = {
-            'db': params.get('DATABASE', 0),
-            'host': params.get('HOST'),
-            'port': params.get('PORT'),
-            'socket_connect_timeout': params.get('CONNECTION_TIMEOUT'),
+            'db': params.get('database', 0),
+            'host': params.get('host'),
+            'port': params.get('port'),
+            'socket_connect_timeout': params.get('connection_timeout'),
         }
         self._name = name
-        self.default_ttl = params.get('DEFAULT_TTL', 300)
-        self.persist_set = params.get('PERSIST_SET',set())
+        self.default_ttl = params.get('default_ttl', 300)
+        self.persist_set = params.get('persist_set',set())
 
         try:
             self._pid = os.getpid()
@@ -79,6 +80,9 @@ class RedisCache(base.BaseCache):
 
     def getlist(self, key, start=0, end=-1):
         return self._cache.lrange(key, start, end)
+        # list_ = self._cache.lrange(key, start, end)
+        # unpickled = cPickle.dumps(list_)
+        # return [element.decode("UTF-8") for element in unpickled]
 
 
     def getlist_len(self, key):

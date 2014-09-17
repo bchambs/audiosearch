@@ -6,8 +6,7 @@ from django.shortcuts import redirect, render, render_to_response
 from django.template import Context, RequestContext
 
 from audiosearch import Cache
-from audiosearch.conf import NROWS_DEFAULT
-from audiosearch.core import handlers
+from audiosearch.conf.settings import NROWS_DEFAULT
 from audiosearch.models import resource
 from audiosearch.utils.decorators import reset_cache, stdout_gap
 
@@ -17,6 +16,7 @@ from audiosearch.utils.decorators import reset_cache, stdout_gap
 def music_home(request, GET, **params):
     context = {}
     top = resource.TopArtists()
+
     # try:
     #     raw_data = Cache.get(top.key, top.dispatch())
     # except FailedKeyError:

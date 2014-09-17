@@ -18,12 +18,12 @@ class SearchSongs(EchoNestService):
         payload = {
             'artist': artist,
             'bucket': SearchSongs._buckets,
-            'song_type': "studio",
-            'sort': "song_hotttnesss-desc",
+            'song_type': 'studio',
+            'sort': 'song_hotttnesss-desc',
             'title': song,
         }
-        super(SearchSongs, self).__init__(SearchSongs._type, SearchSongs._method, 
-                                            payload)
+        super(SearchSongs, self).__init__(SearchSongs._type, 
+                                            SearchSongs._method, **payload)
 
 
 class SongProfile(EchoNestService):
@@ -39,13 +39,15 @@ class SongProfile(EchoNestService):
 
 
     def __init__(self, artist, song):
-        req = SongID(song, artist)
-        payload = {'bucket': SongProfile._buckets}
+        payload = dict(bucket=SongProfile._buckets)
+        super(SongProfile, self).__init__(SongProfile._type, 
+                                            SongProfile._method, **payload)
+        id_service = SongID(song, artist)
+        self.dependencies.append(id_service)
 
-        super(SongProfile, self).__init__(SongProfile._type, SongProfile._method, 
-                                            payload, dependency=req)
-
-
+            
+# everything below this line needs to be remade
+###############################################################################
     def combine_dependency(self, intermediate):
         try:
             first_result = intermediate.pop()
@@ -86,7 +88,7 @@ class SongProfile(EchoNestService):
                                             'song_hotttnesss_rank')
 
             return data
-            
+
 
 # TODO: remove index error, move try to caller for None str
 def to_percent(float):
