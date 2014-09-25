@@ -11,7 +11,7 @@ class SearchSongs(EchoNestService):
         'song_hotttnesss', 
         'song_hotttnesss_rank', 
     ]
-    echo_key = 'songs'
+    response_data_key = 'songs'
 
 
     def __init__(self, artist, song):
@@ -35,7 +35,7 @@ class SongProfile(EchoNestService):
         'song_hotttnesss_rank', 
         'song_type',
     ]
-    echo_key = 'songs'
+    response_data_key = 'songs'
 
 
     def __init__(self, artist, song):

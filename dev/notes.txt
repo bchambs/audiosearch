@@ -1,0 +1,14 @@
+Various notes / code snippets / useful documentation sections.
+
+CELERY
+    -A task's __init__ is called once per process.
+
+    -Tasks will only be registered when the module they are defined in is imported.
+        http://celery.readthedocs.org/en/latest/userguide/tasks.html#how-it-works
+
+    -How daemon worker process/threads are configured:
+        http://comments.gmane.org/gmane.comp.python.amqp.celery.user/4267
+
+
+CELERY BEST PRACTICES
+    -http://celery.readthedocs.org/en/latest/userguide/tasks.html#tips-and-best-practices

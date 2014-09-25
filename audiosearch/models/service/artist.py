@@ -17,7 +17,8 @@ class ArtistProfile(EchoNestService):
         'genre',
         'years_active',
     ]
-    echo_key = 'artist'
+    requires_processing = True
+    response_data_key = 'artist'
 
 
     def __init__(self, artist):
@@ -77,7 +78,7 @@ class ArtistSongs(EchoNestService):
     _buckets = [
         'audio_summary',
     ]
-    echo_key = 'songs'
+    response_data_key = 'songs'
 
 
     def __init__(self, artist):
@@ -93,7 +94,7 @@ class ArtistSongs(EchoNestService):
 class SearchArtists(EchoNestService):
     _type = 'artist'
     _method = 'suggest'
-    echo_key = 'artists'
+    response_data_key = 'artists'
 
 
     def __init__(self, artist):
@@ -110,7 +111,7 @@ class SimilarArtists(EchoNestService):
         'terms',
         'songs',
     ]
-    echo_key = 'artists'
+    response_data_key = 'artists'
 
 
     def __init__(self, artist):
@@ -126,7 +127,7 @@ class TopArtists(EchoNestService):
     _buckets = [
         'hotttnesss_rank',
     ]
-    echo_key = 'artists'
+    response_data_key = 'artists'
 
 
     def __init__(self):

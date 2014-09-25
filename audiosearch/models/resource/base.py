@@ -6,18 +6,19 @@ from __future__ import absolute_import
 from audiosearch.core import echonest
 
 
-_ID_SEP = '_'
-_KEY_SEP = '::'
-_SONG_SEP = ' BY '
+EMPTY_KEY_PIECE = '$'
+ID_SEP = '_'
+KEY_SEP = '::'
+SONG_SEP = ' BY '
 
 
 def make_id(head, tail):
     """Key prefix."""
-    return _ID_SEP.join([head, tail])
+    return ID_SEP.join([head, tail])
 
 
-def make_key(key_id, name):
-    return _KEY_SEP.join([key_id, name])
+def make_key(id_, name):
+    return KEY_SEP.join([id_, name])
 
 
 class BaseResource(object):
@@ -37,9 +38,9 @@ class BaseResource(object):
         if self.group == 'artist':
             name = self.artist
         elif self.group == 'song':
-            name = _SONG_SEP.join([self.song, self.artist])
+            name = SONG_SEP.join([self.song, self.artist])
         else:
-            name = '$'
+            name = EMPTY_KEY_PIECE
 
         self._resource_id = make_id(self.group, self.category)
         self._key = make_key(self._resource_id, name)
@@ -76,16 +77,21 @@ class BaseResource(object):
     # def name(self):
         # return self._name
 
-    """key_id ?"""
     @property
     def resource_id(self):
         return self._resource_id
 
 
+    # REDO
     def retrieve(self):
-        params = dict([(field, getattr(self, field)) for field in self._fields])
-        echonest.get_data(self.key, self.group, self.category, params)
+        resource_params = dict([
+            (field, getattr(self, field)) 
+            for field 
+            in self._fields])
+        echonest.get_resource(self.key, self.group, self.category, 
+            resource_params)
 
 
+    # REDO
     def async_rep(self):
         return self._group, self._category, self._name

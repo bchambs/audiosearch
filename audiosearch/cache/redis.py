@@ -1,3 +1,8 @@
+"""
+TODO: store artist / song hashes with form
+    artist_hash::a {'artist 1': ECHO_HASH,...},
+    song_hash::a {'title by artist 1': ECHO_HASH,...},
+"""
 from __future__ import absolute_import
 import codecs
 import cPickle
@@ -5,16 +10,37 @@ import os
 
 import redis
 
-from audiosearch.cache import base
+from audiosearch.cache.base import BaseCache
+from audiosearch.core.exceptions import StorageTypeError
 
 
 _failed_keys = 'Failed keys'
 
 
-class RedisCache(base.BaseCache):
+class RedisCache(BaseCache):
     """Redis-py wrapper with cPickle serialization.  Echo requests which fail
     to return data (because of error or no results) are stored in a set keyed
     by ``_failed_keys.``
+
+    Pending request handling: 
+        The get_echo_data handler will execute a cached LUA script to determine
+        if the request is in the task queue.  Pending keys are stored in a set
+        keyed by ``_pending_keys.``  Logic should be something like:
+
+        LUA (py syntax)
+            1. if not cache[key] and 
+                not cache.ismember(failed_keys, key) and 
+                not cache.ismember(pending_keys, key):
+                    cache.sadd(pending_keys, key)
+
+                    return True
+
+        CALLER
+            2. if response is True enqueue task, else do not enqueue
+
+        Store script in audiosearch/scripts.  In audiosearch/__init__ open,
+        load, then 'cache' it in during RedisCache.__init__.  Add the hash as a
+        static attribute so workers have access.
 
     name: instance name
     params: RESOURCE_CACHE dict from audiosearch.conf.settings
@@ -103,7 +129,7 @@ class RedisCache(base.BaseCache):
         elif type(value) is dict:
             self._cache.hmset(key, value)
         else:
-            pass    
+            raise StorageTypeError()   
 
         self._cache.expire(key, self.default_ttl)
 

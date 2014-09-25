@@ -1,0 +1,12 @@
+Ideas for future development which are too important to be lost in inlined 'TODO' comments
+
+
+TASKS
+    1. Add a scheduled task to check for echo nest api updates.  Email admin on update.
+
+
+SERVICES
+
+
+GENERAL
+    1. Add doc strings to exceptions.

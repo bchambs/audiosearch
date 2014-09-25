@@ -3,15 +3,11 @@ from __future__ import absolute_import
 from audiosearch.models.service.base import EchoNestService
 
 
-class DependencyError(Exception):
-    pass
-
-
 class SongID(EchoNestService):
     """Used to acquire a song's Echo Nest id."""
     _type = 'song'
     _method = 'search'
-    echo_key = 'songs'
+    response_data_key = 'songs'
 
 
     def __init__(self, artist, song):

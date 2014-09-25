@@ -1,71 +1,191 @@
 from __future__ import absolute_import
 
-import celery
-import requests
+import json
+import time
 
-from audiosearch.core import tasks
+import requests
+from celery import shared_task, Task
+
+# from audiosearch.conf.celery import app as audiosearch_celery_queue
+from audiosearch.conf.tasks import SharedConnectionMixin
+from audiosearch.core.exceptions import (DataKeyError, FatalStatusError,
+                                        RateLimitError, UnexpectedFormatError)
 from audiosearch.models.service import ServiceFactory
 
+# Keyed status of an Echo Nest API call
+# Location in JSON format: response['status']['code']
+ECHONEST_STATUS_CODES = {
+    '-1': 'Unknown Error',
+    '0': 'Success',
+    '1': 'Missing/ Invalid API Key',
+    '2': 'This API key is not allowed to call this method',
+    '3': 'Rate Limit Exceeded',
+    '4': 'Missing Parameter',
+    '5': 'Invalid Parameter',
+}
 
-# EchoNest response codes.
-_SUCCESS = 0
-_LIMIT_EXCEEDED = 3
-_MISSING_PARAM = 4
-_INVALID_PARAM = 5
+# Echo Nest status codes which indicate the consumed service will never succeed
+FATAL_STATUS_CODES = set([
+    '-1',
+    '1',
+    '2',
+    '4',
+    '5',
+    ])
+
+# Status aliases
+RATE_EXCEEDED = 3
+SUCCESS = 0
+
+# Keyed HTTP codes of an Echo Nest API call
+ECHONEST_HTTP_RESPONSE_CODES = {
+    '200': 'Success',
+    '304': '''Not Modified - indicates that the resource has not been modified 
+            since the version specified by the request headers If-Modified-Since 
+            or If-Match.''',
+    '400': 'Bad Request - the request is not valid',
+    '403': 'Forbidden - you are not authorized to access that resource',
+    '404': 'Not Found - The requested resource could not be found',
+    '429': '''Too Many Requests - You have exceeded the rate limit associated 
+            with your API key''',
+    '5XX': '''Server Error - The Echo Nest is having an internal issue and 
+            cannot serve your request''',
+}
 
 
-class EchoResponseError(Exception):
-    pass
+def get_resource(key, category, content_type, params):
+    """Create the services required to fulfill a resource request then
+    defer the work to a celery worker."""
+
+    service = ServiceFactory(category, content_type, params)
+    call_echonest.delay(key, service)
 
 
-class RateLimitError(EchoResponseError):
-    pass
+class EchoNestAPICall(Task, SharedConnectionMixin):
+    """Task definition and handlers for calling the Echo Nest's API."""
+
+    abstract = True
+    default_retry_delay = 2 # In seconds
+    max_retries = 15
+
+    # Set of execptions raised during task execution which indicate the service
+    # will not succeed if retried
+    fatal_errors = set([
+        DataKeyError,
+        FatalStatusError,
+        requests.ConnectionError,
+        requests.HTTPError,
+        requests.TooManyRedirects,
+        requests.Timeout,
+        requests.URLRequired,
+        requests.RequestException,    # Base requests exception
+        UnexpectedFormatError,
+        ValueError, # For requests.response to json conversion
+        ])
 
 
-def get_data(key, category, content, params):
-    service = ServiceFactory(category, content, params)
-    tasks.call_echo_api.delay(key, service, service.dependencies)
-
-
-# TODO: move key arg to a callback or use celery on_success / on_fail functions
-@celery.shared_task(base=tasks.CachePool)
-def call_api(key, service, dependencies=None):
-    if dependencies:
-        for service in dependencies:
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        """Called when task execution encounters an unhandled exception."""
+        
+        if exc not in EchoNestAPICall.fatal_errors:
+            # Unexpected exception. log
             pass
-    pass
+
+        # TODO: add case logic by exception
+        #   -store key in failed set for bad requests
+        #   -do something if echo nest host is down
+        #   -do something if audiosearch host is down
 
 
-def parse_response():
-    """Parse echo nest REST api response and return the call's data element as
-    a dict.
+    # def on_retry(self, exc, task_id, args, kwargs, einfo):
+    #     pass
+
+
+def zzz():
+    print 'ok' * 20
+
+@shared_task(base=EchoNestAPICall, bind=True)
+def call_echonest(self, key, service):
+    """Attempt to retrieve Echo Nest data defined by `service` and store
+    at Cache[`key`].  
+
+    Explicitly handled exceptions indicate that the error may be temporary
+    and that the task should be retried.
+
+    Fatal errors are silently handled by on_failure().
     """
+    
+    response = requests.get(service.url, params=service.payload)
+    response_dict = response.json()
+
+    try:
+        echonest_data = parse(response_dict, service.response_data_key)
+    except RateLimitError as e:
+        raise self.retry(exc=e)
+
+    resource_data = service.process(echonest_data)
+    self.Cache.store(key, resource_data)    # Raises StorageTypeError
 
 
+def parse(echonest_response, data_key):
+    """Parse Echo Nest json response dict."""
 
-# def consume(package):
-#     attempt = 1
+    try:
+        echonest_dict = echonest_response['response']
+        status_code = echonest_dict['status']['code']
+    except KeyError:
+        raise UnexpectedFormatError()
 
-#     while 1:
+    if status_code is SUCCESS:
+        echonest_data = echonest_dict[data_key]
+    elif status_code is RATE_EXCEEDED:
+        raise RateLimitError()
+    elif status_code in FATAL_STATUS_CODES:
+        raise FatalStatusError(status_code)
+    
+    return echonest_data
+
+####################
+####################
+####################
+####################
+# Expanded error handling for logging / better handling / etc
+# def parse(echonest_response, data_key):
+#     try:
+#         echonest_dict = echonest_response['response']
+#         status_code = echonest_dict['status']['code']
+#     except KeyError:
+#         raise UnexpectedFormatError
+
+#     if status_code is SUCCESS:
 #         try:
-#             if attempt > _ATTEMPT_LIMIT: 
-#                 raise TimeoutError()
+#             echonest_data = echonest_dict[data_key]
+#         except KeyError:
+#             raise DataKeyError()
+#     elif status_code is RATE_EXCEEDED:
+#         raise RateLimitError()
+#     elif status_code in FATAL_STATUS_CODES:
+#         raise FatalStatusError(status_code)
+    
+#     return echonest_data
 
-#             response = get(package.url, params=package.payload)
-#             json_response = response.json()
-#             status_code = json_response['response']['status']['code']
 
-#             # Response is valid, branch on echo nest code.
-#             if status_code == _SUCCESS:
-#                 data = json_response['response'][package.echo_key]
-#             elif status_code == _LIMIT_EXCEEDED:
-#                 attempt += 1
-#                 sleep(_CALL_SNOOZE)
-#             else:
-#                 raise ServiceFailureError()
-                
-#         # Invalid request or unable to parse json response.
-#         except (KeyError, RequestException, ValueError):
-#             raise ServiceFailureError()
-#         else:
-#             return data
+# def run(self, key, service):
+#     """Attempt to retrieve Echo Nest data defined by `service` and store
+#     at Cache[`key`].
+#     """
+    
+#     response = requests.get(service.url, params=service.payload)
+#     response_dict = response.json()
+
+#     try:
+#         echonest_data = parse(response_dict, service.response_data_key)
+#     except RateLimitError as e:
+#         raise self.retry(exc=e)
+
+#     if service.requires_processing:
+#         resource_data = service.process(echonest_data)
+#     else:
+#         resource_data = echonest_data
+
+#     return key, resource_data

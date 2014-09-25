@@ -37,8 +37,8 @@ def create_service_map():
         },
     }
 
-    def init_service(call_type, content_type, params):
-        return service_map[call_type][content_type](**params)
+    def init_service(echonest_group, content_type, params):
+        return service_map[echonest_group][content_type](**params)
     return init_service
 
 ServiceFactory = create_service_map()

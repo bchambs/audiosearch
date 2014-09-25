@@ -1,3 +1,5 @@
+Template used for project structure rework in August.
+
 ./audiosearch
     ./cache
         client.py

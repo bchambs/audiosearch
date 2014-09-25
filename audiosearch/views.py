@@ -28,50 +28,8 @@ def music_home(request, GET, **params):
 
     return render(request, 'music-home.html', context)
 
-    # if status == 'available':
-    #     raw_data, size = Cache.get_list_bundle(top.key, 0, 14)
-    #     content_map = Available.process(top, raw_data, size, 0, 14)
-    # elif status == 'failed':
-    #     content_map = Failed.process(top)
-    # else:
-    #     top.get_resource()
-    #     content_map = Pending.process(top)
-
-    # context[top.res_id] = content_map
-
-    # print context[top.res_id]
-
-    # return render(request, 'music-home.html', context)
 
 
 def ajax_retrieve_content(request, GET, **params):
-    try:
-        group = params.pop('group')
-        category = params.pop('category')
-        name = params.pop('name')
-    except KeyError:
-        return HttpResponse(json.dumps({'status': 'failed'}), 
-                            content_type="application/json")
-
-    context = {}
-    page = GET.get('page')
-    row_count = GET.get('row_count', DEFAULT_ROW_COUNT)
-    key = resource.make_key(group, category, name)
-
-    if key in Cache:
-        # Build dict to load table in content_rows.html
-        content = {}
-        start, end = _calculate_page_range(page, row_count)
-        content['offset'] = start - 1
-        content['resource_data'], content['total_data'] = Cache.get(key, start, end)
-
-        # Render template html then send with status as JSON encoded bundle.
-        template_html = render_to_response('content_rows.html', content, 
-                                context_instance=RequestContext(request))
-        context['template'] = template_html.content
-        context['status'] = 'complete'
-    else:
-        context['status'] = 'pending'
-    
+    context = dict(status='failed')
     return HttpResponse(json.dumps(context), content_type="application/json")
-

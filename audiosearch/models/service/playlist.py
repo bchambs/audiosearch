@@ -10,7 +10,7 @@ class BasePlaylist(EchoNestService):
     _buckets = [
         'song_hotttnesss',
     ]
-    ECHO_NEST_KEY = 'songs'
+    response_data_key = 'songs'
     
 
     def __init__(self, params):
