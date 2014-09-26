@@ -7,6 +7,7 @@ _N_CONTENT_ROWS = 10    # Default number of rows in content table.
 NAV_MORE = 'more'
 NAV_PAGES = 'pages'
 
+
 def build_template_map(available, failed, page, n_items, nav_style):
     
     complete = dict()

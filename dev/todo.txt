@@ -3,10 +3,26 @@ Ideas for future development which are too important to be lost in inlined 'TODO
 
 TASKS
     1. Add a scheduled task to check for echo nest api updates.  Email admin on update.
-
+    2. Add scheduled task to update top artists on /music/
 
 SERVICES
+    1. Group service classes somehow.
+    2. Move echo host / url stuff to echonest.py.
+    3. Have 'seed' init args determine playlist type. seed=song
+
+
+ECHONEST.py
+    1. Add validate method to be executed before storing.  (check size, data type, etc. pass data type to cache.store ?)
+    2. Create a response key generator (group + 's' if response data type is a list?)
 
 
 GENERAL
     1. Add doc strings to exceptions.
+    2. Generalize make_key and make_id.  
+    3. Look into __getstate__ and __setstate__ when improving core/redis.py
+        -see requests
+        -https://stackoverflow.com/questions/12627949/python-override-getstate-setstate
+
+
+OLD CODE
+    1. preprocess.py can probably be improved / simplified with a django module.

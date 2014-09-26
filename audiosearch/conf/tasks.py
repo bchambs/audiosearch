@@ -1,17 +1,19 @@
-"""Abstract task class definitions"""
+"""Abstract task class definitions and mixins."""
 
 from __future__ import absolute_import
 import os
+
+from celery import Task
 
 from audiosearch.cache.redis import RedisCache
 from audiosearch.conf import settings
 
 
-class SharedConnectionMixin(object):
+class SharedConnection(Task):
     """Enforce all tasks executed in a worker's subprocess to use the same
     audiosearch cache client.
     """
-
+    abstract = True
     _cache = None
 
 

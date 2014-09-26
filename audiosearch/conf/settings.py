@@ -106,10 +106,6 @@ NROWS_DEFAULT = 10  # Number of rows displayed in a paged table.
 # HOME_ROW_COUNT = 15     # Number of rows displayed in a table on home pages.
 
 
-# Echo Nest
-ECHO_API_KEY = 'QZQG43T7640VIF4FN'
-
-
 # Redis 
 CACHE_CONFIG = {
     'host': 'localhost',

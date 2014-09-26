@@ -31,5 +31,5 @@ class FatalStatusError(ServiceError):
 class CacheError(Exception):
     pass
 
-class StorageTypeError(CacheError):
+class UnexpectedTypeError(CacheError):
     pass

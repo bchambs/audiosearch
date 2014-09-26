@@ -5,12 +5,10 @@ import celery
 
 from audiosearch.cache.redis import RedisCache
 from audiosearch.conf import settings
-from audiosearch.core.echonest import EchoNestAPICall
 
 
 # Setup
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'audiosearch.conf.settings')
-# app = celery.Celery('audiosearch', task_cls=EchoNestAPICall)
 app = celery.Celery('audiosearch')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 

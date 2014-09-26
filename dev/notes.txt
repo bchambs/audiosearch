@@ -12,3 +12,5 @@ CELERY
 
 CELERY BEST PRACTICES
     -http://celery.readthedocs.org/en/latest/userguide/tasks.html#tips-and-best-practices
+
+

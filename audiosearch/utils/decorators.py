@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from functools import wraps
 
-from audiosearch.models import resource 
+from audiosearch.models import resources
 from audiosearch import Cache
 
 
@@ -32,7 +32,7 @@ def reset_cache(page):
     def wrapper(view_func):
         def delete_key(*args, **kwargs):
             if page == 'top':
-                key = resource.TopArtists().key
+                key = resources.TopArtists().key
             else:
                 key = None
 

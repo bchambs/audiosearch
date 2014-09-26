@@ -11,7 +11,7 @@ import os
 import redis
 
 from audiosearch.cache.base import BaseCache
-from audiosearch.core.exceptions import StorageTypeError
+from audiosearch.core.exceptions import UnexpectedTypeError
 
 
 _failed_keys = 'Failed keys'
@@ -80,12 +80,6 @@ class RedisCache(BaseCache):
 
 
     def __contains__(self, key):
-        yo = self._cache.__contains__(key)
-        print '???'
-        print self._cache.exists(key)
-        print yo
-        print self._cache.dbsize()
-        print self._cache.keys()
         return self._cache.exists(key)
 
 
@@ -99,8 +93,6 @@ class RedisCache(BaseCache):
     @property
     def info(self):
         """Return redis client specification."""
-        return repr(self)
-        print self._spec
         return self._spec
 
 
@@ -132,6 +124,7 @@ class RedisCache(BaseCache):
     
 
     def store(self, key, value):
+        print 'in store'
         vt = type(value)
 
         if vt is list:
@@ -139,11 +132,7 @@ class RedisCache(BaseCache):
         elif vt is dict:
             self._cache.hmset(key, value)
         else:
-            print vt
-            print vt
-            print vt
-            print vt
-            raise StorageTypeError()   
+            raise UnexpectedTypeError(key, vt)   
 
         self._cache.expire(key, self.default_ttl)
 
