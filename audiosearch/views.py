@@ -17,14 +17,13 @@ def music_home(request, GET, **params):
     context = {}
     top = resource.TopArtists()
 
-    # try:
-    #     raw_data = Cache.get(top.key, top.dispatch())
-    # except FailedKeyError:
-    #     process_failed(top)
-
-    # status = Cache.get_status(top.key)
-    # top_content = handlers.dispatch(top, status)
-    # context[top.resource_id] = top_content
+    print Cache
+    
+    if top in Cache:
+        data = Cache.getlist(top.key, 0, 14)
+        print data
+    else:
+        top.retrieve()
 
     return render(request, 'music-home.html', context)
 

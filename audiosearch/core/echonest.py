@@ -86,6 +86,15 @@ class EchoNestAPICall(Task, SharedConnectionMixin):
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         """Called when task execution encounters an unhandled exception."""
+
+        print 'in on_failure'
+        print 'in on_failure'
+        print 'in on_failure'
+        print args
+        print exc
+        print
+        print
+        print
         
         if exc not in EchoNestAPICall.fatal_errors:
             # Unexpected exception. log
@@ -101,9 +110,6 @@ class EchoNestAPICall(Task, SharedConnectionMixin):
     #     pass
 
 
-def zzz():
-    print 'ok' * 20
-
 @shared_task(base=EchoNestAPICall, bind=True)
 def call_echonest(self, key, service):
     """Attempt to retrieve Echo Nest data defined by `service` and store
@@ -115,16 +121,22 @@ def call_echonest(self, key, service):
     Fatal errors are silently handled by on_failure().
     """
     
+    print 1
     response = requests.get(service.url, params=service.payload)
+    print 2
     response_dict = response.json()
 
     try:
         echonest_data = parse(response_dict, service.response_data_key)
+        print 3
     except RateLimitError as e:
         raise self.retry(exc=e)
 
     resource_data = service.process(echonest_data)
+    print 4
     self.Cache.store(key, resource_data)    # Raises StorageTypeError
+    print 5
+
 
 
 def parse(echonest_response, data_key):
@@ -137,12 +149,15 @@ def parse(echonest_response, data_key):
         raise UnexpectedFormatError()
 
     if status_code is SUCCESS:
+        print 'SSSS'
         echonest_data = echonest_dict[data_key]
     elif status_code is RATE_EXCEEDED:
+        print 'RRRR'
         raise RateLimitError()
     elif status_code in FATAL_STATUS_CODES:
+        print 'FFFF'
         raise FatalStatusError(status_code)
-    
+
     return echonest_data
 
 ####################

@@ -80,6 +80,12 @@ class RedisCache(BaseCache):
 
 
     def __contains__(self, key):
+        yo = self._cache.__contains__(key)
+        print '???'
+        print self._cache.exists(key)
+        print yo
+        print self._cache.dbsize()
+        print self._cache.keys()
         return self._cache.exists(key)
 
 
@@ -93,6 +99,8 @@ class RedisCache(BaseCache):
     @property
     def info(self):
         """Return redis client specification."""
+        return repr(self)
+        print self._spec
         return self._spec
 
 
@@ -124,11 +132,17 @@ class RedisCache(BaseCache):
     
 
     def store(self, key, value):
-        if type(value) is list:
+        vt = type(value)
+
+        if vt is list:
             self._cache.rpush(key, *value)
-        elif type(value) is dict:
+        elif vt is dict:
             self._cache.hmset(key, value)
         else:
+            print vt
+            print vt
+            print vt
+            print vt
             raise StorageTypeError()   
 
         self._cache.expire(key, self.default_ttl)

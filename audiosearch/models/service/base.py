@@ -36,4 +36,4 @@ class EchoNestService(object):
 
 
     def process(self, echonest_data):
-        pass
+        return echonest_data
