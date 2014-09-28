@@ -31,9 +31,13 @@ SUCCESS = 0
 
 
 def get(resource):
+    prepared_request = prepare(resource)
+    get_and_store(key, prepared_request)
+
+def prepare(resource):
     payload = build_payload(resource.content, resource.params)
     url = build_url(resource.group, resource.method)
-    call_api(resource.key, url, payload, resource.response_key)
+    return dict(url=url, params=payload, resp_key=resource.response_key)
 
 def build_payload(buckets, params):
     payload = {
@@ -71,12 +75,7 @@ def parse(echo_response, response_key):
     elif status_code in FATAL_STATUS_CODES:
         raise FatalStatusError(status_code)
 
-@shared_task(
-    base=tasks.SharedConnection,
-    # bind=True,
-    default_retry_delay=2,
-    max_retries=5,
-    on_failure=failed_call)
+
 def call_api(key, url, payload, response_key):
     response = requests.get(url, params=payload)
     response_dict = response.json()
@@ -90,4 +89,15 @@ def call_api(key, url, payload, response_key):
     except UnexpectedFormatError:
         raise
 
-    Cache.store(key, echodata)
+    return echodata
+
+
+
+@shared_task(
+    base=tasks.SharedConnection,
+    # bind=True,
+    default_retry_delay=2,
+    max_retries=5,
+    on_failure=failed_call)
+def get_and_store():
+    
