@@ -1,11 +1,10 @@
 from __future__ import absolute_import
 import codecs
 import cPickle as pickle
+import json
 import os
 
 import redis
-
-from audiosearch.core.exceptions import UnexpectedTypeError
 
 
 FAILED_KEYS = 'failed:keys'
@@ -42,34 +41,55 @@ class RedisCache(object):
             self._client = redis.StrictRedis(**self.client_params)
         return self._client
 
+    # General
     def delete(self, key):
         return self._cache.delete(key)
 
-    def gethash(self, key):
-        return self._cache.hgetall(key)
+    def fetch(self, key, page=None):
+        vtype = self._cache.type(key)
 
-    def getlist(self, key, start=0, end=-1):
+        if vtype == 'list':
+            start = page * 10 if page is not None else 0
+            end = start + 9 if page is not None else 14
+            value = self.getlist(key, start, end)
+        elif vtype == 'hash':
+            value = self.gethash(key)
+        else:
+            raise ValueError()
+
+        return value
+
+
+    # Status checking
+    def has_failed(self, key):
+        return self._cache.sismember(FAILED_KEYS, key)
+
+    def set_failed(self, key):
+        return self._cache.sadd(FAILED_KEYS, key)
+
+
+    # List
+    def getlist(self, key, start, end):
         raw = self._cache.lrange(key, start, end)
-        deserialized = [pickle.loads(item) for item in raw]
-        return [element.decode("UTF-8") for element in deserialized]
+        return [json.loads(element) for element in raw]
 
     def getlist_len(self, key):
         return self._cache.llen(key)
 
-    def has_failed(self, key):
-        return self._cache.sismember(FAILED_KEYS, key)
+    def setlist(self, key, values):
+        json_values = [json.dumps(element) for element in values]
+        self._cache.rpush(key, *json_values)
+
+
+    # Hash
+    def gethash(self, key):
+        return self._cache.hgetall(key)
+
+    def sethash(self, key, value_map):
+        self._cache.hmset(key, value_map)
+
     
-    def set_failed(self, key):
-        return self._cache.sadd(FAILED_KEYS, key)
 
-    def store(self, key, value):
-        vtype = type(value)
+    
 
-        if vtype is list:
-            encoded = [element.encode("UTF-8") for element in value]
-            serialized = [pickle.dumps(item) for item in encoded]
-            self._cache.rpush(key, *serialized)
-        elif vtype is dict:
-            self._cache.hmset(key, value)
-        else:
-            raise UnexpectedTypeError(key, vtype)   
+    

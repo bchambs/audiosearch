@@ -19,3 +19,10 @@ class BaseResource(object):
         self.key = key
         self.method = method
         self.name = name
+
+    @property
+    def params(self):
+        d = {}
+        for param in self._params:
+            d[param] = getattr(self, param)
+        return d
