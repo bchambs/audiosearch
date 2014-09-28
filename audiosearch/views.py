@@ -7,21 +7,22 @@ from django.template import Context
 
 from audiosearch import Cache
 from audiosearch.core import echonest
-from audiosearch.models import resources
+from audiosearch.models import artist
 from audiosearch.utils.decorators import reset_cache, stdout_gap
 
 
 # @reset_cache('top')
 @stdout_gap
-def music_home(request, GET, **kwargs):
+def music_home(request, qstring, **kwargs):
     context = {}
 
-    artist = resources.Artist('led zeppelin')
+    profile = artist.Profile('led zeppelin')
 
-    if artist.profile in Cache:
+    if profile.key in Cache:
+        # profile_data = Cache.get(profile.fetch)
         pass
     else:
-        echonest.get(artist.profile())
+        echonest.get(profile)
 
     return render(request, 'music-home.html', context)
 

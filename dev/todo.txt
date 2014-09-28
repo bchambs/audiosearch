@@ -5,11 +5,16 @@ TASKS
     1. Add a scheduled task to check for echo nest api updates.  Email admin on update.
     2. Add scheduled task to update top artists on /music/
 
+
+CELERY
+    1. redo app init, read docs (shared_task ?)
+    
+
 SERVICES
     1. Group service classes somehow.
     2. Move echo host / url stuff to echonest.py.
     3. Have 'seed' init args determine playlist type. seed=song
-
+    4. Permanently store echonest object hashes with the first request
 
 ECHONEST.py
     1. Add validate method to be executed before storing.  (check size, data type, etc. pass data type to cache.store ?)
@@ -22,7 +27,31 @@ GENERAL
     3. Look into __getstate__ and __setstate__ when improving core/redis.py
         -see requests
         -https://stackoverflow.com/questions/12627949/python-override-getstate-setstate
+    4. Add local_settings.py to overwrite for dev.
+
+
+REDIS
+    1. Add set of 'pending' resources to prevent duplicate requests enqueue
+        Scratch from redis.py:
+            Pending keys are stored in a set keyed by ``_pending_keys.``  
+            Logic should be something like:
+
+            LUA (in py syntax)
+                1. if not cache[key] and 
+                    not cache.ismember(failed_keys, key) and 
+                    not cache.ismember(pending_keys, key):
+                        cache.sadd(pending_keys, key)
+
+                        return True
+
+            CALLER
+                2. if response is True enqueue task, else do not enqueue
+
+            Store script in audiosearch/scripts.  In audiosearch/__init__ open,
+            load, then 'cache' it in during RedisCache.__init__.  Add the hash as a
+            static attribute so workers have access.
 
 
 OLD CODE
     1. preprocess.py can probably be improved / simplified with a django module.
+    2. clean class __inits__ (see BaseService)
