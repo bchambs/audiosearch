@@ -11,9 +11,12 @@
 }
 
 #page-nav {
-    min-height: 30px;
     font-size: 25px;
+    margin: auto;
+    min-height: 30px;
     padding: 10px 0;
+    position: relative;
+    width: 970px;
 }
 #page-nav li {
     float: left;

@@ -27,11 +27,11 @@ hr {
 /*
     POSITIONING
 */
-.center {
+/*.center {
     margin: auto;
     position: relative;
     width: 970px;
-}
+}*/
 .left {
     float: left;
 }
@@ -45,11 +45,11 @@ hr {
     LISTS
 */
 ul, ol {
-    width: 100%;
     height: 100%;
     list-style: none outside none;
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 li {
     margin: 0;
@@ -61,16 +61,16 @@ li {
     LINKS
 */
 a {
-    /*color: inherit;*/
-    /*color: #FFCC99;*/
-    color: #B1F6FF;         /*light blue*/
-    color: #DAC7FF;
-    text-decoration: none;
+    color: #FACA66;
     font-style: bold;
+    text-decoration: none;
 }
 a:hover {
     color: #fff;
     text-decoration: underline;
+}
+a:visited {
+    color: #F45D4C;
 }
 
 
@@ -89,11 +89,11 @@ a:hover {
     margin: 0;
 }
 .container-table .header {
-    width: 100%;
     display: inline-block;
     font-size: 22px;
     font-weight: bold;
     padding: 6px 0;
+    width: 100%;
     /*padding: 10px 0 15px 0;*/
 }
 .container-table .header .left {
@@ -115,10 +115,13 @@ table {
     /*background: none repeat scroll 0 0 #272727;*/
     /*border-right: 2px solid #272727;
     border-bottom: 2px solid #272727;*/
-    width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
     line-height: 220%;
+    width: 100%;
+}
+tfoot {
+    text-align: center;
 }
 td:first-child { 
     padding: 0 15px;
@@ -135,9 +138,10 @@ tr:hover {
 }
 
 
+
 #debug-zone {
+    font-size: 50px;
+    left: 50px;
     position: absolute;
     top: 100px;
-    left: 50px;
-    font-size: 50px;
 }

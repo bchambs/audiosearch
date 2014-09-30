@@ -1,25 +1,41 @@
-import ast
+from __future__ import absolute_import
 
 from django import template
 
+from audiosearch.conf.display import ROWS_PER_TABLE as INTERVAL
+
+
 register = template.Library()
 
+
+# @register.simple_tag(takes_context=True)
+# def set_page(qparams, offset):
+#     page_num = page + offset
+#     return "?page={}".format(page_num)
+#     # page_num = page_nav + offset
+#     # qs = '&'.join("%s=%s" % (k, v) for (k, v) in params.iteritems())
+#     # return ''.join(['?', qs])
+
+
 @register.filter
-def space_to_plus(url):
-    # TODO use builtin
-    try:
-        return url.replace(' ', '+')
-    except AttributeError:
+def build_query(params):
+    """Create query string."""
+    if not params:
         return ''
+    qs = '&'.join("%s=%s" % (k, v) for (k, v) in params.iteritems())
+    return ''.join(['?', qs])
 
 
 @register.filter
-def to_query_string(params):
-    try:
-        qs = '&'.join("%s=%s" % (k, v) for (k, v) in params.iteritems())
-    except AttributeError:
-        qs = ''
-    return qs
+def offset(page):
+    """Calculate page index offset."""
+    return 1 if page < 2 else (page * INTERVAL) + 1
+
+
+@register.filter
+def divideby(results, rows_per_table):
+    """Divide and truncate decimal."""
+    return results / rows_per_table
 
 
 @register.filter
@@ -29,36 +45,19 @@ def inspect(item):
     print '\t{}'.format(len(item))
     print '\t{}'.format(item)
     print 'out filter\n'
-
     return item
 
 
+########################
+########################
+########################
+
+
 @register.filter
-def print_context(wall_of_text):
-    """
-    Filter template context from Django's 'debug' template tag.
-    Usage:
-        {% filter print_context %} {% debug %} {% endfilter %}
-    """
-
-    generator = lambda text: iter(text.splitlines())
-    lines = generator(wall_of_text)
-
-    for line in lines:
-        if 'user' in line:  # TODO: Context can span multiple lines
-            print 
-            try:
-                token = line.split('}{').pop(2)
-                context_string = "{" + token + "}"
-                context = ast.literal_eval(context_string)
-            except (IndexError, SyntaxError):
-                print '{}Error parsing template context'.format(' ' * 4)
-            else:
-                print '{}Template Context'.format(' ' * 4)
-                for k, v in context.iteritems():
-                    print '{}{}: {}'.format('\t', k, v)
-            finally:
-                print
-                return ''
-
+def space_to_plus(url):
+    # TODO use builtin iri_to_uri
+    try:
+        return url.replace(' ', '+')
+    except AttributeError:
+        return ''
 

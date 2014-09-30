@@ -6,6 +6,8 @@ import os
 
 import redis
 
+from audiosearch.utils.paginate import paginate
+
 
 FAILED_KEYS = 'failed:keys'
 
@@ -33,6 +35,7 @@ class RedisCache(object):
             self._pid = '????'
 
     def __contains__(self, key):
+        # return False
         return self._cache.exists(key)
 
     @property
@@ -45,19 +48,20 @@ class RedisCache(object):
     def delete(self, key):
         return self._cache.delete(key)
 
-    def fetch(self, key, page=None):
+    def fetch(self, key, page):
         vtype = self._cache.type(key)
 
         if vtype == 'list':
-            start = page * 10 if page is not None else 0
-            end = start + 9 if page is not None else 14
-            value = self.getlist(key, start, end)
+            start, end = paginate(page)
+            data = self.getlist(key, start, end)
+            length = self.getlist_len(key)
         elif vtype == 'hash':
-            value = self.gethash(key)
+            data = self.gethash(key)
+            length = 0
         else:
             raise ValueError()
 
-        return value
+        return data, length
 
 
     # Status checking

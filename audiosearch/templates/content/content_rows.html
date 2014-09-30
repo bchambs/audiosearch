@@ -1,25 +1,42 @@
 {% load audiosearch_tags %}
 
-{% with index=content.offset|default:1 %}
-{% for item in resource_data %}
-<tr class="{% cycle 'even' 'odd' %}">
-    <td>
-        {{ forloop.counter0|add:index }}.
-    </td>
-    <td>
-        {% if item.title %}
+<!-- table nav -->
+<tfoot>
+<tr><td colspan="2">
+    <div class="center">
+    {% if content.previous %}
+        <a href="?page={{ page|add:'-1' }}">previous</a>
+    {% endif %}
 
-            {% if display_by_artist %}
-                <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
-                 by {{ item.artist_name }}
+    {{ page|default:1 }} of {{ content.total_results|divideby:row_count }}
+
+    {% if content.next %}
+        <a href="?page={{ page|add:'1' }}">next</a>
+    {% endif %}
+    </div>
+</tr><td>
+</tfoot>
+
+<tbody>
+{% with index=page|offset %}
+{% for item in content.echodata %}
+    <tr class="{% cycle 'even' 'odd' %}">
+        <td>
+            {{ forloop.counter0|add:index }}.
+        </td>
+        <td>
+            {% if item.title %}
+                {% if display_by_artist %}
+                    <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                     by {{ item.artist_name }}
+                {% else %}
+                    <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                {% endif %}
             {% else %}
-                <a href = "/music/{{ item.artist_name|space_to_plus }}/_/{{ item.title|space_to_plus }}/" >{{ item.title }}</a>
+                <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
             {% endif %}
-
-        {% else %}
-            <a href = "/music/{{ item.name|space_to_plus }}/" >{{ item.name }}</a>
-        {% endif %}
-    </td>
-</tr>
+        </td>
+    </tr>
 {% endfor %}
 {% endwith %}
+</tbody>

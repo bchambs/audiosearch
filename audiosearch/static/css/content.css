@@ -6,19 +6,22 @@
 }
 .container-content {
     background: none repeat scroll 0 0 #5A5A5A;
+    border-color: #272727;
+    border-radius: 0 0 3px 3px;
+    border-style: none solid solid;
+    border-width: thin 2px 2px;
     border: 0 none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     color: #fff;
     font: inherit;
     margin: 30px auto;
     padding: 0 20px 100px 20px;
     width: 970px;
-
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    
-    border-color: #272727;
-    border-radius: 0 0 3px 3px;
-    border-style: none solid solid;
-    border-width: thin 2px 2px;
+}
+.container-content.center {
+    margin: auto;
+    position: relative;
+    width: 970px;
 }
 
 #resource-title {
@@ -56,8 +59,6 @@
 #profile-genres li {
     margin-right: 8px;
 }
-
-
 
 
 .genre-tag {

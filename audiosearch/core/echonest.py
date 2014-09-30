@@ -1,10 +1,7 @@
 from __future__ import absolute_import
 
 import requests
-from celery import shared_task
 
-from audiosearch import Cache
-from audiosearch.conf import tasks
 from audiosearch.core.exceptions import (
     APIConnectionError,
     APIResponseError,
@@ -26,6 +23,9 @@ FATAL_STATUS_CODES = set(['-1', '1', '2', '4', '5'])
 RATE_EXCEEDED = 3
 SUCCESS = 0
 
+# Largest possible length of response data list
+MAX_RESULTS = 100   
+
 
 def call(group, method, params):
     url = '/'.join([BASE_URL, group, method])
@@ -33,35 +33,37 @@ def call(group, method, params):
 
     try:
         response = requests.get(url, params=payload)
+        response_dict = response.json()
     except requests.RequestException:
         raise APIConnectionError('unable to contact echo nest')
-    else:
-        try:
-            response_dict = response.json()
-        except ValueError:
-            raise APIResponseError('response not json')
-        else:
-            return response_dict
+    except ValueError:
+        raise APIResponseError('response not json')
+
+    return response_dict
 
 def parse(raw_response, method_key):
     try:
         response = raw_response['response']
-        status_code = response['status']['code']
+        status = response['status']
+        status_code = status['code']
     except KeyError:
         raise APIResponseError('unexpected format')
+
+    if status_code is SUCCESS:
+        try:
+            echodata = response[method_key]
+        except KeyError:
+            raise APIResponseError('invalid data key')
+        return echodata
+
+    elif status_code is RATE_EXCEEDED:
+        raise RateLimitError()
     else:
-        if status_code is SUCCESS:
-            try:
-                echodata = response[method_key]
-            except KeyError:
-                raise APIResponseError('invalid data key')
-            else:
-                return echodata
+        raise APIResponseError(status)
 
-        elif status_code is RATE_EXCEEDED:
-            raise RateLimitError()
-        else:
-            pass
+def init_prepare(key, format):
+    def _prepare(params):
+        return dict(params.iteritems(), api_key=key, format=format)
+    return _prepare
 
-def prepare(params):
-    return dict(params.iteritems(), api_key=api.KEY, format=api.FORMAT)
+prepare = init_prepare(api.KEY, api.FORMAT)

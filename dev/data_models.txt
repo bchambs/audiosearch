@@ -4,7 +4,7 @@ View Context-to-Template dict mapping.
     Context = {
         res.name: {
             'res.category res. content': {
-                'div_id': div id selector prefix,
+                'template_id': div id selector prefix,
                 'title': context table or box header,
                 'is_preview': boolean determining content nav bar,
 

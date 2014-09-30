@@ -9,7 +9,7 @@ function remove_resource(resource) {
     $.ajax({
         url: "/ajax/clear/",
         data: {
-            resource: resource,
+            key: rkey,
         },
         dataType: 'json',
         type: 'GET'

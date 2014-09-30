@@ -1,7 +1,7 @@
 {% load audiosearch_tags %}
 
 <!-- display page nav -->
-<div id="{{ div_id }}-next" class="right">
+<div id="{{ template_id }}-next" class="right">
     {% if content.next %}
         {% if q_params %}
             <a href = "?{{ q_params|to_query_string }}&page={{ content.next }}" >next</a>
@@ -11,13 +11,13 @@
     {% endif %}
 </div>
 
-<div id="{{ div_id }}-current" class="right">
+<div id="{{ template_id }}-current" class="right">
     {% if content.next or content.previous and content.current %}
         {{ content.current }} of {{ content.total }}
     {% endif %}
 </div>
 
-<div id="{{ div_id }}-previous" class="right">
+<div id="{{ template_id }}-previous" class="right">
     {% if content.previous %}
         {% if q_params %}
             <a href = "?{{ q_params|to_query_string }}&page={{ content.previous }}" >previous</a>

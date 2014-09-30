@@ -28,6 +28,8 @@ GENERAL
         -see requests
         -https://stackoverflow.com/questions/12627949/python-override-getstate-setstate
     4. Add local_settings.py to overwrite for dev.
+    5. iri_to_uri
+        https://docs.djangoproject.com/en/1.6/ref/unicode/#uri-and-iri-handling
 
 
 REDIS

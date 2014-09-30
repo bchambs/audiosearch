@@ -2,6 +2,31 @@ from __future__ import absolute_import
 import urllib
 
 
+def normalize(d):
+    """Return a 'copy' of d with normalized values."""
+
+    normal = {}
+
+    for k, v in d.iteritems():
+        try:
+            normal[k] = clean(v)
+        except TypeError:
+            normal[k] = v
+
+    return normal
+
+
+def clean(s):
+    """Strip white space, convert to lowercase, and remove consecutive spaces."""
+    if not len(s):
+        return None
+
+    trimmed = s.strip()
+    lowered = trimmed.lower()
+    spacey = urllib.unquote_plus(lowered)
+    return ' '.join(spacey.split())
+
+
 class Normalizer(object):
     """Convert request data to standardized format.  Django request.GET is
     immutable in a normal request/response cycle so pass a new formatted dict
@@ -23,35 +48,11 @@ class Normalizer(object):
         normal_kwargs = {}
 
         if request.GET:
-            normal_GET = _normalize(request.GET.copy())
+            normal_GET = normalize(request.GET.copy())
 
         if view_kwargs:
-            normal_kwargs = _normalize(view_kwargs)
+            normal_kwargs = normalize(view_kwargs)
 
-        return view_func(request, normal_GET, **normal_kwargs)
+        page = int(normal_GET.get('page', 1))
 
-
-def _normalize(d):
-    """Return a 'copy' of d with normalized values."""
-
-    normal = {}
-
-    for k, v in d.iteritems():
-        if v:
-            try:
-                normal[k] = _normalize_string(v)
-            except AttributeError:
-                normal[k] = v 
-        else:
-            normal[k] = None    # TODO: see why empty unicode strs do not throw. 
-                                # --> see if unicode has strip(), lower()... etc
-    return normal
-
-
-def _normalize_string(s):
-    """Strip white space, convert to lowercase, and remove consecutive spaces."""
-    stripped = s.strip()
-    lowered = stripped.lower()
-    spacey = urllib.unquote_plus(lowered)
-    return ' '.join(spacey.split())
-
+        return view_func(request, normal_GET, page, **normal_kwargs)

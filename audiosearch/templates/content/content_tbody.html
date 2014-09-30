@@ -1,7 +1,7 @@
 {% load audiosearch_tags %}
 
 {% with index=content.offset|default:1 %}
-{% for item in content.resource_data %}
+{% for item in content.echodata %}
     <tr class="{% cycle 'even' 'odd' %}">
         <td>
             {{ forloop.counter0|add:index }}.

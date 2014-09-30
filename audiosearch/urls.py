@@ -30,8 +30,7 @@ urlpatterns = patterns('',
 
 
     # Ajax.
-    url(ur'^ajax/(?P<group>.*)/(?P<category>.*)/(?P<name>.*)/$', views.ajax_retrieve_content, name='ajax_retrieval'),
-    # url(ur'^ajax/clear/$', views.clear_resource),
+    url(ur'^ajax/(?P<group>.+)/(?P<method>.+)/(?P<name>.+)/$', views.ajax_retrieve, name='ajax_retrieve'),
 
 
     # Disallow web spiders.

@@ -63,10 +63,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'audiosearch.middleware.class_loader.AsyncClassLoader',
     'audiosearch.middleware.preprocess.Normalizer',
 )
 
-# TODO: see if this is needed in production (reason: dev static serving)
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
