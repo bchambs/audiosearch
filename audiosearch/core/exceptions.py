@@ -1,11 +1,14 @@
 from __future__ import absolute_import
 
 
-class APIConnectionError(Exception):
+class AudiosearchError(Exception):
+    pass
+    
+class APIConnectionError(AudiosearchError):
     pass
 
-class APIResponseError(Exception):
+class APIResponseError(AudiosearchError):
     pass
 
-class RateLimitError(Exception):
+class RateLimitError(AudiosearchError):
     pass

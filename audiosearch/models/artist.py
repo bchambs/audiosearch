@@ -6,8 +6,14 @@ from audiosearch.models import base
 GROUP = 'artist'
 
 
-class Profile(base.EchoNestResource):
-    # _params = ['bucket', 'name']
+class ArtistMixin(object):
+    group = 'artist'
+
+    def get_alias(self):
+        return getattr(self, 'artist', '$')
+
+
+class Profile(base.EchoNestResource, ArtistMixin):
     _fields = ['artist']
     bucket = [
         'artist_location',
@@ -18,20 +24,20 @@ class Profile(base.EchoNestResource):
     method = 'profile'
     response_key = 'artist'
 
-    def __init__(self, name):
-        super(Profile, self).__init__(GROUP, Profile.method, name)
-        self.name = name
-        self._params = dict(bucket=Profile.bucket, name=name)
+    def get_params(self):
+        return {
+            'bucket': Profile.bucket,
+            'name': self.artist,
+        }
 
 
-class Top_Hottt(base.EchoNestResource):
-    # _params = ['results']
-    _fields = {}
+class Top_Hottt(base.EchoNestResource, ArtistMixin):
+    _fields = []
     description = 'Popular Music'
     method = 'top_hottt'
-
     response_key = 'artists'
-    results = 100
 
-    def __init__(self):
-        super(Top_Hottt, self).__init__(GROUP, Top_Hottt.method)
+    def get_params(self):
+        return {
+            'results': 100,
+        }

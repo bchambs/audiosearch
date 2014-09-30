@@ -13,19 +13,21 @@ def make_key(group, method, name):
 
 
 class EchoNestResource(object):
-    def __init__(self, group, method, alias='$'):
-        key = make_key(group, method, alias)
+    # init *args mapped by cls._fields
+    _fields = []
 
-        self._key = key
-        self._params = {}
-        self.alias = alias
-        self.group = group
-        self.method = method
 
-    @classmethod
-    def from_scheme(cls, **params):
-        args = [params.get(field) for field in cls._fields]
-        return cls(*args)
+    def __init__(self, *args):
+        if len(args) > len(self._fields):
+            raise TypeError('Expected {} arguments'.format(len(self._fields)))
+        
+        # Set field attributes
+        for field, value in zip(self._fields, args):
+            setattr(self, field, value)
+        
+        
+        alias = self.get_alias()    
+        self._key = make_key(self.group, self.method, alias)
 
     def __eq__(self, other):
         return self.key == other.key
@@ -36,10 +38,18 @@ class EchoNestResource(object):
     def __hash__(self):
         return hash(self.key)
 
+    @classmethod
+    def from_scheme(cls, **params):
+        args = [params.get(field) for field in cls._fields]
+        return cls(*args)
+
     @property
     def key(self):
         return self._key
 
     @property
-    def params(self):
-        return self._params
+    def get_scheme(self):
+        scheme = {}
+        for field in self._fields:
+            scheme[field] = getattr(self, field)
+        return scheme
