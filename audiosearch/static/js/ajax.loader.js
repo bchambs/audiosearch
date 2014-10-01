@@ -20,6 +20,7 @@ function dispatch(opts) {
     console.log('dispatching... ' + attempt);
 
     $.get(url, data, function(context) {
+        console.log(context['status'])
         if (context['status'] === 'complete') {
 
             var $spinner = '#' + id + '-spinner',

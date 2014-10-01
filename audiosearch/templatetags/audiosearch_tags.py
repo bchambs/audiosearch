@@ -9,18 +9,6 @@ register = template.Library()
 
 
 @register.filter
-def offset(page):
-    """Calculate page index offset."""
-    return 1 if page < 2 else (((page - 1) * INTERVAL) + 1)
-
-
-@register.filter
-def divideby(results, rows_per_table):
-    """Divide and truncate decimal."""
-    return results / rows_per_table
-
-
-@register.filter
 def inspect(item):
     print '\nin filter'
     print '\t{}'.format(type(item))
@@ -44,14 +32,6 @@ def inspect(item):
 ########################
 ########################
 
-
-@register.filter
-def build_query(params):
-    """Create query string."""
-    if not params:
-        return ''
-    qs = '&'.join("%s=%s" % (k, v) for (k, v) in params.iteritems())
-    return ''.join(['?', qs])
 
 @register.filter
 def space_to_plus(url):

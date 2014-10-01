@@ -16,6 +16,74 @@ from audiosearch.models import artist
 from audiosearch.utils.decorators import stdout_gap
 
 
+# @stdout_gap
+def artist_home(request, querydict, page, **kwargs):
+    artist_name = kwargs.get('artist')
+    if not artist_name:
+        return redirect(music_home)
+
+    context = {}
+    resources = [
+        artist.Profile(artist_name),
+        # artist.Songs(artist_name),
+    ]
+
+    for resource in resources:
+        if resource.key in Cache:
+            datawrap = Cache.fetch(resource.key, page)
+            context[resource] = datawrap
+        else:
+            get.delay(resource)
+            context[resource] = None
+
+    packaged_context = processors.prepare(context, page)
+    return render(request, 'artist-home.html', Context(packaged_context))
+
+
+def music_home(request, querydict, page, **kwargs):
+    context = {}
+    top = artist.Top_Hottt()
+
+    if top.key in Cache:
+        datawrap = Cache.fetch(top.key, page)
+        context[top] = datawrap
+    else:
+        get.delay(top)
+        context[top] = None
+
+    packaged_context = processors.prepare(context, page)
+    return render(request, 'music-home.html', Context(packaged_context))
+
+
+def ajax_retrieve(request, querydict, page, **kwargs):
+    try:
+        # Build resource from kwargs / scheme
+        group = kwargs.pop('group')
+        method = kwargs.pop('method')
+        
+        # Load relevant class obj from `models` module
+        target = vars(models).get(group)
+        klass = getattr(target, method.title())
+        
+        # Exec alt constructor with scheme dict
+        resource = klass.from_scheme(**querydict)
+
+    except (AttributeError, KeyError, TypeError):
+        # Construction failed for some reason; retrieve will never succeed
+        failed = {'status':'failed'}
+        return HttpResponse(json.dumps(failed), content_type="application/json")
+
+    if resource.key in Cache:
+        datawrap = Cache.fetch(resource.key, page)
+        resource_package = (resource, datawrap)
+    else:
+        resource_package = (resource, None)
+
+    packaged_response = processors.prepare_async(request, resource_package, page)
+    return HttpResponse(json.dumps(packaged_response), 
+                        content_type="application/json")
+
+
 @shared_task(base=tasks.SharedConnection, default_retry_delay=2, max_retries=5)
 def get(resource):
     params = resource.get_service_params()
@@ -33,55 +101,3 @@ def get(resource):
         Cache.set_failed(resource.key)
     except RateLimitError as e:
         get.retry(exc=e)
-
-
-# @stdout_gap
-def music_home(request, querydict, page, **kwargs):
-    context = {}
-    # top = artist.Profile('led zeppelin')
-    top = artist.Top_Hottt()
-
-    # Cache.delete(top.key)
-
-    if top.key in Cache:
-        datawrap = Cache.fetch(top.key, page)
-        context[top] = datawrap
-    else:
-        get(top)
-        context[top] = None
-
-    packaged_context = processors.prepare(context, page)
-    return render(request, 'music-home.html', Context(packaged_context))
-
-
-@stdout_gap
-def ajax_retrieve(request, querydict, page, **kwargs):
-    try:
-        # Build resource from kwargs / scheme
-        group = kwargs.pop('group')
-        method = kwargs.pop('method')
-        
-        # Load relevant class obj from `models` module
-        target = vars(models).get(group)
-        klass = getattr(target, method.title())
-        
-        # Exec alt constructor with scheme dict
-        resource = klass.from_scheme(**querydict)
-
-    except (AttributeError, KeyError, TypeError) as e:
-        print "ajax resource init error"
-        print e
-        print
-        # Construction failed for some reason; retrieve will never succeed
-        failed = {'status':'failed'}
-        return HttpResponse(json.dumps(failed), content_type="application/json")
-
-    if resource.key in Cache:
-        datawrap = Cache.fetch(resource.key, page)
-        resource_package = (resource, datawrap)
-    else:
-        resource_package = (resource, None)
-
-    packaged_response = processors.prepare_async(request, resource_package, page)
-    return HttpResponse(json.dumps(packaged_response), 
-                        content_type="application/json")

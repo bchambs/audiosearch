@@ -8,7 +8,6 @@ template context format:
     resource3.template_key: { resource3 subcontext dict }
     ...
 """
-
 from __future__ import absolute_import
 from itertools import chain
 import json
@@ -25,7 +24,6 @@ from audiosearch.utils.paginate import calculate_offset
 GENERIC_KEY = 'content'
 
 
-@stdout_gap
 def prepare(context, page):
     packaged = build_globals(page)
 
@@ -36,7 +34,8 @@ def prepare(context, page):
         base = build_base(resource)
 
         if datawrap:
-            content = process_available(resource, datawrap, page)
+            data, total_results = datawrap
+            content = process_available(resource, data, total_results, page)
             packaged[key] = dict(chain(base.iteritems(), content.iteritems()))
         else:
             ajax_params = build_ajax(resource, page)
@@ -46,15 +45,15 @@ def prepare(context, page):
     return packaged
 
 
-@stdout_gap
 def prepare_async(request, resource_package, page):
     packaged = {}
     resource, datawrap = resource_package
+    data, total_results = datawrap
 
-    if datawrap:
+    if data:
         # Process normally
         base = build_base(resource, use_generic=True)
-        context = process_available(resource, datawrap, page)
+        context = process_available(resource, data, total_results, page)
 
         # Wrap context under the generic key and add globals
         context_wrap = build_globals(page)
@@ -69,7 +68,9 @@ def prepare_async(request, resource_package, page):
         packaged['template'] = template.content
         packaged['status'] = 'complete'
     else:
-        packaged['status'] = 'pending'
+        # No results
+        # return no-results.html
+        pass
 
     return packaged
 
@@ -88,7 +89,6 @@ def build_base(resource, use_generic=False):
         'title': resource.description,
     }
 
-@stdout_gap
 def build_ajax(resource, page):
     """Params used in ajax loading."""
     querydict = resource.get_scheme()
@@ -100,25 +100,22 @@ def build_ajax(resource, page):
         'template_key': resource.template_key,
     }
 
-def process_available(resource, datawrap, page):
-    data, total_results = datawrap
+def process_available(resource, data, total_results, page):
     total_pages = total_results / rows
     index = calculate_offset(page, total_pages, total_results)
 
-    # Page nav
+    # Page nav; use initial page if page exceeds total pages
     current = page if page <= total_pages else 1
-    next = current + 1 if (current * rows) < total_results else 0
+    next_ = current + 1 if (current * rows) < total_results else 0
     previous = current - 1 if current <= total_pages else total_pages
 
     return {
-        'echodata': data,
-        'total_results': total_results,
-        'row_count': rows,
-        'index': index,
-        'total_pages': total_pages,
-        
-        # 'next': next if 0 < next < total_pages else ,
-        'next': next,
-        'previous': previous,
         'current': current,
+        'echodata': data,
+        'index': index,
+        'next': next_,
+        'previous': previous,
+        'row_count': rows,
+        'total_pages': total_pages,
+        'total_results': total_results,
     }

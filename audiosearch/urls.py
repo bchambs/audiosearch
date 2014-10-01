@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+similar/$', views.artist_content, {'content_key': 'similar_artists'}),
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+songs/$', views.artist_content, {'content_key': 'songs'}),
     # url(ur'^music/(?P<artist>(?!/_/).*)/\+recommended/$', views.artist_content, {'content_key': 'song_playlist'}),
-    # url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_home),
+    url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_home),
 
 
     # Ajax.

@@ -1,0 +1,44 @@
+{% load audiosearch_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    {% include "html_head.html" %}
+
+    {% if not profile %}
+        <style>
+            #profile-box {
+                display: none;
+            }
+        </style>
+    {% endif %}
+
+    <title>audiosearch - artist</title>
+</head>
+<body>
+
+{% include "page_header.html" %}
+
+<div class="page-wrapper">
+
+<!-- profile -->
+<div class="container-content">
+    {% with content=top_hottt %}
+        {% include "content_box.html" %}
+    {% endwith %}
+</div>
+
+<!-- song list -->
+<div class="container-content">
+    {% with content=top_hottt %}
+        {% include "content_box.html" %}
+    {% endwith %}
+</div><!--END song list -->
+
+{% include "page_footer.html" %}
+</div><!--END page wrapper -->
+
+{% include "js_source.html" %}
+{% include "ajax_source.html" %}
+</body>
+</html>
