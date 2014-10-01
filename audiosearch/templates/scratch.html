@@ -1,0 +1,24 @@
+﻿<!-- content -->
+<div class="container-content">
+    
+    <!-- resource title -->
+    <div id="resource-title" class="center">
+        <div id="title-container">
+            <h1>
+                Top 100
+            </h1>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="subtitle center">
+        Music ranked by popularity according to the Echo Nest.
+    </div>
+
+    {% with content=top_hottt %}
+        {% include "content_box.html" %}
+    {% endwith %}
+</div><!--END content -->
+
+

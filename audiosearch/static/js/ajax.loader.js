@@ -12,6 +12,7 @@ var AJAX_SNOOZE = 2000,             // Time in ms between failed AJAX requests.
 
 
 function dispatch(opts) {
+    return false;
     var id = opts.id,
         url = opts.url,
         data = opts.data,
@@ -20,7 +21,9 @@ function dispatch(opts) {
     console.log('dispatching... ' + attempt);
 
     $.get(url, data, function(context) {
+        
         console.log(context['status'])
+
         if (context['status'] === 'complete') {
 
             var $spinner = '#' + id + '-spinner',
@@ -32,8 +35,7 @@ function dispatch(opts) {
             console.log(id);
             console.log($table);
             console.log("loaded");
-            console.log(context['template']);
-
+            // console.log(context['template']);
 
         }
         else if (context['status'] === 'pending' && attempt < AJAX_FAIL_THRESHOLD) {

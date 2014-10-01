@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # General.
     # url(ur'^$', views.index), 
     # url(ur'^about/$', views.about),
-    # url(ur'^search/$', views.search),
+    url(ur'^search/$', views.search, name='search'),
     url(ur'^music/$', views.music_home),
     # url(ur'^trending/$', views.trending),
 

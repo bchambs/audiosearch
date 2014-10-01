@@ -16,6 +16,9 @@ from audiosearch.models import artist
 from audiosearch.utils.decorators import stdout_gap
 
 
+def search(request, querydict, page, **kwargs):
+    return render(request, 'artist-home.html', Context({}))
+
 # @stdout_gap
 def artist_home(request, querydict, page, **kwargs):
     artist_name = kwargs.get('artist')
@@ -44,6 +47,8 @@ def music_home(request, querydict, page, **kwargs):
     context = {}
     top = artist.Top_Hottt()
 
+    Cache.delete(top.key)
+
     if top.key in Cache:
         datawrap = Cache.fetch(top.key, page)
         context[top] = datawrap
@@ -52,7 +57,8 @@ def music_home(request, querydict, page, **kwargs):
         context[top] = None
 
     packaged_context = processors.prepare(context, page)
-    return render(request, 'music-home.html', Context(packaged_context))
+    # return render(request, 'music-home.html', Context(packaged_context))
+    return render(request, 'base.html', Context(packaged_context))
 
 
 def ajax_retrieve(request, querydict, page, **kwargs):
@@ -92,9 +98,9 @@ def get(resource):
         echodata = echonest.parse(response, resource.response_key)
 
         if type(echodata) is list:
-            Cache.setlist(resource.key, echodata)
+            Cache.set_list(resource.key, echodata)
         elif type(echodata) is dict:
-            Cache.sethash(resource.key, echodata)
+            Cache.set_hash(resource.key, echodata)
         else:
             Cache.set_failed(resource.key)
     except (APIConnectionError, APIResponseError) as e:

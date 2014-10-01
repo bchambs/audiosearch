@@ -48,10 +48,10 @@ def prepare(context, page):
 def prepare_async(request, resource_package, page):
     packaged = {}
     resource, datawrap = resource_package
-    data, total_results = datawrap
 
-    if data:
+    if datawrap:
         # Process normally
+        data, total_results = datawrap
         base = build_base(resource, use_generic=True)
         context = process_available(resource, data, total_results, page)
 

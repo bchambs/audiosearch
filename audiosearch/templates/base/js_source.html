@@ -1,0 +1,14 @@
+<script src="{{ STATIC_URL }}js/jquery-1.11.0.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.loader.js"></script>
+
+{% for resource in pending %}
+<script>
+    var opts = {
+            'id': '{{ resource.template_key }}',
+            'url': '{% url "ajax_retrieve" resource.group resource.method %}',
+            'data': jQuery.parseJSON('{{ resource.querydict|escapejs }}')
+        };
+
+    setTimeout(function() {dispatch(opts);}, AJAX_INITIAL_SNOOZE);
+</script>
+{% endfor %}
