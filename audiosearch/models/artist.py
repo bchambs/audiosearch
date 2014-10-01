@@ -7,14 +7,15 @@ GROUP = 'artist'
 
 
 class ArtistMixin(object):
+    _fields = ['artist']
     group = 'artist'
 
-    def get_alias(self):
-        return getattr(self, 'artist', '$')
+    @property
+    def alias(self):
+        return getattr(self, 'artist', base.DEFAULT_ALIAS)
 
 
 class Profile(base.EchoNestResource, ArtistMixin):
-    _fields = ['artist']
     bucket = [
         'artist_location',
         'genre',
@@ -24,7 +25,7 @@ class Profile(base.EchoNestResource, ArtistMixin):
     method = 'profile'
     response_key = 'artist'
 
-    def get_params(self):
+    def get_service_params(self):
         return {
             'bucket': Profile.bucket,
             'name': self.artist,
@@ -37,7 +38,7 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
     method = 'top_hottt'
     response_key = 'artists'
 
-    def get_params(self):
+    def get_service_params(self):
         return {
             'results': 100,
         }

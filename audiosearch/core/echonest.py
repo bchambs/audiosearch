@@ -29,7 +29,7 @@ MAX_RESULTS = 100
 
 def call(group, method, params):
     url = '/'.join([BASE_URL, group, method])
-    payload = prepare(params)
+    payload = _build_payload(params)
 
     try:
         response = requests.get(url, params=payload)
@@ -40,6 +40,7 @@ def call(group, method, params):
         raise APIResponseError('response not json')
 
     return response_dict
+
 
 def parse(raw_response, method_key):
     try:
@@ -61,9 +62,6 @@ def parse(raw_response, method_key):
     else:
         raise APIResponseError(status)
 
-def init_prepare(key, format):
-    def _prepare(params):
-        return dict(params.iteritems(), api_key=key, format=format)
-    return _prepare
 
-prepare = init_prepare(api.KEY, api.FORMAT)
+def _build_payload(params):
+    return dict(params.iteritems(), api_key=api.KEY, format=api.FORMAT)

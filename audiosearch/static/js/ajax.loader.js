@@ -11,19 +11,34 @@ var AJAX_SNOOZE = 2000,             // Time in ms between failed AJAX requests.
     FADEIN = 700;   // Milliseconds.
 
 
-function dispatch(url, id, attempt) {
+function dispatch(opts) {
+    var id = opts.id,
+        url = opts.url,
+        data = opts.data,
+        attempt = (opts.attempt || 1);
+
     console.log('dispatching... ' + attempt);
-    $.get(url, function(context) {
+
+    $.get(url, data, function(context) {
         if (context['status'] === 'complete') {
-            var $table = '#' + id + '-table';
-            $(template_id + '-spinner').hide();
+
+            var $spinner = '#' + id + '-spinner',
+                $table = '#' + id + '-table';
+
+            $($spinner).hide();
             $($table).append(context['template']).hide().fadeIn(FADEIN);
+            
+            console.log(id);
+            console.log($table);
             console.log("loaded");
+            console.log(context['template']);
+
+
         }
         else if (context['status'] === 'pending' && attempt < AJAX_FAIL_THRESHOLD) {
-            setTimeout(function() {
-                dispatch(url, template_id, ++attempt);
-            }, AJAX_SNOOZE);
+            opts.attempt = ++attempt;
+
+            setTimeout(function() {dispatch(opts);}, AJAX_SNOOZE);
         }
         else {
             console.log('failed');

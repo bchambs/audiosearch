@@ -63,7 +63,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'audiosearch.middleware.class_loader.AsyncClassLoader',
     'audiosearch.middleware.preprocess.Normalizer',
 )
 

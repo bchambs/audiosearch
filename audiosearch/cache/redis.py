@@ -52,16 +52,16 @@ class RedisCache(object):
         vtype = self._cache.type(key)
 
         if vtype == 'list':
-            start, end = paginate(page)
-            data = self.getlist(key, start, end)
             length = self.getlist_len(key)
+            start, end = paginate(page, length)
+            data = self.getlist(key, start, end)
         elif vtype == 'hash':
             data = self.gethash(key)
             length = 0
         else:
             raise ValueError()
 
-        return data, length
+        return (data, length)
 
 
     # Status checking

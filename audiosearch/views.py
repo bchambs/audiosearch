@@ -6,8 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import Context
 
-# from audiosearch.models import factory
 from audiosearch import Cache
+from audiosearch import models
 from audiosearch.conf import tasks
 from audiosearch.core import echonest
 from audiosearch.core import processors
@@ -18,10 +18,10 @@ from audiosearch.utils.decorators import stdout_gap
 
 @shared_task(base=tasks.SharedConnection, default_retry_delay=2, max_retries=5)
 def get(resource):
+    params = resource.get_service_params()
     try:
-        echo_response = echonest.call(resource.group, resource.method, 
-                                    resource.params)
-        echodata = echonest.parse(echo_response, resource.response_key)
+        response = echonest.call(resource.group, resource.method, params)
+        echodata = echonest.parse(response, resource.response_key)
 
         if type(echodata) is list:
             Cache.setlist(resource.key, echodata)
@@ -35,19 +35,18 @@ def get(resource):
         get.retry(exc=e)
 
 
-@stdout_gap
-def music_home(request, qparams, page, **kwargs):
+# @stdout_gap
+def music_home(request, querydict, page, **kwargs):
     context = {}
+    # top = artist.Profile('led zeppelin')
     top = artist.Top_Hottt()
 
-    Cache.delete(top.key)
+    # Cache.delete(top.key)
 
     if top.key in Cache:
-        print 'hit'
-        data_pair = Cache.fetch(top.key)
-        context[top] = data_pair
+        datawrap = Cache.fetch(top.key, page)
+        context[top] = datawrap
     else:
-        print 'miss'
         get(top)
         context[top] = None
 
@@ -55,53 +54,34 @@ def music_home(request, qparams, page, **kwargs):
     return render(request, 'music-home.html', Context(packaged_context))
 
 
-def ajax_retrieve(request, qparams, page, **kwargs):
-    print 'in ajax'
-    print kwargs.keys()
-
+@stdout_gap
+def ajax_retrieve(request, querydict, page, **kwargs):
     try:
-        resource = kwargs.pop('resource')
-    except KeyError as e:
+        # Build resource from kwargs / scheme
+        group = kwargs.pop('group')
+        method = kwargs.pop('method')
+        
+        # Load relevant class obj from `models` module
+        target = vars(models).get(group)
+        klass = getattr(target, method.title())
+        
+        # Exec alt constructor with scheme dict
+        resource = klass.from_scheme(**querydict)
+
+    except (AttributeError, KeyError, TypeError) as e:
+        print "ajax resource init error"
         print e
-        return HttpResponse(json.dumps({'status': 'failed'}),
-                            content_type="application/json")
+        print
+        # Construction failed for some reason; retrieve will never succeed
+        failed = {'status':'failed'}
+        return HttpResponse(json.dumps(failed), content_type="application/json")
 
-    print resource.key
-    context = {}
     if resource.key in Cache:
-        data_pair = Cache.fetch(resource.key, page)
-        context[resource] = data_pair
+        datawrap = Cache.fetch(resource.key, page)
+        resource_package = (resource, datawrap)
     else:
-        context[resource] = None
+        resource_package = (resource, None)
 
-    packaged_context = processors.prepare(request, context, page)
-    return HttpResponse(json.dumps(packaged_context), 
+    packaged_response = processors.prepare_async(request, resource_package, page)
+    return HttpResponse(json.dumps(packaged_response), 
                         content_type="application/json")
-
-
-# def ajax_retrieve(request, qparams, page, **kwargs):
-#     failed = dict(status='failed')
-#     return HttpResponse(json.dumps(failed), content_type="application/json")
-
-#     try:
-#         group = kwargs.pop('group')
-#         method = kwargs.pop('method')
-#     except KeyError:
-#         failed = dict(status='failed')
-#         return HttpResponse(json.dumps(failed), content_type="application/json")
-
-#     context = {}
-#     resource = factory.Resource(group, method, qparams)
-#     if not resource:
-#         failed = dict(status='failed')
-#         return HttpResponse(json.dumps(failed), content_type="application/json")
-
-#     if resource.key in Cache:
-#         data_pair = Cache.fetch(resource.key, page)
-#         context[resource] = data_pair
-#     else:
-#         context[resource] = None
-
-#     packaged_context = processors.prepare(request, context, page)
-#     return HttpResponse(json.dumps(packaged_context), 
-#                         content_type="application/json")

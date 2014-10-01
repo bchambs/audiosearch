@@ -9,17 +9,17 @@
 
             <!-- spinner -->
             {% if not content.echodata %}
-                <div id="{{ content.template_id }}-spinner" class="spinner left">
+                <div id="{{ content.template_key }}-spinner" class="spinner left">
                     <img src="{{ STATIC_URL }}img/spinner.gif"></img>
                 </div>
             {% endif %}
         </div>
 
         <!-- error/empty message -->
-        <div id="{{ content.template_id }}-notification" class="content-notification hide"></div>
+        <div id="{{ content.template_key }}-notification" class="content-notification hide"></div>
 
         <!-- content table -->
-        <table id="{{ content.template_id }}-table">
+        <table id="{{ content.template_key }}-table">
             {% if content.echodata %}
                 {% include "content_rows.html" %}
             {% else %}

@@ -5,24 +5,23 @@
 <tr><td colspan="2">
     <div class="center">
     {% if content.previous %}
-        <a href="?page={{ page|add:'-1' }}">previous</a>
+        <a href="?page={{ content.previous }}">previous</a>
     {% endif %}
 
-    {{ page|default:1 }} of {{ content.total_results|divideby:row_count }}
+    {{ content.current }} of {{ content.total_pages }}
 
     {% if content.next %}
-        <a href="?page={{ page|add:'1' }}">next</a>
+        <a href="?page={{ content.next }}">next</a>
     {% endif %}
     </div>
 </tr><td>
 </tfoot>
 
 <tbody>
-{% with index=page|offset %}
 {% for item in content.echodata %}
     <tr class="{% cycle 'even' 'odd' %}">
         <td>
-            {{ forloop.counter0|add:index }}.
+            {{ forloop.counter0|add:content.index }}.
         </td>
         <td>
             {% if item.title %}
@@ -38,5 +37,4 @@
         </td>
     </tr>
 {% endfor %}
-{% endwith %}
 </tbody>
