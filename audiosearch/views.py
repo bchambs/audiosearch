@@ -58,7 +58,7 @@ def music_home(request, querydict, page, **kwargs):
 
     packaged_context = processors.prepare(context, page)
     # return render(request, 'music-home.html', Context(packaged_context))
-    return render(request, 'base.html', Context(packaged_context))
+    return render(request, 'base_music.html', Context(packaged_context))
 
 
 def ajax_retrieve(request, querydict, page, **kwargs):

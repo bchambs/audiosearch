@@ -1,0 +1,27 @@
+/*
+    articles
+*/
+article {
+    background: none repeat scroll 0 0 #5A5A5A;
+    border-bottom: 1px solid #272727;
+    border-left: 1px solid #272727;
+    border-radius: 0 0 23px 23px;
+    border-right: 1px solid #272727;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    color: #fff;
+    margin: 0 auto;
+    max-width: 830px;
+    min-width: 830px;
+    padding: 20px 20px;
+}
+article header {
+    color: #000;
+}
+
+/*
+    sections
+*/
+section {
+    padding: 0;
+    margin: 0;
+}

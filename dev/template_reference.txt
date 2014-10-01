@@ -1,0 +1,15 @@
+Color hex / css properties
+
+
+BACKGROUNDS
+    article:    5A5A5A
+    body:       929292
+    navbar:     272727
+
+LINKS
+    hover:      fff
+    normal:     FACA66
+    visited:    F45D4C
+
+TEXT
+    normal:     fff

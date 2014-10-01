@@ -10,21 +10,23 @@
 </head>
 
 <body>
-<div id="page-wrapper">
-{% include "navbar.html" %}
+    <div id="page-wrapper">
 
-<article>
-    <section>
-        hello
-        hi
-        sup
-    </section>
-</article>
+        {% include "navbar.html" %}
 
-{% include "footer.html" %}
+        <article>
+            {% block base_article_header %}
+                Article Header !
+            {% endblock %}
 
-</div><!-- END page-wrapper -->
+            {% block base_content_zone %}
+                A section !
+            {% endblock %}
+        </article>
+
+        {% include "footer.html" %}
+
+    </div><!-- END page-wrapper -->
 {% include "js_source.html" %}
 </body>
-
 </html>
