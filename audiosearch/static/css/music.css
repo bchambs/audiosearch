@@ -88,7 +88,8 @@ section li .genres {
 section li .genres .tag {
     background-color: #272727;
     margin-right: 5px;
-    color: #FACA66;
+    /*color: #FACA66;*/
+    color: #D1B2F0;
     padding: 3px 6px;
 }
 
@@ -109,11 +110,24 @@ section .pagination .box {
     float: right;
 }
 section .pagination .box:hover {
-    background-color: #5A5A5A;
+    background-color: #3F3F3F;
 }
 section .pagination .current.box:hover {
     background-color: #272727;
 }
 section .pagination a:hover {
     text-decoration: none;
+}
+
+/*
+    spinner
+*/
+section .spinner {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 0 auto;
+}
+section .spinner img{
+    max-width: 100px;
+    max-height: 100px;
 }

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load audiosearch_tags %}
+
+
+{% block base_head %}
+    <link href="{{ STATIC_URL }}css/artist.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block base_title %}
+    {{ artist_name }}
+{% endblock %}
+
+
+{% block base_article_header %}
+<header>
+    {{ artist_name }}
+</header>
+{% endblock %}
+
+
+{% block base_content_zone %}
+<section id="profile">
+</section>
+
+<section id="songs">
+</section>
+
+<section id="similar">
+</section>
+{% endblock %}

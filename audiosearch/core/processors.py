@@ -34,10 +34,12 @@ def prepare(context, page):
         base = build_base(resource)
 
         if datawrap:
+            print 'hit'
             data, total_results = datawrap
             content = process_available(resource, data, total_results, page)
             packaged[key] = dict(chain(base.iteritems(), content.iteritems()))
         else:
+            print 'miss'
             ajax_params = build_ajax(resource, page)
             packaged['pending'].append(ajax_params)
             packaged[key] = base
@@ -57,15 +59,15 @@ def prepare_async(request, resource_package, page):
 
         # Wrap context under the generic key and add globals
         context_wrap = build_globals(page)
-        context_wrap[GENERIC_KEY] = dict(chain(base.iteritems(), 
+        context_wrap[resource.template_key] = dict(chain(base.iteritems(), 
                                         context.iteritems()))
 
         # Render template section with context
-        template = render_to_response('content_rows.html', context_wrap, 
+        rendered = render_to_response(resource.template, context_wrap, 
                                     context_instance=RequestContext(request))
         
-        # Set status and template html
-        packaged['template'] = template.content
+        # Set status and raw template html
+        packaged['template'] = rendered.content
         packaged['status'] = 'complete'
     else:
         # No results
@@ -85,7 +87,8 @@ def build_globals(page):
 def build_base(resource, use_generic=False):
     """Pairs common to all subcontexts."""
     return {
-        'template_key': GENERIC_KEY if use_generic else resource.template_key,
+        # 'template_key': GENERIC_KEY if use_generic else resource.template_key,
+        'template_key': resource.template_key,
         'title': resource.description,
     }
 
@@ -118,4 +121,5 @@ def process_available(resource, data, total_results, page):
         'row_count': rows,
         'total_pages': total_pages,
         'total_results': total_results,
+        'complete': True,
     }

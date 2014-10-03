@@ -38,6 +38,8 @@ TEMPLATE_LOADERS = (
 TEMPLATE_DIRS = (
     'audiosearch/templates/',
     'audiosearch/templates/base',
+    'audiosearch/templates/music',
+    'audiosearch/templates/artist',
 )
 
 # Application definition

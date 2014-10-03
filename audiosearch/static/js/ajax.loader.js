@@ -12,7 +12,6 @@ var AJAX_SNOOZE = 2000,             // Time in ms between failed AJAX requests.
 
 
 function dispatch(opts) {
-    return false;
     var id = opts.id,
         url = opts.url,
         data = opts.data,
@@ -27,13 +26,13 @@ function dispatch(opts) {
         if (context['status'] === 'complete') {
 
             var $spinner = '#' + id + '-spinner',
-                $table = '#' + id + '-table';
+                $div = '#' + id;
 
             $($spinner).hide();
-            $($table).append(context['template']).hide().fadeIn(FADEIN);
+            $($div).append(context['template']).hide().fadeIn(FADEIN);
             
             console.log(id);
-            console.log($table);
+            console.log($div);
             console.log("loaded");
             // console.log(context['template']);
 

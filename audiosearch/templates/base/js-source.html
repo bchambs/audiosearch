@@ -9,7 +9,8 @@
             'data': jQuery.parseJSON('{{ resource.querydict|escapejs }}')
         };
 
-    setTimeout(function() {dispatch(opts);}, AJAX_INITIAL_SNOOZE);
+    // setTimeout(function() {dispatch(opts);}, AJAX_INITIAL_SNOOZE);
+    setTimeout(function() {dispatch(opts);}, 6000);
 </script>
 {% endfor %}
 

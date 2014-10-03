@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load audiosearch_tags %}
+
+
+{% block base_head %}
+    <link href="{{ STATIC_URL }}css/music.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block base_title %}
+    top 100
+{% endblock %}
+
+
+{% block base_article_header %}
+<header>
+    Popular Music
+</header>
+{% endblock %}
+
+
+{% block base_content_zone %}
+<section id="top_hottt">
+    
+    {% if top_hottt.complete %}
+        {% include "music-home-content.html" %}
+    {% else %}
+        <div id="top_hottt-spinner" class="spinner">
+            <img src="{{ STATIC_URL }}img/preloader.gif" />
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

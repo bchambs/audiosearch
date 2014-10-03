@@ -58,7 +58,8 @@ nav li {
     margin: 18px 20px 0 0;
 }
 nav #sitename {
-    color: #fff;
+    /*color: #F45D4C;*/
+    color: #D1B2F0;
     float: left;
     font-size: 30px;
     padding-top: 9px;
@@ -76,7 +77,8 @@ nav a:visited {
     color: #FACA66;
 }
 nav a:hover#sitename{
-    color: #D1B2F0;
+    /*color: #D1B2F0;*/
+    color: #fff;
     text-decoration: none;
     text-shadow: none;
 }

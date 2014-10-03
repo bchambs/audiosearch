@@ -26,24 +26,22 @@ def music_home(request, querydict, page, **kwargs):
     top = artist.Top_Hottt()
 
     if top.key in Cache:
-        print 'hit'
         datawrap = Cache.fetch(top.key, page)
         context[top] = datawrap
     else:
-        print 'miss'
         # get.delay(top)
         get(top)
         context[top] = None
 
     packaged_context = processors.prepare(context, page)
-    dbg(packaged_context, top)
-    return render(request, 'base_music.html', Context(packaged_context))
-    
+    return render(request, 'music-home-base.html', Context(packaged_context))
+
 
 def song_home(request, querydict, page, **kwargs):
     return render(request, 'song-home.html', Context({}))
 
 
+@stdout_gap
 def artist_home(request, querydict, page, **kwargs):
     artist_name = kwargs.get('artist')
     if not artist_name:
@@ -60,11 +58,14 @@ def artist_home(request, querydict, page, **kwargs):
             datawrap = Cache.fetch(resource.key, page)
             context[resource] = datawrap
         else:
-            get.delay(resource)
+            # get.delay(resource)
+            get(resource)
             context[resource] = None
 
     packaged_context = processors.prepare(context, page)
-    return render(request, 'artist-home.html', Context(packaged_context))
+    packaged_context['artist_name'] = artist_name.title()
+    packaged_context['RCKEY'] = artist.Profile(artist_name).key
+    return render(request, 'artist-home-base.html', Context(packaged_context))
 
 
 def ajax_retrieve(request, querydict, page, **kwargs):
@@ -117,7 +118,7 @@ def get(resource):
     try:
         response = echonest.call(resource.group, resource.method, service_params)
         raw_data = echonest.parse(response, resource.response_key)
-        echodata = resource.trim(raw_data)
+        echodata = resource.clean(raw_data)
 
         if type(echodata) is list:
             Cache.set_list(resource.key, echodata)
@@ -129,17 +130,3 @@ def get(resource):
         Cache.set_failed(resource.key)
     except RateLimitError as e:
         get.retry(exc=e)
-
-
-
-
-def dbg(context, resource):
-    context['RCKEY'] = resource.key
-    try:
-        datakey = resource.template_key
-        cache_data = context[datakey]['echodata']
-        first = cache_data[1]
-        context['images'] = resource.dbg(first)
-    except (UnboundLocalError, KeyError) as e:
-        print 'failed debug: {}'.format(e)
-    return context

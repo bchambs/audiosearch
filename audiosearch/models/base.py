@@ -57,11 +57,10 @@ class EchoNestResource(object):
 
     def get_scheme(self):
         scheme = {}
+
         for field in self._fields:
             scheme[field] = getattr(self, field)
         return scheme
 
-
-    def trim(self, data):
-        print 'in base trim\n' * 5
+    def clean(self, data):
         return data
