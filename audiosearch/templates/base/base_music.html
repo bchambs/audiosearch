@@ -1,11 +1,45 @@
 {% extends "base.html" %}
+{% load audiosearch_tags %}
+
 
 {% block base_title %}
     top 100
 {% endblock %}
 
+
 {% block base_article_header %}
+<header>
+    Popular Music
+</header>
+{% endblock %}
 
-    
 
+{% block base_content_zone %}
+<section>
+    <!-- top artists list -->
+    <ul>
+    {% for artist in top_hottt.echodata %}
+        <li class="{% cycle 'odd' 'even' %}">
+            
+            <!-- side image -->
+            <a href="{% url 'artist_home' artist.name %}">&nbsp;
+                <div class="image-wrap">
+                    <img class="top-image" src="{{ artist.image }}"></img>
+                <div>
+            </a><!-- END side image -->
+
+            <div class="artist-name"><!-- artist name -->
+            <div><!-- END artist name -->
+            
+
+            <div class=""><!-- artist genres -->
+            <div><!-- END artist genres -->
+            
+
+            <div class=""><!-- artist songs -->
+            <div><!-- END artist songs -->
+        </li>
+    {% endfor %}
+    </ul><!-- END top artists list -->
+</section>
 {% endblock %}

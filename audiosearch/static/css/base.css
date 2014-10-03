@@ -30,11 +30,10 @@ li {
 }
 
 /************
-    header
+    nav
 *************/
-#header-wrapper {
+nav {
     background: none repeat scroll 0 0 #272727;
-    border-bottom: 5px solid #525252;
     border-left: 1px solid #272727;
     border-radius: 0 23px 0 0;
     border-right: 1px solid #272727;
@@ -48,39 +47,31 @@ li {
     width: 830px;
     z-index: 999;
 }
-#header-wrapper #navbar {
-    font-size: 17px;
-    height: 100%;
-    margin: 0 auto;
-    position: relative;
-    min-width: 830px;
-    max-width: 830px;
-}
-#header-wrapper #navbar ul {
+nav ul {
     height: 100%;
     text-align: center;
     width: 100%;
 }
-#header-wrapper #navbar li {
+nav li {
     float: right;
     margin: 18px 20px 0 0;
 }
-#header-wrapper #navbar #sitename {
+nav #sitename {
     color: #fff;
     float: left;
     font-size: 30px;
     padding-top: 9px;
 }
-#header-wrapper #navbar a:hover#sitename{
+nav a:hover#sitename{
     color: #D1B2F0;
     text-decoration: none;
     text-shadow: none;
 }
-#header-wrapper #navbar #navsearch {
+nav #navsearch {
     float: right;
     padding-top: 15px;
 }
-#header-wrapper #navbar .searchbar {
+nav .searchbar {
     background: white repeat scroll 0 0 transparent;
     border: 0 none;
     height: 20px;

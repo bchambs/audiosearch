@@ -30,6 +30,7 @@ GENERAL
     4. Add local_settings.py to overwrite for dev.
     5. iri_to_uri
         https://docs.djangoproject.com/en/1.6/ref/unicode/#uri-and-iri-handling
+    6. add sort-by-genre list for / music/
 
 
 REDIS

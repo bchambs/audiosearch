@@ -19,7 +19,7 @@ from audiosearch.utils.decorators import stdout_gap
 def search(request, querydict, page, **kwargs):
     return render(request, 'artist-home.html', Context({}))
 
-# @stdout_gap
+
 def artist_home(request, querydict, page, **kwargs):
     artist_name = kwargs.get('artist')
     if not artist_name:
@@ -43,21 +43,23 @@ def artist_home(request, querydict, page, **kwargs):
     return render(request, 'artist-home.html', Context(packaged_context))
 
 
+@stdout_gap
 def music_home(request, querydict, page, **kwargs):
     context = {}
     top = artist.Top_Hottt()
 
-    Cache.delete(top.key)
-
     if top.key in Cache:
+        print 'hit'
         datawrap = Cache.fetch(top.key, page)
         context[top] = datawrap
     else:
-        get.delay(top)
+        print 'miss'
+        # get.delay(top)
+        get(top)
         context[top] = None
 
     packaged_context = processors.prepare(context, page)
-    # return render(request, 'music-home.html', Context(packaged_context))
+    dbg(packaged_context, top)
     return render(request, 'base_music.html', Context(packaged_context))
 
 
@@ -90,12 +92,28 @@ def ajax_retrieve(request, querydict, page, **kwargs):
                         content_type="application/json")
 
 
+def ajax_clear(request, querydict, page, **kwargs):
+    try:
+        key = querydict.pop('RCKEY')
+    except KeyError:
+        hit = False
+        key = "NO KEY"
+    else:
+        hit = Cache.delete(key)
+
+    msg = "Removed: {}".format(key) if hit else "Not found: {}".format(key)
+    print "\n{}\n".format(msg)
+
+    return HttpResponse(json.dumps({}), content_type="application/json")
+
+
 @shared_task(base=tasks.SharedConnection, default_retry_delay=2, max_retries=5)
 def get(resource):
-    params = resource.get_service_params()
+    service_params = resource.get_service_params()
     try:
-        response = echonest.call(resource.group, resource.method, params)
-        echodata = echonest.parse(response, resource.response_key)
+        response = echonest.call(resource.group, resource.method, service_params)
+        raw_data = echonest.parse(response, resource.response_key)
+        echodata = resource.trim(raw_data)
 
         if type(echodata) is list:
             Cache.set_list(resource.key, echodata)
@@ -107,3 +125,17 @@ def get(resource):
         Cache.set_failed(resource.key)
     except RateLimitError as e:
         get.retry(exc=e)
+
+
+
+
+def dbg(context, resource):
+    context['RCKEY'] = resource.key
+    try:
+        datakey = resource.template_key
+        cache_data = context[datakey]['echodata']
+        first = cache_data[1]
+        context['images'] = resource.dbg(first)
+    except (UnboundLocalError, KeyError) as e:
+        print 'failed debug: {}'.format(e)
+    return context

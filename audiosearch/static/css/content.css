@@ -1,11 +1,22 @@
 /*
+    general
+*/
+.even {
+    background-color: #5A5A5A;
+}
+.odd {
+    background-color: #3F3F3F;
+}
+
+/*
     articles
 */
 article {
     background: none repeat scroll 0 0 #5A5A5A;
     border-bottom: 1px solid #272727;
     border-left: 1px solid #272727;
-    border-radius: 0 0 23px 23px;
+    /*border-radius: 0 0 23px 23px;*/
+    border-radius: 0 0 0 23px;
     border-right: 1px solid #272727;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     color: #fff;
@@ -14,14 +25,23 @@ article {
     min-width: 830px;
     padding: 20px 20px;
 }
+
+/* 
+    article headers
+*/
 article header {
-    color: #000;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
 }
 
 /*
     sections
 */
 section {
+    margin-bottom: 20px;
     padding: 0;
-    margin: 0;
 }

@@ -1,0 +1,27 @@
+<!-- nav -->
+<nav>
+    <a id="sitename" href="/">audiosearch</a>
+
+    <form id ="navsearch" action='{% url "search" %}' method="GET">
+        <input class="searchbar" type="text" name="q">
+    </form>
+
+    <!-- nav links -->
+    <ul>
+        <li>
+            <a href="/about/">about</a>
+        </li>
+        <li>
+            <a href="/trending/">trending</a>
+        </li>
+        <li>
+            <a href="/music/">music</a>
+        </li>
+        <li>
+            <a name="clear" href="/ajax/clear/">clear</a>
+        </li>
+        <li>
+            {{ RCKEY }}
+        </li>
+    </ul><!--END nav links -->
+</nav><!--END nav -->

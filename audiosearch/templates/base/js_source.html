@@ -12,3 +12,13 @@
     setTimeout(function() {dispatch(opts);}, AJAX_INITIAL_SNOOZE);
 </script>
 {% endfor %}
+
+
+<script>
+    $(document).on("click","a[name='clear']", function (e) {
+        var url = '{% url "ajax_clear" %}',
+            data = {'RCKEY': '{{ RCKEY }}'}
+        $.get(url, data);
+        return false;
+    });
+</script>

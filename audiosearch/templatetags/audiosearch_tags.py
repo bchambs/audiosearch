@@ -16,28 +16,3 @@ def inspect(item):
     print '\t{}'.format(item)
     print 'out filter\n'
     return item
-
-
-
-
-
-
-
-
-
-
-
-
-########################
-########################
-########################
-
-
-@register.filter
-def space_to_plus(url):
-    # TODO use builtin iri_to_uri
-    try:
-        return url.replace(' ', '+')
-    except AttributeError:
-        return ''
-

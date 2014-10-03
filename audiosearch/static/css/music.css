@@ -1,0 +1,38 @@
+/*
+    top artists: side image
+*/
+section li {
+    padding: 10px;
+    display: block;
+    clear: both;
+    height: 102px;
+}
+section li .image-wrap {
+    border: 1px solid #000;
+    color: #000;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+    width: 130px;
+    float: left;
+    margin-right: 15px;
+
+}
+section li .image-wrap .top-image {
+    bottom: -9999px;
+    left: -9999px;
+    margin: auto;
+    min-height: 100%;
+    position: absolute;
+    right: -9999px;
+    top: -9999px;
+}
+section li img {
+    display: block;
+    height: auto;
+    width: 130px;
+}
+
+/*
+    
+*/
