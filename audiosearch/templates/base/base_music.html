@@ -34,7 +34,12 @@
                 <a href="{% url 'artist_home' artist.name %}">
                     {{ artist.name }}
                 </a>
-            </strong><!-- END artist name -->
+            </strong>
+            <span class="rank">
+                {% if artist.rank %}
+                    ( {{ artist.rank }} % )
+                {% endif %}
+            </span><!-- END artist name -->
 
 
             <!-- recommended songs -->
@@ -64,5 +69,39 @@
         </li>
     {% endfor %}
     </ul><!-- END top artists list -->
+
+
+    <!-- pagination -->
+    <div class="pagination">
+        
+        <!-- next -->
+        {% if top_hottt.next %}
+            <a href="{% url 'music_home' %}?page={{ top_hottt.next }}">
+                <span class="box">
+                    next
+                </span>
+            </a>
+        {% endif %}<!-- END next -->
+
+
+        <!-- current -->
+        {% if top_hottt.total_pages != 1 %}
+            <span class="current box">
+                {{ top_hottt.current }} of {{ top_hottt.total_pages }}
+            </span>
+        {% endif %}<!-- END current -->
+
+
+        <!-- previous -->
+        {% if top_hottt.previous %}
+            <a href="{% url 'music_home' %}?page={{ top_hottt.previous }}">
+                <span class="box">
+                    previous
+                </span>
+            </a>
+        {% endif %}<!-- END previous -->
+
+    </div><!-- END pagination -->
+
 </section>
 {% endblock %}

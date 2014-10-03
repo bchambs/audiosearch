@@ -2,10 +2,12 @@
     general
 */
 .even {
+    /*background-color: #5A5A5A;*/
     background-color: #5A5A5A;
 }
 .odd {
-    background-color: #3F3F3F;
+    /*background-color: #3F3F3F;*/
+    background-color: #4A4A4A;
 }
 
 /*

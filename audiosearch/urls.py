@@ -10,7 +10,7 @@ urlpatterns = patterns('',
 
     # General
     url(ur'^search/$', views.search, name='search'),
-    url(ur'^music/$', views.music_home),
+    url(ur'^music/$', views.music_home, name='music_home'),
 
     # Songs
     url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/$', views.song_home, name='song_home'),

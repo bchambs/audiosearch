@@ -1,6 +1,10 @@
 /*
     general
 */
+section ul {
+    border-bottom: 1px solid #272727;
+    margin-bottom: 15px;
+}
 section li {
     /*clear: both;*/
     display: block;
@@ -44,8 +48,13 @@ section li .image-wrap img {
     artist name
 */
 section li strong.name {
+    font-size: 17px;
     font-weight: 600;
     line-height: 18px;
+}
+section li .rank {
+    color: #CCCCCC;
+    margin-left: 7px;
 }
 
 /* 
@@ -81,4 +90,30 @@ section li .genres .tag {
     margin-right: 5px;
     color: #FACA66;
     padding: 3px 6px;
+}
+
+/*
+    pagination
+*/
+section .pagination {
+    clear: both;
+    margin-bottom: 15px;
+    display: inline-block;
+    width: 100%;
+}
+section .pagination .box {
+    background-color: #272727;
+    border: 1px solid #272727;
+    padding: 2px 12px;
+    margin-left: 12px;
+    float: right;
+}
+section .pagination .box:hover {
+    background-color: #5A5A5A;
+}
+section .pagination .current.box:hover {
+    background-color: #272727;
+}
+section .pagination a:hover {
+    text-decoration: none;
 }

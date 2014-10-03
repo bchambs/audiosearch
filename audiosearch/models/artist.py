@@ -36,6 +36,7 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
     _fields = []
     bucket = [
         'genre',
+        'hotttnesss',
         'images',
         'songs',
     ]
@@ -52,7 +53,7 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
     def trim(self, echodata):
         BAD_IMAGES = set('myspace')
         GENRES_COUNT = 3
-        SONGS_COUNT = 2
+        SONGS_COUNT = 3
         trimmed = []
 
         for artist in echodata:
@@ -61,6 +62,10 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
                 name = artist.pop('name')
             except KeyError:
                 continue
+
+            # Rank
+            hotttnesss = artist.get('hotttnesss', 0.0)
+            rank = round(hotttnesss * 100, 2)
 
             # Genres
             genre_dicts = artist.get('genres', [])
@@ -81,7 +86,7 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
                 if title not in seen:
                     seen.add(title)
                     songs.append(song)
-                if len(songs) > SONGS_COUNT:
+                if len(songs) >= SONGS_COUNT:
                     break
 
             # Display image
@@ -99,6 +104,7 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
 
             infodict = {
                 'name': name,
+                'rank': rank,
                 'genres': genres,
                 'songs': songs,
                 'image': image_url,
