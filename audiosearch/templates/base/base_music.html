@@ -22,22 +22,45 @@
         <li class="{% cycle 'odd' 'even' %}">
             
             <!-- side image -->
-            <a href="{% url 'artist_home' artist.name %}">&nbsp;
-                <div class="image-wrap">
-                    <img class="top-image" src="{{ artist.image }}"></img>
-                <div>
-            </a><!-- END side image -->
+            <div class="image-wrap">
+                <a href="{% url 'artist_home' artist.name %}">&nbsp;
+                    <img src="{{ artist.image }}" />
+                </a>
+            </div><!-- END side image -->
 
-            <div class="artist-name"><!-- artist name -->
-            <div><!-- END artist name -->
+
+            <!-- artist name -->
+            <strong class="name">
+                <a href="{% url 'artist_home' artist.name %}">
+                    {{ artist.name }}
+                </a>
+            </strong><!-- END artist name -->
+
+
+            <!-- recommended songs -->
+            <div class="recommended">
+                Recommended: 
+                {% for song in artist.songs %}
+                    <span class="song">
+                        {% if forloop.last %}
+                            <a href="{% url 'song_home' artist.name song.title %}">{{ song.title }}</a>
+                        {% else %}
+                            <a href="{% url 'song_home' artist.name song.title %}">{{ song.title }}</a>,
+                        {% endif %}
+                    </span>
+                {% endfor %}
+            </div><!-- END recommended songs -->
             
 
-            <div class=""><!-- artist genres -->
-            <div><!-- END artist genres -->
-            
+            <!-- genre tags -->
+            <div class="genres">
+                {% for genre in artist.genres %}
+                    <span class="tag">
+                        {{ genre }}
+                    </span>
+                {% endfor %}
+            </div><!-- END genre tags -->
 
-            <div class=""><!-- artist songs -->
-            <div><!-- END artist songs -->
         </li>
     {% endfor %}
     </ul><!-- END top artists list -->

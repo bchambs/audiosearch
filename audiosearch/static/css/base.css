@@ -25,6 +25,7 @@ li {
     display: inline-block;
 }
 #page-wrapper {
+    margin-bottom: 120px;
     margin-top: 15px;
     min-width: 900px;
 }
@@ -62,6 +63,18 @@ nav #sitename {
     font-size: 30px;
     padding-top: 9px;
 }
+nav a {
+    color: #FACA66;
+    font-style: bold;
+    text-decoration: none;
+}
+nav a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+nav a:visited {
+    color: #FACA66;
+}
 nav a:hover#sitename{
     color: #D1B2F0;
     text-decoration: none;
@@ -84,14 +97,13 @@ nav .searchbar {
     links
 *************/
 a {
-    color: #FACA66;
-    font-style: bold;
+    color: #fff;
     text-decoration: none;
 }
 a:hover {
-    color: #fff;
     text-decoration: underline;
 }
 a:visited {
-    color: #F45D4C;
+    /*color: #F45D4C;*/
+    color: #fff;
 }

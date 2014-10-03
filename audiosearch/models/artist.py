@@ -56,8 +56,8 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
         trimmed = []
 
         for artist in echodata:
+            # Require artist name
             try:
-                # Require artist name
                 name = artist.pop('name')
             except KeyError:
                 continue

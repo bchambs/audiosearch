@@ -20,6 +20,30 @@ def search(request, querydict, page, **kwargs):
     return render(request, 'artist-home.html', Context({}))
 
 
+@stdout_gap
+def music_home(request, querydict, page, **kwargs):
+    context = {}
+    top = artist.Top_Hottt()
+
+    if top.key in Cache:
+        print 'hit'
+        datawrap = Cache.fetch(top.key, page)
+        context[top] = datawrap
+    else:
+        print 'miss'
+        # get.delay(top)
+        get(top)
+        context[top] = None
+
+    packaged_context = processors.prepare(context, page)
+    dbg(packaged_context, top)
+    return render(request, 'base_music.html', Context(packaged_context))
+    
+
+def song_home(request, querydict, page, **kwargs):
+    return render(request, 'song-home.html', Context({}))
+
+
 def artist_home(request, querydict, page, **kwargs):
     artist_name = kwargs.get('artist')
     if not artist_name:
@@ -41,26 +65,6 @@ def artist_home(request, querydict, page, **kwargs):
 
     packaged_context = processors.prepare(context, page)
     return render(request, 'artist-home.html', Context(packaged_context))
-
-
-@stdout_gap
-def music_home(request, querydict, page, **kwargs):
-    context = {}
-    top = artist.Top_Hottt()
-
-    if top.key in Cache:
-        print 'hit'
-        datawrap = Cache.fetch(top.key, page)
-        context[top] = datawrap
-    else:
-        print 'miss'
-        # get.delay(top)
-        get(top)
-        context[top] = None
-
-    packaged_context = processors.prepare(context, page)
-    dbg(packaged_context, top)
-    return render(request, 'base_music.html', Context(packaged_context))
 
 
 def ajax_retrieve(request, querydict, page, **kwargs):

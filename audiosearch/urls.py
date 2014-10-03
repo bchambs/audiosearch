@@ -12,6 +12,9 @@ urlpatterns = patterns('',
     url(ur'^search/$', views.search, name='search'),
     url(ur'^music/$', views.music_home),
 
+    # Songs
+    url(ur'^music/(?P<artist>(?!/_/).*)/_/(?P<song>.*)/$', views.song_home, name='song_home'),
+
     # Artists
     url(ur'^music/(?P<artist>(?!/_/).*)/$', views.artist_home, name='artist_home'),
 

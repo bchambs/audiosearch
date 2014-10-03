@@ -1,38 +1,84 @@
 /*
-    top artists: side image
+    general
 */
 section li {
-    padding: 10px;
+    /*clear: both;*/
     display: block;
-    clear: both;
     height: 102px;
+    padding: 20px 10px 20px 140px;
+    position: relative;
 }
+section li.odd {
+    border-top: 1px solid #272727;
+    border-bottom: 2px solid #272727;
+}
+
+/* 
+    side image 
+*/
 section li .image-wrap {
     border: 1px solid #000;
     color: #000;
+    float: left;
     height: 100px;
+    margin-right: 20px;
+    margin-left: -130px;
     overflow: hidden;
     position: relative;
     width: 130px;
-    float: left;
-    margin-right: 15px;
-
 }
-section li .image-wrap .top-image {
+section li .image-wrap img {
     bottom: -9999px;
+    display: block;
+    height: auto;
     left: -9999px;
     margin: auto;
     min-height: 100%;
     position: absolute;
     right: -9999px;
     top: -9999px;
-}
-section li img {
-    display: block;
-    height: auto;
     width: 130px;
 }
 
-/*
-    
+/* 
+    artist name
 */
+section li strong.name {
+    font-weight: 600;
+    line-height: 18px;
+}
+
+/* 
+    recommended songs
+*/
+section li .recommended {
+    margin: 5px 0;
+    max-height: 36px;
+    overflow: hidden;
+}
+section li .recommended .song {
+    margin-left: 5px;
+}
+section li .recommended a {
+    color: #80C3E2;
+    line-height: 15px;
+}
+section li .recommended a:hover {
+    color: #80C3E2;
+}
+
+/* 
+    genre tags
+*/
+section li .genres {
+    bottom: 23px;
+    margin-left: 21px;
+    position: absolute;
+    /*right: 5px;*/
+}
+section li .genres .tag {
+    background-color: #272727;
+    margin-right: 5px;
+    color: #FACA66;
+    padding: 3px 6px;
+}
