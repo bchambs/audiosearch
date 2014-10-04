@@ -29,10 +29,11 @@ class RedisCache(object):
             'port': params.get('port', 6379),
         }
         self.name = name
-        try:
-            self._pid = os.getpid()
-        except os.OSError:
-            self._pid = '????'
+        self._pid = os.getpid()
+        # try:
+        #     self._pid = os.getpid()
+        # except os.OSError:
+        #     self._pid = '????'
 
     def __contains__(self, key):
         return self._cache.exists(key)
@@ -83,22 +84,35 @@ class RedisCache(object):
     # List
     def get_list(self, key, start, end):
         raw = self._cache.lrange(key, start, end)
-        return [json.loads(element) for element in raw]
+        return [_deserialize(element) for element in raw]
 
     def get_list_len(self, key):
         return self._cache.llen(key)
 
     def set_list(self, key, values):
-        json_values = [json.dumps(element) for element in values]
-        self._cache.rpush(key, *json_values)
+        serialized = [_serialize(element) for element in values]
+        self._cache.rpush(key, *serialized)
 
 
     # Hash
     def get_hash(self, key):
-        return self._cache.hgetall(key)
+        raw = self._cache.hgetall(key)
+        return { k: _deserialize(v) for k, v in raw.iteritems() }
 
     def set_hash(self, key, value_map):
-        self._cache.hmset(key, value_map)
+        serialized = { k: _serialize(v) for k, v in value_map.iteritems() }
+        self._cache.hmset(key, serialized)
+
+
+def _serialize(value):
+    """Convenience function to easily change serialization format."""
+    return json.dumps(value)
+
+def _deserialize(value):
+    """Convenience function to easily change serialization format."""
+    return json.loads(value)
+
+
 
     
 

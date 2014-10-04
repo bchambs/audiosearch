@@ -4,19 +4,11 @@ from audiosearch.models import base
 from audiosearch.core import trim
 
  
-GROUP = 'artist'
+ARTIST_GROUP = 'artist'
 
 
-class ArtistMixin(object):
+class Profile(base.EchoNestResource):
     _fields = ['artist']
-    group = 'artist'
-
-    @property
-    def alias(self):
-        return getattr(self, 'artist', base.DEFAULT_ALIAS)
-
-
-class Profile(base.EchoNestResource, ArtistMixin):
     bucket = [
         'artist_location',
         'biographies',
@@ -26,29 +18,32 @@ class Profile(base.EchoNestResource, ArtistMixin):
         'years_active',
     ]
     description = 'Profile'
+    group = ARTIST_GROUP
     method = 'profile'
     response_key = 'artist'
     template = 'artist-home-profile.html'
 
+    @property
+    def alias(self):
+        return getattr(self, 'artist')
+
     def get_service_params(self):
         return {
             'bucket': Profile.bucket,
-            'name': self.artist,
+            'name': getattr(self, 'artist'),
         }
 
-    def clean(self, echodata):
+    @staticmethod
+    def clean(echodata):
         BIO_SOURCE = 'wikipedia'
+        IMAGE_COUNT = 5
         neat = {}
 
         # Artist location (city, region, country)
-        try:
-            location_dict = echodata.pop('artist_location')
-        except KeyError:
-            city = region = country = None
-        else:
-            city = location_dict.get('city')
-            region = location_dict.get('region')
-            country = location_dict.get('country')
+        location_dict  = echodata.get('artist_location')
+        city = location_dict.get('city')
+        region = location_dict.get('region')
+        country = location_dict.get('country')
 
         # Biography (first paragraph as summary and full text)
         biography_dicts = echodata.get('biographies')
@@ -66,24 +61,24 @@ class Profile(base.EchoNestResource, ArtistMixin):
 
         # Genres (list of strings)
         genre_dicts = echodata.get('genres')
-        genres = trim.genres(genre_dicts) if genre_dicts else []
+        genres = trim.genres(genre_dicts)
 
         # Rank (##.###)
         hotttnesss = echodata.get('hotttnesss')
-        rank = trim.rank(hotttnesss) if hotttnesss else None
+        rank = trim.rank(hotttnesss)
 
         # Images (list of urls)
         image_dicts = echodata.get('images')
-        images = trim.images(image_dicts) if image_dicts else []
+        images = trim.images(image_dicts, IMAGE_COUNT)
 
-        # Years active (start - end)
+        # Years active (start - end), response is a list of dicts (usually 1)
+        active_dict = echodata.get('years_active')
         try:
-            years_active_dict = echodata.pop('years_active')[0]
-        except (IndexError, KeyError):
-            start, end = None
-        else:
-            start = years_active_dict.get('start', 'Unknown')
-            end = years_active_dict.get('end', 'present')
+            first_active = active_dict[0]
+        except IndexError:
+            first_active = {}
+        start = first_active.get('start', 'Unknown')
+        end = first_active.get('end', 'present')
 
         neat = {
             'city': city,
@@ -101,7 +96,7 @@ class Profile(base.EchoNestResource, ArtistMixin):
         return neat
 
 
-class Top_Hottt(base.EchoNestResource, ArtistMixin):
+class Top_Hottt(base.EchoNestResource):
     _fields = []
     bucket = [
         'genre',
@@ -110,17 +105,24 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
         'songs',
     ]
     description = 'Popular Music'
+    group = ARTIST_GROUP
     method = 'top_hottt'
     response_key = 'artists'
     template = 'music-home-content.html'
 
-    def get_service_params(self):
+    @property
+    def alias(self):
+        return '$'
+
+    @staticmethod
+    def get_service_params():
         return {
             'bucket': Top_Hottt.bucket,
             'results': 100,
         }
 
-    def clean(self, echodata):
+    @staticmethod
+    def clean(echodata):
         GENRES_COUNT = 3
         SONGS_COUNT = 3
         neat = []
@@ -134,30 +136,23 @@ class Top_Hottt(base.EchoNestResource, ArtistMixin):
 
             # Genres (list of strings)
             genre_dicts = artist.get('genres')
-            genres = trim.genres(genre_dicts, GENRES_COUNT) if genre_dicts else []
+            genres = trim.genres(genre_dicts, GENRES_COUNT)
 
             # Rank (##.###)
             hotttnesss = artist.get('hotttnesss')
-            rank = trim.rank(hotttnesss) if hotttnesss else None
+            rank = trim.rank(hotttnesss)
 
             # Display image (url)
-            image_dicts = artist.get('images', [])
-            images = trim.images(image_dicts, 1) if image_dicts else None
-            image_url = images[0] if len(images) else None
+            image_dicts = artist.get('images')
+            images = trim.images(image_dicts, 1)
+            try:
+                image_url = images[0]
+            except IndexError:
+                image_url = None
 
             # Songs (title and echonest id?)
-            song_dicts = artist.get('songs', [])
-            seen = set('default')
-            songs = []
-            for song in song_dicts:
-                title = song.get('title', 'default')
-                
-                # Do not display duplicate songs with different echo ids
-                if title not in seen:
-                    seen.add(title)
-                    songs.append(song)
-                if len(songs) >= SONGS_COUNT:
-                    break
+            song_dicts = artist.get('songs')
+            songs = trim.songs(song_dicts, SONGS_COUNT)
 
             infodict = {
                 'name': name,

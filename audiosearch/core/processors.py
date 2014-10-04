@@ -36,7 +36,7 @@ def prepare(context, page):
         if datawrap:
             print 'hit'
             data, total_results = datawrap
-            content = process_available(resource, data, total_results, page)
+            content = process_available(data, total_results, page)
             packaged[key] = dict(chain(base.iteritems(), content.iteritems()))
         else:
             print 'miss'
@@ -54,8 +54,8 @@ def prepare_async(request, resource_package, page):
     if datawrap:
         # Process normally
         data, total_results = datawrap
-        base = build_base(resource, use_generic=True)
-        context = process_available(resource, data, total_results, page)
+        base = build_base(resource)
+        context = process_available(data, total_results, page)
 
         # Wrap context under the generic key and add globals
         context_wrap = build_globals(page)
@@ -84,10 +84,9 @@ def build_globals(page):
         'pending': [],
     }
 
-def build_base(resource, use_generic=False):
+def build_base(resource):
     """Pairs common to all subcontexts."""
     return {
-        # 'template_key': GENERIC_KEY if use_generic else resource.template_key,
         'template_key': resource.template_key,
         'title': resource.description,
     }
@@ -103,11 +102,15 @@ def build_ajax(resource, page):
         'template_key': resource.template_key,
     }
 
-def process_available(resource, data, total_results, page):
+def process_available(data, total_results, page):
+    # Profiles do not need pagination
+    if type(data) is dict:
+        return dict(data.iteritems(), complete=True)
+
+    # Pagination calculation
     total_pages = total_results / rows
     index = calculate_offset(page, total_pages, total_results)
-
-    # Page nav; use initial page if page exceeds total pages
+    # Use first page if page exceeds total pages (eg, ?page=103513)
     current = page if page <= total_pages else 1
     next_ = current + 1 if (current * rows) < total_results else 0
     previous = current - 1 if current <= total_pages else total_pages

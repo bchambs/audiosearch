@@ -1,0 +1,16 @@
+/*
+    image band
+*/
+section #image-band {
+    height: 122px;
+    width: 100%;
+}
+/* 1px border */
+section #image-band .image-wrap {
+    height: 120px;
+    width: 164px;
+}
+section #image-band .image-wrap img {
+    min-height: 100%;
+    width: 164px;
+}

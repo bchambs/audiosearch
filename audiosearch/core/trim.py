@@ -1,37 +1,38 @@
+"""Remove unused data from echo nest API responses."""
 from __future__ import absolute_import
 
 
-REJECTED_IMAGES = set('myspace')
+REJECTED_IMAGES = set([u'myspace', u'thumb',])
 
 
 def genres(genre_dicts, count=None):
-    genres = []
+    trimmed = []
     count = count or len(genre_dicts)
 
     for genre in genre_dicts[:count]:
         genre_text = genre.get('name')
 
         if genre_text:
-            genres.append(genre_text)
+            trimmed.append(genre_text)
 
-    return genres
+    return trimmed
+
 
 def images(image_dicts, count=None):
-    images = []
+    trimmed = []
     count = count or len(image_dicts)
 
     for img in image_dicts:
-        attribution = img.get('attribution', 'n/a')
+        url = img.get('url', '')
 
-        if attribution not in REJECTED_IMAGES:
-            image_url = img.get('url')
-
-            if image_url:
-                images.append(image_url)
-            if len(images) >= count:
+        if not any(bad_src in url for bad_src in REJECTED_IMAGES):
+            if url:
+                trimmed.append(url)
+            if len(trimmed) >= count:
                 break
 
-    return images
+    return trimmed
+
 
 def rank(hotttnesss):
     hotttnesss = hotttnesss or 0.0
@@ -43,3 +44,21 @@ def rank(hotttnesss):
             return None
             
     return round(hotttnesss * 100, 2)
+
+
+def songs(song_dicts, count=None):
+    trimmed = []
+    count = count or len(song_dicts)
+    seen = set('DEFAULT')
+
+    for song in song_dicts:
+        title = song.get('title', 'DEFAULT')
+        
+        # Remove identical songs with different echo nest IDs
+        if title not in seen:
+            seen.add(title)
+            trimmed.append(song)
+        if len(trimmed) >= count:
+            break
+
+    return trimmed

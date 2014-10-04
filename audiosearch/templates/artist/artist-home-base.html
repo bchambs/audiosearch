@@ -13,14 +13,14 @@
 
 
 {% block base_article_header %}
-<header>
-    {{ artist_name }}
-</header>
 {% endblock %}
 
 
 {% block base_content_zone %}
 <section id="profile">
+    {% if profile.complete %}
+        {% include "artist-home-profile.html" %}
+    {% endif %}
 </section>
 
 <section id="songs">

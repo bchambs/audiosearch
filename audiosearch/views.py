@@ -34,6 +34,7 @@ def music_home(request, querydict, page, **kwargs):
         context[top] = None
 
     packaged_context = processors.prepare(context, page)
+    packaged_context['RCKEY'] = top.key
     return render(request, 'music-home-base.html', Context(packaged_context))
 
 
@@ -61,10 +62,11 @@ def artist_home(request, querydict, page, **kwargs):
             # get.delay(resource)
             get(resource)
             context[resource] = None
-
+    
     packaged_context = processors.prepare(context, page)
     packaged_context['artist_name'] = artist_name.title()
     packaged_context['RCKEY'] = artist.Profile(artist_name).key
+    
     return render(request, 'artist-home-base.html', Context(packaged_context))
 
 

@@ -1,86 +1,14 @@
-<!-- top artists list -->
-<ul>
-{% for artist in top_hottt.echodata %}
-    <li class="{% cycle 'odd' 'even' %}">
-        
-        <!-- side image -->
-        <div class="image-wrap">
-            <a href="{% url 'artist_home' artist.name %}">&nbsp;
-                <img src="{{ artist.image }}" />
+<!-- artist profile -->
+
+<div id="image-band">
+    {% for image in profile.images %}
+        <span class="image-wrap">
+            <a href="{{ image }}">&nbsp;
+                <img class="grayscale" src="{{ image }}" />
             </a>
-        </div><!-- END side image -->
-
-
-        <!-- artist name -->
-        <strong class="name">
-            <a href="{% url 'artist_home' artist.name %}">
-                {{ artist.name }}</a>
-        </strong>
-        <span class="rank">
-            {% if artist.rank %}
-                ( {{ artist.rank }} % )
-            {% endif %}
         </span>
-        <!-- END artist name -->
+    {% endfor %}
+</div>
 
 
-        <!-- recommended songs -->
-        <div class="recommended">
-            Recommended: 
-            {% for song in artist.songs %}
-                <span class="song">
-                    {% if forloop.last %}
-                        <a href="{% url 'song_home' artist.name song.title %}">{{ song.title }}</a>
-                    {% else %}
-                        <a href="{% url 'song_home' artist.name song.title %}">{{ song.title }}</a>,
-                    {% endif %}
-                </span>
-            {% endfor %}
-        </div><!-- END recommended songs -->
-        
-
-        <!-- genre tags -->
-        <div class="genres">
-            {% for genre in artist.genres %}
-                <span class="tag">
-                    {{ genre }}
-                </span>
-            {% endfor %}
-        </div><!-- END genre tags -->
-
-    </li>
-{% endfor %}
-</ul><!-- END top artists list -->
-
-
-<!-- pagination -->
-<div class="pagination">
-    
-    <!-- next -->
-    {% if top_hottt.next %}
-        <a href="{% url 'music_home' %}?page={{ top_hottt.next }}">
-            <span class="box">
-                next
-            </span>
-        </a>
-    {% endif %}<!-- END next -->
-
-
-    <!-- current -->
-    {% if top_hottt.total_pages > 1 %}
-        <span class="current box">
-            {{ top_hottt.current }} of {{ top_hottt.total_pages }}
-        </span>
-    {% endif %}<!-- END current -->
-
-
-    <!-- previous -->
-    {% if top_hottt.previous %}
-        <a href="{% url 'music_home' %}?page={{ top_hottt.previous }}">
-            <span class="box">
-                previous
-            </span>
-        </a>
-    {% endif %}<!-- END previous -->
-
-</div><!-- END pagination -->
+<! END artist profile -->

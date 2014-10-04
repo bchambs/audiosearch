@@ -18,6 +18,17 @@ def make_key(group, method, alias):
 
 
 class EchoNestResource(object):
+    _fields = None
+    _key = None
+    _template_key = None
+    alias = None
+    bucket = None
+    description = None
+    group = None
+    method = None
+    response_key = None
+    template = None
+
     def __init__(self, *args):
         if len(args) > len(self._fields):
             raise TypeError('Expected {} arguments'.format(len(self._fields)))
@@ -61,6 +72,3 @@ class EchoNestResource(object):
         for field in self._fields:
             scheme[field] = getattr(self, field)
         return scheme
-
-    def clean(self, data):
-        return data

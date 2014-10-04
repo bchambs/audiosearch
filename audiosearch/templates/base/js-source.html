@@ -9,8 +9,10 @@
             'data': jQuery.parseJSON('{{ resource.querydict|escapejs }}')
         };
 
+    var snooze = 6000;
+    console.log('dispatching in ' + (snooze / 1000) + ' seconds.');
+    setTimeout(function() {dispatch(opts);}, snooze);
     // setTimeout(function() {dispatch(opts);}, AJAX_INITIAL_SNOOZE);
-    setTimeout(function() {dispatch(opts);}, 6000);
 </script>
 {% endfor %}
 
@@ -18,7 +20,7 @@
 <script>
     $(document).on("click","a[name='clear']", function (e) {
         var url = '{% url "ajax_clear" %}',
-            data = {'RCKEY': '{{ RCKEY }}'}
+            data = {'RCKEY': '{{ RCKEY }}'};
         $.get(url, data);
         return false;
     });
